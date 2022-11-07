@@ -32,16 +32,16 @@ let package = Package(
     .macCatalyst(.v13),
   ],
   products: [
-    .library(name: "IDEUtils", type: .static, targets: ["IDEUtils"]),
-    .library(name: "SwiftDiagnostics", type: .static, targets: ["SwiftDiagnostics"]),
-    .library(name: "SwiftOperators", type: .static, targets: ["SwiftOperators"]),
-    .library(name: "SwiftParser", type: .static, targets: ["SwiftParser"]),
-    .library(name: "SwiftParserDiagnostics", type: .static, targets: ["SwiftParserDiagnostics"]),
-    .library(name: "SwiftSyntax", type: .static, targets: ["SwiftSyntax"]),
-    .library(name: "SwiftSyntaxParser", type: .static, targets: ["SwiftSyntaxParser"]),
-    .library(name: "SwiftSyntaxBuilder", type: .static, targets: ["SwiftSyntaxBuilder"]),
-    .library(name: "_SwiftSyntaxMacros", type: .static, targets: ["_SwiftSyntaxMacros"]),
-    .library(name: "SwiftRefactor", type: .static, targets: ["SwiftRefactor"]),
+    .library(name: "IDEUtils", targets: ["IDEUtils"]),
+    .library(name: "SwiftDiagnostics", targets: ["SwiftDiagnostics"]),
+    .library(name: "SwiftOperators", targets: ["SwiftOperators"]),
+    .library(name: "SwiftParser", targets: ["SwiftParser"]),
+    .library(name: "SwiftParserDiagnostics", targets: ["SwiftParserDiagnostics"]),
+    .library(name: "SwiftSyntax", targets: ["SwiftSyntax"]),
+    .library(name: "SwiftSyntaxParser", targets: ["SwiftSyntaxParser"]),
+    .library(name: "SwiftSyntaxBuilder", targets: ["SwiftSyntaxBuilder"]),
+    .library(name: "_SwiftSyntaxMacros", targets: ["_SwiftSyntaxMacros"]),
+    .library(name: "SwiftRefactor", targets: ["SwiftRefactor"]),
   ],
   targets: [
     .target(
@@ -93,7 +93,8 @@ let package = Package(
     ),
     .target(
       name: "SwiftSyntaxParser",
-      dependencies: ["SwiftSyntax", "SwiftParser"]
+      dependencies: ["SwiftSyntax", "SwiftParser",
+                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))]
     ),
     .target(
       name: "_SwiftSyntaxTestSupport",
@@ -154,6 +155,9 @@ let package = Package(
       dependencies: [
         "SwiftSyntax", "SwiftParser",
       ]),
+    .target(
+      name: "WASIHelpers"
+    ),
     .executableTarget(
       name: "lit-test-helper",
       dependencies: ["IDEUtils", "SwiftSyntax", "SwiftSyntaxParser"]
@@ -178,7 +182,8 @@ let package = Package(
     ),
     .testTarget(
       name: "SwiftSyntaxParserTest",
-      dependencies: ["SwiftSyntaxParser", "_SwiftSyntaxTestSupport"],
+      dependencies: ["SwiftSyntaxParser", "_SwiftSyntaxTestSupport",
+                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))],
       exclude: ["Inputs"]
     ),
     .testTarget(
@@ -195,7 +200,8 @@ let package = Package(
     .testTarget(
       name: "SwiftParserTest",
       dependencies: ["SwiftDiagnostics", "SwiftOperators", "SwiftParser",
-                     "_SwiftSyntaxTestSupport", "SwiftSyntaxBuilder"]
+                     "_SwiftSyntaxTestSupport", "SwiftSyntaxBuilder",
+                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))]
     ),
     .testTarget(
       name: "SwiftParserDiagnosticsTest",

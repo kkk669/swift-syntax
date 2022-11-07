@@ -14,6 +14,9 @@ import XCTest
 import SwiftSyntax
 import SwiftSyntaxParser
 import _SwiftSyntaxTestSupport
+#if os(WASI)
+import WASIHelpers
+#endif
 
 fileprivate class FuncRenamer: SyntaxRewriter {
   override func visit(_ node: FunctionDeclSyntax) -> DeclSyntax {

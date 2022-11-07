@@ -14,6 +14,9 @@
 import SwiftSyntax
 import SwiftSyntaxParser
 import Foundation
+#if os(WASI)
+import WASIHelpers
+#endif
 
 /// Print the given message to stderr
 func printerr(_ message: String, terminator: String = "\n") {

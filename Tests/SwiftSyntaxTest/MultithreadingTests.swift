@@ -20,6 +20,7 @@ extension SyntaxProtocol {
   }
 }
 
+#if !os(WASI)
 public class MultithreadingTests: XCTestCase {
 
   public func testPathological() {
@@ -94,3 +95,4 @@ public class MultithreadingTests: XCTestCase {
   }
 
 }
+#endif

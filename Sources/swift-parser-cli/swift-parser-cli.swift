@@ -22,6 +22,7 @@ import ArgumentParser
 import WinSDK
 #endif
 
+#if !os(WASI)
 /// Print the given message to stderr
 func printerr(_ message: String, terminator: String = "\n") {
   FileHandle.standardError.write((message + terminator).data(using: .utf8)!)
@@ -60,11 +61,13 @@ func foldAllSequences(_ tree: SourceFileSyntax) -> (Syntax, [Diagnostic]) {
   let resultTree = operatorTable.foldAll(tree, errorHandler: recordOperatorError)
   return (resultTree, diags)
 }
+#endif
 
 @main
 class SwiftParserCli: ParsableCommand {
   required init() {}
 
+#if !os(WASI)
   static var configuration = CommandConfiguration(
     abstract: "Utility to test SwiftSyntax syntax tree creation.",
     subcommands: [
@@ -75,8 +78,10 @@ class SwiftParserCli: ParsableCommand {
       VerifyRoundTrip.self,
     ]
   )
+#endif
 }
 
+#if !os(WASI)
 class VerifyRoundTrip: ParsableCommand {
   required init() {}
 
@@ -406,3 +411,4 @@ class Reduce: ParsableCommand {
     print(reducedString)
   }
 }
+#endif

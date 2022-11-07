@@ -11,11 +11,17 @@
 //===----------------------------------------------------------------------===//
 
 import _SwiftSyntaxTestSupport
+#if !os(WASI)
 import Dispatch
+#endif
 import XCTest
 import SwiftSyntax
 import SwiftParser
 import SwiftParserDiagnostics
+#if os(WASI)
+import WASILibc
+import WASIHelpers
+#endif
 
 public class ParserTests: XCTestCase {
   /// Run a single parse test.
@@ -64,6 +70,7 @@ public class ParserTests: XCTestCase {
       }
 
     print("\(name) - processing \(fileURLs.count) source files")
+#if !os(WASI)
     DispatchQueue.concurrentPerform(iterations: fileURLs.count) { fileURLIndex in
       let fileURL = fileURLs[fileURLIndex]
       if shouldExclude(fileURL) {
@@ -76,6 +83,15 @@ public class ParserTests: XCTestCase {
         XCTFail("\(name): \(fileURL) failed due to \(error)")
       }
     }
+#else
+    for fileURL in fileURLs where !shouldExclude(fileURL) {
+      do {
+        try runParseTest(fileURL: fileURL, checkDiagnostics: checkDiagnostics)
+      } catch {
+        XCTFail("\(name): \(fileURL) failed due to \(error)")
+      }
+    }
+#endif
   }
 
   let packageDir = URL(fileURLWithPath: #file)
@@ -144,6 +160,9 @@ public class ParserTests: XCTestCase {
   }
 
   func testConcurrentSelfParsePerformance() throws {
+#if os(WASI)
+    throw XCTSkip()
+#else
     try XCTSkipUnless(ProcessInfo.processInfo.environment["ENABLE_SELF_PARSE_PERFORMANCE"] == "1")
 
     let sourceDir = packageDir.appendingPathComponent("Sources")
@@ -161,5 +180,6 @@ public class ParserTests: XCTestCase {
         }
       }
     }
+#endif
   }
 }

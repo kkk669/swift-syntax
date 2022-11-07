@@ -17,6 +17,9 @@
 import Foundation
 @_spi(RawSyntax) import SwiftSyntax
 @_implementationOnly import SwiftParser
+#if os(WASI)
+import WASIHelpers
+#endif
 
 /// A list of possible errors that could be encountered while parsing a
 /// Syntax tree.
