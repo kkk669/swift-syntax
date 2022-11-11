@@ -25,6 +25,8 @@ struct StringifyMacro: ExpressionMacro {
 
   static var signature: TypeSyntax = "(T) -> (T, String)"
 
+  static var owningModule: String = "Swift"
+
   static func apply(
     _ macro: MacroExpansionExprSyntax, in context: MacroEvaluationContext
   ) -> MacroResult<ExprSyntax> {
@@ -33,7 +35,7 @@ struct StringifyMacro: ExpressionMacro {
       return MacroResult(ExprSyntax(macro))
     }
 
-    return MacroResult("(\(argument), #\"\(argument)\"#)")
+    return MacroResult("(\(argument), \(StringLiteralExprSyntax(content: argument.description)))")
   }
 }
 
