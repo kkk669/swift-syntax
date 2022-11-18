@@ -1,9 +1,21 @@
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift.org open source project
+//
+// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See https://swift.org/LICENSE.txt for license information
+// See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+//
+//===----------------------------------------------------------------------===//
+
 import SwiftSyntax
 
 /// A type that transforms syntax to provide a (context-sensitive)
 /// refactoring.
 ///
-/// A type conforming to the `RefactoringProvider` protocol defines the
+/// A type conforming to the `RefactoringProvider` protocol defines
 /// a refactoring action against a family of Swift syntax trees.
 ///
 /// Refactoring
@@ -43,7 +55,7 @@ import SwiftSyntax
 public protocol RefactoringProvider {
   /// The type of syntax this refactoring action accepts.
   associatedtype Input: SyntaxProtocol = SourceFileSyntax
-  /// The type of syntax this refactorign action returns.
+  /// The type of syntax this refactoring action returns.
   associatedtype Output: SyntaxProtocol = SourceFileSyntax
   /// Contextual information used by the refactoring action.
   associatedtype Context = Void
