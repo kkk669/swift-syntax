@@ -35,7 +35,7 @@ public struct RawDeclSyntax: RawDeclSyntaxNodeProtocol, RawSyntaxToSyntax {
 
   public static func isKindOf(_ raw: RawSyntax) -> Bool {
     switch raw.kind {
-    case .unknownDecl, .missingDecl, .typealiasDecl, .associatedtypeDecl, .ifConfigDecl, .poundErrorDecl, .poundWarningDecl, .poundSourceLocation, .classDecl, .actorDecl, .structDecl, .protocolDecl, .extensionDecl, .functionDecl, .initializerDecl, .deinitializerDecl, .subscriptDecl, .importDecl, .accessorDecl, .variableDecl, .enumCaseDecl, .enumDecl, .operatorDecl, .precedenceGroupDecl, .macroExpansionDecl: return true
+    case .unknownDecl, .missingDecl, .typealiasDecl, .associatedtypeDecl, .ifConfigDecl, .poundErrorDecl, .poundWarningDecl, .poundSourceLocation, .classDecl, .actorDecl, .structDecl, .protocolDecl, .extensionDecl, .functionDecl, .initializerDecl, .deinitializerDecl, .subscriptDecl, .importDecl, .accessorDecl, .variableDecl, .enumCaseDecl, .enumDecl, .operatorDecl, .precedenceGroupDecl, .macroDecl, .macroExpansionDecl: return true
     default: return false
     }
   }
@@ -542,6 +542,7 @@ public struct RawMissingPatternSyntax: RawPatternSyntaxNodeProtocol, RawSyntaxTo
 
 @_spi(RawSyntax)
 public struct RawCodeBlockItemSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Item: RawSyntaxNodeProtocol {
     case `decl`(RawDeclSyntax)
     case `stmt`(RawStmtSyntax)
@@ -1047,6 +1048,7 @@ public struct RawDictionaryElementListSyntax: RawSyntaxNodeProtocol, RawSyntaxTo
 
 @_spi(RawSyntax)
 public struct RawStringLiteralSegmentsSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Element: RawSyntaxNodeProtocol {
     case `stringSegment`(RawStringSegmentSyntax)
     case `expressionSegment`(RawExpressionSegmentSyntax)
@@ -2653,6 +2655,7 @@ public struct RawArrayExprSyntax: RawExprSyntaxNodeProtocol, RawSyntaxToSyntax {
 
 @_spi(RawSyntax)
 public struct RawDictionaryExprSyntax: RawExprSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Content: RawSyntaxNodeProtocol {
     case `colon`(RawTokenSyntax)
     case `elements`(RawDictionaryElementListSyntax)
@@ -3940,6 +3943,7 @@ public struct RawClosureParamListSyntax: RawSyntaxNodeProtocol, RawSyntaxToSynta
 
 @_spi(RawSyntax)
 public struct RawClosureSignatureSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Input: RawSyntaxNodeProtocol {
     case `simpleInput`(RawClosureParamListSyntax)
     case `input`(RawParameterClauseSyntax)
@@ -5165,6 +5169,7 @@ public struct RawKeyPathComponentListSyntax: RawSyntaxNodeProtocol, RawSyntaxToS
 
 @_spi(RawSyntax)
 public struct RawKeyPathComponentSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Component: RawSyntaxNodeProtocol {
     case `property`(RawKeyPathPropertyComponentSyntax)
     case `subscript`(RawKeyPathSubscriptComponentSyntax)
@@ -5453,6 +5458,7 @@ public struct RawKeyPathOptionalComponentSyntax: RawSyntaxNodeProtocol, RawSynta
 
 @_spi(RawSyntax)
 public struct RawOldKeyPathExprSyntax: RawExprSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum RootExpr: RawSyntaxNodeProtocol {
     case `identifierExpr`(RawIdentifierExprSyntax)
     case `specializeExpr`(RawSpecializeExprSyntax)
@@ -6846,6 +6852,7 @@ public struct RawFunctionSignatureSyntax: RawSyntaxNodeProtocol, RawSyntaxToSynt
 
 @_spi(RawSyntax)
 public struct RawIfConfigClauseSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Elements: RawSyntaxNodeProtocol {
     case `statements`(RawCodeBlockItemListSyntax)
     case `switchCases`(RawSwitchCaseListSyntax)
@@ -9099,6 +9106,7 @@ public struct RawDeinitializerDeclSyntax: RawDeclSyntaxNodeProtocol, RawSyntaxTo
 
 @_spi(RawSyntax)
 public struct RawSubscriptDeclSyntax: RawDeclSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Accessor: RawSyntaxNodeProtocol {
     case `accessors`(RawAccessorBlockSyntax)
     case `getter`(RawCodeBlockSyntax)
@@ -9796,6 +9804,7 @@ public struct RawAccessorBlockSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
 
 @_spi(RawSyntax)
 public struct RawPatternBindingSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Accessor: RawSyntaxNodeProtocol {
     case `accessors`(RawAccessorBlockSyntax)
     case `getter`(RawCodeBlockSyntax)
@@ -10736,6 +10745,7 @@ public struct RawPrecedenceGroupDeclSyntax: RawDeclSyntaxNodeProtocol, RawSyntax
 
 @_spi(RawSyntax)
 public struct RawPrecedenceGroupAttributeListSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Element: RawSyntaxNodeProtocol {
     case `precedenceGroupRelation`(RawPrecedenceGroupRelationSyntax)
     case `precedenceGroupAssignment`(RawPrecedenceGroupAssignmentSyntax)
@@ -11125,6 +11135,237 @@ public struct RawPrecedenceGroupAssociativitySyntax: RawSyntaxNodeProtocol, RawS
 }
 
 @_spi(RawSyntax)
+public struct RawMacroDeclSyntax: RawDeclSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
+  public enum Signature: RawSyntaxNodeProtocol {
+    case `functionLike`(RawFunctionSignatureSyntax)
+    case `valueLike`(RawTypeAnnotationSyntax)
+
+    public static func isKindOf(_ raw: RawSyntax) -> Bool {
+      return RawFunctionSignatureSyntax.isKindOf(raw) || RawTypeAnnotationSyntax.isKindOf(raw)
+    }
+
+    public var raw: RawSyntax {
+      switch self {
+      case .functionLike(let node): return node.raw
+      case .valueLike(let node): return node.raw
+      }
+    }
+
+    public init?<T>(_ other: T) where T : RawSyntaxNodeProtocol {
+      if let node = RawFunctionSignatureSyntax(other) {
+        self = .functionLike(node)
+        return
+      }
+      if let node = RawTypeAnnotationSyntax(other) {
+        self = .valueLike(node)
+        return
+      }
+      return nil
+    }
+  }
+
+  public typealias SyntaxType = MacroDeclSyntax
+
+  @_spi(RawSyntax)
+  public var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    return raw.kind == .macroDecl
+  }
+
+  public var raw: RawSyntax
+  init(raw: RawSyntax) {
+    assert(Self.isKindOf(raw))
+    self.raw = raw
+  }
+
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else { return nil }
+    self.init(raw: other.raw)
+  }
+
+  public init(
+    _ unexpectedBeforeAttributes: RawUnexpectedNodesSyntax? = nil,
+    attributes: RawAttributeListSyntax?,
+    _ unexpectedBetweenAttributesAndModifiers: RawUnexpectedNodesSyntax? = nil,
+    modifiers: RawModifierListSyntax?,
+    _ unexpectedBetweenModifiersAndMacroKeyword: RawUnexpectedNodesSyntax? = nil,
+    macroKeyword: RawTokenSyntax,
+    _ unexpectedBetweenMacroKeywordAndIdentifier: RawUnexpectedNodesSyntax? = nil,
+    identifier: RawTokenSyntax,
+    _ unexpectedBetweenIdentifierAndGenericParameterClause: RawUnexpectedNodesSyntax? = nil,
+    genericParameterClause: RawGenericParameterClauseSyntax?,
+    _ unexpectedBetweenGenericParameterClauseAndSignature: RawUnexpectedNodesSyntax? = nil,
+    signature: Signature,
+    _ unexpectedBetweenSignatureAndEqual: RawUnexpectedNodesSyntax? = nil,
+    equal: RawTokenSyntax,
+    _ unexpectedBetweenEqualAndExternalName: RawUnexpectedNodesSyntax? = nil,
+    externalName: RawExternalMacroNameSyntax?,
+    _ unexpectedBetweenExternalNameAndGenericWhereClause: RawUnexpectedNodesSyntax? = nil,
+    genericWhereClause: RawGenericWhereClauseSyntax?,
+    _ unexpectedAfterGenericWhereClause: RawUnexpectedNodesSyntax? = nil,
+    arena: __shared SyntaxArena
+  ) {
+    let raw = RawSyntax.makeLayout(
+      kind: .macroDecl, uninitializedCount: 19, arena: arena) { layout in
+      layout.initialize(repeating: nil)
+      layout[0] = unexpectedBeforeAttributes?.raw
+      layout[1] = attributes?.raw
+      layout[2] = unexpectedBetweenAttributesAndModifiers?.raw
+      layout[3] = modifiers?.raw
+      layout[4] = unexpectedBetweenModifiersAndMacroKeyword?.raw
+      layout[5] = macroKeyword.raw
+      layout[6] = unexpectedBetweenMacroKeywordAndIdentifier?.raw
+      layout[7] = identifier.raw
+      layout[8] = unexpectedBetweenIdentifierAndGenericParameterClause?.raw
+      layout[9] = genericParameterClause?.raw
+      layout[10] = unexpectedBetweenGenericParameterClauseAndSignature?.raw
+      layout[11] = signature.raw
+      layout[12] = unexpectedBetweenSignatureAndEqual?.raw
+      layout[13] = equal.raw
+      layout[14] = unexpectedBetweenEqualAndExternalName?.raw
+      layout[15] = externalName?.raw
+      layout[16] = unexpectedBetweenExternalNameAndGenericWhereClause?.raw
+      layout[17] = genericWhereClause?.raw
+      layout[18] = unexpectedAfterGenericWhereClause?.raw
+    }
+    self.init(raw: raw)
+  }
+
+  public var unexpectedBeforeAttributes: RawUnexpectedNodesSyntax? {
+    layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var attributes: RawAttributeListSyntax? {
+    layoutView.children[1].map(RawAttributeListSyntax.init(raw:))
+  }
+  public var unexpectedBetweenAttributesAndModifiers: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var modifiers: RawModifierListSyntax? {
+    layoutView.children[3].map(RawModifierListSyntax.init(raw:))
+  }
+  public var unexpectedBetweenModifiersAndMacroKeyword: RawUnexpectedNodesSyntax? {
+    layoutView.children[4].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var macroKeyword: RawTokenSyntax {
+    layoutView.children[5].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenMacroKeywordAndIdentifier: RawUnexpectedNodesSyntax? {
+    layoutView.children[6].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var identifier: RawTokenSyntax {
+    layoutView.children[7].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenIdentifierAndGenericParameterClause: RawUnexpectedNodesSyntax? {
+    layoutView.children[8].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var genericParameterClause: RawGenericParameterClauseSyntax? {
+    layoutView.children[9].map(RawGenericParameterClauseSyntax.init(raw:))
+  }
+  public var unexpectedBetweenGenericParameterClauseAndSignature: RawUnexpectedNodesSyntax? {
+    layoutView.children[10].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var signature: RawSyntax {
+    layoutView.children[11]!
+  }
+  public var unexpectedBetweenSignatureAndEqual: RawUnexpectedNodesSyntax? {
+    layoutView.children[12].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var equal: RawTokenSyntax {
+    layoutView.children[13].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenEqualAndExternalName: RawUnexpectedNodesSyntax? {
+    layoutView.children[14].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var externalName: RawExternalMacroNameSyntax? {
+    layoutView.children[15].map(RawExternalMacroNameSyntax.init(raw:))
+  }
+  public var unexpectedBetweenExternalNameAndGenericWhereClause: RawUnexpectedNodesSyntax? {
+    layoutView.children[16].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var genericWhereClause: RawGenericWhereClauseSyntax? {
+    layoutView.children[17].map(RawGenericWhereClauseSyntax.init(raw:))
+  }
+  public var unexpectedAfterGenericWhereClause: RawUnexpectedNodesSyntax? {
+    layoutView.children[18].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+}
+
+@_spi(RawSyntax)
+public struct RawExternalMacroNameSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  public typealias SyntaxType = ExternalMacroNameSyntax
+
+  @_spi(RawSyntax)
+  public var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    return raw.kind == .externalMacroName
+  }
+
+  public var raw: RawSyntax
+  init(raw: RawSyntax) {
+    assert(Self.isKindOf(raw))
+    self.raw = raw
+  }
+
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else { return nil }
+    self.init(raw: other.raw)
+  }
+
+  public init(
+    _ unexpectedBeforeModuleName: RawUnexpectedNodesSyntax? = nil,
+    moduleName: RawTokenSyntax,
+    _ unexpectedBetweenModuleNameAndPeriod: RawUnexpectedNodesSyntax? = nil,
+    period: RawTokenSyntax,
+    _ unexpectedBetweenPeriodAndMacroTypeName: RawUnexpectedNodesSyntax? = nil,
+    macroTypeName: RawTokenSyntax,
+    _ unexpectedAfterMacroTypeName: RawUnexpectedNodesSyntax? = nil,
+    arena: __shared SyntaxArena
+  ) {
+    let raw = RawSyntax.makeLayout(
+      kind: .externalMacroName, uninitializedCount: 7, arena: arena) { layout in
+      layout.initialize(repeating: nil)
+      layout[0] = unexpectedBeforeModuleName?.raw
+      layout[1] = moduleName.raw
+      layout[2] = unexpectedBetweenModuleNameAndPeriod?.raw
+      layout[3] = period.raw
+      layout[4] = unexpectedBetweenPeriodAndMacroTypeName?.raw
+      layout[5] = macroTypeName.raw
+      layout[6] = unexpectedAfterMacroTypeName?.raw
+    }
+    self.init(raw: raw)
+  }
+
+  public var unexpectedBeforeModuleName: RawUnexpectedNodesSyntax? {
+    layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var moduleName: RawTokenSyntax {
+    layoutView.children[1].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenModuleNameAndPeriod: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var period: RawTokenSyntax {
+    layoutView.children[3].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedBetweenPeriodAndMacroTypeName: RawUnexpectedNodesSyntax? {
+    layoutView.children[4].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  public var macroTypeName: RawTokenSyntax {
+    layoutView.children[5].map(RawTokenSyntax.init(raw:))!
+  }
+  public var unexpectedAfterMacroTypeName: RawUnexpectedNodesSyntax? {
+    layoutView.children[6].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+}
+
+@_spi(RawSyntax)
 public struct RawMacroExpansionDeclSyntax: RawDeclSyntaxNodeProtocol, RawSyntaxToSyntax {
   public typealias SyntaxType = MacroExpansionDeclSyntax
 
@@ -11420,6 +11661,7 @@ public struct RawCustomAttributeSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax
 
 @_spi(RawSyntax)
 public struct RawAttributeSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Argument: RawSyntaxNodeProtocol {
     case `token`(RawTokenSyntax)
     case `stringExpr`(RawStringLiteralExprSyntax)
@@ -11621,6 +11863,7 @@ public struct RawAttributeSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
 
 @_spi(RawSyntax)
 public struct RawAttributeListSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Element: RawSyntaxNodeProtocol {
     case `attribute`(RawAttributeSyntax)
     case `customAttribute`(RawCustomAttributeSyntax)
@@ -11696,6 +11939,7 @@ public struct RawAttributeListSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
 
 @_spi(RawSyntax)
 public struct RawSpecializeAttributeSpecListSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Element: RawSyntaxNodeProtocol {
     case `labeledSpecializeEntry`(RawLabeledSpecializeEntrySyntax)
     case `availabilityEntry`(RawAvailabilityEntrySyntax)
@@ -12020,6 +12264,7 @@ public struct RawTargetFunctionEntrySyntax: RawSyntaxNodeProtocol, RawSyntaxToSy
 
 @_spi(RawSyntax)
 public struct RawNamedAttributeStringArgumentSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum StringOrDeclname: RawSyntaxNodeProtocol {
     case `string`(RawTokenSyntax)
     case `declname`(RawDeclNameSyntax)
@@ -12454,6 +12699,7 @@ public struct RawDifferentiableAttributeArgumentsSyntax: RawSyntaxNodeProtocol, 
 
 @_spi(RawSyntax)
 public struct RawDifferentiabilityParamsClauseSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Parameters: RawSyntaxNodeProtocol {
     case `parameter`(RawDifferentiabilityParamSyntax)
     case `parameterList`(RawDifferentiabilityParamsSyntax)
@@ -13700,6 +13946,7 @@ public struct RawExpressionStmtSyntax: RawStmtSyntaxNodeProtocol, RawSyntaxToSyn
 
 @_spi(RawSyntax)
 public struct RawSwitchCaseListSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Element: RawSyntaxNodeProtocol {
     case `switchCase`(RawSwitchCaseSyntax)
     case `ifConfigDecl`(RawIfConfigDeclSyntax)
@@ -14397,6 +14644,7 @@ public struct RawReturnStmtSyntax: RawStmtSyntaxNodeProtocol, RawSyntaxToSyntax 
 
 @_spi(RawSyntax)
 public struct RawYieldStmtSyntax: RawStmtSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Yields: RawSyntaxNodeProtocol {
     case `yieldList`(RawYieldListSyntax)
     case `simpleYield`(RawExprSyntax)
@@ -14751,6 +14999,7 @@ public struct RawCatchItemListSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
 
 @_spi(RawSyntax)
 public struct RawConditionElementSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Condition: RawSyntaxNodeProtocol {
     case `expression`(RawExprSyntax)
     case `availability`(RawAvailabilityConditionSyntax)
@@ -15422,6 +15671,7 @@ public struct RawThrowStmtSyntax: RawStmtSyntaxNodeProtocol, RawSyntaxToSyntax {
 
 @_spi(RawSyntax)
 public struct RawIfStmtSyntax: RawStmtSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum ElseBody: RawSyntaxNodeProtocol {
     case `ifStmt`(RawIfStmtSyntax)
     case `codeBlock`(RawCodeBlockSyntax)
@@ -15541,6 +15791,7 @@ public struct RawIfStmtSyntax: RawStmtSyntaxNodeProtocol, RawSyntaxToSyntax {
 
 @_spi(RawSyntax)
 public struct RawSwitchCaseSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Label: RawSyntaxNodeProtocol {
     case `default`(RawSwitchDefaultLabelSyntax)
     case `case`(RawSwitchCaseLabelSyntax)
@@ -16188,6 +16439,7 @@ public struct RawGenericRequirementListSyntax: RawSyntaxNodeProtocol, RawSyntaxT
 
 @_spi(RawSyntax)
 public struct RawGenericRequirementSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Body: RawSyntaxNodeProtocol {
     case `sameTypeRequirement`(RawSameTypeRequirementSyntax)
     case `conformanceRequirement`(RawConformanceRequirementSyntax)
@@ -19207,6 +19459,7 @@ public struct RawAvailabilitySpecListSyntax: RawSyntaxNodeProtocol, RawSyntaxToS
 
 @_spi(RawSyntax)
 public struct RawAvailabilityArgumentSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Entry: RawSyntaxNodeProtocol {
     case `token`(RawTokenSyntax)
     case `availabilityVersionRestriction`(RawAvailabilityVersionRestrictionSyntax)
@@ -19308,6 +19561,7 @@ public struct RawAvailabilityArgumentSyntax: RawSyntaxNodeProtocol, RawSyntaxToS
 
 @_spi(RawSyntax)
 public struct RawAvailabilityLabeledArgumentSyntax: RawSyntaxNodeProtocol, RawSyntaxToSyntax {
+  @frozen // FIXME: Not actually stable, works around a miscompile
   public enum Value: RawSyntaxNodeProtocol {
     case `string`(RawTokenSyntax)
     case `version`(RawVersionTupleSyntax)

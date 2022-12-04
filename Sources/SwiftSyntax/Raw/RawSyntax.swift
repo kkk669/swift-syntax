@@ -133,7 +133,7 @@ public struct RawSyntax {
   }
 
   internal var payload: RawSyntaxData.Payload {
-    _read { yield rawData.payload }
+    get { rawData.payload }
   }
 }
 
@@ -154,16 +154,6 @@ extension RawSyntax {
   @_spi(RawSyntax)
   public var isToken: Bool {
     kind == .token
-  }
-
-  /// Whether or not this node is a collection one.
-  var isCollection: Bool {
-    kind.isSyntaxCollection
-  }
-
-  /// Whether or not this node is an unknown one.
-  var isUnknown: Bool {
-    kind.isUnknown
   }
 
   var recursiveFlags: RecursiveRawSyntaxFlags {
@@ -229,6 +219,7 @@ extension RawSyntax {
         kind: tokenView.formKind(),
         leadingTrivia: leadingTrivia,
         trailingTrivia: tokenView.formTrailingTrivia(),
+        presence: tokenView.presence,
         arena: arena)
     case .layout(let layoutView):
       for (index, child) in layoutView.children.enumerated() {
@@ -252,6 +243,7 @@ extension RawSyntax {
         kind: tokenView.formKind(),
         leadingTrivia: tokenView.formLeadingTrivia(),
         trailingTrivia: trailingTrivia,
+        presence: tokenView.presence,
         arena: arena)
     case .layout(let layoutView):
       for (index, child) in layoutView.children.enumerated().reversed() {
@@ -555,7 +547,7 @@ extension RawSyntax {
     kind: TokenKind,
     leadingTrivia: Trivia,
     trailingTrivia: Trivia,
-    presence: SourcePresence = .present,
+    presence: SourcePresence,
     arena: SyntaxArena
   ) -> RawSyntax {
     let decomposed = kind.decomposeToRaw()

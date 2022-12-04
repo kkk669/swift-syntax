@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 /// Enum to exhaustively switch over all different syntax nodes.
+@frozen // FIXME: Not actually stable, works around a miscompile
 public enum SyntaxEnum {
   case unknown(UnknownSyntax)
   case token(TokenSyntax)
@@ -177,6 +178,8 @@ public enum SyntaxEnum {
   case precedenceGroupNameElement(PrecedenceGroupNameElementSyntax)
   case precedenceGroupAssignment(PrecedenceGroupAssignmentSyntax)
   case precedenceGroupAssociativity(PrecedenceGroupAssociativitySyntax)
+  case macroDecl(MacroDeclSyntax)
+  case externalMacroName(ExternalMacroNameSyntax)
   case macroExpansionDecl(MacroExpansionDeclSyntax)
   case tokenList(TokenListSyntax)
   case nonEmptyTokenList(NonEmptyTokenListSyntax)
@@ -626,6 +629,10 @@ public extension Syntax {
       return .precedenceGroupAssignment(PrecedenceGroupAssignmentSyntax(self)!)
     case .precedenceGroupAssociativity:
       return .precedenceGroupAssociativity(PrecedenceGroupAssociativitySyntax(self)!)
+    case .macroDecl:
+      return .macroDecl(MacroDeclSyntax(self)!)
+    case .externalMacroName:
+      return .externalMacroName(ExternalMacroNameSyntax(self)!)
     case .macroExpansionDecl:
       return .macroExpansionDecl(MacroExpansionDeclSyntax(self)!)
     case .tokenList:

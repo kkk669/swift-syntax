@@ -13,6 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 /// Enumerates the known kinds of Syntax represented in the Syntax tree.
+@frozen // FIXME: Not actually stable, works around a miscompile
 public enum SyntaxKind {
   case token
   case unknown
@@ -177,6 +178,8 @@ public enum SyntaxKind {
   case precedenceGroupNameElement
   case precedenceGroupAssignment
   case precedenceGroupAssociativity
+  case macroDecl
+  case externalMacroName
   case macroExpansionDecl
   case tokenList
   case nonEmptyTokenList

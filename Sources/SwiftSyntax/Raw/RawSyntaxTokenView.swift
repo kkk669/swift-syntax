@@ -142,14 +142,6 @@ public struct RawSyntaxTokenView {
     return Trivia(pieces: trailingRawTriviaPieces.map({ TriviaPiece(raw: $0) }))
   }
 
-  /// Calls `body` with the token text. The token text value must not escape the closure.
-  @_spi(RawSyntax)
-  public func withUnsafeTokenText<Result>(
-    _ body: (SyntaxText?) -> Result
-  ) -> Result {
-    body(rawText)
-  }
-
   /// Returns a `RawSyntax` node with the same source text but with the token
   /// kind changed to `newValue`.
   @_spi(RawSyntax)
@@ -161,6 +153,7 @@ public struct RawSyntaxTokenView {
         kind: newValue,
         leadingTrivia: formLeadingTrivia(),
         trailingTrivia: formTrailingTrivia(),
+        presence: presence,
         arena: arena)
     case .materializedToken(var payload):
       let decomposed = newValue.decomposeToRaw()

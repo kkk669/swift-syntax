@@ -16,31 +16,41 @@ import SwiftSyntaxBuilder
 @_spi(Testing) import _SwiftSyntaxMacros
 import _SwiftSyntaxTestSupport
 
+/// Macro whose only purpose is to ensure that we cannot see "out" of the
+/// macro expansion syntax node we were given.
+struct CheckContextIndependenceMacro: ExpressionMacro {
+  static func expand(
+    _ macro: MacroExpansionExprSyntax,
+    in context: inout MacroExpansionContext) -> ExprSyntax {
+
+    // Should not have a parent.
+    XCTAssertNil(macro.parent)
+
+    // Absolute starting position should be zero.
+    XCTAssertEqual(macro.position.utf8Offset, 0)
+
+    return ExprSyntax(macro)
+  }
+}
+
 final class MacroSystemTests: XCTestCase {
   func testExpressionExpansion() {
     let sf: SourceFileSyntax =
       """
-      #line
-      let a = (#line)
       let b = #stringify(x + y)
       #colorLiteral(red: 0.5, green: 0.5, blue: 0.25, alpha: 1.0)
-      let c = #column
       """
-    let converter = SourceLocationConverter(file: "test.swift", tree: sf)
-    let context = MacroEvaluationContext(
-      moduleName: "MyModule", sourceLocationConverter: converter
+    var context = MacroExpansionContext(
+      moduleName: "MyModule", fileName: "test.swift"
     )
     let transformedSF = MacroSystem.exampleSystem.evaluateMacros(
-      node: sf, in: context, errorHandler: { error in }
+      node: sf, in: &context
     )
     AssertStringsEqualWithDiff(
       transformedSF.description,
       """
-      1
-      let a = (2)
       let b = (x + y, "x + y")
       .init(_colorLiteralRed: 0.5, green: 0.5, blue: 0.25, alpha: 1.0)
-      let c = 9
       """
     )
   }
@@ -53,12 +63,11 @@ final class MacroSystemTests: XCTestCase {
         return true
       })
       """
-    let converter = SourceLocationConverter(file: "test.swift", tree: sf)
-    let context = MacroEvaluationContext(
-      moduleName: "MyModule", sourceLocationConverter: converter
+    var context = MacroExpansionContext(
+      moduleName: "MyModule", fileName: "test.swift"
     )
     let transformedSF = MacroSystem.exampleSystem.evaluateMacros(
-      node: sf, in: context, errorHandler: { error in }
+      node: sf, in: &context
     )
     AssertStringsEqualWithDiff(
       transformedSF.description,
@@ -66,79 +75,7 @@ final class MacroSystemTests: XCTestCase {
       _ = ({ () -> Bool in
         print("hello")
         return true
-      }, #"{ () -> Bool in\\n  print("hello")\\n  return true\\n}"#)
-      """
-    )
-  }
-
-  func testPoundFunctionExpansion() {
-    let sf: SourceFileSyntax =
-      """
-      func f(a: Int, _: Double, c: Int) {
-        print(#function)
-      }
-
-      struct X {
-        var computed: String {
-          get {
-            #function
-          }
-        }
-
-        init(from: String) {
-          #function
-        }
-
-        subscript(a: Int) -> String {
-          #function
-        }
-
-        subscript(a a: Int) -> String {
-          #function
-        }
-      }
-
-      extension A {
-        static var staticProp: String = #function
-      }
-      """
-    let converter = SourceLocationConverter(file: "test.swift", tree: sf)
-    let context = MacroEvaluationContext(
-      moduleName: "MyModule", sourceLocationConverter: converter
-    )
-    let transformedSF = MacroSystem.exampleSystem.evaluateMacros(
-      node: sf, in: context, errorHandler: { error in }
-    )
-    AssertStringsEqualWithDiff(
-      transformedSF.description,
-      """
-      func f(a: Int, _: Double, c: Int) {
-        print("f(a:_:c:)")
-      }
-
-      struct X {
-        var computed: String {
-          get {
-            "computed"
-          }
-        }
-
-        init(from: String) {
-          "init(from:)"
-        }
-
-        subscript(a: Int) -> String {
-          "subscript(_:)"
-        }
-
-        subscript(a a: Int) -> String {
-          "subscript(a:)"
-        }
-      }
-
-      extension A {
-        static var staticProp: String = "A"
-      }
+      }, #"{ () -> Bool in\\#n  print("hello")\\#n  return true\\#n}"#)
       """
     )
   }
@@ -146,29 +83,53 @@ final class MacroSystemTests: XCTestCase {
   func testFileExpansions() {
     let sf: SourceFileSyntax =
       """
-      let a = #filePath
       let b = #fileID
       """
-    let converter = SourceLocationConverter(
-      file: "/tmp/src/taylor.swift", tree: sf
-    )
-    let context = MacroEvaluationContext(
-      moduleName: "MyModule", sourceLocationConverter: converter
+    var context = MacroExpansionContext(
+      moduleName: "MyModule", fileName: "taylor.swift"
     )
     let transformedSF = MacroSystem.exampleSystem.evaluateMacros(
-      node: sf, in: context, errorHandler: { error in }
+      node: sf, in: &context
     )
     AssertStringsEqualWithDiff(
       transformedSF.description,
       """
-      let a = "/tmp/src/taylor.swift"
       let b = "MyModule/taylor.swift"
       """
     )
   }
 
-  func testDocumentation() {
-    let macro = MacroSystem.builtinMacroSystem.lookup("line")!
-    XCTAssertEqual(macro.documentation, "The line at which this macro is used")
+  func testContextUniqueLocalNames() {
+    var context = MacroExpansionContext(
+      moduleName: "MyModule", fileName: "taylor.swift"
+    )
+
+    let t1 = context.createUniqueLocalName()
+    let t2 = context.createUniqueLocalName()
+    XCTAssertNotEqual(t1.description, t2.description)
+    XCTAssertEqual(t1.description, "__macro_local_0")
+  }
+
+  func testContextIndependence() {
+    var system = MacroSystem()
+    try! system.add(CheckContextIndependenceMacro.self, name: "checkContext")
+
+    let sf: SourceFileSyntax =
+      """
+      let b = #checkContext
+      """
+    var context = MacroExpansionContext(
+      moduleName: "MyModule", fileName: "taylor.swift"
+    )
+    let transformedSF = system.evaluateMacros(
+      node: sf, in: &context
+    )
+    AssertStringsEqualWithDiff(
+      transformedSF.description,
+      """
+      let b = #checkContext
+      """
+    )
+
   }
 }

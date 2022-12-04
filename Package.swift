@@ -113,10 +113,11 @@ let package = Package(
       dependencies: ["SwiftDiagnostics", "SwiftSyntax"],
       exclude: [
         "CMakeLists.txt",
-        "README.md",
-        "TypeAttribute.swift.gyb",
         "DeclarationModifier.swift.gyb",
         "DeclarationAttribute.swift.gyb",
+        "Parser+Entry.swift.gyb",
+        "README.md",
+        "TypeAttribute.swift.gyb",
       ]
     ),
     .target(
