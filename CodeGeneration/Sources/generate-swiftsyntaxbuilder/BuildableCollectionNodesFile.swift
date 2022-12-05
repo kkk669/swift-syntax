@@ -10,7 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SyntaxSupport
@@ -19,7 +18,7 @@ import SwiftBasicFormat
 
 let buildableCollectionNodesFile = SourceFile {
   ImportDecl(
-    leadingTrivia: .docLineComment(copyrightHeader),
+    leadingTrivia: .docLineComment(generateCopyrightHeader(for: "generate-swiftsyntaxbuilder")),
     path: [AccessPathComponent(name: "SwiftSyntax")]
   )
 

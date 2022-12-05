@@ -10,21 +10,26 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftSyntax
+import ArgumentParser
+import Foundation
 import SwiftSyntaxBuilder
-import SyntaxSupport
 import Utils
-import SwiftBasicFormat
 
-let typealiasesFile = SourceFile {
-  ImportDecl(
-    leadingTrivia: .docLineComment(generateCopyrightHeader(for: "generate-swiftsyntaxbuilder")),
-    path: [AccessPathComponent(name: "SwiftSyntax")]
-  )
+@main
+struct GenerateSwiftIDEUtils: ParsableCommand {
+  @Argument(help: "The path to the destination directory where the source files are to be generated")
+  var generatedPath: String
 
-  TypealiasDecl("public typealias Token = TokenSyntax")
-  
-  for node in SYNTAX_NODES where !node.isUnknown && !node.isMissing {
-    TypealiasDecl("public typealias \(node.type.shorthandName) = \(node.type.syntaxBaseName)")
+  @Flag(help: "Enable verbose output")
+  var verbose: Bool = false
+
+  func run() throws {
+    try generateTemplates(
+      templates: [
+        (syntaxClassificationFile, "SyntaxClassification.swift"),
+      ],
+      destination: URL(fileURLWithPath: generatedPath),
+      verbose: verbose
+    )
   }
 }

@@ -105,7 +105,6 @@ let package = Package(
       dependencies: ["SwiftSyntax"],
       exclude: [
         "CMakeLists.txt",
-        "SyntaxClassification.swift.gyb",
       ]
     ),
     .target(

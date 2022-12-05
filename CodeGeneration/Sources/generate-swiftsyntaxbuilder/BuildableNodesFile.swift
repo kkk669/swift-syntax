@@ -10,7 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SyntaxSupport
@@ -18,7 +17,7 @@ import Utils
 
 let buildableNodesFile = SourceFile {
   ImportDecl(
-    leadingTrivia: .docLineComment(copyrightHeader),
+    leadingTrivia: .docLineComment(generateCopyrightHeader(for: "generate-swiftsyntaxbuilder")),
     path: [AccessPathComponent(name: "SwiftSyntax")]
   )
 
