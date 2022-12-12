@@ -27,6 +27,7 @@ extension AccessLevelModifier {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -49,6 +50,7 @@ extension AccessPathComponent {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -101,6 +103,7 @@ extension AccessorDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -132,6 +135,7 @@ extension AccessorParameter {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -166,6 +170,7 @@ extension ActorDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -190,9 +195,11 @@ extension ArrayElement: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -215,6 +222,7 @@ extension ArrayExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -261,6 +269,7 @@ extension ArrowExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -345,6 +354,7 @@ extension AssociatedtypeDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -453,6 +463,7 @@ extension AvailabilityEntry {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -478,6 +489,7 @@ extension AvailabilityLabeledArgument {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -500,6 +512,7 @@ extension AvailabilityVersionRestriction {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -522,6 +535,7 @@ extension AwaitExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -548,6 +562,7 @@ extension BackDeployAttributeSpecList {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -611,6 +626,7 @@ extension BreakStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -637,9 +653,11 @@ extension CaseItem: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -661,6 +679,7 @@ extension CatchClause {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -687,9 +706,11 @@ extension CatchItem: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -721,6 +742,7 @@ extension ClassDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -765,6 +787,7 @@ extension ClosureCaptureItem: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -774,9 +797,11 @@ extension ClosureCaptureItem: HasTrailingComma {
     }, unexpectedBetweenNameAndAssignToken, assignToken: assignToken, unexpectedBetweenAssignTokenAndExpression, expression: ExprSyntax(fromProtocol: expression), unexpectedBetweenExpressionAndTrailingComma, trailingComma: trailingComma)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -799,6 +824,7 @@ extension ClosureCaptureSignature {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -828,6 +854,7 @@ extension ClosureExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -852,9 +879,11 @@ extension ClosureParam: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -886,6 +915,7 @@ extension ClosureSignature {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -931,6 +961,7 @@ extension CodeBlock {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -982,9 +1013,11 @@ extension ConditionElement: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -1021,6 +1054,7 @@ extension ConstrainedSugarType {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1043,6 +1077,7 @@ extension ContinueStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1077,6 +1112,7 @@ extension ConventionAttributeArguments {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1106,6 +1142,7 @@ extension ConventionWitnessMethodAttributeArguments {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1137,6 +1174,7 @@ extension CustomAttribute {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1164,6 +1202,7 @@ extension DeclModifierDetail {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1260,6 +1299,7 @@ extension DeferStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1288,6 +1328,7 @@ extension DeinitializerDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1329,6 +1370,7 @@ extension DerivativeRegistrationAttributeArguments {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1353,6 +1395,7 @@ extension DesignatedTypeElement {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1380,9 +1423,11 @@ extension DictionaryElement: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -1444,9 +1489,11 @@ extension DifferentiabilityParam: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -1470,6 +1517,7 @@ extension DifferentiabilityParamsClause {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1520,6 +1568,7 @@ extension DifferentiableAttributeArguments {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1559,6 +1608,7 @@ extension DoStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1580,6 +1630,7 @@ extension EditorPlaceholderExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1607,6 +1658,7 @@ extension EnumCaseDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1636,6 +1688,7 @@ extension EnumCaseElement: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1643,9 +1696,11 @@ extension EnumCaseElement: HasTrailingComma {
     self.init (unexpectedBeforeIdentifier, identifier: Token.`identifier`(identifier), unexpectedBetweenIdentifierAndAssociatedValue, associatedValue: associatedValue, unexpectedBetweenAssociatedValueAndRawValue, rawValue: rawValue, unexpectedBetweenRawValueAndTrailingComma, trailingComma: trailingComma)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -1669,6 +1724,7 @@ extension EnumCasePattern {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1704,6 +1760,7 @@ extension EnumDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1748,6 +1805,7 @@ extension ExpressionSegment {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1796,6 +1854,7 @@ extension ExtensionDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1803,30 +1862,6 @@ extension ExtensionDecl {
     MemberDeclListSyntax([])
   }) {
     self.init (unexpectedBeforeAttributes, attributes: attributes, unexpectedBetweenAttributesAndModifiers, modifiers: modifiers, unexpectedBetweenModifiersAndExtensionKeyword, extensionKeyword: extensionKeyword, unexpectedBetweenExtensionKeywordAndExtendedType, extendedType: TypeSyntax(fromProtocol: extendedType), unexpectedBetweenExtendedTypeAndInheritanceClause, inheritanceClause: inheritanceClause, unexpectedBetweenInheritanceClauseAndGenericWhereClause, genericWhereClause: genericWhereClause, unexpectedBetweenGenericWhereClauseAndMembers, members: MemberDeclBlockSyntax(members: membersBuilder()))
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-  }
-}
-
-extension ExternalMacroName {
-  /// Creates a `ExternalMacroName` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforeModuleName: 
-  ///   - moduleName: 
-  ///   - unexpectedBetweenModuleNameAndPeriod: 
-  ///   - period: 
-  ///   - unexpectedBetweenPeriodAndMacroTypeName: 
-  ///   - macroTypeName: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforeModuleName: UnexpectedNodes? = nil, moduleName: Token, unexpectedBetweenModuleNameAndPeriod: UnexpectedNodes? = nil, period: Token = Token.`period`, unexpectedBetweenPeriodAndMacroTypeName: UnexpectedNodes? = nil, macroTypeName: Token) {
-    assert(period.text == ".")
-    self = ExternalMacroNameSyntax(unexpectedBeforeModuleName, moduleName: moduleName, unexpectedBetweenModuleNameAndPeriod, period: period, unexpectedBetweenPeriodAndMacroTypeName, macroTypeName: macroTypeName)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-  /// A convenience initializer that allows:
-  ///  - Initializing syntax collections using result builders
-  ///  - Initializing tokens without default text using strings
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], unexpectedBeforeModuleName: UnexpectedNodes? = nil, moduleName: String, unexpectedBetweenModuleNameAndPeriod: UnexpectedNodes? = nil, period: Token = Token.`period`, unexpectedBetweenPeriodAndMacroTypeName: UnexpectedNodes? = nil, macroTypeName: String) {
-    self.init (unexpectedBeforeModuleName, moduleName: Token.`identifier`(moduleName), unexpectedBetweenModuleNameAndPeriod, period: period, unexpectedBetweenPeriodAndMacroTypeName, macroTypeName: Token.`identifier`(macroTypeName))
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
 }
@@ -1854,6 +1889,7 @@ extension FloatLiteralExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1896,6 +1932,7 @@ extension ForInStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1946,6 +1983,7 @@ extension FunctionCallExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -1997,6 +2035,7 @@ extension FunctionDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2039,9 +2078,11 @@ extension FunctionParameter: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -2066,6 +2107,7 @@ extension FunctionSignature {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2122,6 +2164,7 @@ extension GenericArgumentClause {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2146,9 +2189,11 @@ extension GenericArgument: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -2173,6 +2218,7 @@ extension GenericParameterClause {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2207,6 +2253,7 @@ extension GenericParameter: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2214,9 +2261,11 @@ extension GenericParameter: HasTrailingComma {
     self.init (unexpectedBeforeAttributes, attributes: attributes, unexpectedBetweenAttributesAndName, name: Token.`identifier`(name), unexpectedBetweenNameAndEllipsis, ellipsis: ellipsis, unexpectedBetweenEllipsisAndColon, colon: colon, unexpectedBetweenColonAndInheritedType, inheritedType: TypeSyntax(fromProtocol: inheritedType), unexpectedBetweenInheritedTypeAndTrailingComma, trailingComma: trailingComma)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -2236,9 +2285,11 @@ extension GenericRequirement: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -2258,6 +2309,7 @@ extension GenericWhereClause {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2287,6 +2339,7 @@ extension GuardStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2396,6 +2449,7 @@ extension IfStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2508,9 +2562,11 @@ extension InheritedType: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -2558,6 +2614,7 @@ extension InitializerDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2581,6 +2638,7 @@ extension IntegerLiteralExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2617,19 +2675,6 @@ extension IsTypePattern {
   @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforeIsKeyword: UnexpectedNodes? = nil, isKeyword: Token = Token.`is`, unexpectedBetweenIsKeywordAndType: UnexpectedNodes? = nil, type: TypeSyntaxProtocol) {
     assert(isKeyword.text == "is")
     self = IsTypePatternSyntax(unexpectedBeforeIsKeyword, isKeyword: isKeyword, unexpectedBetweenIsKeywordAndType, type: TypeSyntax(fromProtocol: type))
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-}
-
-extension KeyPathBaseExpr {
-  /// Creates a `KeyPathBaseExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforePeriod: 
-  ///   - period: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforePeriod: UnexpectedNodes? = nil, period: Token = Token.`period`) {
-    assert(period.text == ".")
-    self = KeyPathBaseExprSyntax(unexpectedBeforePeriod, period: period)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
@@ -2712,6 +2757,7 @@ extension KeyPathSubscriptComponent {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2742,6 +2788,7 @@ extension LabeledSpecializeEntry: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2749,9 +2796,11 @@ extension LabeledSpecializeEntry: HasTrailingComma {
     self.init (unexpectedBeforeLabel, label: Token.`identifier`(label), unexpectedBetweenLabelAndColon, colon: colon, unexpectedBetweenColonAndValue, value: value, unexpectedBetweenValueAndTrailingComma, trailingComma: trailingComma)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -2773,6 +2822,7 @@ extension LabeledStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2810,6 +2860,7 @@ extension LayoutRequirement {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2838,24 +2889,22 @@ extension MacroDecl {
   ///   - genericParameterClause: 
   ///   - unexpectedBetweenGenericParameterClauseAndSignature: 
   ///   - signature: 
-  ///   - unexpectedBetweenSignatureAndEqual: 
-  ///   - equal: 
-  ///   - unexpectedBetweenEqualAndExternalName: 
-  ///   - externalName: 
-  ///   - unexpectedBetweenExternalNameAndGenericWhereClause: 
+  ///   - unexpectedBetweenSignatureAndDefinition: 
+  ///   - definition: 
+  ///   - unexpectedBetweenDefinitionAndGenericWhereClause: 
   ///   - genericWhereClause: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforeAttributes: UnexpectedNodes? = nil, attributes: AttributeList? = nil, unexpectedBetweenAttributesAndModifiers: UnexpectedNodes? = nil, modifiers: ModifierList? = nil, unexpectedBetweenModifiersAndMacroKeyword: UnexpectedNodes? = nil, macroKeyword: Token, unexpectedBetweenMacroKeywordAndIdentifier: UnexpectedNodes? = nil, identifier: Token, unexpectedBetweenIdentifierAndGenericParameterClause: UnexpectedNodes? = nil, genericParameterClause: GenericParameterClause? = nil, unexpectedBetweenGenericParameterClauseAndSignature: UnexpectedNodes? = nil, signature: Signature, unexpectedBetweenSignatureAndEqual: UnexpectedNodes? = nil, equal: Token = Token.`equal`, unexpectedBetweenEqualAndExternalName: UnexpectedNodes? = nil, externalName: ExternalMacroName? = nil, unexpectedBetweenExternalNameAndGenericWhereClause: UnexpectedNodes? = nil, genericWhereClause: GenericWhereClause? = nil) {
+  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforeAttributes: UnexpectedNodes? = nil, attributes: AttributeList? = nil, unexpectedBetweenAttributesAndModifiers: UnexpectedNodes? = nil, modifiers: ModifierList? = nil, unexpectedBetweenModifiersAndMacroKeyword: UnexpectedNodes? = nil, macroKeyword: Token, unexpectedBetweenMacroKeywordAndIdentifier: UnexpectedNodes? = nil, identifier: Token, unexpectedBetweenIdentifierAndGenericParameterClause: UnexpectedNodes? = nil, genericParameterClause: GenericParameterClause? = nil, unexpectedBetweenGenericParameterClauseAndSignature: UnexpectedNodes? = nil, signature: Signature, unexpectedBetweenSignatureAndDefinition: UnexpectedNodes? = nil, definition: InitializerClause? = nil, unexpectedBetweenDefinitionAndGenericWhereClause: UnexpectedNodes? = nil, genericWhereClause: GenericWhereClause? = nil) {
     assert(macroKeyword.text == "macro")
-    assert(equal.text == "=")
-    self = MacroDeclSyntax(unexpectedBeforeAttributes, attributes: attributes, unexpectedBetweenAttributesAndModifiers, modifiers: modifiers, unexpectedBetweenModifiersAndMacroKeyword, macroKeyword: macroKeyword, unexpectedBetweenMacroKeywordAndIdentifier, identifier: identifier, unexpectedBetweenIdentifierAndGenericParameterClause, genericParameterClause: genericParameterClause, unexpectedBetweenGenericParameterClauseAndSignature, signature: signature, unexpectedBetweenSignatureAndEqual, equal: equal, unexpectedBetweenEqualAndExternalName, externalName: externalName, unexpectedBetweenExternalNameAndGenericWhereClause, genericWhereClause: genericWhereClause)
+    self = MacroDeclSyntax(unexpectedBeforeAttributes, attributes: attributes, unexpectedBetweenAttributesAndModifiers, modifiers: modifiers, unexpectedBetweenModifiersAndMacroKeyword, macroKeyword: macroKeyword, unexpectedBetweenMacroKeywordAndIdentifier, identifier: identifier, unexpectedBetweenIdentifierAndGenericParameterClause, genericParameterClause: genericParameterClause, unexpectedBetweenGenericParameterClauseAndSignature, signature: signature, unexpectedBetweenSignatureAndDefinition, definition: definition, unexpectedBetweenDefinitionAndGenericWhereClause, genericWhereClause: genericWhereClause)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], unexpectedBeforeAttributes: UnexpectedNodes? = nil, attributes: AttributeList? = nil, unexpectedBetweenAttributesAndModifiers: UnexpectedNodes? = nil, modifiers: ModifierList? = nil, unexpectedBetweenModifiersAndMacroKeyword: UnexpectedNodes? = nil, macroKeyword: String, unexpectedBetweenMacroKeywordAndIdentifier: UnexpectedNodes? = nil, identifier: String, unexpectedBetweenIdentifierAndGenericParameterClause: UnexpectedNodes? = nil, genericParameterClause: GenericParameterClause? = nil, unexpectedBetweenGenericParameterClauseAndSignature: UnexpectedNodes? = nil, signature: Signature, unexpectedBetweenSignatureAndEqual: UnexpectedNodes? = nil, equal: Token = Token.`equal`, unexpectedBetweenEqualAndExternalName: UnexpectedNodes? = nil, externalName: ExternalMacroName? = nil, unexpectedBetweenExternalNameAndGenericWhereClause: UnexpectedNodes? = nil, genericWhereClause: GenericWhereClause? = nil) {
-    self.init (unexpectedBeforeAttributes, attributes: attributes, unexpectedBetweenAttributesAndModifiers, modifiers: modifiers, unexpectedBetweenModifiersAndMacroKeyword, macroKeyword: Token.`contextualKeyword`(macroKeyword), unexpectedBetweenMacroKeywordAndIdentifier, identifier: Token.`identifier`(identifier), unexpectedBetweenIdentifierAndGenericParameterClause, genericParameterClause: genericParameterClause, unexpectedBetweenGenericParameterClauseAndSignature, signature: signature, unexpectedBetweenSignatureAndEqual, equal: equal, unexpectedBetweenEqualAndExternalName, externalName: externalName, unexpectedBetweenExternalNameAndGenericWhereClause, genericWhereClause: genericWhereClause)
+  @_disfavoredOverload public init (leadingTrivia: Trivia = [], unexpectedBeforeAttributes: UnexpectedNodes? = nil, attributes: AttributeList? = nil, unexpectedBetweenAttributesAndModifiers: UnexpectedNodes? = nil, modifiers: ModifierList? = nil, unexpectedBetweenModifiersAndMacroKeyword: UnexpectedNodes? = nil, macroKeyword: String, unexpectedBetweenMacroKeywordAndIdentifier: UnexpectedNodes? = nil, identifier: String, unexpectedBetweenIdentifierAndGenericParameterClause: UnexpectedNodes? = nil, genericParameterClause: GenericParameterClause? = nil, unexpectedBetweenGenericParameterClauseAndSignature: UnexpectedNodes? = nil, signature: Signature, unexpectedBetweenSignatureAndDefinition: UnexpectedNodes? = nil, definition: InitializerClause? = nil, unexpectedBetweenDefinitionAndGenericWhereClause: UnexpectedNodes? = nil, genericWhereClause: GenericWhereClause? = nil) {
+    self.init (unexpectedBeforeAttributes, attributes: attributes, unexpectedBetweenAttributesAndModifiers, modifiers: modifiers, unexpectedBetweenModifiersAndMacroKeyword, macroKeyword: Token.`contextualKeyword`(macroKeyword), unexpectedBetweenMacroKeywordAndIdentifier, identifier: Token.`identifier`(identifier), unexpectedBetweenIdentifierAndGenericParameterClause, genericParameterClause: genericParameterClause, unexpectedBetweenGenericParameterClauseAndSignature, signature: signature, unexpectedBetweenSignatureAndDefinition, definition: definition, unexpectedBetweenDefinitionAndGenericWhereClause, genericWhereClause: genericWhereClause)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
 }
@@ -2887,6 +2936,7 @@ extension MacroExpansionDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2925,6 +2975,7 @@ extension MacroExpansionExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -2990,6 +3041,7 @@ extension MemberDeclBlock {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3052,6 +3104,7 @@ extension MetatypeType {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3074,6 +3127,7 @@ extension MoveExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3159,6 +3213,7 @@ extension ObjCSelectorPiece {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3167,132 +3222,6 @@ extension ObjCSelectorPiece {
       Token.`identifier`($0) 
     }, unexpectedBetweenNameAndColon, colon: colon)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-  }
-}
-
-extension ObjcKeyPathExpr {
-  /// Creates a `ObjcKeyPathExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforeKeyPath: 
-  ///   - keyPath: 
-  ///   - unexpectedBetweenKeyPathAndLeftParen: 
-  ///   - leftParen: 
-  ///   - unexpectedBetweenLeftParenAndName: 
-  ///   - name: 
-  ///   - unexpectedBetweenNameAndRightParen: 
-  ///   - rightParen: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforeKeyPath: UnexpectedNodes? = nil, keyPath: Token = Token.`poundKeyPath`, unexpectedBetweenKeyPathAndLeftParen: UnexpectedNodes? = nil, leftParen: Token = Token.`leftParen`, unexpectedBetweenLeftParenAndName: UnexpectedNodes? = nil, name: ObjcName, unexpectedBetweenNameAndRightParen: UnexpectedNodes? = nil, rightParen: Token = Token.`rightParen`) {
-    assert(keyPath.text == "#keyPath")
-    assert(leftParen.text == "(")
-    assert(rightParen.text == ")")
-    self = ObjcKeyPathExprSyntax(unexpectedBeforeKeyPath, keyPath: keyPath, unexpectedBetweenKeyPathAndLeftParen, leftParen: leftParen, unexpectedBetweenLeftParenAndName, name: name, unexpectedBetweenNameAndRightParen, rightParen: rightParen)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-}
-
-extension ObjcNamePiece {
-  /// Creates a `ObjcNamePiece` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforeName: 
-  ///   - name: 
-  ///   - unexpectedBetweenNameAndDot: 
-  ///   - dot: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforeName: UnexpectedNodes? = nil, name: Token, unexpectedBetweenNameAndDot: UnexpectedNodes? = nil, dot: Token? = nil) {
-    assert(dot == nil || dot!.text == ".")
-    self = ObjcNamePieceSyntax(unexpectedBeforeName, name: name, unexpectedBetweenNameAndDot, dot: dot)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-  /// A convenience initializer that allows:
-  ///  - Initializing syntax collections using result builders
-  ///  - Initializing tokens without default text using strings
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], unexpectedBeforeName: UnexpectedNodes? = nil, name: String, unexpectedBetweenNameAndDot: UnexpectedNodes? = nil, dot: Token? = nil) {
-    self.init (unexpectedBeforeName, name: Token.`identifier`(name), unexpectedBetweenNameAndDot, dot: dot)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-  }
-}
-
-extension ObjcSelectorExpr {
-  /// Creates a `ObjcSelectorExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforePoundSelector: 
-  ///   - poundSelector: 
-  ///   - unexpectedBetweenPoundSelectorAndLeftParen: 
-  ///   - leftParen: 
-  ///   - unexpectedBetweenLeftParenAndKind: 
-  ///   - kind: 
-  ///   - unexpectedBetweenKindAndColon: 
-  ///   - colon: 
-  ///   - unexpectedBetweenColonAndName: 
-  ///   - name: 
-  ///   - unexpectedBetweenNameAndRightParen: 
-  ///   - rightParen: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforePoundSelector: UnexpectedNodes? = nil, poundSelector: Token = Token.`poundSelector`, unexpectedBetweenPoundSelectorAndLeftParen: UnexpectedNodes? = nil, leftParen: Token = Token.`leftParen`, unexpectedBetweenLeftParenAndKind: UnexpectedNodes? = nil, kind: Token? = nil, unexpectedBetweenKindAndColon: UnexpectedNodes? = nil, colon: Token? = nil, unexpectedBetweenColonAndName: UnexpectedNodes? = nil, name: ExprSyntaxProtocol, unexpectedBetweenNameAndRightParen: UnexpectedNodes? = nil, rightParen: Token = Token.`rightParen`) {
-    assert(poundSelector.text == "#selector")
-    assert(leftParen.text == "(")
-    assert(kind == nil || kind!.text == "getter" || kind!.text == "setter")
-    assert(colon == nil || colon!.text == ":")
-    assert(rightParen.text == ")")
-    self = ObjcSelectorExprSyntax(unexpectedBeforePoundSelector, poundSelector: poundSelector, unexpectedBetweenPoundSelectorAndLeftParen, leftParen: leftParen, unexpectedBetweenLeftParenAndKind, kind: kind, unexpectedBetweenKindAndColon, colon: colon, unexpectedBetweenColonAndName, name: ExprSyntax(fromProtocol: name), unexpectedBetweenNameAndRightParen, rightParen: rightParen)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-  /// A convenience initializer that allows:
-  ///  - Initializing syntax collections using result builders
-  ///  - Initializing tokens without default text using strings
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], unexpectedBeforePoundSelector: UnexpectedNodes? = nil, poundSelector: Token = Token.`poundSelector`, unexpectedBetweenPoundSelectorAndLeftParen: UnexpectedNodes? = nil, leftParen: Token = Token.`leftParen`, unexpectedBetweenLeftParenAndKind: UnexpectedNodes? = nil, kind: String?, unexpectedBetweenKindAndColon: UnexpectedNodes? = nil, colon: Token? = nil, unexpectedBetweenColonAndName: UnexpectedNodes? = nil, name: ExprSyntaxProtocol, unexpectedBetweenNameAndRightParen: UnexpectedNodes? = nil, rightParen: Token = Token.`rightParen`) {
-    self.init (unexpectedBeforePoundSelector, poundSelector: poundSelector, unexpectedBetweenPoundSelectorAndLeftParen, leftParen: leftParen, unexpectedBetweenLeftParenAndKind, kind: kind.map { 
-      Token.`contextualKeyword`($0) 
-    }, unexpectedBetweenKindAndColon, colon: colon, unexpectedBetweenColonAndName, name: ExprSyntax(fromProtocol: name), unexpectedBetweenNameAndRightParen, rightParen: rightParen)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-  }
-}
-
-extension ObjectLiteralExpr {
-  /// Creates a `ObjectLiteralExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforeIdentifier: 
-  ///   - identifier: 
-  ///   - unexpectedBetweenIdentifierAndLeftParen: 
-  ///   - leftParen: 
-  ///   - unexpectedBetweenLeftParenAndArguments: 
-  ///   - arguments: 
-  ///   - unexpectedBetweenArgumentsAndRightParen: 
-  ///   - rightParen: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforeIdentifier: UnexpectedNodes? = nil, identifier: Token, unexpectedBetweenIdentifierAndLeftParen: UnexpectedNodes? = nil, leftParen: Token = Token.`leftParen`, unexpectedBetweenLeftParenAndArguments: UnexpectedNodes? = nil, arguments: TupleExprElementList, unexpectedBetweenArgumentsAndRightParen: UnexpectedNodes? = nil, rightParen: Token = Token.`rightParen`) {
-    assert(identifier.text == "#colorLiteral" || identifier.text == "#fileLiteral" || identifier.text == "#imageLiteral")
-    assert(leftParen.text == "(")
-    assert(rightParen.text == ")")
-    self = ObjectLiteralExprSyntax(unexpectedBeforeIdentifier, identifier: identifier, unexpectedBetweenIdentifierAndLeftParen, leftParen: leftParen, unexpectedBetweenLeftParenAndArguments, arguments: arguments, unexpectedBetweenArgumentsAndRightParen, rightParen: rightParen)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-  /// A convenience initializer that allows:
-  ///  - Initializing syntax collections using result builders
-  ///  - Initializing tokens without default text using strings
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], unexpectedBeforeIdentifier: UnexpectedNodes? = nil, identifier: Token, unexpectedBetweenIdentifierAndLeftParen: UnexpectedNodes? = nil, leftParen: Token = Token.`leftParen`, unexpectedBetweenLeftParenAndArguments: UnexpectedNodes? = nil, unexpectedBetweenArgumentsAndRightParen: UnexpectedNodes? = nil, rightParen: Token = Token.`rightParen`, @TupleExprElementListBuilder argumentsBuilder: () -> TupleExprElementListSyntax = {
-    TupleExprElementListSyntax([])
-  }) {
-    self.init (unexpectedBeforeIdentifier, identifier: identifier, unexpectedBetweenIdentifierAndLeftParen, leftParen: leftParen, unexpectedBetweenLeftParenAndArguments, arguments: argumentsBuilder(), unexpectedBetweenArgumentsAndRightParen, rightParen: rightParen)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-  }
-}
-
-extension OldKeyPathExpr {
-  /// Creates a `OldKeyPathExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforeBackslash: 
-  ///   - backslash: 
-  ///   - unexpectedBetweenBackslashAndRootExpr: 
-  ///   - rootExpr: 
-  ///   - unexpectedBetweenRootExprAndExpression: 
-  ///   - expression: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforeBackslash: UnexpectedNodes? = nil, backslash: Token = Token.`backslash`, unexpectedBetweenBackslashAndRootExpr: UnexpectedNodes? = nil, rootExpr: RootExpr? = nil, unexpectedBetweenRootExprAndExpression: UnexpectedNodes? = nil, expression: ExprSyntaxProtocol) {
-    assert(backslash.text == #"\"#)
-    self = OldKeyPathExprSyntax(unexpectedBeforeBackslash, backslash: backslash, unexpectedBetweenBackslashAndRootExpr, rootExpr: rootExpr, unexpectedBetweenRootExprAndExpression, expression: ExprSyntax(fromProtocol: expression))
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
 }
 
@@ -3312,6 +3241,7 @@ extension OpaqueReturnTypeOfAttributeArguments {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3359,6 +3289,7 @@ extension OperatorPrecedenceAndTypes {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3463,6 +3394,7 @@ extension ParameterClause {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3493,9 +3425,11 @@ extension PatternBinding: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -3528,6 +3462,7 @@ extension PostfixUnaryExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3561,6 +3496,7 @@ extension PoundAssertStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3585,19 +3521,6 @@ extension PoundColumnExpr {
   }
 }
 
-extension PoundDsohandleExpr {
-  /// Creates a `PoundDsohandleExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforePoundDsohandle: 
-  ///   - poundDsohandle: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforePoundDsohandle: UnexpectedNodes? = nil, poundDsohandle: Token = Token.`poundDsohandle`) {
-    assert(poundDsohandle.text == "#dsohandle")
-    self = PoundDsohandleExprSyntax(unexpectedBeforePoundDsohandle, poundDsohandle: poundDsohandle)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-}
-
 extension PoundErrorDecl {
   /// Creates a `PoundErrorDecl` using the provided parameters.
   /// - Parameters:
@@ -3614,71 +3537,6 @@ extension PoundErrorDecl {
     assert(leftParen.text == "(")
     assert(rightParen.text == ")")
     self = PoundErrorDeclSyntax(unexpectedBeforePoundError, poundError: poundError, unexpectedBetweenPoundErrorAndLeftParen, leftParen: leftParen, unexpectedBetweenLeftParenAndMessage, message: message, unexpectedBetweenMessageAndRightParen, rightParen: rightParen)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-}
-
-extension PoundFileExpr {
-  /// Creates a `PoundFileExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforePoundFile: 
-  ///   - poundFile: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforePoundFile: UnexpectedNodes? = nil, poundFile: Token = Token.`poundFile`) {
-    assert(poundFile.text == "#file")
-    self = PoundFileExprSyntax(unexpectedBeforePoundFile, poundFile: poundFile)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-}
-
-extension PoundFileIDExpr {
-  /// Creates a `PoundFileIDExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforePoundFileID: 
-  ///   - poundFileID: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforePoundFileID: UnexpectedNodes? = nil, poundFileID: Token = Token.`poundFileID`) {
-    assert(poundFileID.text == "#fileID")
-    self = PoundFileIDExprSyntax(unexpectedBeforePoundFileID, poundFileID: poundFileID)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-}
-
-extension PoundFilePathExpr {
-  /// Creates a `PoundFilePathExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforePoundFilePath: 
-  ///   - poundFilePath: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforePoundFilePath: UnexpectedNodes? = nil, poundFilePath: Token = Token.`poundFilePath`) {
-    assert(poundFilePath.text == "#filePath")
-    self = PoundFilePathExprSyntax(unexpectedBeforePoundFilePath, poundFilePath: poundFilePath)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-}
-
-extension PoundFunctionExpr {
-  /// Creates a `PoundFunctionExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforePoundFunction: 
-  ///   - poundFunction: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforePoundFunction: UnexpectedNodes? = nil, poundFunction: Token = Token.`poundFunction`) {
-    assert(poundFunction.text == "#function")
-    self = PoundFunctionExprSyntax(unexpectedBeforePoundFunction, poundFunction: poundFunction)
-    self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
-    self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
-  }
-}
-
-extension PoundLineExpr {
-  /// Creates a `PoundLineExpr` using the provided parameters.
-  /// - Parameters:
-  ///   - unexpectedBeforePoundLine: 
-  ///   - poundLine: 
-  @_disfavoredOverload public init (leadingTrivia: Trivia = [], trailingTrivia: Trivia = [], unexpectedBeforePoundLine: UnexpectedNodes? = nil, poundLine: Token = Token.`poundLine`) {
-    assert(poundLine.text == "#line")
-    self = PoundLineExprSyntax(unexpectedBeforePoundLine, poundLine: poundLine)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
@@ -3711,6 +3569,7 @@ extension PoundSourceLocationArgs {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3780,6 +3639,7 @@ extension PrecedenceGroupAssignment {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3807,6 +3667,7 @@ extension PrecedenceGroupAssociativity {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3842,6 +3703,7 @@ extension PrecedenceGroupDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3864,6 +3726,7 @@ extension PrecedenceGroupNameElement {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3890,6 +3753,7 @@ extension PrecedenceGroupRelation {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3911,6 +3775,7 @@ extension PrefixOperatorExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3953,6 +3818,7 @@ extension PrimaryAssociatedType: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -3960,9 +3826,11 @@ extension PrimaryAssociatedType: HasTrailingComma {
     self.init (unexpectedBeforeName, name: Token.`identifier`(name), unexpectedBetweenNameAndTrailingComma, trailingComma: trailingComma)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -3994,6 +3862,7 @@ extension ProtocolDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4035,6 +3904,7 @@ extension RegexLiteralExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4062,6 +3932,7 @@ extension RepeatWhileStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4129,6 +4000,7 @@ extension SequenceExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4166,6 +4038,7 @@ extension SourceFile {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4211,6 +4084,7 @@ extension StringLiteralExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4234,6 +4108,7 @@ extension StringSegment {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4268,6 +4143,7 @@ extension StructDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4328,6 +4204,7 @@ extension SubscriptExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4368,6 +4245,7 @@ extension SwitchCaseLabel {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4393,6 +4271,7 @@ extension SwitchCase {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4441,6 +4320,7 @@ extension SwitchStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4464,6 +4344,7 @@ extension SymbolicReferenceExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4492,6 +4373,7 @@ extension TargetFunctionEntry: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4499,9 +4381,11 @@ extension TargetFunctionEntry: HasTrailingComma {
     self.init (unexpectedBeforeLabel, label: Token.`identifier`(label), unexpectedBetweenLabelAndColon, colon: colon, unexpectedBetweenColonAndDeclname, declname: declname, unexpectedBetweenDeclnameAndTrailingComma, trailingComma: trailingComma)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -4581,9 +4465,11 @@ extension TupleExprElement: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -4606,6 +4492,7 @@ extension TupleExpr {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4635,6 +4522,7 @@ extension TuplePatternElement: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4644,9 +4532,11 @@ extension TuplePatternElement: HasTrailingComma {
     }, unexpectedBetweenLabelNameAndLabelColon, labelColon: labelColon, unexpectedBetweenLabelColonAndPattern, pattern: PatternSyntax(fromProtocol: pattern), unexpectedBetweenPatternAndTrailingComma, trailingComma: trailingComma)
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -4669,6 +4559,7 @@ extension TuplePattern {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4708,9 +4599,11 @@ extension TupleTypeElement: HasTrailingComma {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   var hasTrailingComma: Bool {
     return trailingComma != nil
   }
+  
   /// Conformance to `HasTrailingComma`.
   public func withTrailingComma(_ withComma: Bool) -> Self {
     return withTrailingComma(withComma ? .commaToken() : nil)
@@ -4775,6 +4668,7 @@ extension TypeInheritanceClause {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4824,6 +4718,7 @@ extension TypealiasDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4945,6 +4840,7 @@ extension VariableDecl {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -4972,6 +4868,7 @@ extension VersionTuple {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings
@@ -5013,6 +4910,7 @@ extension WhileStmt {
     self.leadingTrivia = leadingTrivia + (self.leadingTrivia ?? [])
     self.trailingTrivia = trailingTrivia + (self.trailingTrivia ?? [])
   }
+  
   /// A convenience initializer that allows:
   ///  - Initializing syntax collections using result builders
   ///  - Initializing tokens without default text using strings

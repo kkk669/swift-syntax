@@ -118,12 +118,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/DiscardAssignmentExprSyntax>
 - <doc:SwiftSyntax/AssignmentExprSyntax>
 - <doc:SwiftSyntax/SequenceExprSyntax>
-- <doc:SwiftSyntax/PoundLineExprSyntax>
-- <doc:SwiftSyntax/PoundFileExprSyntax>
-- <doc:SwiftSyntax/PoundFileIDExprSyntax>
-- <doc:SwiftSyntax/PoundFilePathExprSyntax>
-- <doc:SwiftSyntax/PoundFunctionExprSyntax>
-- <doc:SwiftSyntax/PoundDsohandleExprSyntax>
 - <doc:SwiftSyntax/SymbolicReferenceExprSyntax>
 - <doc:SwiftSyntax/PrefixOperatorExprSyntax>
 - <doc:SwiftSyntax/BinaryOperatorExprSyntax>
@@ -154,14 +148,9 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/StringLiteralExprSyntax>
 - <doc:SwiftSyntax/RegexLiteralExprSyntax>
 - <doc:SwiftSyntax/KeyPathExprSyntax>
-- <doc:SwiftSyntax/OldKeyPathExprSyntax>
-- <doc:SwiftSyntax/KeyPathBaseExprSyntax>
-- <doc:SwiftSyntax/ObjcKeyPathExprSyntax>
-- <doc:SwiftSyntax/ObjcSelectorExprSyntax>
 - <doc:SwiftSyntax/MacroExpansionExprSyntax>
 - <doc:SwiftSyntax/PostfixIfConfigExprSyntax>
 - <doc:SwiftSyntax/EditorPlaceholderExprSyntax>
-- <doc:SwiftSyntax/ObjectLiteralExprSyntax>
 
 ### Types
 
@@ -222,8 +211,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/MultipleTrailingClosureElementSyntax>
 - <doc:SwiftSyntax/KeyPathComponentListSyntax>
 - <doc:SwiftSyntax/KeyPathComponentSyntax>
-- <doc:SwiftSyntax/ObjcNameSyntax>
-- <doc:SwiftSyntax/ObjcNamePieceSyntax>
 - <doc:SwiftSyntax/YieldExprListSyntax>
 - <doc:SwiftSyntax/YieldExprListElementSyntax>
 - <doc:SwiftSyntax/FunctionParameterListSyntax>
@@ -313,8 +300,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/KeyPathPropertyComponentSyntax>
 - <doc:SwiftSyntax/KeyPathSubscriptComponentSyntax>
 - <doc:SwiftSyntax/KeyPathOptionalComponentSyntax>
-- <doc:SwiftSyntax/ObjcNamePieceSyntax>
-- <doc:SwiftSyntax/ObjcNameSyntax>
 - <doc:SwiftSyntax/YieldExprListSyntax>
 - <doc:SwiftSyntax/YieldExprListElementSyntax>
 - <doc:SwiftSyntax/TypeInitializerClauseSyntax>
@@ -356,7 +341,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/PrecedenceGroupNameElementSyntax>
 - <doc:SwiftSyntax/PrecedenceGroupAssignmentSyntax>
 - <doc:SwiftSyntax/PrecedenceGroupAssociativitySyntax>
-- <doc:SwiftSyntax/ExternalMacroNameSyntax>
 - <doc:SwiftSyntax/TokenListSyntax>
 - <doc:SwiftSyntax/NonEmptyTokenListSyntax>
 - <doc:SwiftSyntax/CustomAttributeSyntax>

@@ -244,12 +244,6 @@ SYNTAX_TOKENS = [
     ExprKeyword('Try', 'try'),
     ExprKeyword('Throws', 'throws'),
 
-    Keyword('__FILE__', '__FILE__'),
-    Keyword('__LINE__', '__LINE__'),
-    Keyword('__COLUMN__', '__COLUMN__'),
-    Keyword('__FUNCTION__', '__FUNCTION__'),
-    Keyword('__DSO_HANDLE__', '__DSO_HANDLE__'),
-
     # Pattern keywords
     PatternKeyword('Wildcard', '_'),
 
@@ -276,8 +270,7 @@ SYNTAX_TOKENS = [
     Punctuator('AtSign', 'at_sign', text='@', classification='Attribute'),
     Punctuator('Pound', 'pound', text='#'),
 
-    Punctuator('PrefixAmpersand', 'amp_prefix', text='&',
-               requires_leading_space=True, requires_trailing_space=True),
+    Punctuator('PrefixAmpersand', 'amp_prefix', text='&'),
     Punctuator('Arrow', 'arrow', text='->', requires_leading_space=True,
                requires_trailing_space=True),
 

@@ -155,6 +155,7 @@ extension ExprList: ExpressibleByArrayLiteral {
       ExprSyntax(fromProtocol: $0) 
     })
   }
+  
   public init (arrayLiteral elements: ExprSyntaxProtocol...) {
     self.init (elements)
   }
@@ -244,13 +245,6 @@ extension ObjCSelector: ExpressibleByArrayLiteral {
   }
 }
 
-/// `ObjcName` represents a collection of `ObjcNamePieceSyntax`
-extension ObjcName: ExpressibleByArrayLiteral {
-  public init (arrayLiteral elements: Element...) {
-    self.init (elements)
-  }
-}
-
 /// `PatternBindingList` represents a collection of `PatternBindingSyntax`
 extension PatternBindingList: ExpressibleByArrayLiteral {
   public init (arrayLiteral elements: Element...) {
@@ -335,6 +329,7 @@ extension UnexpectedNodes: ExpressibleByArrayLiteral {
       Syntax(fromProtocol: $0) 
     })
   }
+  
   public init (arrayLiteral elements: SyntaxProtocol...) {
     self.init (elements)
   }

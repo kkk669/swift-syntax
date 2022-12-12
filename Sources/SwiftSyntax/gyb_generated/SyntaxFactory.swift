@@ -794,168 +794,6 @@ public enum SyntaxFactory {
       return ExprListSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on PoundLineExprSyntax")
-  public static func makePoundLineExpr(_ unexpectedBeforePoundLine: UnexpectedNodesSyntax? = nil, poundLine: TokenSyntax, _ unexpectedAfterPoundLine: UnexpectedNodesSyntax? = nil) -> PoundLineExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundLine?.raw,
-      poundLine.raw,
-      unexpectedAfterPoundLine?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.poundLineExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return PoundLineExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on PoundLineExprSyntax")
-  public static func makeBlankPoundLineExpr(presence: SourcePresence = .present) -> PoundLineExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .poundLineExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundLineKeyword, arena: arena),
-        nil,
-      ], arena: arena))
-      return PoundLineExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on PoundFileExprSyntax")
-  public static func makePoundFileExpr(_ unexpectedBeforePoundFile: UnexpectedNodesSyntax? = nil, poundFile: TokenSyntax, _ unexpectedAfterPoundFile: UnexpectedNodesSyntax? = nil) -> PoundFileExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundFile?.raw,
-      poundFile.raw,
-      unexpectedAfterPoundFile?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.poundFileExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return PoundFileExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on PoundFileExprSyntax")
-  public static func makeBlankPoundFileExpr(presence: SourcePresence = .present) -> PoundFileExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .poundFileExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundFileKeyword, arena: arena),
-        nil,
-      ], arena: arena))
-      return PoundFileExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on PoundFileIDExprSyntax")
-  public static func makePoundFileIDExpr(_ unexpectedBeforePoundFileID: UnexpectedNodesSyntax? = nil, poundFileID: TokenSyntax, _ unexpectedAfterPoundFileID: UnexpectedNodesSyntax? = nil) -> PoundFileIDExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundFileID?.raw,
-      poundFileID.raw,
-      unexpectedAfterPoundFileID?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.poundFileIDExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return PoundFileIDExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on PoundFileIDExprSyntax")
-  public static func makeBlankPoundFileIDExpr(presence: SourcePresence = .present) -> PoundFileIDExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .poundFileIDExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundFileIDKeyword, arena: arena),
-        nil,
-      ], arena: arena))
-      return PoundFileIDExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on PoundFilePathExprSyntax")
-  public static func makePoundFilePathExpr(_ unexpectedBeforePoundFilePath: UnexpectedNodesSyntax? = nil, poundFilePath: TokenSyntax, _ unexpectedAfterPoundFilePath: UnexpectedNodesSyntax? = nil) -> PoundFilePathExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundFilePath?.raw,
-      poundFilePath.raw,
-      unexpectedAfterPoundFilePath?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.poundFilePathExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return PoundFilePathExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on PoundFilePathExprSyntax")
-  public static func makeBlankPoundFilePathExpr(presence: SourcePresence = .present) -> PoundFilePathExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .poundFilePathExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundFilePathKeyword, arena: arena),
-        nil,
-      ], arena: arena))
-      return PoundFilePathExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on PoundFunctionExprSyntax")
-  public static func makePoundFunctionExpr(_ unexpectedBeforePoundFunction: UnexpectedNodesSyntax? = nil, poundFunction: TokenSyntax, _ unexpectedAfterPoundFunction: UnexpectedNodesSyntax? = nil) -> PoundFunctionExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundFunction?.raw,
-      poundFunction.raw,
-      unexpectedAfterPoundFunction?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.poundFunctionExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return PoundFunctionExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on PoundFunctionExprSyntax")
-  public static func makeBlankPoundFunctionExpr(presence: SourcePresence = .present) -> PoundFunctionExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .poundFunctionExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundFunctionKeyword, arena: arena),
-        nil,
-      ], arena: arena))
-      return PoundFunctionExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on PoundDsohandleExprSyntax")
-  public static func makePoundDsohandleExpr(_ unexpectedBeforePoundDsohandle: UnexpectedNodesSyntax? = nil, poundDsohandle: TokenSyntax, _ unexpectedAfterPoundDsohandle: UnexpectedNodesSyntax? = nil) -> PoundDsohandleExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundDsohandle?.raw,
-      poundDsohandle.raw,
-      unexpectedAfterPoundDsohandle?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.poundDsohandleExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return PoundDsohandleExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on PoundDsohandleExprSyntax")
-  public static func makeBlankPoundDsohandleExpr(presence: SourcePresence = .present) -> PoundDsohandleExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .poundDsohandleExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundDsohandleKeyword, arena: arena),
-        nil,
-      ], arena: arena))
-      return PoundDsohandleExprSyntax(data)
-    }
-  }
   @available(*, deprecated, message: "Use initializer on SymbolicReferenceExprSyntax")
   public static func makeSymbolicReferenceExpr(_ unexpectedBeforeIdentifier: UnexpectedNodesSyntax? = nil, identifier: TokenSyntax, _ unexpectedBetweenIdentifierAndGenericArgumentClause: UnexpectedNodesSyntax? = nil, genericArgumentClause: GenericArgumentClauseSyntax?, _ unexpectedAfterGenericArgumentClause: UnexpectedNodesSyntax? = nil) -> SymbolicReferenceExprSyntax {
     let layout: [RawSyntax?] = [
@@ -2548,205 +2386,6 @@ public enum SyntaxFactory {
       return KeyPathOptionalComponentSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on OldKeyPathExprSyntax")
-  public static func makeOldKeyPathExpr(_ unexpectedBeforeBackslash: UnexpectedNodesSyntax? = nil, backslash: TokenSyntax, _ unexpectedBetweenBackslashAndRootExpr: UnexpectedNodesSyntax? = nil, rootExpr: ExprSyntax?, _ unexpectedBetweenRootExprAndExpression: UnexpectedNodesSyntax? = nil, expression: ExprSyntax, _ unexpectedAfterExpression: UnexpectedNodesSyntax? = nil) -> OldKeyPathExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeBackslash?.raw,
-      backslash.raw,
-      unexpectedBetweenBackslashAndRootExpr?.raw,
-      rootExpr?.raw,
-      unexpectedBetweenRootExprAndExpression?.raw,
-      expression.raw,
-      unexpectedAfterExpression?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.oldKeyPathExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return OldKeyPathExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on OldKeyPathExprSyntax")
-  public static func makeBlankOldKeyPathExpr(presence: SourcePresence = .present) -> OldKeyPathExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .oldKeyPathExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.backslash, arena: arena),
-        nil,
-        nil,
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
-        nil,
-      ], arena: arena))
-      return OldKeyPathExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on KeyPathBaseExprSyntax")
-  public static func makeKeyPathBaseExpr(_ unexpectedBeforePeriod: UnexpectedNodesSyntax? = nil, period: TokenSyntax, _ unexpectedAfterPeriod: UnexpectedNodesSyntax? = nil) -> KeyPathBaseExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePeriod?.raw,
-      period.raw,
-      unexpectedAfterPeriod?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.keyPathBaseExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return KeyPathBaseExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on KeyPathBaseExprSyntax")
-  public static func makeBlankKeyPathBaseExpr(presence: SourcePresence = .present) -> KeyPathBaseExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .keyPathBaseExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.period, arena: arena),
-        nil,
-      ], arena: arena))
-      return KeyPathBaseExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on ObjcNamePieceSyntax")
-  public static func makeObjcNamePiece(_ unexpectedBeforeName: UnexpectedNodesSyntax? = nil, name: TokenSyntax, _ unexpectedBetweenNameAndDot: UnexpectedNodesSyntax? = nil, dot: TokenSyntax?, _ unexpectedAfterDot: UnexpectedNodesSyntax? = nil) -> ObjcNamePieceSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeName?.raw,
-      name.raw,
-      unexpectedBetweenNameAndDot?.raw,
-      dot?.raw,
-      unexpectedAfterDot?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.objcNamePiece,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return ObjcNamePieceSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on ObjcNamePieceSyntax")
-  public static func makeBlankObjcNamePiece(presence: SourcePresence = .present) -> ObjcNamePieceSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .objcNamePiece,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
-        nil,
-        nil,
-        nil,
-      ], arena: arena))
-      return ObjcNamePieceSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on ObjcNameSyntax")
-  public static func makeObjcName(
-    _ elements: [ObjcNamePieceSyntax]) -> ObjcNameSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.objcName,
-        from: elements.map { $0.raw }, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return ObjcNameSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on ObjcNameSyntax")
-  public static func makeBlankObjcName(presence: SourcePresence = .present) -> ObjcNameSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .objcName,
-        from: [
-      ], arena: arena))
-      return ObjcNameSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on ObjcKeyPathExprSyntax")
-  public static func makeObjcKeyPathExpr(_ unexpectedBeforeKeyPath: UnexpectedNodesSyntax? = nil, keyPath: TokenSyntax, _ unexpectedBetweenKeyPathAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax, _ unexpectedBetweenLeftParenAndName: UnexpectedNodesSyntax? = nil, name: ObjcNameSyntax, _ unexpectedBetweenNameAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> ObjcKeyPathExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeKeyPath?.raw,
-      keyPath.raw,
-      unexpectedBetweenKeyPathAndLeftParen?.raw,
-      leftParen.raw,
-      unexpectedBetweenLeftParenAndName?.raw,
-      name.raw,
-      unexpectedBetweenNameAndRightParen?.raw,
-      rightParen.raw,
-      unexpectedAfterRightParen?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.objcKeyPathExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return ObjcKeyPathExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on ObjcKeyPathExprSyntax")
-  public static func makeBlankObjcKeyPathExpr(presence: SourcePresence = .present) -> ObjcKeyPathExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .objcKeyPathExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundKeyPathKeyword, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.leftParen, arena: arena),
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.objcName, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.rightParen, arena: arena),
-        nil,
-      ], arena: arena))
-      return ObjcKeyPathExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on ObjcSelectorExprSyntax")
-  public static func makeObjcSelectorExpr(_ unexpectedBeforePoundSelector: UnexpectedNodesSyntax? = nil, poundSelector: TokenSyntax, _ unexpectedBetweenPoundSelectorAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax, _ unexpectedBetweenLeftParenAndKind: UnexpectedNodesSyntax? = nil, kind: TokenSyntax?, _ unexpectedBetweenKindAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax?, _ unexpectedBetweenColonAndName: UnexpectedNodesSyntax? = nil, name: ExprSyntax, _ unexpectedBetweenNameAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> ObjcSelectorExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundSelector?.raw,
-      poundSelector.raw,
-      unexpectedBetweenPoundSelectorAndLeftParen?.raw,
-      leftParen.raw,
-      unexpectedBetweenLeftParenAndKind?.raw,
-      kind?.raw,
-      unexpectedBetweenKindAndColon?.raw,
-      colon?.raw,
-      unexpectedBetweenColonAndName?.raw,
-      name.raw,
-      unexpectedBetweenNameAndRightParen?.raw,
-      rightParen.raw,
-      unexpectedAfterRightParen?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.objcSelectorExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return ObjcSelectorExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on ObjcSelectorExprSyntax")
-  public static func makeBlankObjcSelectorExpr(presence: SourcePresence = .present) -> ObjcSelectorExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .objcSelectorExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundSelectorKeyword, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.leftParen, arena: arena),
-        nil,
-        nil,
-        nil,
-        nil,
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.rightParen, arena: arena),
-        nil,
-      ], arena: arena))
-      return ObjcSelectorExprSyntax(data)
-    }
-  }
   @available(*, deprecated, message: "Use initializer on MacroExpansionExprSyntax")
   public static func makeMacroExpansionExpr(_ unexpectedBeforePoundToken: UnexpectedNodesSyntax? = nil, poundToken: TokenSyntax, _ unexpectedBetweenPoundTokenAndMacro: UnexpectedNodesSyntax? = nil, macro: TokenSyntax, _ unexpectedBetweenMacroAndGenericArguments: UnexpectedNodesSyntax? = nil, genericArguments: GenericArgumentClauseSyntax?, _ unexpectedBetweenGenericArgumentsAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax?, _ unexpectedBetweenLeftParenAndArgumentList: UnexpectedNodesSyntax? = nil, argumentList: TupleExprElementListSyntax, _ unexpectedBetweenArgumentListAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax?, _ unexpectedBetweenRightParenAndTrailingClosure: UnexpectedNodesSyntax? = nil, trailingClosure: ClosureExprSyntax?, _ unexpectedBetweenTrailingClosureAndAdditionalTrailingClosures: UnexpectedNodesSyntax? = nil, additionalTrailingClosures: MultipleTrailingClosureElementListSyntax?, _ unexpectedAfterAdditionalTrailingClosures: UnexpectedNodesSyntax? = nil) -> MacroExpansionExprSyntax {
     let layout: [RawSyntax?] = [
@@ -2858,45 +2497,6 @@ public enum SyntaxFactory {
         nil,
       ], arena: arena))
       return EditorPlaceholderExprSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on ObjectLiteralExprSyntax")
-  public static func makeObjectLiteralExpr(_ unexpectedBeforeIdentifier: UnexpectedNodesSyntax? = nil, identifier: TokenSyntax, _ unexpectedBetweenIdentifierAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax, _ unexpectedBetweenLeftParenAndArguments: UnexpectedNodesSyntax? = nil, arguments: TupleExprElementListSyntax, _ unexpectedBetweenArgumentsAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> ObjectLiteralExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeIdentifier?.raw,
-      identifier.raw,
-      unexpectedBetweenIdentifierAndLeftParen?.raw,
-      leftParen.raw,
-      unexpectedBetweenLeftParenAndArguments?.raw,
-      arguments.raw,
-      unexpectedBetweenArgumentsAndRightParen?.raw,
-      rightParen.raw,
-      unexpectedAfterRightParen?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.objectLiteralExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return ObjectLiteralExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on ObjectLiteralExprSyntax")
-  public static func makeBlankObjectLiteralExpr(presence: SourcePresence = .present) -> ObjectLiteralExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .objectLiteralExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundColorLiteralKeyword, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.leftParen, arena: arena),
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.tupleExprElementList, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.rightParen, arena: arena),
-        nil,
-      ], arena: arena))
-      return ObjectLiteralExprSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on YieldExprListSyntax")
@@ -5190,7 +4790,7 @@ public enum SyntaxFactory {
     }
   }
   @available(*, deprecated, message: "Use initializer on MacroDeclSyntax")
-  public static func makeMacroDecl(_ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil, attributes: AttributeListSyntax?, _ unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? = nil, modifiers: ModifierListSyntax?, _ unexpectedBetweenModifiersAndMacroKeyword: UnexpectedNodesSyntax? = nil, macroKeyword: TokenSyntax, _ unexpectedBetweenMacroKeywordAndIdentifier: UnexpectedNodesSyntax? = nil, identifier: TokenSyntax, _ unexpectedBetweenIdentifierAndGenericParameterClause: UnexpectedNodesSyntax? = nil, genericParameterClause: GenericParameterClauseSyntax?, _ unexpectedBetweenGenericParameterClauseAndSignature: UnexpectedNodesSyntax? = nil, signature: Syntax, _ unexpectedBetweenSignatureAndEqual: UnexpectedNodesSyntax? = nil, equal: TokenSyntax, _ unexpectedBetweenEqualAndExternalName: UnexpectedNodesSyntax? = nil, externalName: ExternalMacroNameSyntax?, _ unexpectedBetweenExternalNameAndGenericWhereClause: UnexpectedNodesSyntax? = nil, genericWhereClause: GenericWhereClauseSyntax?, _ unexpectedAfterGenericWhereClause: UnexpectedNodesSyntax? = nil) -> MacroDeclSyntax {
+  public static func makeMacroDecl(_ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil, attributes: AttributeListSyntax?, _ unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? = nil, modifiers: ModifierListSyntax?, _ unexpectedBetweenModifiersAndMacroKeyword: UnexpectedNodesSyntax? = nil, macroKeyword: TokenSyntax, _ unexpectedBetweenMacroKeywordAndIdentifier: UnexpectedNodesSyntax? = nil, identifier: TokenSyntax, _ unexpectedBetweenIdentifierAndGenericParameterClause: UnexpectedNodesSyntax? = nil, genericParameterClause: GenericParameterClauseSyntax?, _ unexpectedBetweenGenericParameterClauseAndSignature: UnexpectedNodesSyntax? = nil, signature: Syntax, _ unexpectedBetweenSignatureAndDefinition: UnexpectedNodesSyntax? = nil, definition: InitializerClauseSyntax?, _ unexpectedBetweenDefinitionAndGenericWhereClause: UnexpectedNodesSyntax? = nil, genericWhereClause: GenericWhereClauseSyntax?, _ unexpectedAfterGenericWhereClause: UnexpectedNodesSyntax? = nil) -> MacroDeclSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeAttributes?.raw,
       attributes?.raw,
@@ -5204,11 +4804,9 @@ public enum SyntaxFactory {
       genericParameterClause?.raw,
       unexpectedBetweenGenericParameterClauseAndSignature?.raw,
       signature.raw,
-      unexpectedBetweenSignatureAndEqual?.raw,
-      equal.raw,
-      unexpectedBetweenEqualAndExternalName?.raw,
-      externalName?.raw,
-      unexpectedBetweenExternalNameAndGenericWhereClause?.raw,
+      unexpectedBetweenSignatureAndDefinition?.raw,
+      definition?.raw,
+      unexpectedBetweenDefinitionAndGenericWhereClause?.raw,
       genericWhereClause?.raw,
       unexpectedAfterGenericWhereClause?.raw,
     ]
@@ -5238,49 +4836,12 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.unknown, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.equal, arena: arena),
-        nil,
         nil,
         nil,
         nil,
         nil,
       ], arena: arena))
       return MacroDeclSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on ExternalMacroNameSyntax")
-  public static func makeExternalMacroName(_ unexpectedBeforeModuleName: UnexpectedNodesSyntax? = nil, moduleName: TokenSyntax, _ unexpectedBetweenModuleNameAndPeriod: UnexpectedNodesSyntax? = nil, period: TokenSyntax, _ unexpectedBetweenPeriodAndMacroTypeName: UnexpectedNodesSyntax? = nil, macroTypeName: TokenSyntax, _ unexpectedAfterMacroTypeName: UnexpectedNodesSyntax? = nil) -> ExternalMacroNameSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeModuleName?.raw,
-      moduleName.raw,
-      unexpectedBetweenModuleNameAndPeriod?.raw,
-      period.raw,
-      unexpectedBetweenPeriodAndMacroTypeName?.raw,
-      macroTypeName.raw,
-      unexpectedAfterMacroTypeName?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.externalMacroName,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return ExternalMacroNameSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on ExternalMacroNameSyntax")
-  public static func makeBlankExternalMacroName(presence: SourcePresence = .present) -> ExternalMacroNameSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .externalMacroName,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.period, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
-        nil,
-      ], arena: arena))
-      return ExternalMacroNameSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on MacroExpansionDeclSyntax")
@@ -9643,51 +9204,6 @@ public enum SyntaxFactory {
                      leadingTrivia: leadingTrivia,
                      trailingTrivia: trailingTrivia)
   }
-  @available(*, deprecated, message: "Use TokenSyntax.__file__KeywordKeyword instead")
-  public static func make__FILE__Keyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.__file__Keyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.__line__KeywordKeyword instead")
-  public static func make__LINE__Keyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.__line__Keyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.__column__KeywordKeyword instead")
-  public static func make__COLUMN__Keyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.__column__Keyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.__function__KeywordKeyword instead")
-  public static func make__FUNCTION__Keyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.__function__Keyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.__dso_handle__KeywordKeyword instead")
-  public static func make__DSO_HANDLE__Keyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.__dso_handle__Keyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
   @available(*, deprecated, message: "Use TokenSyntax.wildcardKeywordKeyword instead")
   public static func makeWildcardKeyword(
     leadingTrivia: Trivia = [],
@@ -9852,8 +9368,8 @@ public enum SyntaxFactory {
   }
   @available(*, deprecated, message: "Use TokenSyntax.prefixAmpersandToken instead")
   public static func makePrefixAmpersandToken(
-    leadingTrivia: Trivia = .space,
-    trailingTrivia: Trivia = .space
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = []
   ) -> TokenSyntax {
     return makeToken(.prefixAmpersand, presence: .present,
                      leadingTrivia: leadingTrivia,

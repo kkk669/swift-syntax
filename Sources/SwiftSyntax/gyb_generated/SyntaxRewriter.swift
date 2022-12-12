@@ -261,48 +261,6 @@ open class SyntaxRewriter {
     return Syntax(visitChildren(node)).cast(ExprListSyntax.self)
   }
 
-  /// Visit a `PoundLineExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: PoundLineExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `PoundFileExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: PoundFileExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `PoundFileIDExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: PoundFileIDExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `PoundFilePathExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: PoundFilePathExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `PoundFunctionExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: PoundFunctionExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `PoundDsohandleExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: PoundDsohandleExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
   /// Visit a `SymbolicReferenceExprSyntax`.
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
@@ -639,48 +597,6 @@ open class SyntaxRewriter {
     return Syntax(visitChildren(node)).cast(KeyPathOptionalComponentSyntax.self)
   }
 
-  /// Visit a `OldKeyPathExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: OldKeyPathExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `KeyPathBaseExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: KeyPathBaseExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `ObjcNamePieceSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: ObjcNamePieceSyntax) -> ObjcNamePieceSyntax {
-    return Syntax(visitChildren(node)).cast(ObjcNamePieceSyntax.self)
-  }
-
-  /// Visit a `ObjcNameSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: ObjcNameSyntax) -> ObjcNameSyntax {
-    return Syntax(visitChildren(node)).cast(ObjcNameSyntax.self)
-  }
-
-  /// Visit a `ObjcKeyPathExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: ObjcKeyPathExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `ObjcSelectorExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: ObjcSelectorExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
   /// Visit a `MacroExpansionExprSyntax`.
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
@@ -699,13 +615,6 @@ open class SyntaxRewriter {
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
   open func visit(_ node: EditorPlaceholderExprSyntax) -> ExprSyntax {
-    return ExprSyntax(visitChildren(node))
-  }
-
-  /// Visit a `ObjectLiteralExprSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: ObjectLiteralExprSyntax) -> ExprSyntax {
     return ExprSyntax(visitChildren(node))
   }
 
@@ -1155,13 +1064,6 @@ open class SyntaxRewriter {
   ///   - Returns: the rewritten node
   open func visit(_ node: MacroDeclSyntax) -> DeclSyntax {
     return DeclSyntax(visitChildren(node))
-  }
-
-  /// Visit a `ExternalMacroNameSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ node: ExternalMacroNameSyntax) -> ExternalMacroNameSyntax {
-    return Syntax(visitChildren(node)).cast(ExternalMacroNameSyntax.self)
   }
 
   /// Visit a `MacroExpansionDeclSyntax`.
@@ -2455,66 +2357,6 @@ open class SyntaxRewriter {
   }
 
   /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplPoundLineExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = PoundLineExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplPoundFileExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = PoundFileExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplPoundFileIDExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = PoundFileIDExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplPoundFilePathExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = PoundFilePathExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplPoundFunctionExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = PoundFunctionExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplPoundDsohandleExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = PoundDsohandleExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplSymbolicReferenceExprSyntax(_ data: SyntaxData) -> Syntax {
       let node = SymbolicReferenceExprSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
@@ -2995,66 +2837,6 @@ open class SyntaxRewriter {
   }
 
   /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplOldKeyPathExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = OldKeyPathExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplKeyPathBaseExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = KeyPathBaseExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplObjcNamePieceSyntax(_ data: SyntaxData) -> Syntax {
-      let node = ObjcNamePieceSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplObjcNameSyntax(_ data: SyntaxData) -> Syntax {
-      let node = ObjcNameSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplObjcKeyPathExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = ObjcKeyPathExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplObjcSelectorExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = ObjcSelectorExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplMacroExpansionExprSyntax(_ data: SyntaxData) -> Syntax {
       let node = MacroExpansionExprSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
@@ -3077,16 +2859,6 @@ open class SyntaxRewriter {
   /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplEditorPlaceholderExprSyntax(_ data: SyntaxData) -> Syntax {
       let node = EditorPlaceholderExprSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplObjectLiteralExprSyntax(_ data: SyntaxData) -> Syntax {
-      let node = ObjectLiteralExprSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
       visitPre(node._syntaxNode)
       defer { visitPost(node._syntaxNode) }
@@ -3727,16 +3499,6 @@ open class SyntaxRewriter {
   /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplMacroDeclSyntax(_ data: SyntaxData) -> Syntax {
       let node = MacroDeclSyntax(data)
-      // Accessing _syntaxNode directly is faster than calling Syntax(node)
-      visitPre(node._syntaxNode)
-      defer { visitPost(node._syntaxNode) }
-      if let newNode = visitAny(node._syntaxNode) { return newNode }
-      return Syntax(visit(node))
-  }
-
-  /// Implementation detail of visit(_:). Do not call directly.
-  private func visitImplExternalMacroNameSyntax(_ data: SyntaxData) -> Syntax {
-      let node = ExternalMacroNameSyntax(data)
       // Accessing _syntaxNode directly is faster than calling Syntax(node)
       visitPre(node._syntaxNode)
       defer { visitPost(node._syntaxNode) }
@@ -5034,18 +4796,6 @@ open class SyntaxRewriter {
       return visitImplSequenceExprSyntax
     case .exprList:
       return visitImplExprListSyntax
-    case .poundLineExpr:
-      return visitImplPoundLineExprSyntax
-    case .poundFileExpr:
-      return visitImplPoundFileExprSyntax
-    case .poundFileIDExpr:
-      return visitImplPoundFileIDExprSyntax
-    case .poundFilePathExpr:
-      return visitImplPoundFilePathExprSyntax
-    case .poundFunctionExpr:
-      return visitImplPoundFunctionExprSyntax
-    case .poundDsohandleExpr:
-      return visitImplPoundDsohandleExprSyntax
     case .symbolicReferenceExpr:
       return visitImplSymbolicReferenceExprSyntax
     case .prefixOperatorExpr:
@@ -5142,26 +4892,12 @@ open class SyntaxRewriter {
       return visitImplKeyPathSubscriptComponentSyntax
     case .keyPathOptionalComponent:
       return visitImplKeyPathOptionalComponentSyntax
-    case .oldKeyPathExpr:
-      return visitImplOldKeyPathExprSyntax
-    case .keyPathBaseExpr:
-      return visitImplKeyPathBaseExprSyntax
-    case .objcNamePiece:
-      return visitImplObjcNamePieceSyntax
-    case .objcName:
-      return visitImplObjcNameSyntax
-    case .objcKeyPathExpr:
-      return visitImplObjcKeyPathExprSyntax
-    case .objcSelectorExpr:
-      return visitImplObjcSelectorExprSyntax
     case .macroExpansionExpr:
       return visitImplMacroExpansionExprSyntax
     case .postfixIfConfigExpr:
       return visitImplPostfixIfConfigExprSyntax
     case .editorPlaceholderExpr:
       return visitImplEditorPlaceholderExprSyntax
-    case .objectLiteralExpr:
-      return visitImplObjectLiteralExprSyntax
     case .yieldExprList:
       return visitImplYieldExprListSyntax
     case .yieldExprListElement:
@@ -5290,8 +5026,6 @@ open class SyntaxRewriter {
       return visitImplPrecedenceGroupAssociativitySyntax
     case .macroDecl:
       return visitImplMacroDeclSyntax
-    case .externalMacroName:
-      return visitImplExternalMacroNameSyntax
     case .macroExpansionDecl:
       return visitImplMacroExpansionDeclSyntax
     case .tokenList:
@@ -5609,18 +5343,6 @@ open class SyntaxRewriter {
       return visitImplSequenceExprSyntax(data)
     case .exprList:
       return visitImplExprListSyntax(data)
-    case .poundLineExpr:
-      return visitImplPoundLineExprSyntax(data)
-    case .poundFileExpr:
-      return visitImplPoundFileExprSyntax(data)
-    case .poundFileIDExpr:
-      return visitImplPoundFileIDExprSyntax(data)
-    case .poundFilePathExpr:
-      return visitImplPoundFilePathExprSyntax(data)
-    case .poundFunctionExpr:
-      return visitImplPoundFunctionExprSyntax(data)
-    case .poundDsohandleExpr:
-      return visitImplPoundDsohandleExprSyntax(data)
     case .symbolicReferenceExpr:
       return visitImplSymbolicReferenceExprSyntax(data)
     case .prefixOperatorExpr:
@@ -5717,26 +5439,12 @@ open class SyntaxRewriter {
       return visitImplKeyPathSubscriptComponentSyntax(data)
     case .keyPathOptionalComponent:
       return visitImplKeyPathOptionalComponentSyntax(data)
-    case .oldKeyPathExpr:
-      return visitImplOldKeyPathExprSyntax(data)
-    case .keyPathBaseExpr:
-      return visitImplKeyPathBaseExprSyntax(data)
-    case .objcNamePiece:
-      return visitImplObjcNamePieceSyntax(data)
-    case .objcName:
-      return visitImplObjcNameSyntax(data)
-    case .objcKeyPathExpr:
-      return visitImplObjcKeyPathExprSyntax(data)
-    case .objcSelectorExpr:
-      return visitImplObjcSelectorExprSyntax(data)
     case .macroExpansionExpr:
       return visitImplMacroExpansionExprSyntax(data)
     case .postfixIfConfigExpr:
       return visitImplPostfixIfConfigExprSyntax(data)
     case .editorPlaceholderExpr:
       return visitImplEditorPlaceholderExprSyntax(data)
-    case .objectLiteralExpr:
-      return visitImplObjectLiteralExprSyntax(data)
     case .yieldExprList:
       return visitImplYieldExprListSyntax(data)
     case .yieldExprListElement:
@@ -5865,8 +5573,6 @@ open class SyntaxRewriter {
       return visitImplPrecedenceGroupAssociativitySyntax(data)
     case .macroDecl:
       return visitImplMacroDeclSyntax(data)
-    case .externalMacroName:
-      return visitImplExternalMacroNameSyntax(data)
     case .macroExpansionDecl:
       return visitImplMacroExpansionDeclSyntax(data)
     case .tokenList:
@@ -6183,7 +5889,7 @@ open class SyntaxRewriter {
       let newRaw = node.raw.layoutView!.replacingLayout(with: Array(newLayout), arena: arena)
       // 'withExtendedLifetime' to keep 'SyntaxArena's of them alive until here.
       return withExtendedLifetime((arena, rewrittens)) {
-        SyntaxType(Syntax(SyntaxData.forRoot(newRaw)))!
+        Syntax(raw: newRaw).cast(SyntaxType.self)
       }
     } else {
       // No child node was rewritten. So no need to change this node as well.

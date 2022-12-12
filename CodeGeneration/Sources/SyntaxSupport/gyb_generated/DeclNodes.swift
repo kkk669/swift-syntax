@@ -413,7 +413,7 @@ public let DECL_NODES: [Node] = [
        ]),
 
   Node(name: "InheritedType",
-       nameForDiagnostics: "type",
+       nameForDiagnostics: "inherited type",
        kind: "Syntax",
        traits: [
          "WithTrailingComma"
@@ -645,6 +645,7 @@ public let DECL_NODES: [Node] = [
        traits: [
          "Braced"
        ],
+       parserFunction: "parseMemberDeclList",
        children: [
          Child(name: "LeftBrace",
                kind: "LeftBraceToken",
@@ -693,6 +694,7 @@ public let DECL_NODES: [Node] = [
        traits: [
          "WithStatements"
        ],
+       parserFunction: "parseSourceFile",
        children: [
          Child(name: "Statements",
                kind: "CodeBlockItemList",
@@ -1541,38 +1543,12 @@ public let DECL_NODES: [Node] = [
                  Child(name: "ValueLike",
                        kind: "TypeAnnotation")
                ]),
-         Child(name: "Equal",
-               kind: "EqualToken",
-               tokenChoices: [
-                 "Equal"
-               ]),
-         Child(name: "ExternalName",
-               kind: "ExternalMacroName",
+         Child(name: "Definition",
+               kind: "InitializerClause",
                isOptional: true),
          Child(name: "GenericWhereClause",
                kind: "GenericWhereClause",
                isOptional: true)
-       ]),
-
-  Node(name: "ExternalMacroName",
-       nameForDiagnostics: "external macro name",
-       kind: "Syntax",
-       children: [
-         Child(name: "ModuleName",
-               kind: "IdentifierToken",
-               tokenChoices: [
-                 "Identifier"
-               ]),
-         Child(name: "Period",
-               kind: "PeriodToken",
-               tokenChoices: [
-                 "Period"
-               ]),
-         Child(name: "MacroTypeName",
-               kind: "IdentifierToken",
-               tokenChoices: [
-                 "Identifier"
-               ])
        ]),
 
   Node(name: "MacroExpansionDecl",

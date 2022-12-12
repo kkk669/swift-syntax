@@ -51,12 +51,6 @@ public enum SyntaxKind {
   case assignmentExpr
   case sequenceExpr
   case exprList
-  case poundLineExpr
-  case poundFileExpr
-  case poundFileIDExpr
-  case poundFilePathExpr
-  case poundFunctionExpr
-  case poundDsohandleExpr
   case symbolicReferenceExpr
   case prefixOperatorExpr
   case binaryOperatorExpr
@@ -105,16 +99,9 @@ public enum SyntaxKind {
   case keyPathPropertyComponent
   case keyPathSubscriptComponent
   case keyPathOptionalComponent
-  case oldKeyPathExpr
-  case keyPathBaseExpr
-  case objcNamePiece
-  case objcName
-  case objcKeyPathExpr
-  case objcSelectorExpr
   case macroExpansionExpr
   case postfixIfConfigExpr
   case editorPlaceholderExpr
-  case objectLiteralExpr
   case yieldExprList
   case yieldExprListElement
   case typeInitializerClause
@@ -179,7 +166,6 @@ public enum SyntaxKind {
   case precedenceGroupAssignment
   case precedenceGroupAssociativity
   case macroDecl
-  case externalMacroName
   case macroExpansionDecl
   case tokenList
   case nonEmptyTokenList
@@ -312,7 +298,6 @@ public enum SyntaxKind {
     case .closureParamList: return true
     case .multipleTrailingClosureElementList: return true
     case .keyPathComponentList: return true
-    case .objcName: return true
     case .yieldExprList: return true
     case .functionParameterList: return true
     case .ifConfigClauseList: return true

@@ -51,12 +51,6 @@ extension Syntax {
       .node(AssignmentExprSyntax.self),
       .node(SequenceExprSyntax.self),
       .node(ExprListSyntax.self),
-      .node(PoundLineExprSyntax.self),
-      .node(PoundFileExprSyntax.self),
-      .node(PoundFileIDExprSyntax.self),
-      .node(PoundFilePathExprSyntax.self),
-      .node(PoundFunctionExprSyntax.self),
-      .node(PoundDsohandleExprSyntax.self),
       .node(SymbolicReferenceExprSyntax.self),
       .node(PrefixOperatorExprSyntax.self),
       .node(BinaryOperatorExprSyntax.self),
@@ -105,16 +99,9 @@ extension Syntax {
       .node(KeyPathPropertyComponentSyntax.self),
       .node(KeyPathSubscriptComponentSyntax.self),
       .node(KeyPathOptionalComponentSyntax.self),
-      .node(OldKeyPathExprSyntax.self),
-      .node(KeyPathBaseExprSyntax.self),
-      .node(ObjcNamePieceSyntax.self),
-      .node(ObjcNameSyntax.self),
-      .node(ObjcKeyPathExprSyntax.self),
-      .node(ObjcSelectorExprSyntax.self),
       .node(MacroExpansionExprSyntax.self),
       .node(PostfixIfConfigExprSyntax.self),
       .node(EditorPlaceholderExprSyntax.self),
-      .node(ObjectLiteralExprSyntax.self),
       .node(YieldExprListSyntax.self),
       .node(YieldExprListElementSyntax.self),
       .node(TypeInitializerClauseSyntax.self),
@@ -179,7 +166,6 @@ extension Syntax {
       .node(PrecedenceGroupAssignmentSyntax.self),
       .node(PrecedenceGroupAssociativitySyntax.self),
       .node(MacroDeclSyntax.self),
-      .node(ExternalMacroNameSyntax.self),
       .node(MacroExpansionDeclSyntax.self),
       .node(TokenListSyntax.self),
       .node(NonEmptyTokenListSyntax.self),
@@ -340,12 +326,6 @@ extension SyntaxKind {
     case .assignmentExpr: return AssignmentExprSyntax.self
     case .sequenceExpr: return SequenceExprSyntax.self
     case .exprList: return ExprListSyntax.self
-    case .poundLineExpr: return PoundLineExprSyntax.self
-    case .poundFileExpr: return PoundFileExprSyntax.self
-    case .poundFileIDExpr: return PoundFileIDExprSyntax.self
-    case .poundFilePathExpr: return PoundFilePathExprSyntax.self
-    case .poundFunctionExpr: return PoundFunctionExprSyntax.self
-    case .poundDsohandleExpr: return PoundDsohandleExprSyntax.self
     case .symbolicReferenceExpr: return SymbolicReferenceExprSyntax.self
     case .prefixOperatorExpr: return PrefixOperatorExprSyntax.self
     case .binaryOperatorExpr: return BinaryOperatorExprSyntax.self
@@ -394,16 +374,9 @@ extension SyntaxKind {
     case .keyPathPropertyComponent: return KeyPathPropertyComponentSyntax.self
     case .keyPathSubscriptComponent: return KeyPathSubscriptComponentSyntax.self
     case .keyPathOptionalComponent: return KeyPathOptionalComponentSyntax.self
-    case .oldKeyPathExpr: return OldKeyPathExprSyntax.self
-    case .keyPathBaseExpr: return KeyPathBaseExprSyntax.self
-    case .objcNamePiece: return ObjcNamePieceSyntax.self
-    case .objcName: return ObjcNameSyntax.self
-    case .objcKeyPathExpr: return ObjcKeyPathExprSyntax.self
-    case .objcSelectorExpr: return ObjcSelectorExprSyntax.self
     case .macroExpansionExpr: return MacroExpansionExprSyntax.self
     case .postfixIfConfigExpr: return PostfixIfConfigExprSyntax.self
     case .editorPlaceholderExpr: return EditorPlaceholderExprSyntax.self
-    case .objectLiteralExpr: return ObjectLiteralExprSyntax.self
     case .yieldExprList: return YieldExprListSyntax.self
     case .yieldExprListElement: return YieldExprListElementSyntax.self
     case .typeInitializerClause: return TypeInitializerClauseSyntax.self
@@ -468,7 +441,6 @@ extension SyntaxKind {
     case .precedenceGroupAssignment: return PrecedenceGroupAssignmentSyntax.self
     case .precedenceGroupAssociativity: return PrecedenceGroupAssociativitySyntax.self
     case .macroDecl: return MacroDeclSyntax.self
-    case .externalMacroName: return ExternalMacroNameSyntax.self
     case .macroExpansionDecl: return MacroExpansionDeclSyntax.self
     case .tokenList: return TokenListSyntax.self
     case .nonEmptyTokenList: return NonEmptyTokenListSyntax.self
@@ -663,18 +635,6 @@ extension SyntaxKind {
       return nil
     case .exprList:
       return nil
-    case .poundLineExpr:
-      return nil
-    case .poundFileExpr:
-      return nil
-    case .poundFileIDExpr:
-      return nil
-    case .poundFilePathExpr:
-      return nil
-    case .poundFunctionExpr:
-      return nil
-    case .poundDsohandleExpr:
-      return nil
     case .symbolicReferenceExpr:
       return nil
     case .prefixOperatorExpr:
@@ -771,26 +731,12 @@ extension SyntaxKind {
       return "key path subscript component"
     case .keyPathOptionalComponent:
       return "key path optional component"
-    case .oldKeyPathExpr:
-      return "key path"
-    case .keyPathBaseExpr:
-      return nil
-    case .objcNamePiece:
-      return nil
-    case .objcName:
-      return nil
-    case .objcKeyPathExpr:
-      return "'#keyPath' expression"
-    case .objcSelectorExpr:
-      return "'#selector' expression"
     case .macroExpansionExpr:
       return "pound literal expression"
     case .postfixIfConfigExpr:
       return nil
     case .editorPlaceholderExpr:
       return "editor placeholder"
-    case .objectLiteralExpr:
-      return "object literal"
     case .yieldExprList:
       return "yield list"
     case .yieldExprListElement:
@@ -828,7 +774,7 @@ extension SyntaxKind {
     case .declModifier:
       return "modifier"
     case .inheritedType:
-      return "type"
+      return "inherited type"
     case .inheritedTypeList:
       return nil
     case .typeInheritanceClause:
@@ -919,8 +865,6 @@ extension SyntaxKind {
       return "'associativity' property of precedencegroup"
     case .macroDecl:
       return "macro"
-    case .externalMacroName:
-      return "external macro name"
     case .macroExpansionDecl:
       return "pound literal declaration"
     case .tokenList:

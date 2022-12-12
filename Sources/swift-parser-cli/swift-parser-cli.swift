@@ -138,6 +138,8 @@ class VerifyRoundTrip: ParsableCommand {
   ) throws {
     let tree = Parser.parse(source: source)
 
+    _ = ParseDiagnosticsGenerator.diagnostics(for: tree)
+
     let resultTree: Syntax
     if foldSequences {
       resultTree = foldAllSequences(tree).0

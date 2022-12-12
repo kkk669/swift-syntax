@@ -681,11 +681,6 @@ enum ParameterModifier: RawTokenKindSubset {
 }
 
 enum PrimaryExpressionStart: RawTokenKindSubset {
-  case __column__Keyword
-  case __dso_handle__Keyword
-  case __file__Keyword
-  case __function__Keyword
-  case __line__Keyword
   case anyKeyword
   case capitalSelfKeyword
   case dollarIdentifier
@@ -700,8 +695,6 @@ enum PrimaryExpressionStart: RawTokenKindSubset {
   case nilKeyword
   case period
   case pound
-  case poundKeyPathKeyword
-  case poundSelectorKeyword
   case prefixPeriod
   case regexLiteral
   case selfKeyword
@@ -712,11 +705,6 @@ enum PrimaryExpressionStart: RawTokenKindSubset {
 
   init?(lexeme: Lexer.Lexeme) {
     switch lexeme.tokenKind {
-    case .__column__Keyword: self = .__column__Keyword
-    case .__dso_handle__Keyword: self = .__dso_handle__Keyword
-    case .__file__Keyword: self = .__file__Keyword
-    case .__function__Keyword: self = .__function__Keyword
-    case .__line__Keyword: self = .__line__Keyword
     case .anyKeyword: self = .anyKeyword
     case .capitalSelfKeyword: self = .capitalSelfKeyword
     case .dollarIdentifier: self = .dollarIdentifier
@@ -731,8 +719,6 @@ enum PrimaryExpressionStart: RawTokenKindSubset {
     case .nilKeyword: self = .nilKeyword
     case .period: self = .period
     case .pound: self = .pound
-    case .poundKeyPathKeyword: self = .poundKeyPathKeyword
-    case .poundSelectorKeyword: self = .poundSelectorKeyword
     case .prefixPeriod: self = .prefixPeriod
     case .regexLiteral: self = .regexLiteral
     case .selfKeyword: self = .selfKeyword
@@ -746,11 +732,6 @@ enum PrimaryExpressionStart: RawTokenKindSubset {
 
   var rawTokenKind: SwiftSyntax.RawTokenKind {
     switch self {
-    case .__column__Keyword: return .__column__Keyword
-    case .__dso_handle__Keyword: return .__dso_handle__Keyword
-    case .__file__Keyword: return .__file__Keyword
-    case .__function__Keyword: return .__function__Keyword
-    case .__line__Keyword: return .__line__Keyword
     case .anyKeyword: return .anyKeyword
     case .capitalSelfKeyword: return .capitalSelfKeyword
     case .dollarIdentifier: return .dollarIdentifier
@@ -765,8 +746,6 @@ enum PrimaryExpressionStart: RawTokenKindSubset {
     case .nilKeyword: return .nilKeyword
     case .period: return .period
     case .pound: return .pound
-    case .poundKeyPathKeyword: return .poundKeyPathKeyword
-    case .poundSelectorKeyword: return .poundSelectorKeyword
     case .prefixPeriod: return .prefixPeriod
     case .regexLiteral: return .regexLiteral
     case .selfKeyword: return .selfKeyword

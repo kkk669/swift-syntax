@@ -213,8 +213,6 @@ public typealias ExpressionStmt = ExpressionStmtSyntax
 
 public typealias ExtensionDecl = ExtensionDeclSyntax
 
-public typealias ExternalMacroName = ExternalMacroNameSyntax
-
 public typealias FallthroughStmt = FallthroughStmtSyntax
 
 public typealias FloatLiteralExpr = FloatLiteralExprSyntax
@@ -295,8 +293,6 @@ public typealias IsExpr = IsExprSyntax
 
 public typealias IsTypePattern = IsTypePatternSyntax
 
-public typealias KeyPathBaseExpr = KeyPathBaseExprSyntax
-
 public typealias KeyPathComponentList = KeyPathComponentListSyntax
 
 public typealias KeyPathComponent = KeyPathComponentSyntax
@@ -355,18 +351,6 @@ public typealias ObjCSelectorPiece = ObjCSelectorPieceSyntax
 
 public typealias ObjCSelector = ObjCSelectorSyntax
 
-public typealias ObjcKeyPathExpr = ObjcKeyPathExprSyntax
-
-public typealias ObjcNamePiece = ObjcNamePieceSyntax
-
-public typealias ObjcName = ObjcNameSyntax
-
-public typealias ObjcSelectorExpr = ObjcSelectorExprSyntax
-
-public typealias ObjectLiteralExpr = ObjectLiteralExprSyntax
-
-public typealias OldKeyPathExpr = OldKeyPathExprSyntax
-
 public typealias OpaqueReturnTypeOfAttributeArguments = OpaqueReturnTypeOfAttributeArgumentsSyntax
 
 public typealias OperatorDecl = OperatorDeclSyntax
@@ -399,19 +383,7 @@ public typealias PoundAssertStmt = PoundAssertStmtSyntax
 
 public typealias PoundColumnExpr = PoundColumnExprSyntax
 
-public typealias PoundDsohandleExpr = PoundDsohandleExprSyntax
-
 public typealias PoundErrorDecl = PoundErrorDeclSyntax
-
-public typealias PoundFileExpr = PoundFileExprSyntax
-
-public typealias PoundFileIDExpr = PoundFileIDExprSyntax
-
-public typealias PoundFilePathExpr = PoundFilePathExprSyntax
-
-public typealias PoundFunctionExpr = PoundFunctionExprSyntax
-
-public typealias PoundLineExpr = PoundLineExprSyntax
 
 public typealias PoundSourceLocationArgs = PoundSourceLocationArgsSyntax
 

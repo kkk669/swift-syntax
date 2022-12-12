@@ -1321,17 +1321,29 @@ final class DeclarationTests: XCTestCase {
       macro m2(_: Int) = A.M2
       macro m3(a b: Int) -> Int = A.M3
       macro m4<T>: T = A.M4 where T.Assoc: P
-      macro m4<T: P>(_: T) = A.M4
+      macro m5<T: P>(_: T)
       """)
 
     AssertParse("""
-      macro m1 1️⃣= A2️⃣
+      macro m1 1️⃣= A
       """,
       diagnostics: [
         DiagnosticSpec(locationMarker: "1️⃣", message: "expected parameter clause in function signature"),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected '.' and macro type name in external macro name"),
       ]
     )
+  }
+
+  func testPrimaryAssociatedTypeNotTerminatedWithAngleBracket() {
+    AssertParse(
+      "protocol1️⃣<2️⃣:3️⃣",
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected identifier in protocol"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected name in primary associated type clause"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected '>' to end primary associated type clause"),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected type in inherited type"),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected member block in protocol"),
+      ]
+  )
   }
 }
 

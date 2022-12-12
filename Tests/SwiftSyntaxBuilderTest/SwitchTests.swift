@@ -18,7 +18,7 @@ final class SwitchTests: XCTestCase {
   func testSwitch() {
     let syntax = SwitchStmt(expression: Expr("count")) {
       for num in 1..<3 {
-        SwitchCase("case \(num):") {
+        SwitchCase("case \(raw: num):") {
           Expr("print(count)")
         }
       }
