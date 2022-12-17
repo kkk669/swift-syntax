@@ -365,7 +365,11 @@ public typealias OptionalPattern = OptionalPatternSyntax
 
 public typealias OptionalType = OptionalTypeSyntax
 
+public typealias PackElementExpr = PackElementExprSyntax
+
 public typealias PackExpansionType = PackExpansionTypeSyntax
+
+public typealias PackReferenceType = PackReferenceTypeSyntax
 
 public typealias ParameterClause = ParameterClauseSyntax
 

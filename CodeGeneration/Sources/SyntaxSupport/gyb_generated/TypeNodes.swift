@@ -216,6 +216,19 @@ public let TYPE_NODES: [Node] = [
                ])
        ]),
   
+  Node(name: "PackReferenceType",
+       nameForDiagnostics: "pack reference",
+       kind: "Type",
+       children: [
+         Child(name: "EachKeyword",
+               kind: "ContextualKeyworkToken",
+               textChoices: [
+                 "each"
+               ]),
+         Child(name: "PackType",
+               kind: "Type")
+       ]),
+  
   Node(name: "TupleTypeElement",
        nameForDiagnostics: nil,
        kind: "Syntax",
@@ -287,7 +300,8 @@ public let TYPE_NODES: [Node] = [
                ]),
          Child(name: "Elements",
                kind: "TupleTypeElementList",
-               collectionElementName: "Element"),
+               collectionElementName: "Element",
+               isIndented: true),
          Child(name: "RightParen",
                kind: "RightParenToken",
                tokenChoices: [
@@ -309,7 +323,8 @@ public let TYPE_NODES: [Node] = [
                ]),
          Child(name: "Arguments",
                kind: "TupleTypeElementList",
-               collectionElementName: "Argument"),
+               collectionElementName: "Argument",
+               isIndented: true),
          Child(name: "RightParen",
                kind: "RightParenToken",
                tokenChoices: [

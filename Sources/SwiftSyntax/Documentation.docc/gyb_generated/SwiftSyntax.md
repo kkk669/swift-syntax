@@ -42,8 +42,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/SyntaxVisitor>
 - <doc:SwiftSyntax/SyntaxAnyVisitor>
 - <doc:SwiftSyntax/SyntaxRewriter>
-- <doc:SwiftSyntax/SyntaxVerifier>
-- <doc:SwiftSyntax/SyntaxVerifierError>
 - <doc:SwiftSyntax/SyntaxTreeViewMode>
 - <doc:SwiftSyntax/SyntaxVisitorContinueKind>
 - <doc:SwiftSyntax/ReversedTokenSequence>
@@ -52,7 +50,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 
 - <doc:SwiftSyntax/DeclSyntax>
 - <doc:SwiftSyntax/DeclSyntaxProtocol>
-- <doc:SwiftSyntax/UnknownDeclSyntax>
 - <doc:SwiftSyntax/TypealiasDeclSyntax>
 - <doc:SwiftSyntax/AssociatedtypeDeclSyntax>
 - <doc:SwiftSyntax/IfConfigDeclSyntax>
@@ -82,7 +79,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 
 - <doc:SwiftSyntax/StmtSyntax>
 - <doc:SwiftSyntax/StmtSyntaxProtocol>
-- <doc:SwiftSyntax/UnknownStmtSyntax>
 - <doc:SwiftSyntax/LabeledStmtSyntax>
 - <doc:SwiftSyntax/ContinueStmtSyntax>
 - <doc:SwiftSyntax/WhileStmtSyntax>
@@ -106,7 +102,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 
 - <doc:SwiftSyntax/ExprSyntax>
 - <doc:SwiftSyntax/ExprSyntaxProtocol>
-- <doc:SwiftSyntax/UnknownExprSyntax>
 - <doc:SwiftSyntax/InOutExprSyntax>
 - <doc:SwiftSyntax/PoundColumnExprSyntax>
 - <doc:SwiftSyntax/TryExprSyntax>
@@ -117,6 +112,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/NilLiteralExprSyntax>
 - <doc:SwiftSyntax/DiscardAssignmentExprSyntax>
 - <doc:SwiftSyntax/AssignmentExprSyntax>
+- <doc:SwiftSyntax/PackElementExprSyntax>
 - <doc:SwiftSyntax/SequenceExprSyntax>
 - <doc:SwiftSyntax/SymbolicReferenceExprSyntax>
 - <doc:SwiftSyntax/PrefixOperatorExprSyntax>
@@ -156,7 +152,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 
 - <doc:SwiftSyntax/TypeSyntax>
 - <doc:SwiftSyntax/TypeSyntaxProtocol>
-- <doc:SwiftSyntax/UnknownTypeSyntax>
 - <doc:SwiftSyntax/SimpleTypeIdentifierSyntax>
 - <doc:SwiftSyntax/MemberTypeIdentifierSyntax>
 - <doc:SwiftSyntax/ClassRestrictionTypeSyntax>
@@ -168,6 +163,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/ImplicitlyUnwrappedOptionalTypeSyntax>
 - <doc:SwiftSyntax/CompositionTypeSyntax>
 - <doc:SwiftSyntax/PackExpansionTypeSyntax>
+- <doc:SwiftSyntax/PackReferenceTypeSyntax>
 - <doc:SwiftSyntax/TupleTypeSyntax>
 - <doc:SwiftSyntax/FunctionTypeSyntax>
 - <doc:SwiftSyntax/AttributedTypeSyntax>
@@ -177,7 +173,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 
 - <doc:SwiftSyntax/PatternSyntax>
 - <doc:SwiftSyntax/PatternSyntaxProtocol>
-- <doc:SwiftSyntax/UnknownPatternSyntax>
 - <doc:SwiftSyntax/EnumCasePatternSyntax>
 - <doc:SwiftSyntax/IsTypePatternSyntax>
 - <doc:SwiftSyntax/OptionalPatternSyntax>
@@ -424,7 +419,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/MissingStmtSyntax>
 - <doc:SwiftSyntax/MissingTypeSyntax>
 - <doc:SwiftSyntax/MissingPatternSyntax>
-- <doc:SwiftSyntax/UnknownSyntax>
 
 ### Traits
 

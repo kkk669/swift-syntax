@@ -10,7 +10,6 @@
 //
 //===----------------------------------------------------------------------===//
 
-
 import SwiftSyntax
 import SwiftSyntaxParser
 import Foundation
@@ -25,7 +24,8 @@ func printerr(_ message: String, terminator: String = "\n") {
 
 /// Print the help message
 func printHelp() {
-  print("""
+  print(
+    """
     Utility to test SwiftSyntax syntax tree creation.
 
     Actions (must specify one):
@@ -80,19 +80,25 @@ func printHelp() {
       -enable-bare-slash-regex [0|1]
             Enable or disable the use of forward slash regular-expression
             literal syntax
-    """)
+    """
+  )
 }
 
 extension CommandLineArguments {
   func getIncrementalEdits() throws -> [IncrementalEdit] {
     let regex = try NSRegularExpression(
-      pattern: "([0-9]+):([0-9]+)-([0-9]+):([0-9]+)=(.*)")
+      pattern: "([0-9]+):([0-9]+)-([0-9]+):([0-9]+)=(.*)"
+    )
     var parsedEdits = [IncrementalEdit]()
     let editArgs = try self.getValues("-incremental-edit")
     for edit in editArgs {
-      guard let match =
-          regex.firstMatch(in: edit,
-                           range: NSRange(edit.startIndex..., in: edit)) else {
+      guard
+        let match =
+          regex.firstMatch(
+            in: edit,
+            range: NSRange(edit.startIndex..., in: edit)
+          )
+      else {
         throw CommandLineArguments.InvalidArgumentValueError(
           argName: "-incremental-edit",
           value: edit
@@ -100,23 +106,30 @@ extension CommandLineArguments {
       }
       let region = getSourceRegion(match, text: edit)
       let replacement = match.match(at: 5, text: edit)
-      parsedEdits.append(IncrementalEdit(
-        region: region,
-        replacement: replacement
-      ))
+      parsedEdits.append(
+        IncrementalEdit(
+          region: region,
+          replacement: replacement
+        )
+      )
     }
     return parsedEdits
   }
 
   func getReparseRegions() throws -> [SourceRegion] {
     let regex = try NSRegularExpression(
-      pattern: "([0-9]+):([0-9]+)-([0-9]+):([0-9]+)")
+      pattern: "([0-9]+):([0-9]+)-([0-9]+):([0-9]+)"
+    )
     var reparseRegions = [SourceRegion]()
     let regionArgs = try self.getValues("-reparse-region")
     for regionStr in regionArgs {
-      guard let match =
-          regex.firstMatch(in: regionStr,
-              range: NSRange(regionStr.startIndex..., in: regionStr)) else {
+      guard
+        let match =
+          regex.firstMatch(
+            in: regionStr,
+            range: NSRange(regionStr.startIndex..., in: regionStr)
+          )
+      else {
         throw CommandLineArguments.InvalidArgumentValueError(
           argName: "-reparse-region",
           value: regionStr
@@ -128,8 +141,10 @@ extension CommandLineArguments {
     return reparseRegions
   }
 
-  private func getSourceRegion(_ match: NSTextCheckingResult,
-                               text: String) -> SourceRegion {
+  private func getSourceRegion(
+    _ match: NSTextCheckingResult,
+    text: String
+  ) -> SourceRegion {
     let matchAsInt = { (i: Int) -> Int in
       return Int(match.match(at: i, text: text))!
     }
@@ -166,17 +181,27 @@ struct ByteSourceRangeSet {
     var result = ByteSourceRangeSet()
     var currentOffset = 0
     for range in ranges {
-      assert(currentOffset <= range.offset,
-             "Ranges must be sorted in ascending order and not be overlapping")
+      assert(
+        currentOffset <= range.offset,
+        "Ranges must be sorted in ascending order and not be overlapping"
+      )
       if currentOffset < range.offset {
-        result.addRange(ByteSourceRange(offset: currentOffset,
-                                        length: range.offset-currentOffset))
+        result.addRange(
+          ByteSourceRange(
+            offset: currentOffset,
+            length: range.offset - currentOffset
+          )
+        )
       }
       currentOffset = range.endOffset
     }
     if currentOffset < totalLength {
-      result.addRange(ByteSourceRange(offset: currentOffset,
-                                      length: totalLength-currentOffset))
+      result.addRange(
+        ByteSourceRange(
+          offset: currentOffset,
+          length: totalLength - currentOffset
+        )
+      )
     }
 
     return result
@@ -216,13 +241,14 @@ func getSwiftLanguageVersionInfo(args: CommandLineArguments) -> (languageVersion
 }
 
 /// Rewrites a parsed tree with all constructed nodes.
-class TreeReconstructor : SyntaxRewriter {
+class TreeReconstructor: SyntaxRewriter {
   override func visit(_ token: TokenSyntax) -> TokenSyntax {
     let token = TokenSyntax(
       token.tokenKind,
       leadingTrivia: token.leadingTrivia,
       trailingTrivia: token.trailingTrivia,
-      presence: token.presence)
+      presence: token.presence
+    )
     return token
   }
 }
@@ -257,7 +283,7 @@ func getLineTable(_ text: String) -> [Int] {
     var idx = 0
     while p[idx] != 0 {
       if p[idx] == Int8(UnicodeScalar("\n").value) {
-        lineOffsets.append(idx+1)
+        lineOffsets.append(idx + 1)
       }
       idx += 1
     }
@@ -265,23 +291,26 @@ func getLineTable(_ text: String) -> [Int] {
   }
 }
 
-func getByteRange(_ region: SourceRegion, lineTable: [Int],
-                  argName: String) throws -> ByteSourceRange {
-  if region.startLine-1 >= lineTable.count {
-      throw CommandLineArguments.InvalidArgumentValueError(
-        argName: argName,
-        value: "startLine: \(region.startLine)"
-      )
+func getByteRange(
+  _ region: SourceRegion,
+  lineTable: [Int],
+  argName: String
+) throws -> ByteSourceRange {
+  if region.startLine - 1 >= lineTable.count {
+    throw CommandLineArguments.InvalidArgumentValueError(
+      argName: argName,
+      value: "startLine: \(region.startLine)"
+    )
   }
-  if region.endLine-1 >= lineTable.count {
-      throw CommandLineArguments.InvalidArgumentValueError(
-        argName: argName,
-        value: "endLine: \(region.endLine)"
-      )
+  if region.endLine - 1 >= lineTable.count {
+    throw CommandLineArguments.InvalidArgumentValueError(
+      argName: argName,
+      value: "endLine: \(region.endLine)"
+    )
   }
-  let startOffset = lineTable[region.startLine-1] + region.startColumn-1
-  let endOffset = lineTable[region.endLine-1] + region.endColumn-1
-  let length = endOffset-startOffset
+  let startOffset = lineTable[region.startLine - 1] + region.startColumn - 1
+  let endOffset = lineTable[region.endLine - 1] + region.endColumn - 1
+  let length = endOffset - startOffset
   return ByteSourceRange(offset: startOffset, length: length)
 }
 
@@ -295,8 +324,11 @@ func parseIncrementalEditArguments(
   let text = try String(contentsOf: preEditURL)
   let lineTable = getLineTable(text)
   for argEdit in argEdits {
-    let range = try getByteRange(argEdit.region, lineTable: lineTable,
-                                 argName: "-incremental-edit")
+    let range = try getByteRange(
+      argEdit.region,
+      lineTable: lineTable,
+      argName: "-incremental-edit"
+    )
     let replacementLength = argEdit.replacement.utf8.count
     edits.append(SourceEdit(range: range, replacementLength: replacementLength))
   }
@@ -333,7 +365,8 @@ func performParseIncremental(args: CommandLineArguments) throws {
 
   let regions = regionCollector.rangeAndNodes.map { $0.0 }
   if let reuseLogURL =
-    args["-incremental-reuse-log"].map(URL.init(fileURLWithPath:)) {
+    args["-incremental-reuse-log"].map(URL.init(fileURLWithPath:))
+  {
     var log = ""
     for region in regions {
       log += "Reused \(region.offset) to \(region.endOffset)\n"
@@ -342,9 +375,11 @@ func performParseIncremental(args: CommandLineArguments) throws {
   }
 
   if !expectedReparseRegions.isEmpty {
-    try verifyReusedRegions(expectedReparseRegions: expectedReparseRegions,
+    try verifyReusedRegions(
+      expectedReparseRegions: expectedReparseRegions,
       reusedRegions: regions,
-      source: postEditText)
+      source: postEditText
+    )
   }
 }
 
@@ -361,12 +396,12 @@ enum TestingError: Error, CustomStringConvertible {
         + " length:\(range.length))"
     case .classificationVerificationFailed(let parsed, let constructed):
       return """
-      parsed vs constructed tree resulted in different classification output
-      --- PARSED:
-      \(parsed)
-      --- CONSTRUCTED:
-      \(constructed)
-      """
+        parsed vs constructed tree resulted in different classification output
+        --- PARSED:
+        \(parsed)
+        --- CONSTRUCTED:
+        \(constructed)
+        """
     case .readingSourceFileFailed(let url):
       return "Reading the source file at \(url) failed"
     case .roundTripFailed:
@@ -375,9 +410,11 @@ enum TestingError: Error, CustomStringConvertible {
   }
 }
 
-func verifyReusedRegions(expectedReparseRegions: [SourceRegion],
-      reusedRegions: [ByteSourceRange],
-      source text: String) throws {
+func verifyReusedRegions(
+  expectedReparseRegions: [SourceRegion],
+  reusedRegions: [ByteSourceRange],
+  source text: String
+) throws {
   let fileLength = text.utf8.count
 
   // Compute the repared regions by inverting the reused regions
@@ -398,7 +435,7 @@ func verifyReusedRegions(expectedReparseRegions: [SourceRegion],
   // Intersect the reparsed regions with the expected reuse regions to get
   // regions that should not have been reparsed
   let unexpectedReparseRegions =
-      reparsedRegions.intersected(expectedReuseRegions)
+    reparsedRegions.intersected(expectedReuseRegions)
 
   for reparseRange in unexpectedReparseRegions.ranges {
     // To improve the ergonomics when writing tests we do not want to complain
@@ -408,8 +445,10 @@ func verifyReusedRegions(expectedReparseRegions: [SourceRegion],
     let end = utf8.index(begin, offsetBy: reparseRange.length)
     let rangeStr = String(utf8[begin..<end])!
     let whitespaceOnlyRegex = try NSRegularExpression(pattern: "^[ \t\r\n]*$")
-    let match = whitespaceOnlyRegex.firstMatch(in: rangeStr,
-                          range: NSRange(rangeStr.startIndex..., in: rangeStr))
+    let match = whitespaceOnlyRegex.firstMatch(
+      in: rangeStr,
+      range: NSRange(rangeStr.startIndex..., in: rangeStr)
+    )
     if match != nil {
       continue
     }
@@ -436,7 +475,7 @@ func performVerifyRoundtrip(args: CommandLineArguments) throws {
     throw TestingError.readingSourceFileFailed(sourceURL)
   }
   let versionInfo = getSwiftLanguageVersionInfo(args: args)
-  
+
   let tree = try SyntaxParser.parse(source: source, languageVersion: versionInfo.languageVersion, enableBareSlashRegexLiteral: versionInfo.enableBareSlashRegexLiteral)
   if tree.description != source {
     throw TestingError.roundTripFailed
@@ -449,7 +488,6 @@ class NodePrinter: SyntaxAnyVisitor {
   }
 
   override func visitAny(_ node: Syntax) -> SyntaxVisitorContinueKind {
-    assert(!node.isUnknown)
     print("<\(type(of: node.asProtocol(SyntaxProtocol.self)))>", terminator: "")
     return .visitChildren
   }
@@ -458,7 +496,7 @@ class NodePrinter: SyntaxAnyVisitor {
   }
   override func visit(_ token: TokenSyntax) -> SyntaxVisitorContinueKind {
     print("<\(type(of: token))>", terminator: "")
-    print(token, terminator:"")
+    print(token, terminator: "")
     return .visitChildren
   }
 }
@@ -475,7 +513,7 @@ func printParserDiags(args: CommandLineArguments) throws {
   let treeURL = URL(fileURLWithPath: try args.getRequired("-source-file"))
   let versionInfo = getSwiftLanguageVersionInfo(args: args)
 
-  var diagCounter : (error: Int, warning: Int, note: Int) = (0, 0, 0)
+  var diagCounter: (error: Int, warning: Int, note: Int) = (0, 0, 0)
 
   func handleDiagnostic(diagnostic: Diagnostic) {
     switch diagnostic.message.severity {
@@ -524,32 +562,12 @@ func diagnose(args: CommandLineArguments) throws {
   let treeURL = URL(fileURLWithPath: try args.getRequired("-source-file"))
   let versionInfo = getSwiftLanguageVersionInfo(args: args)
 
-  let tree = try SyntaxParser.parse(treeURL, languageVersion: versionInfo.languageVersion, enableBareSlashRegexLiteral: versionInfo.enableBareSlashRegexLiteral, diagnosticHandler: printDiagnostic)
-
-  class DiagnoseUnknown: SyntaxAnyVisitor {
-    let diagnosticHandler: ((Diagnostic) -> Void)
-    let converter: SourceLocationConverter
-    init(diagnosticHandler: @escaping ((Diagnostic) -> Void), _ converter: SourceLocationConverter) {
-      self.diagnosticHandler = diagnosticHandler
-      self.converter = converter
-      super.init(viewMode: .all)
-    }
-    override func visitAny(_ node: Syntax) -> SyntaxVisitorContinueKind {
-      if node.isUnknown {
-        diagnosticHandler(Diagnostic(
-          message: Diagnostic.Message(.warning, "unknown syntax exists"),
-          location: node.startLocation(converter: converter, afterLeadingTrivia: true),
-          actions: nil
-        ))
-      }
-      return .visitChildren
-    }
-  }
-  let visitor = DiagnoseUnknown(
-    diagnosticHandler: printDiagnostic,
-    SourceLocationConverter(file: treeURL.path, tree: tree)
+  _ = try SyntaxParser.parse(
+    treeURL,
+    languageVersion: versionInfo.languageVersion,
+    enableBareSlashRegexLiteral: versionInfo.enableBareSlashRegexLiteral,
+    diagnosticHandler: printDiagnostic
   )
-  visitor.walk(tree)
 }
 
 do {
@@ -572,10 +590,12 @@ do {
   } else if args.has("-help") {
     printHelp()
   } else {
-    printerr("""
+    printerr(
+      """
       No action specified.
       See -help for information about available actions
-      """)
+      """
+    )
     exit(1)
   }
   exit(0)

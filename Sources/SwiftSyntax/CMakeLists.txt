@@ -21,7 +21,6 @@ add_swift_host_library(SwiftSyntax
   SyntaxOtherNodes.swift
   SyntaxText.swift
   SyntaxTreeViewMode.swift
-  SyntaxVerifier.swift
   Utils.swift
 
   Raw/RawSyntax.swift
@@ -32,13 +31,13 @@ add_swift_host_library(SwiftSyntax
   Raw/gyb_generated/RawSyntaxNodes.swift
   Raw/gyb_generated/RawSyntaxValidation.swift
 
-  gyb_generated/Misc.swift
-  gyb_generated/SyntaxAnyVisitor.swift
-  gyb_generated/SyntaxBaseNodes.swift
+  generated/Misc.swift
+  generated/SyntaxAnyVisitor.swift
+  generated/SyntaxBaseNodes.swift
   gyb_generated/SyntaxCollections.swift
-  gyb_generated/SyntaxEnum.swift
+  generated/SyntaxEnum.swift
   gyb_generated/SyntaxFactory.swift
-  gyb_generated/SyntaxKind.swift
+  generated/SyntaxKind.swift
   gyb_generated/SyntaxRewriter.swift
   gyb_generated/SyntaxTraits.swift
   gyb_generated/SyntaxTransform.swift
