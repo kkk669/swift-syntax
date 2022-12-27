@@ -21,7 +21,7 @@ extension DeclarationModifier {
       .nonmutating, .optional, .override, .postfix, .prefix, .reasync,
       .required, .rethrows, .staticKeyword, .weak:
       return false
-    case .fileprivateKeyword, .internalKeyword, .open, .privateKeyword,
+    case .fileprivateKeyword, .internalKeyword, .package, .open, .privateKeyword,
       .publicKeyword, .unowned:
       return true
     }
@@ -795,7 +795,7 @@ extension Parser {
       var keepGoing: RawTokenSyntax? = nil
       var loopProgress = LoopProgressCondition()
       repeat {
-        let unexpectedPeriod = self.consume(ifAny: [.period, .prefixPeriod])
+        let unexpectedPeriod = self.consume(if: .period)
         let (unexpectedBeforeName, name) = self.expectIdentifier(allowIdentifierLikeKeywords: false, keywordRecovery: true)
 
         let associatedValue: RawParameterClauseSyntax?
