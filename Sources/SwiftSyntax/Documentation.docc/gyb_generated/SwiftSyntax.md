@@ -16,8 +16,13 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 
 ### Articles
 
+- <doc:Working-with-SwiftSyntax>
 - <doc:ChangingSwiftSyntax>
 - <doc:Create-SwiftSyntax-Release>
+
+### Tutorials
+
+- <doc:Tutorial-Table-of-Contents>
 
 ### Syntax
 
@@ -107,6 +112,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/TryExprSyntax>
 - <doc:SwiftSyntax/AwaitExprSyntax>
 - <doc:SwiftSyntax/MoveExprSyntax>
+- <doc:SwiftSyntax/BorrowExprSyntax>
 - <doc:SwiftSyntax/IdentifierExprSyntax>
 - <doc:SwiftSyntax/SuperRefExprSyntax>
 - <doc:SwiftSyntax/NilLiteralExprSyntax>
@@ -439,12 +445,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/SourceRange>
 - <doc:SwiftSyntax/SourceLength>
 
-### Classifying Syntax
-
-- <doc:SwiftSyntax/SyntaxClassification>
-- <doc:SwiftSyntax/SyntaxClassifications>
-- <doc:SwiftSyntax/SyntaxClassifiedRange>
-
 ### Incremental Parsing
 
 - <doc:SwiftSyntax/IncrementalParseLookup>
@@ -463,4 +463,3 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/SyntaxHashable>
 - <doc:SwiftSyntax/SyntaxIdentifier>
 - <doc:SwiftSyntax/RawTokenKind>
-- <doc:SwiftSyntax/SyntaxNode>
