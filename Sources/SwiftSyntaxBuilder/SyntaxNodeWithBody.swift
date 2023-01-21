@@ -12,43 +12,48 @@
 
 import SwiftSyntax
 
-// MARK: - HasCodeBlock
+// MARK: - PartialSyntaxNode
 
-// TODO: Consider removing `HasTrailingCodeBlock` and friends
-// It'd be much nicer if we didn't have any builder APIs taking strings. We
-// should just make convenvience inits where needed such that we could write:
-//   `IfStmt("if foo")` -> `IfStmt(conditions: [.expression("foo")])`
-//   `ProtocolDecl("public protocol SomeProto") -> `ProtocolDecl(modifiers: [.public], identifier: "SomeProto")`
-//
-// This is sort of what we used to have, but there weren't enough convenience
-// initializers.
-//   `SwitchCase(label: SwitchCaseLabel(caseItems: [CaseItem(pattern: ExpressionPattern(expression: MemberAccessExpr(name: "contextualKeyword")))]))`
-// is currently
-//   `SwitchCase("case .contextualKeyword:")`
-// but ideally we'd have enough convenience initializers such that we could have:
-//   `SwitchCase(pattern: ".contextualKeyword") { }`
-//
-// Another example is that we now have
-//   `ExtensionDecl("\(docComment)extension \(node.type.shorthandName): ExpressibleByArrayLiteral")`
-// which could be
-//   `ExtensionDecl(leadingTrivia: docComment, extendedType: "\(node.type.shorthandName)", inheritances: ["ExpressibleByArrayLiteral"])`
-public protocol HasTrailingCodeBlock {
-  var body: CodeBlock { get set }
-}
+/// A type that is expressible by string interpolation the same way that syntax
+/// nodes are, but instead of producing a node, it stores the string interpolation
+/// text. Used to represent partial syntax nodes in initializers that take a
+/// trailing code block.
+///
+/// This type should always be constructed using string interpolation.
+public struct PartialSyntaxNodeString: SyntaxExpressibleByStringInterpolation {
+  let sourceText: [UInt8]
 
-public extension HasTrailingCodeBlock where Self: SyntaxExpressibleByStringInterpolation {
-  init(_ signature: String, @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemListSyntax) {
-    self = "\(raw: signature) {}"
-    self.body = CodeBlock(statements: bodyBuilder())
+  public init(stringInterpolationOrThrow stringInterpolation: SyntaxStringInterpolation) throws {
+    self.sourceText = stringInterpolation.sourceText
   }
 }
 
-extension CatchClause: HasTrailingCodeBlock {}
-extension DeferStmt: HasTrailingCodeBlock {}
-extension DoStmt: HasTrailingCodeBlock {}
-extension ForInStmt: HasTrailingCodeBlock {}
-extension GuardStmt: HasTrailingCodeBlock {}
-extension WhileStmt: HasTrailingCodeBlock {}
+extension SyntaxStringInterpolation {
+  public mutating func appendInterpolation(_ value: PartialSyntaxNodeString) {
+    sourceText.append(contentsOf: value.sourceText)
+    self.lastIndentation = nil
+  }
+}
+
+// MARK: - HasCodeBlock
+
+public protocol HasTrailingCodeBlock {
+  var body: CodeBlockSyntax { get set }
+}
+
+public extension HasTrailingCodeBlock where Self: SyntaxExpressibleByStringInterpolation {
+  init(_ signature: PartialSyntaxNodeString, @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemListSyntax) {
+    self = "\(signature) {}"
+    self.body = CodeBlockSyntax(statements: bodyBuilder())
+  }
+}
+
+extension CatchClauseSyntax: HasTrailingCodeBlock {}
+extension DeferStmtSyntax: HasTrailingCodeBlock {}
+extension DoStmtSyntax: HasTrailingCodeBlock {}
+extension ForInStmtSyntax: HasTrailingCodeBlock {}
+extension GuardStmtSyntax: HasTrailingCodeBlock {}
+extension WhileStmtSyntax: HasTrailingCodeBlock {}
 
 // MARK: - HasOptionalCodeBlock
 
@@ -57,53 +62,53 @@ public protocol HasTrailingOptionalCodeBlock {
 }
 
 public extension HasTrailingOptionalCodeBlock where Self: SyntaxExpressibleByStringInterpolation {
-  init(_ signature: String, @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemListSyntax) {
-    self = "\(raw: signature) {}"
-    self.body = CodeBlock(statements: bodyBuilder())
+  init(_ signature: PartialSyntaxNodeString, @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemListSyntax) {
+    self = "\(signature) {}"
+    self.body = CodeBlockSyntax(statements: bodyBuilder())
   }
 }
 
-extension AccessorDecl: HasTrailingOptionalCodeBlock {}
-extension DeinitializerDecl: HasTrailingOptionalCodeBlock {}
-extension FunctionDecl: HasTrailingOptionalCodeBlock {}
-extension InitializerDecl: HasTrailingOptionalCodeBlock {}
+extension AccessorDeclSyntax: HasTrailingOptionalCodeBlock {}
+extension DeinitializerDeclSyntax: HasTrailingOptionalCodeBlock {}
+extension FunctionDeclSyntax: HasTrailingOptionalCodeBlock {}
+extension InitializerDeclSyntax: HasTrailingOptionalCodeBlock {}
 
 // MARK: HasTrailingMemberDeclBlock
 
 public protocol HasTrailingMemberDeclBlock {
-  var members: MemberDeclBlock { get set }
+  var members: MemberDeclBlockSyntax { get set }
 }
 
 public extension HasTrailingMemberDeclBlock where Self: SyntaxExpressibleByStringInterpolation {
-  init(_ signature: String, @MemberDeclListBuilder membersBuilder: () -> MemberDeclListSyntax) {
-    self = "\(raw: signature) {}"
-    self.members = MemberDeclBlock(members: membersBuilder())
+  init(_ signature: PartialSyntaxNodeString, @MemberDeclListBuilder membersBuilder: () -> MemberDeclListSyntax) {
+    self = "\(signature) {}"
+    self.members = MemberDeclBlockSyntax(members: membersBuilder())
   }
 }
 
-extension ActorDecl: HasTrailingMemberDeclBlock {}
-extension ClassDecl: HasTrailingMemberDeclBlock {}
-extension EnumDecl: HasTrailingMemberDeclBlock {}
-extension ExtensionDecl: HasTrailingMemberDeclBlock {}
-extension ProtocolDecl: HasTrailingMemberDeclBlock {}
-extension StructDecl: HasTrailingMemberDeclBlock {}
+extension ActorDeclSyntax: HasTrailingMemberDeclBlock {}
+extension ClassDeclSyntax: HasTrailingMemberDeclBlock {}
+extension EnumDeclSyntax: HasTrailingMemberDeclBlock {}
+extension ExtensionDeclSyntax: HasTrailingMemberDeclBlock {}
+extension ProtocolDeclSyntax: HasTrailingMemberDeclBlock {}
+extension StructDeclSyntax: HasTrailingMemberDeclBlock {}
 
 // MARK: - IfStmt
 // IfStmtSyntax is a special scenario as we also have the `else` body or an if-else
 // So we cannot conform to `HasTrailingCodeBlock`
 
-public extension IfStmt {
-  init(_ signature: String, @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemList, @CodeBlockItemListBuilder `else` elseBuilder: () -> CodeBlockItemList? = { nil }) {
-    self = "\(raw: signature) {}"
-    self.body = CodeBlock(statements: bodyBuilder())
-    self.elseBody = elseBuilder().map { .codeBlock(CodeBlock(statements: $0)) }
-    self.elseKeyword = elseBody != nil ? .elseKeyword() : nil
+public extension IfStmtSyntax {
+  init(_ signature: PartialSyntaxNodeString, @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemListSyntax, @CodeBlockItemListBuilder `else` elseBuilder: () -> CodeBlockItemListSyntax? = { nil }) {
+    self = "\(signature) {}"
+    self.body = CodeBlockSyntax(statements: bodyBuilder())
+    self.elseBody = elseBuilder().map { .codeBlock(CodeBlockSyntax(statements: $0)) }
+    self.elseKeyword = elseBody != nil ? .keyword(.else) : nil
   }
 
-  init(_ signature: String, @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemList, elseIf: IfStmt) {
-    self = "\(raw: signature) {}"
-    self.body = CodeBlock(statements: bodyBuilder())
+  init(_ signature: String, @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemListSyntax, elseIf: IfStmtSyntax) {
+    self = "\(signature) {}"
+    self.body = CodeBlockSyntax(statements: bodyBuilder())
     self.elseBody = .ifStmt(elseIf)
-    self.elseKeyword = elseBody != nil ? .elseKeyword() : nil
+    self.elseKeyword = elseBody != nil ? .keyword(.else) : nil
   }
 }

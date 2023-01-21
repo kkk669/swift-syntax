@@ -32,7 +32,9 @@ public struct MissingStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   }
 
   public init() {
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), ())) { (arena, _) in
       let raw = RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingStmt, arena: arena)
       return SyntaxData.forRoot(raw)
     }
@@ -88,16 +90,18 @@ public struct LabeledStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     _ unexpectedAfterStatement: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeLabelName?.raw,
-      labelName.raw,
-      unexpectedBetweenLabelNameAndLabelColon?.raw,
-      labelColon.raw,
-      unexpectedBetweenLabelColonAndStatement?.raw,
-      statement.raw,
-      unexpectedAfterStatement?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeLabelName, labelName, unexpectedBetweenLabelNameAndLabelColon, labelColon, unexpectedBetweenLabelColonAndStatement, statement, unexpectedAfterStatement))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeLabelName?.raw,
+        labelName.raw,
+        unexpectedBetweenLabelNameAndLabelColon?.raw,
+        labelColon.raw,
+        unexpectedBetweenLabelColonAndStatement?.raw,
+        statement.raw,
+        unexpectedAfterStatement?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.labeledStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -140,9 +144,9 @@ public struct LabeledStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `labelName` replaced.
   /// - param newChild: The new `labelName` to replace the node's
   ///                   current `labelName`, if present.
-  public func withLabelName(_ newChild: TokenSyntax?) -> LabeledStmtSyntax {
+  public func withLabelName(_ newChild: TokenSyntax) -> LabeledStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return LabeledStmtSyntax(newData)
   }
@@ -181,9 +185,9 @@ public struct LabeledStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `labelColon` replaced.
   /// - param newChild: The new `labelColon` to replace the node's
   ///                   current `labelColon`, if present.
-  public func withLabelColon(_ newChild: TokenSyntax?) -> LabeledStmtSyntax {
+  public func withLabelColon(_ newChild: TokenSyntax) -> LabeledStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return LabeledStmtSyntax(newData)
   }
@@ -222,9 +226,9 @@ public struct LabeledStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `statement` replaced.
   /// - param newChild: The new `statement` to replace the node's
   ///                   current `statement`, if present.
-  public func withStatement(_ newChild: StmtSyntax?) -> LabeledStmtSyntax {
+  public func withStatement(_ newChild: StmtSyntax) -> LabeledStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingStmt, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 5, with: raw, arena: arena)
     return LabeledStmtSyntax(newData)
   }
@@ -319,20 +323,22 @@ public struct ContinueStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeContinueKeyword: UnexpectedNodesSyntax? = nil,
-    continueKeyword: TokenSyntax = .continueKeyword(),
+    continueKeyword: TokenSyntax = .keyword(.continue),
     _ unexpectedBetweenContinueKeywordAndLabel: UnexpectedNodesSyntax? = nil,
     label: TokenSyntax? = nil,
     _ unexpectedAfterLabel: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeContinueKeyword?.raw,
-      continueKeyword.raw,
-      unexpectedBetweenContinueKeywordAndLabel?.raw,
-      label?.raw,
-      unexpectedAfterLabel?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeContinueKeyword, continueKeyword, unexpectedBetweenContinueKeywordAndLabel, label, unexpectedAfterLabel))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeContinueKeyword?.raw,
+        continueKeyword.raw,
+        unexpectedBetweenContinueKeywordAndLabel?.raw,
+        label?.raw,
+        unexpectedAfterLabel?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.continueStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -375,9 +381,9 @@ public struct ContinueStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `continueKeyword` replaced.
   /// - param newChild: The new `continueKeyword` to replace the node's
   ///                   current `continueKeyword`, if present.
-  public func withContinueKeyword(_ newChild: TokenSyntax?) -> ContinueStmtSyntax {
+  public func withContinueKeyword(_ newChild: TokenSyntax) -> ContinueStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.continueKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return ContinueStmtSyntax(newData)
   }
@@ -506,7 +512,7 @@ public struct WhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeWhileKeyword: UnexpectedNodesSyntax? = nil,
-    whileKeyword: TokenSyntax = .whileKeyword(),
+    whileKeyword: TokenSyntax = .keyword(.while),
     _ unexpectedBetweenWhileKeywordAndConditions: UnexpectedNodesSyntax? = nil,
     conditions: ConditionElementListSyntax,
     _ unexpectedBetweenConditionsAndBody: UnexpectedNodesSyntax? = nil,
@@ -514,16 +520,18 @@ public struct WhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeWhileKeyword?.raw,
-      whileKeyword.raw,
-      unexpectedBetweenWhileKeywordAndConditions?.raw,
-      conditions.raw,
-      unexpectedBetweenConditionsAndBody?.raw,
-      body.raw,
-      unexpectedAfterBody?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeWhileKeyword, whileKeyword, unexpectedBetweenWhileKeywordAndConditions, conditions, unexpectedBetweenConditionsAndBody, body, unexpectedAfterBody))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeWhileKeyword?.raw,
+        whileKeyword.raw,
+        unexpectedBetweenWhileKeywordAndConditions?.raw,
+        conditions.raw,
+        unexpectedBetweenConditionsAndBody?.raw,
+        body.raw,
+        unexpectedAfterBody?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.whileStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -566,9 +574,9 @@ public struct WhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `whileKeyword` replaced.
   /// - param newChild: The new `whileKeyword` to replace the node's
   ///                   current `whileKeyword`, if present.
-  public func withWhileKeyword(_ newChild: TokenSyntax?) -> WhileStmtSyntax {
+  public func withWhileKeyword(_ newChild: TokenSyntax) -> WhileStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.whileKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return WhileStmtSyntax(newData)
   }
@@ -626,9 +634,9 @@ public struct WhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `conditions` replaced.
   /// - param newChild: The new `conditions` to replace the node's
   ///                   current `conditions`, if present.
-  public func withConditions(_ newChild: ConditionElementListSyntax?) -> WhileStmtSyntax {
+  public func withConditions(_ newChild: ConditionElementListSyntax) -> WhileStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.conditionElementList, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return WhileStmtSyntax(newData)
   }
@@ -667,9 +675,9 @@ public struct WhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `body` replaced.
   /// - param newChild: The new `body` to replace the node's
   ///                   current `body`, if present.
-  public func withBody(_ newChild: CodeBlockSyntax?) -> WhileStmtSyntax {
+  public func withBody(_ newChild: CodeBlockSyntax) -> WhileStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 5, with: raw, arena: arena)
     return WhileStmtSyntax(newData)
   }
@@ -764,20 +772,22 @@ public struct DeferStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeDeferKeyword: UnexpectedNodesSyntax? = nil,
-    deferKeyword: TokenSyntax = .deferKeyword(),
+    deferKeyword: TokenSyntax = .keyword(.defer),
     _ unexpectedBetweenDeferKeywordAndBody: UnexpectedNodesSyntax? = nil,
     body: CodeBlockSyntax,
     _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeDeferKeyword?.raw,
-      deferKeyword.raw,
-      unexpectedBetweenDeferKeywordAndBody?.raw,
-      body.raw,
-      unexpectedAfterBody?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeDeferKeyword, deferKeyword, unexpectedBetweenDeferKeywordAndBody, body, unexpectedAfterBody))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeDeferKeyword?.raw,
+        deferKeyword.raw,
+        unexpectedBetweenDeferKeywordAndBody?.raw,
+        body.raw,
+        unexpectedAfterBody?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.deferStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -820,9 +830,9 @@ public struct DeferStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `deferKeyword` replaced.
   /// - param newChild: The new `deferKeyword` to replace the node's
   ///                   current `deferKeyword`, if present.
-  public func withDeferKeyword(_ newChild: TokenSyntax?) -> DeferStmtSyntax {
+  public func withDeferKeyword(_ newChild: TokenSyntax) -> DeferStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.deferKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return DeferStmtSyntax(newData)
   }
@@ -861,9 +871,9 @@ public struct DeferStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `body` replaced.
   /// - param newChild: The new `body` to replace the node's
   ///                   current `body`, if present.
-  public func withBody(_ newChild: CodeBlockSyntax?) -> DeferStmtSyntax {
+  public func withBody(_ newChild: CodeBlockSyntax) -> DeferStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return DeferStmtSyntax(newData)
   }
@@ -929,139 +939,6 @@ extension DeferStmtSyntax: CustomReflectable {
   }
 }
 
-// MARK: - ExpressionStmtSyntax
-
-public struct ExpressionStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
-  public let _syntaxNode: Syntax
-
-  public init?<S: SyntaxProtocol>(_ node: S) {
-    guard node.raw.kind == .expressionStmt else { return nil }
-    self._syntaxNode = node._syntaxNode
-  }
-
-  /// Creates a `ExpressionStmtSyntax` node from the given `SyntaxData`. This assumes
-  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
-  /// is undefined.
-  internal init(_ data: SyntaxData) {
-    assert(data.raw.kind == .expressionStmt)
-    self._syntaxNode = Syntax(data)
-  }
-
-  public init<E: ExprSyntaxProtocol>(
-    leadingTrivia: Trivia? = nil,
-    _ unexpectedBeforeExpression: UnexpectedNodesSyntax? = nil,
-    expression: E,
-    _ unexpectedAfterExpression: UnexpectedNodesSyntax? = nil,
-    trailingTrivia: Trivia? = nil
-  ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeExpression?.raw,
-      expression.raw,
-      unexpectedAfterExpression?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(
-        kind: SyntaxKind.expressionStmt, from: layout, arena: arena,
-        leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
-      return SyntaxData.forRoot(raw)
-    }
-    self.init(data)
-  }
-
-  public var unexpectedBeforeExpression: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedBeforeExpression(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeExpression` replaced.
-  /// - param newChild: The new `unexpectedBeforeExpression` to replace the node's
-  ///                   current `unexpectedBeforeExpression`, if present.
-  public func withUnexpectedBeforeExpression(_ newChild: UnexpectedNodesSyntax?) -> ExpressionStmtSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ExpressionStmtSyntax(newData)
-  }
-
-  public var expression: ExprSyntax {
-    get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return ExprSyntax(childData!)
-    }
-    set(value) {
-      self = withExpression(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `expression` replaced.
-  /// - param newChild: The new `expression` to replace the node's
-  ///                   current `expression`, if present.
-  public func withExpression(_ newChild: ExprSyntax?) -> ExpressionStmtSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena)
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ExpressionStmtSyntax(newData)
-  }
-
-  public var unexpectedAfterExpression: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedAfterExpression(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterExpression` replaced.
-  /// - param newChild: The new `unexpectedAfterExpression` to replace the node's
-  ///                   current `unexpectedAfterExpression`, if present.
-  public func withUnexpectedAfterExpression(_ newChild: UnexpectedNodesSyntax?) -> ExpressionStmtSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ExpressionStmtSyntax(newData)
-  }
-
-  public static var structure: SyntaxNodeStructure {
-    return .layout([
-      \Self.unexpectedBeforeExpression,
-      \Self.expression,
-      \Self.unexpectedAfterExpression,
-    ])
-  }
-
-  public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
-    switch index.data?.indexInParent {
-    case 0:
-      return nil
-    case 1:
-      return nil
-    case 2:
-      return nil
-    default:
-      fatalError("Invalid index")
-    }
-  }
-}
-
-extension ExpressionStmtSyntax: CustomReflectable {
-  public var customMirror: Mirror {
-    return Mirror(self, children: [
-      "unexpectedBeforeExpression": unexpectedBeforeExpression.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "expression": Syntax(expression).asProtocol(SyntaxProtocol.self),
-      "unexpectedAfterExpression": unexpectedAfterExpression.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-    ])
-  }
-}
-
 // MARK: - RepeatWhileStmtSyntax
 
 public struct RepeatWhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
@@ -1083,28 +960,30 @@ public struct RepeatWhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init<C: ExprSyntaxProtocol>(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeRepeatKeyword: UnexpectedNodesSyntax? = nil,
-    repeatKeyword: TokenSyntax = .repeatKeyword(),
+    repeatKeyword: TokenSyntax = .keyword(.repeat),
     _ unexpectedBetweenRepeatKeywordAndBody: UnexpectedNodesSyntax? = nil,
     body: CodeBlockSyntax,
     _ unexpectedBetweenBodyAndWhileKeyword: UnexpectedNodesSyntax? = nil,
-    whileKeyword: TokenSyntax = .whileKeyword(),
+    whileKeyword: TokenSyntax = .keyword(.while),
     _ unexpectedBetweenWhileKeywordAndCondition: UnexpectedNodesSyntax? = nil,
     condition: C,
     _ unexpectedAfterCondition: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeRepeatKeyword?.raw,
-      repeatKeyword.raw,
-      unexpectedBetweenRepeatKeywordAndBody?.raw,
-      body.raw,
-      unexpectedBetweenBodyAndWhileKeyword?.raw,
-      whileKeyword.raw,
-      unexpectedBetweenWhileKeywordAndCondition?.raw,
-      condition.raw,
-      unexpectedAfterCondition?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeRepeatKeyword, repeatKeyword, unexpectedBetweenRepeatKeywordAndBody, body, unexpectedBetweenBodyAndWhileKeyword, whileKeyword, unexpectedBetweenWhileKeywordAndCondition, condition, unexpectedAfterCondition))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeRepeatKeyword?.raw,
+        repeatKeyword.raw,
+        unexpectedBetweenRepeatKeywordAndBody?.raw,
+        body.raw,
+        unexpectedBetweenBodyAndWhileKeyword?.raw,
+        whileKeyword.raw,
+        unexpectedBetweenWhileKeywordAndCondition?.raw,
+        condition.raw,
+        unexpectedAfterCondition?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.repeatWhileStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -1147,9 +1026,9 @@ public struct RepeatWhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `repeatKeyword` replaced.
   /// - param newChild: The new `repeatKeyword` to replace the node's
   ///                   current `repeatKeyword`, if present.
-  public func withRepeatKeyword(_ newChild: TokenSyntax?) -> RepeatWhileStmtSyntax {
+  public func withRepeatKeyword(_ newChild: TokenSyntax) -> RepeatWhileStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.repeatKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return RepeatWhileStmtSyntax(newData)
   }
@@ -1188,9 +1067,9 @@ public struct RepeatWhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `body` replaced.
   /// - param newChild: The new `body` to replace the node's
   ///                   current `body`, if present.
-  public func withBody(_ newChild: CodeBlockSyntax?) -> RepeatWhileStmtSyntax {
+  public func withBody(_ newChild: CodeBlockSyntax) -> RepeatWhileStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return RepeatWhileStmtSyntax(newData)
   }
@@ -1229,9 +1108,9 @@ public struct RepeatWhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `whileKeyword` replaced.
   /// - param newChild: The new `whileKeyword` to replace the node's
   ///                   current `whileKeyword`, if present.
-  public func withWhileKeyword(_ newChild: TokenSyntax?) -> RepeatWhileStmtSyntax {
+  public func withWhileKeyword(_ newChild: TokenSyntax) -> RepeatWhileStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.whileKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 5, with: raw, arena: arena)
     return RepeatWhileStmtSyntax(newData)
   }
@@ -1270,9 +1149,9 @@ public struct RepeatWhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `condition` replaced.
   /// - param newChild: The new `condition` to replace the node's
   ///                   current `condition`, if present.
-  public func withCondition(_ newChild: ExprSyntax?) -> RepeatWhileStmtSyntax {
+  public func withCondition(_ newChild: ExprSyntax) -> RepeatWhileStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 7, with: raw, arena: arena)
     return RepeatWhileStmtSyntax(newData)
   }
@@ -1375,28 +1254,30 @@ public struct GuardStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeGuardKeyword: UnexpectedNodesSyntax? = nil,
-    guardKeyword: TokenSyntax = .guardKeyword(),
+    guardKeyword: TokenSyntax = .keyword(.guard),
     _ unexpectedBetweenGuardKeywordAndConditions: UnexpectedNodesSyntax? = nil,
     conditions: ConditionElementListSyntax,
     _ unexpectedBetweenConditionsAndElseKeyword: UnexpectedNodesSyntax? = nil,
-    elseKeyword: TokenSyntax = .elseKeyword(),
+    elseKeyword: TokenSyntax = .keyword(.else),
     _ unexpectedBetweenElseKeywordAndBody: UnexpectedNodesSyntax? = nil,
     body: CodeBlockSyntax,
     _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeGuardKeyword?.raw,
-      guardKeyword.raw,
-      unexpectedBetweenGuardKeywordAndConditions?.raw,
-      conditions.raw,
-      unexpectedBetweenConditionsAndElseKeyword?.raw,
-      elseKeyword.raw,
-      unexpectedBetweenElseKeywordAndBody?.raw,
-      body.raw,
-      unexpectedAfterBody?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeGuardKeyword, guardKeyword, unexpectedBetweenGuardKeywordAndConditions, conditions, unexpectedBetweenConditionsAndElseKeyword, elseKeyword, unexpectedBetweenElseKeywordAndBody, body, unexpectedAfterBody))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeGuardKeyword?.raw,
+        guardKeyword.raw,
+        unexpectedBetweenGuardKeywordAndConditions?.raw,
+        conditions.raw,
+        unexpectedBetweenConditionsAndElseKeyword?.raw,
+        elseKeyword.raw,
+        unexpectedBetweenElseKeywordAndBody?.raw,
+        body.raw,
+        unexpectedAfterBody?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.guardStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -1439,9 +1320,9 @@ public struct GuardStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `guardKeyword` replaced.
   /// - param newChild: The new `guardKeyword` to replace the node's
   ///                   current `guardKeyword`, if present.
-  public func withGuardKeyword(_ newChild: TokenSyntax?) -> GuardStmtSyntax {
+  public func withGuardKeyword(_ newChild: TokenSyntax) -> GuardStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.guardKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return GuardStmtSyntax(newData)
   }
@@ -1499,9 +1380,9 @@ public struct GuardStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `conditions` replaced.
   /// - param newChild: The new `conditions` to replace the node's
   ///                   current `conditions`, if present.
-  public func withConditions(_ newChild: ConditionElementListSyntax?) -> GuardStmtSyntax {
+  public func withConditions(_ newChild: ConditionElementListSyntax) -> GuardStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.conditionElementList, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return GuardStmtSyntax(newData)
   }
@@ -1540,9 +1421,9 @@ public struct GuardStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `elseKeyword` replaced.
   /// - param newChild: The new `elseKeyword` to replace the node's
   ///                   current `elseKeyword`, if present.
-  public func withElseKeyword(_ newChild: TokenSyntax?) -> GuardStmtSyntax {
+  public func withElseKeyword(_ newChild: TokenSyntax) -> GuardStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.elseKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 5, with: raw, arena: arena)
     return GuardStmtSyntax(newData)
   }
@@ -1581,9 +1462,9 @@ public struct GuardStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `body` replaced.
   /// - param newChild: The new `body` to replace the node's
   ///                   current `body`, if present.
-  public func withBody(_ newChild: CodeBlockSyntax?) -> GuardStmtSyntax {
+  public func withBody(_ newChild: CodeBlockSyntax) -> GuardStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 7, with: raw, arena: arena)
     return GuardStmtSyntax(newData)
   }
@@ -1686,7 +1567,7 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init<P: PatternSyntaxProtocol, S: ExprSyntaxProtocol>(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeForKeyword: UnexpectedNodesSyntax? = nil,
-    forKeyword: TokenSyntax = .forKeyword(),
+    forKeyword: TokenSyntax = .keyword(.for),
     _ unexpectedBetweenForKeywordAndTryKeyword: UnexpectedNodesSyntax? = nil,
     tryKeyword: TokenSyntax? = nil,
     _ unexpectedBetweenTryKeywordAndAwaitKeyword: UnexpectedNodesSyntax? = nil,
@@ -1698,7 +1579,7 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     _ unexpectedBetweenPatternAndTypeAnnotation: UnexpectedNodesSyntax? = nil,
     typeAnnotation: TypeAnnotationSyntax? = nil,
     _ unexpectedBetweenTypeAnnotationAndInKeyword: UnexpectedNodesSyntax? = nil,
-    inKeyword: TokenSyntax = .inKeyword(),
+    inKeyword: TokenSyntax = .keyword(.in),
     _ unexpectedBetweenInKeywordAndSequenceExpr: UnexpectedNodesSyntax? = nil,
     sequenceExpr: S,
     _ unexpectedBetweenSequenceExprAndWhereClause: UnexpectedNodesSyntax? = nil,
@@ -1708,30 +1589,32 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeForKeyword?.raw,
-      forKeyword.raw,
-      unexpectedBetweenForKeywordAndTryKeyword?.raw,
-      tryKeyword?.raw,
-      unexpectedBetweenTryKeywordAndAwaitKeyword?.raw,
-      awaitKeyword?.raw,
-      unexpectedBetweenAwaitKeywordAndCaseKeyword?.raw,
-      caseKeyword?.raw,
-      unexpectedBetweenCaseKeywordAndPattern?.raw,
-      pattern.raw,
-      unexpectedBetweenPatternAndTypeAnnotation?.raw,
-      typeAnnotation?.raw,
-      unexpectedBetweenTypeAnnotationAndInKeyword?.raw,
-      inKeyword.raw,
-      unexpectedBetweenInKeywordAndSequenceExpr?.raw,
-      sequenceExpr.raw,
-      unexpectedBetweenSequenceExprAndWhereClause?.raw,
-      whereClause?.raw,
-      unexpectedBetweenWhereClauseAndBody?.raw,
-      body.raw,
-      unexpectedAfterBody?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeForKeyword, forKeyword, unexpectedBetweenForKeywordAndTryKeyword, tryKeyword, unexpectedBetweenTryKeywordAndAwaitKeyword, awaitKeyword, unexpectedBetweenAwaitKeywordAndCaseKeyword, caseKeyword, unexpectedBetweenCaseKeywordAndPattern, pattern, unexpectedBetweenPatternAndTypeAnnotation, typeAnnotation, unexpectedBetweenTypeAnnotationAndInKeyword, inKeyword, unexpectedBetweenInKeywordAndSequenceExpr, sequenceExpr, unexpectedBetweenSequenceExprAndWhereClause, whereClause, unexpectedBetweenWhereClauseAndBody, body, unexpectedAfterBody))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeForKeyword?.raw,
+        forKeyword.raw,
+        unexpectedBetweenForKeywordAndTryKeyword?.raw,
+        tryKeyword?.raw,
+        unexpectedBetweenTryKeywordAndAwaitKeyword?.raw,
+        awaitKeyword?.raw,
+        unexpectedBetweenAwaitKeywordAndCaseKeyword?.raw,
+        caseKeyword?.raw,
+        unexpectedBetweenCaseKeywordAndPattern?.raw,
+        pattern.raw,
+        unexpectedBetweenPatternAndTypeAnnotation?.raw,
+        typeAnnotation?.raw,
+        unexpectedBetweenTypeAnnotationAndInKeyword?.raw,
+        inKeyword.raw,
+        unexpectedBetweenInKeywordAndSequenceExpr?.raw,
+        sequenceExpr.raw,
+        unexpectedBetweenSequenceExprAndWhereClause?.raw,
+        whereClause?.raw,
+        unexpectedBetweenWhereClauseAndBody?.raw,
+        body.raw,
+        unexpectedAfterBody?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.forInStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -1774,9 +1657,9 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `forKeyword` replaced.
   /// - param newChild: The new `forKeyword` to replace the node's
   ///                   current `forKeyword`, if present.
-  public func withForKeyword(_ newChild: TokenSyntax?) -> ForInStmtSyntax {
+  public func withForKeyword(_ newChild: TokenSyntax) -> ForInStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.forKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return ForInStmtSyntax(newData)
   }
@@ -1941,9 +1824,9 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `pattern` replaced.
   /// - param newChild: The new `pattern` to replace the node's
   ///                   current `pattern`, if present.
-  public func withPattern(_ newChild: PatternSyntax?) -> ForInStmtSyntax {
+  public func withPattern(_ newChild: PatternSyntax) -> ForInStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingPattern, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 9, with: raw, arena: arena)
     return ForInStmtSyntax(newData)
   }
@@ -2024,9 +1907,9 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `inKeyword` replaced.
   /// - param newChild: The new `inKeyword` to replace the node's
   ///                   current `inKeyword`, if present.
-  public func withInKeyword(_ newChild: TokenSyntax?) -> ForInStmtSyntax {
+  public func withInKeyword(_ newChild: TokenSyntax) -> ForInStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.inKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 13, with: raw, arena: arena)
     return ForInStmtSyntax(newData)
   }
@@ -2065,9 +1948,9 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `sequenceExpr` replaced.
   /// - param newChild: The new `sequenceExpr` to replace the node's
   ///                   current `sequenceExpr`, if present.
-  public func withSequenceExpr(_ newChild: ExprSyntax?) -> ForInStmtSyntax {
+  public func withSequenceExpr(_ newChild: ExprSyntax) -> ForInStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 15, with: raw, arena: arena)
     return ForInStmtSyntax(newData)
   }
@@ -2148,9 +2031,9 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `body` replaced.
   /// - param newChild: The new `body` to replace the node's
   ///                   current `body`, if present.
-  public func withBody(_ newChild: CodeBlockSyntax?) -> ForInStmtSyntax {
+  public func withBody(_ newChild: CodeBlockSyntax) -> ForInStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 19, with: raw, arena: arena)
     return ForInStmtSyntax(newData)
   }
@@ -2301,7 +2184,7 @@ public struct SwitchStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init<E: ExprSyntaxProtocol>(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeSwitchKeyword: UnexpectedNodesSyntax? = nil,
-    switchKeyword: TokenSyntax = .switchKeyword(),
+    switchKeyword: TokenSyntax = .keyword(.switch),
     _ unexpectedBetweenSwitchKeywordAndExpression: UnexpectedNodesSyntax? = nil,
     expression: E,
     _ unexpectedBetweenExpressionAndLeftBrace: UnexpectedNodesSyntax? = nil,
@@ -2313,20 +2196,22 @@ public struct SwitchStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     _ unexpectedAfterRightBrace: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeSwitchKeyword?.raw,
-      switchKeyword.raw,
-      unexpectedBetweenSwitchKeywordAndExpression?.raw,
-      expression.raw,
-      unexpectedBetweenExpressionAndLeftBrace?.raw,
-      leftBrace.raw,
-      unexpectedBetweenLeftBraceAndCases?.raw,
-      cases.raw,
-      unexpectedBetweenCasesAndRightBrace?.raw,
-      rightBrace.raw,
-      unexpectedAfterRightBrace?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeSwitchKeyword, switchKeyword, unexpectedBetweenSwitchKeywordAndExpression, expression, unexpectedBetweenExpressionAndLeftBrace, leftBrace, unexpectedBetweenLeftBraceAndCases, cases, unexpectedBetweenCasesAndRightBrace, rightBrace, unexpectedAfterRightBrace))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeSwitchKeyword?.raw,
+        switchKeyword.raw,
+        unexpectedBetweenSwitchKeywordAndExpression?.raw,
+        expression.raw,
+        unexpectedBetweenExpressionAndLeftBrace?.raw,
+        leftBrace.raw,
+        unexpectedBetweenLeftBraceAndCases?.raw,
+        cases.raw,
+        unexpectedBetweenCasesAndRightBrace?.raw,
+        rightBrace.raw,
+        unexpectedAfterRightBrace?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.switchStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -2369,9 +2254,9 @@ public struct SwitchStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `switchKeyword` replaced.
   /// - param newChild: The new `switchKeyword` to replace the node's
   ///                   current `switchKeyword`, if present.
-  public func withSwitchKeyword(_ newChild: TokenSyntax?) -> SwitchStmtSyntax {
+  public func withSwitchKeyword(_ newChild: TokenSyntax) -> SwitchStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.switchKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return SwitchStmtSyntax(newData)
   }
@@ -2410,9 +2295,9 @@ public struct SwitchStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `expression` replaced.
   /// - param newChild: The new `expression` to replace the node's
   ///                   current `expression`, if present.
-  public func withExpression(_ newChild: ExprSyntax?) -> SwitchStmtSyntax {
+  public func withExpression(_ newChild: ExprSyntax) -> SwitchStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return SwitchStmtSyntax(newData)
   }
@@ -2451,9 +2336,9 @@ public struct SwitchStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `leftBrace` replaced.
   /// - param newChild: The new `leftBrace` to replace the node's
   ///                   current `leftBrace`, if present.
-  public func withLeftBrace(_ newChild: TokenSyntax?) -> SwitchStmtSyntax {
+  public func withLeftBrace(_ newChild: TokenSyntax) -> SwitchStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.leftBrace, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 5, with: raw, arena: arena)
     return SwitchStmtSyntax(newData)
   }
@@ -2511,9 +2396,9 @@ public struct SwitchStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `cases` replaced.
   /// - param newChild: The new `cases` to replace the node's
   ///                   current `cases`, if present.
-  public func withCases(_ newChild: SwitchCaseListSyntax?) -> SwitchStmtSyntax {
+  public func withCases(_ newChild: SwitchCaseListSyntax) -> SwitchStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.switchCaseList, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 7, with: raw, arena: arena)
     return SwitchStmtSyntax(newData)
   }
@@ -2552,9 +2437,9 @@ public struct SwitchStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `rightBrace` replaced.
   /// - param newChild: The new `rightBrace` to replace the node's
   ///                   current `rightBrace`, if present.
-  public func withRightBrace(_ newChild: TokenSyntax?) -> SwitchStmtSyntax {
+  public func withRightBrace(_ newChild: TokenSyntax) -> SwitchStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.rightBrace, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 9, with: raw, arena: arena)
     return SwitchStmtSyntax(newData)
   }
@@ -2665,7 +2550,7 @@ public struct DoStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeDoKeyword: UnexpectedNodesSyntax? = nil,
-    doKeyword: TokenSyntax = .doKeyword(),
+    doKeyword: TokenSyntax = .keyword(.do),
     _ unexpectedBetweenDoKeywordAndBody: UnexpectedNodesSyntax? = nil,
     body: CodeBlockSyntax,
     _ unexpectedBetweenBodyAndCatchClauses: UnexpectedNodesSyntax? = nil,
@@ -2673,16 +2558,18 @@ public struct DoStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     _ unexpectedAfterCatchClauses: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeDoKeyword?.raw,
-      doKeyword.raw,
-      unexpectedBetweenDoKeywordAndBody?.raw,
-      body.raw,
-      unexpectedBetweenBodyAndCatchClauses?.raw,
-      catchClauses?.raw,
-      unexpectedAfterCatchClauses?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeDoKeyword, doKeyword, unexpectedBetweenDoKeywordAndBody, body, unexpectedBetweenBodyAndCatchClauses, catchClauses, unexpectedAfterCatchClauses))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeDoKeyword?.raw,
+        doKeyword.raw,
+        unexpectedBetweenDoKeywordAndBody?.raw,
+        body.raw,
+        unexpectedBetweenBodyAndCatchClauses?.raw,
+        catchClauses?.raw,
+        unexpectedAfterCatchClauses?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.doStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -2725,9 +2612,9 @@ public struct DoStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `doKeyword` replaced.
   /// - param newChild: The new `doKeyword` to replace the node's
   ///                   current `doKeyword`, if present.
-  public func withDoKeyword(_ newChild: TokenSyntax?) -> DoStmtSyntax {
+  public func withDoKeyword(_ newChild: TokenSyntax) -> DoStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.doKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return DoStmtSyntax(newData)
   }
@@ -2766,9 +2653,9 @@ public struct DoStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `body` replaced.
   /// - param newChild: The new `body` to replace the node's
   ///                   current `body`, if present.
-  public func withBody(_ newChild: CodeBlockSyntax?) -> DoStmtSyntax {
+  public func withBody(_ newChild: CodeBlockSyntax) -> DoStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return DoStmtSyntax(newData)
   }
@@ -2924,20 +2811,22 @@ public struct ReturnStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init<E: ExprSyntaxProtocol>(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeReturnKeyword: UnexpectedNodesSyntax? = nil,
-    returnKeyword: TokenSyntax = .returnKeyword(),
+    returnKeyword: TokenSyntax = .keyword(.return),
     _ unexpectedBetweenReturnKeywordAndExpression: UnexpectedNodesSyntax? = nil,
     expression: E? = nil,
     _ unexpectedAfterExpression: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeReturnKeyword?.raw,
-      returnKeyword.raw,
-      unexpectedBetweenReturnKeywordAndExpression?.raw,
-      expression?.raw,
-      unexpectedAfterExpression?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeReturnKeyword, returnKeyword, unexpectedBetweenReturnKeywordAndExpression, expression, unexpectedAfterExpression))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeReturnKeyword?.raw,
+        returnKeyword.raw,
+        unexpectedBetweenReturnKeywordAndExpression?.raw,
+        expression?.raw,
+        unexpectedAfterExpression?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.returnStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -2959,7 +2848,7 @@ public struct ReturnStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeReturnKeyword: UnexpectedNodesSyntax? = nil,
-    returnKeyword: TokenSyntax = .returnKeyword(),
+    returnKeyword: TokenSyntax = .keyword(.return),
     _ unexpectedBetweenReturnKeywordAndExpression: UnexpectedNodesSyntax? = nil,
     expression: MissingExprSyntax? = nil,
     _ unexpectedAfterExpression: UnexpectedNodesSyntax? = nil,
@@ -3010,9 +2899,9 @@ public struct ReturnStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `returnKeyword` replaced.
   /// - param newChild: The new `returnKeyword` to replace the node's
   ///                   current `returnKeyword`, if present.
-  public func withReturnKeyword(_ newChild: TokenSyntax?) -> ReturnStmtSyntax {
+  public func withReturnKeyword(_ newChild: TokenSyntax) -> ReturnStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.returnKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return ReturnStmtSyntax(newData)
   }
@@ -3177,20 +3066,22 @@ public struct YieldStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeYieldKeyword: UnexpectedNodesSyntax? = nil,
-    yieldKeyword: TokenSyntax = .yieldToken(),
+    yieldKeyword: TokenSyntax = .keyword(.yield),
     _ unexpectedBetweenYieldKeywordAndYields: UnexpectedNodesSyntax? = nil,
     yields: Yields,
     _ unexpectedAfterYields: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeYieldKeyword?.raw,
-      yieldKeyword.raw,
-      unexpectedBetweenYieldKeywordAndYields?.raw,
-      yields.raw,
-      unexpectedAfterYields?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeYieldKeyword, yieldKeyword, unexpectedBetweenYieldKeywordAndYields, yields, unexpectedAfterYields))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeYieldKeyword?.raw,
+        yieldKeyword.raw,
+        unexpectedBetweenYieldKeywordAndYields?.raw,
+        yields.raw,
+        unexpectedAfterYields?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.yieldStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -3233,9 +3124,9 @@ public struct YieldStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `yieldKeyword` replaced.
   /// - param newChild: The new `yieldKeyword` to replace the node's
   ///                   current `yieldKeyword`, if present.
-  public func withYieldKeyword(_ newChild: TokenSyntax?) -> YieldStmtSyntax {
+  public func withYieldKeyword(_ newChild: TokenSyntax) -> YieldStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.yield, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return YieldStmtSyntax(newData)
   }
@@ -3274,9 +3165,9 @@ public struct YieldStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `yields` replaced.
   /// - param newChild: The new `yields` to replace the node's
   ///                   current `yields`, if present.
-  public func withYields(_ newChild: Yields?) -> YieldStmtSyntax {
+  public func withYields(_ newChild: Yields) -> YieldStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missing, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return YieldStmtSyntax(newData)
   }
@@ -3363,16 +3254,18 @@ public struct FallthroughStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeFallthroughKeyword: UnexpectedNodesSyntax? = nil,
-    fallthroughKeyword: TokenSyntax = .fallthroughKeyword(),
+    fallthroughKeyword: TokenSyntax = .keyword(.fallthrough),
     _ unexpectedAfterFallthroughKeyword: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeFallthroughKeyword?.raw,
-      fallthroughKeyword.raw,
-      unexpectedAfterFallthroughKeyword?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeFallthroughKeyword, fallthroughKeyword, unexpectedAfterFallthroughKeyword))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeFallthroughKeyword?.raw,
+        fallthroughKeyword.raw,
+        unexpectedAfterFallthroughKeyword?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.fallthroughStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -3415,9 +3308,9 @@ public struct FallthroughStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `fallthroughKeyword` replaced.
   /// - param newChild: The new `fallthroughKeyword` to replace the node's
   ///                   current `fallthroughKeyword`, if present.
-  public func withFallthroughKeyword(_ newChild: TokenSyntax?) -> FallthroughStmtSyntax {
+  public func withFallthroughKeyword(_ newChild: TokenSyntax) -> FallthroughStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.fallthroughKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return FallthroughStmtSyntax(newData)
   }
@@ -3496,20 +3389,22 @@ public struct BreakStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeBreakKeyword: UnexpectedNodesSyntax? = nil,
-    breakKeyword: TokenSyntax = .breakKeyword(),
+    breakKeyword: TokenSyntax = .keyword(.break),
     _ unexpectedBetweenBreakKeywordAndLabel: UnexpectedNodesSyntax? = nil,
     label: TokenSyntax? = nil,
     _ unexpectedAfterLabel: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeBreakKeyword?.raw,
-      breakKeyword.raw,
-      unexpectedBetweenBreakKeywordAndLabel?.raw,
-      label?.raw,
-      unexpectedAfterLabel?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeBreakKeyword, breakKeyword, unexpectedBetweenBreakKeywordAndLabel, label, unexpectedAfterLabel))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeBreakKeyword?.raw,
+        breakKeyword.raw,
+        unexpectedBetweenBreakKeywordAndLabel?.raw,
+        label?.raw,
+        unexpectedAfterLabel?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.breakStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -3552,9 +3447,9 @@ public struct BreakStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `breakKeyword` replaced.
   /// - param newChild: The new `breakKeyword` to replace the node's
   ///                   current `breakKeyword`, if present.
-  public func withBreakKeyword(_ newChild: TokenSyntax?) -> BreakStmtSyntax {
+  public func withBreakKeyword(_ newChild: TokenSyntax) -> BreakStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.breakKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return BreakStmtSyntax(newData)
   }
@@ -3662,139 +3557,6 @@ extension BreakStmtSyntax: CustomReflectable {
   }
 }
 
-// MARK: - DeclarationStmtSyntax
-
-public struct DeclarationStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
-  public let _syntaxNode: Syntax
-
-  public init?<S: SyntaxProtocol>(_ node: S) {
-    guard node.raw.kind == .declarationStmt else { return nil }
-    self._syntaxNode = node._syntaxNode
-  }
-
-  /// Creates a `DeclarationStmtSyntax` node from the given `SyntaxData`. This assumes
-  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
-  /// is undefined.
-  internal init(_ data: SyntaxData) {
-    assert(data.raw.kind == .declarationStmt)
-    self._syntaxNode = Syntax(data)
-  }
-
-  public init<D: DeclSyntaxProtocol>(
-    leadingTrivia: Trivia? = nil,
-    _ unexpectedBeforeDeclaration: UnexpectedNodesSyntax? = nil,
-    declaration: D,
-    _ unexpectedAfterDeclaration: UnexpectedNodesSyntax? = nil,
-    trailingTrivia: Trivia? = nil
-  ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeDeclaration?.raw,
-      declaration.raw,
-      unexpectedAfterDeclaration?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(
-        kind: SyntaxKind.declarationStmt, from: layout, arena: arena,
-        leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
-      return SyntaxData.forRoot(raw)
-    }
-    self.init(data)
-  }
-
-  public var unexpectedBeforeDeclaration: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedBeforeDeclaration(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeDeclaration` replaced.
-  /// - param newChild: The new `unexpectedBeforeDeclaration` to replace the node's
-  ///                   current `unexpectedBeforeDeclaration`, if present.
-  public func withUnexpectedBeforeDeclaration(_ newChild: UnexpectedNodesSyntax?) -> DeclarationStmtSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DeclarationStmtSyntax(newData)
-  }
-
-  public var declaration: DeclSyntax {
-    get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return DeclSyntax(childData!)
-    }
-    set(value) {
-      self = withDeclaration(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `declaration` replaced.
-  /// - param newChild: The new `declaration` to replace the node's
-  ///                   current `declaration`, if present.
-  public func withDeclaration(_ newChild: DeclSyntax?) -> DeclarationStmtSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingDecl, arena: arena)
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DeclarationStmtSyntax(newData)
-  }
-
-  public var unexpectedAfterDeclaration: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedAfterDeclaration(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterDeclaration` replaced.
-  /// - param newChild: The new `unexpectedAfterDeclaration` to replace the node's
-  ///                   current `unexpectedAfterDeclaration`, if present.
-  public func withUnexpectedAfterDeclaration(_ newChild: UnexpectedNodesSyntax?) -> DeclarationStmtSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DeclarationStmtSyntax(newData)
-  }
-
-  public static var structure: SyntaxNodeStructure {
-    return .layout([
-      \Self.unexpectedBeforeDeclaration,
-      \Self.declaration,
-      \Self.unexpectedAfterDeclaration,
-    ])
-  }
-
-  public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
-    switch index.data?.indexInParent {
-    case 0:
-      return nil
-    case 1:
-      return nil
-    case 2:
-      return nil
-    default:
-      fatalError("Invalid index")
-    }
-  }
-}
-
-extension DeclarationStmtSyntax: CustomReflectable {
-  public var customMirror: Mirror {
-    return Mirror(self, children: [
-      "unexpectedBeforeDeclaration": unexpectedBeforeDeclaration.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "declaration": Syntax(declaration).asProtocol(SyntaxProtocol.self),
-      "unexpectedAfterDeclaration": unexpectedAfterDeclaration.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-    ])
-  }
-}
-
 // MARK: - ThrowStmtSyntax
 
 public struct ThrowStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
@@ -3816,20 +3578,22 @@ public struct ThrowStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init<E: ExprSyntaxProtocol>(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeThrowKeyword: UnexpectedNodesSyntax? = nil,
-    throwKeyword: TokenSyntax = .throwKeyword(),
+    throwKeyword: TokenSyntax = .keyword(.throw),
     _ unexpectedBetweenThrowKeywordAndExpression: UnexpectedNodesSyntax? = nil,
     expression: E,
     _ unexpectedAfterExpression: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeThrowKeyword?.raw,
-      throwKeyword.raw,
-      unexpectedBetweenThrowKeywordAndExpression?.raw,
-      expression.raw,
-      unexpectedAfterExpression?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeThrowKeyword, throwKeyword, unexpectedBetweenThrowKeywordAndExpression, expression, unexpectedAfterExpression))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeThrowKeyword?.raw,
+        throwKeyword.raw,
+        unexpectedBetweenThrowKeywordAndExpression?.raw,
+        expression.raw,
+        unexpectedAfterExpression?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.throwStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -3872,9 +3636,9 @@ public struct ThrowStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `throwKeyword` replaced.
   /// - param newChild: The new `throwKeyword` to replace the node's
   ///                   current `throwKeyword`, if present.
-  public func withThrowKeyword(_ newChild: TokenSyntax?) -> ThrowStmtSyntax {
+  public func withThrowKeyword(_ newChild: TokenSyntax) -> ThrowStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.throwKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return ThrowStmtSyntax(newData)
   }
@@ -3913,9 +3677,9 @@ public struct ThrowStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `expression` replaced.
   /// - param newChild: The new `expression` to replace the node's
   ///                   current `expression`, if present.
-  public func withExpression(_ newChild: ExprSyntax?) -> ThrowStmtSyntax {
+  public func withExpression(_ newChild: ExprSyntax) -> ThrowStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return ThrowStmtSyntax(newData)
   }
@@ -4038,7 +3802,7 @@ public struct IfStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public init(
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeIfKeyword: UnexpectedNodesSyntax? = nil,
-    ifKeyword: TokenSyntax = .ifKeyword(),
+    ifKeyword: TokenSyntax = .keyword(.if),
     _ unexpectedBetweenIfKeywordAndConditions: UnexpectedNodesSyntax? = nil,
     conditions: ConditionElementListSyntax,
     _ unexpectedBetweenConditionsAndBody: UnexpectedNodesSyntax? = nil,
@@ -4050,20 +3814,22 @@ public struct IfStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     _ unexpectedAfterElseBody: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeIfKeyword?.raw,
-      ifKeyword.raw,
-      unexpectedBetweenIfKeywordAndConditions?.raw,
-      conditions.raw,
-      unexpectedBetweenConditionsAndBody?.raw,
-      body.raw,
-      unexpectedBetweenBodyAndElseKeyword?.raw,
-      elseKeyword?.raw,
-      unexpectedBetweenElseKeywordAndElseBody?.raw,
-      elseBody?.raw,
-      unexpectedAfterElseBody?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeIfKeyword, ifKeyword, unexpectedBetweenIfKeywordAndConditions, conditions, unexpectedBetweenConditionsAndBody, body, unexpectedBetweenBodyAndElseKeyword, elseKeyword, unexpectedBetweenElseKeywordAndElseBody, elseBody, unexpectedAfterElseBody))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeIfKeyword?.raw,
+        ifKeyword.raw,
+        unexpectedBetweenIfKeywordAndConditions?.raw,
+        conditions.raw,
+        unexpectedBetweenConditionsAndBody?.raw,
+        body.raw,
+        unexpectedBetweenBodyAndElseKeyword?.raw,
+        elseKeyword?.raw,
+        unexpectedBetweenElseKeywordAndElseBody?.raw,
+        elseBody?.raw,
+        unexpectedAfterElseBody?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.ifStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -4106,9 +3872,9 @@ public struct IfStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `ifKeyword` replaced.
   /// - param newChild: The new `ifKeyword` to replace the node's
   ///                   current `ifKeyword`, if present.
-  public func withIfKeyword(_ newChild: TokenSyntax?) -> IfStmtSyntax {
+  public func withIfKeyword(_ newChild: TokenSyntax) -> IfStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.ifKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return IfStmtSyntax(newData)
   }
@@ -4166,9 +3932,9 @@ public struct IfStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `conditions` replaced.
   /// - param newChild: The new `conditions` to replace the node's
   ///                   current `conditions`, if present.
-  public func withConditions(_ newChild: ConditionElementListSyntax?) -> IfStmtSyntax {
+  public func withConditions(_ newChild: ConditionElementListSyntax) -> IfStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.conditionElementList, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return IfStmtSyntax(newData)
   }
@@ -4207,9 +3973,9 @@ public struct IfStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `body` replaced.
   /// - param newChild: The new `body` to replace the node's
   ///                   current `body`, if present.
-  public func withBody(_ newChild: CodeBlockSyntax?) -> IfStmtSyntax {
+  public func withBody(_ newChild: CodeBlockSyntax) -> IfStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 5, with: raw, arena: arena)
     return IfStmtSyntax(newData)
   }
@@ -4412,28 +4178,30 @@ public struct PoundAssertStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     _ unexpectedBetweenConditionAndComma: UnexpectedNodesSyntax? = nil,
     comma: TokenSyntax? = nil,
     _ unexpectedBetweenCommaAndMessage: UnexpectedNodesSyntax? = nil,
-    message: TokenSyntax? = nil,
+    message: StringLiteralExprSyntax? = nil,
     _ unexpectedBetweenMessageAndRightParen: UnexpectedNodesSyntax? = nil,
     rightParen: TokenSyntax = .rightParenToken(),
     _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundAssert?.raw,
-      poundAssert.raw,
-      unexpectedBetweenPoundAssertAndLeftParen?.raw,
-      leftParen.raw,
-      unexpectedBetweenLeftParenAndCondition?.raw,
-      condition.raw,
-      unexpectedBetweenConditionAndComma?.raw,
-      comma?.raw,
-      unexpectedBetweenCommaAndMessage?.raw,
-      message?.raw,
-      unexpectedBetweenMessageAndRightParen?.raw,
-      rightParen.raw,
-      unexpectedAfterRightParen?.raw,
-    ]
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforePoundAssert, poundAssert, unexpectedBetweenPoundAssertAndLeftParen, leftParen, unexpectedBetweenLeftParenAndCondition, condition, unexpectedBetweenConditionAndComma, comma, unexpectedBetweenCommaAndMessage, message, unexpectedBetweenMessageAndRightParen, rightParen, unexpectedAfterRightParen))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforePoundAssert?.raw,
+        poundAssert.raw,
+        unexpectedBetweenPoundAssertAndLeftParen?.raw,
+        leftParen.raw,
+        unexpectedBetweenLeftParenAndCondition?.raw,
+        condition.raw,
+        unexpectedBetweenConditionAndComma?.raw,
+        comma?.raw,
+        unexpectedBetweenCommaAndMessage?.raw,
+        message?.raw,
+        unexpectedBetweenMessageAndRightParen?.raw,
+        rightParen.raw,
+        unexpectedAfterRightParen?.raw,
+      ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.poundAssertStmt, from: layout, arena: arena,
         leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
@@ -4476,9 +4244,9 @@ public struct PoundAssertStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `poundAssert` replaced.
   /// - param newChild: The new `poundAssert` to replace the node's
   ///                   current `poundAssert`, if present.
-  public func withPoundAssert(_ newChild: TokenSyntax?) -> PoundAssertStmtSyntax {
+  public func withPoundAssert(_ newChild: TokenSyntax) -> PoundAssertStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.poundAssertKeyword, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 1, with: raw, arena: arena)
     return PoundAssertStmtSyntax(newData)
   }
@@ -4517,9 +4285,9 @@ public struct PoundAssertStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `leftParen` replaced.
   /// - param newChild: The new `leftParen` to replace the node's
   ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax?) -> PoundAssertStmtSyntax {
+  public func withLeftParen(_ newChild: TokenSyntax) -> PoundAssertStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.leftParen, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 3, with: raw, arena: arena)
     return PoundAssertStmtSyntax(newData)
   }
@@ -4559,9 +4327,9 @@ public struct PoundAssertStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `condition` replaced.
   /// - param newChild: The new `condition` to replace the node's
   ///                   current `condition`, if present.
-  public func withCondition(_ newChild: ExprSyntax?) -> PoundAssertStmtSyntax {
+  public func withCondition(_ newChild: ExprSyntax) -> PoundAssertStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 5, with: raw, arena: arena)
     return PoundAssertStmtSyntax(newData)
   }
@@ -4631,11 +4399,11 @@ public struct PoundAssertStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   }
 
   /// The assertion message.
-  public var message: TokenSyntax? {
+  public var message: StringLiteralExprSyntax? {
     get {
       let childData = data.child(at: 9, parent: Syntax(self))
       if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return StringLiteralExprSyntax(childData!)
     }
     set(value) {
       self = withMessage(value)
@@ -4645,7 +4413,7 @@ public struct PoundAssertStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `message` replaced.
   /// - param newChild: The new `message` to replace the node's
   ///                   current `message`, if present.
-  public func withMessage(_ newChild: TokenSyntax?) -> PoundAssertStmtSyntax {
+  public func withMessage(_ newChild: StringLiteralExprSyntax?) -> PoundAssertStmtSyntax {
     let arena = SyntaxArena()
     let raw = newChild?.raw
     let newData = data.replacingChild(at: 9, with: raw, arena: arena)
@@ -4686,9 +4454,9 @@ public struct PoundAssertStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   /// Returns a copy of the receiver with its `rightParen` replaced.
   /// - param newChild: The new `rightParen` to replace the node's
   ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax?) -> PoundAssertStmtSyntax {
+  public func withRightParen(_ newChild: TokenSyntax) -> PoundAssertStmtSyntax {
     let arena = SyntaxArena()
-    let raw = newChild?.raw ?? RawSyntax.makeMissingToken(kind: TokenKind.rightParen, arena: arena)
+    let raw = newChild.raw
     let newData = data.replacingChild(at: 11, with: raw, arena: arena)
     return PoundAssertStmtSyntax(newData)
   }

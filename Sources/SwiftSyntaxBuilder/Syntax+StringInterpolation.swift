@@ -12,7 +12,8 @@
 
 import SwiftBasicFormat
 import SwiftDiagnostics
-import SwiftSyntax
+@_spi(RawSyntax) import SwiftSyntax
+@_spi(RawSyntax) import SwiftParser
 
 /// An individual interpolated syntax node.
 struct InterpolatedSyntaxNode {
@@ -121,7 +122,7 @@ extension SyntaxStringInterpolation: StringInterpolationProtocol {
     literal value: Literal,
     format: BasicFormat = BasicFormat()
   ) {
-    self.appendInterpolation(Expr(literal: value), format: format)
+    self.appendInterpolation(ExprSyntax(literal: value), format: format)
   }
 
   // This overload is technically redundant with the previous one, except that
@@ -133,14 +134,14 @@ extension SyntaxStringInterpolation: StringInterpolationProtocol {
     literal value: Literal?,
     format: BasicFormat = BasicFormat()
   ) {
-    self.appendInterpolation(Expr(literal: value), format: format)
+    self.appendInterpolation(ExprSyntax(literal: value), format: format)
   }
 }
 
 /// Syntax nodes that can be formed by a string interpolation involve source
 /// code and interpolated syntax nodes.
 public protocol SyntaxExpressibleByStringInterpolation:
-  ExpressibleByStringInterpolation, SyntaxProtocol
+  ExpressibleByStringInterpolation
 where Self.StringInterpolation == SyntaxStringInterpolation {
   init(stringInterpolationOrThrow stringInterpolation: SyntaxStringInterpolation) throws
 }
@@ -250,23 +251,23 @@ extension SyntaxExpressibleByStringInterpolation {
 // MARK: ExpressibleByLiteralSyntax conformances
 
 extension Substring: ExpressibleByLiteralSyntax {
-  public func makeLiteralSyntax() -> StringLiteralExpr {
+  public func makeLiteralSyntax() -> StringLiteralExprSyntax {
     String(self).makeLiteralSyntax()
   }
 }
 
 extension String: ExpressibleByLiteralSyntax {
-  public func makeLiteralSyntax() -> StringLiteralExpr {
+  public func makeLiteralSyntax() -> StringLiteralExprSyntax {
     // TODO: Use a multi-line literal if there are more than N inner newlines.
-    StringLiteralExpr(content: self)
+    StringLiteralExprSyntax(content: self)
   }
 }
 
 extension ExpressibleByLiteralSyntax where Self: BinaryInteger {
-  public func makeLiteralSyntax() -> IntegerLiteralExpr {
+  public func makeLiteralSyntax() -> IntegerLiteralExprSyntax {
     // TODO: Radix selection? Thousands separators?
     let digits = String(self, radix: 10)
-    return IntegerLiteralExpr(digits: digits)
+    return IntegerLiteralExprSyntax(digits: .integerLiteral(digits))
   }
 }
 extension Int: ExpressibleByLiteralSyntax {}
@@ -284,17 +285,17 @@ extension ExpressibleByLiteralSyntax where Self: FloatingPoint, Self: LosslessSt
   public func makeLiteralSyntax() -> ExprSyntax {
     switch floatingPointClass {
     case .positiveInfinity:
-      return ExprSyntax(MemberAccessExpr(name: "infinity"))
+      return ExprSyntax(MemberAccessExprSyntax(name: "infinity"))
 
     case .quietNaN:
-      return ExprSyntax(MemberAccessExpr(name: "nan"))
+      return ExprSyntax(MemberAccessExprSyntax(name: "nan"))
 
     case .signalingNaN:
-      return ExprSyntax(MemberAccessExpr(name: "signalingNaN"))
+      return ExprSyntax(MemberAccessExprSyntax(name: "signalingNaN"))
 
     case .negativeInfinity, .negativeZero:
       return ExprSyntax(
-        PrefixOperatorExpr(
+        PrefixOperatorExprSyntax(
           operatorToken: "-",
           postfixExpression: (-self).makeLiteralSyntax()
         )
@@ -303,7 +304,7 @@ extension ExpressibleByLiteralSyntax where Self: FloatingPoint, Self: LosslessSt
     case .negativeNormal, .negativeSubnormal, .positiveZero, .positiveSubnormal, .positiveNormal:
       // TODO: Thousands separators?
       let digits = String(self)
-      return ExprSyntax(FloatLiteralExpr(floatingDigits: digits))
+      return ExprSyntax(FloatLiteralExprSyntax(floatingDigits: .floatingLiteral(digits)))
     }
 
   }
@@ -317,21 +318,21 @@ extension Float16: ExpressibleByLiteralSyntax {}
 #endif
 
 extension Bool: ExpressibleByLiteralSyntax {
-  public func makeLiteralSyntax() -> BooleanLiteralExpr {
-    BooleanLiteralExpr(self)
+  public func makeLiteralSyntax() -> BooleanLiteralExprSyntax {
+    BooleanLiteralExprSyntax(self)
   }
 }
 
 extension ArraySlice: ExpressibleByLiteralSyntax where Element: ExpressibleByLiteralSyntax {
   public func makeLiteralSyntax() -> ArrayExprSyntax {
     ArrayExprSyntax(
-      leftSquare: .leftSquareBracket,
-      elements: ArrayElementList {
+      leftSquare: .leftSquareBracketToken(),
+      elements: ArrayElementListSyntax {
         for elem in self {
           ArrayElementSyntax(expression: elem.makeLiteralSyntax())
         }
       },
-      rightSquare: .rightSquareBracket
+      rightSquare: .rightSquareBracketToken()
     )
   }
 }
@@ -352,24 +353,24 @@ extension Set: ExpressibleByLiteralSyntax where Element: ExpressibleByLiteralSyn
     }
 
     return ArrayExprSyntax(
-      leftSquare: .leftSquareBracket,
-      elements: ArrayElementList {
+      leftSquare: .leftSquareBracketToken(),
+      elements: ArrayElementListSyntax {
         for elemSyntax in elemSyntaxes {
           ArrayElementSyntax(expression: elemSyntax)
         }
       },
-      rightSquare: .rightSquareBracket
+      rightSquare: .rightSquareBracketToken()
     )
   }
 }
 
 extension KeyValuePairs: ExpressibleByLiteralSyntax where Key: ExpressibleByLiteralSyntax, Value: ExpressibleByLiteralSyntax {
   public func makeLiteralSyntax() -> DictionaryExprSyntax {
-    DictionaryExprSyntax(leftSquare: .leftSquareBracket, rightSquare: .rightSquareBracket) {
+    DictionaryExprSyntax(leftSquare: .leftSquareBracketToken(), rightSquare: .rightSquareBracketToken()) {
       for elem in self {
         DictionaryElementSyntax(
           keyExpression: elem.key.makeLiteralSyntax(),
-          colon: .colon,
+          colon: .colonToken(),
           valueExpression: elem.value.makeLiteralSyntax()
         )
       }
@@ -386,11 +387,11 @@ extension Dictionary: ExpressibleByLiteralSyntax where Key: ExpressibleByLiteral
       $0.key.syntaxTextBytes.lexicographicallyPrecedes($1.key.syntaxTextBytes)
     }
 
-    return DictionaryExprSyntax(leftSquare: .leftSquareBracket, rightSquare: .rightSquareBracket) {
+    return DictionaryExprSyntax(leftSquare: .leftSquareBracketToken(), rightSquare: .rightSquareBracketToken()) {
       for elemSyntax in elemSyntaxes {
         DictionaryElementSyntax(
           keyExpression: elemSyntax.key,
-          colon: .colon,
+          colon: .colonToken(),
           valueExpression: elemSyntax.value
         )
       }
@@ -401,12 +402,12 @@ extension Dictionary: ExpressibleByLiteralSyntax where Key: ExpressibleByLiteral
 extension Optional: ExpressibleByLiteralSyntax where Wrapped: ExpressibleByLiteralSyntax {
   public func makeLiteralSyntax() -> ExprSyntax {
     func containsNil(_ expr: ExprSyntaxProtocol) -> Bool {
-      if expr.is(NilLiteralExpr.self) {
+      if expr.is(NilLiteralExprSyntax.self) {
         return true
       }
 
-      if let call = expr.as(FunctionCallExpr.self),
-        let memberAccess = call.calledExpression.as(MemberAccessExpr.self),
+      if let call = expr.as(FunctionCallExprSyntax.self),
+        let memberAccess = call.calledExpression.as(MemberAccessExprSyntax.self),
         memberAccess.name.text == "some",
         let argument = call.argumentList.first?.expression
       {
@@ -418,7 +419,7 @@ extension Optional: ExpressibleByLiteralSyntax where Wrapped: ExpressibleByLiter
 
     switch self {
     case nil:
-      return ExprSyntax(NilLiteralExpr())
+      return ExprSyntax(NilLiteralExprSyntax())
 
     case let wrapped?:
       let wrappedExpr = wrapped.makeLiteralSyntax()
@@ -428,13 +429,106 @@ extension Optional: ExpressibleByLiteralSyntax where Wrapped: ExpressibleByLiter
       // depth of the data structure.
       if containsNil(wrappedExpr) {
         return ExprSyntax(
-          FunctionCallExpr(callee: MemberAccessExpr(name: "some")) {
-            TupleExprElement(expression: wrappedExpr)
+          FunctionCallExprSyntax(callee: MemberAccessExprSyntax(name: "some")) {
+            TupleExprElementSyntax(expression: wrappedExpr)
           }
         )
       }
 
       return ExprSyntax(wrappedExpr)
     }
+  }
+}
+
+extension TokenSyntax: SyntaxExpressibleByStringInterpolation {
+  public init(stringInterpolationOrThrow stringInterpolation: SyntaxStringInterpolation) throws {
+    let string = stringInterpolation.sourceText.withUnsafeBufferPointer { buf in
+      return String(syntaxText: SyntaxText(buffer: buf))
+    }
+    self = .identifier(string)
+  }
+}
+
+// MARK: - Trivia expressible as string
+
+extension TriviaPiece {
+  var isUnexpected: Bool {
+    switch self {
+    case .unexpectedText: return true
+    default: return false
+    }
+  }
+}
+
+struct UnexpectedTrivia: DiagnosticMessage {
+  let triviaContents: String
+
+  let diagnosticID = MessageID(domain: "SwiftSyntaxBuilder", id: "UnexpectedTrivia")
+  let severity = DiagnosticSeverity.error
+  var message: String {
+    "unexpected trivia '\(triviaContents)'"
+  }
+
+}
+
+extension Trivia: ExpressibleByStringInterpolation {
+  /// Initialize a syntax node by parsing the contents of the interpolation.
+  /// This function is marked `@_transparent` so that fatalErrors raised here
+  /// are reported at the string literal itself.
+  /// This makes debugging easier because Xcode will jump to the string literal
+  /// that had a parsing error instead of the initializer that raised the `fatalError`
+  @_transparent
+  public init(stringInterpolation: String.StringInterpolation) {
+    do {
+      try self.init(stringInterpolationOrThrow: stringInterpolation)
+    } catch {
+      fatalError(String(describing: error))
+    }
+  }
+
+  public init(stringInterpolationOrThrow stringInterpolation: String.StringInterpolation) throws {
+    var text = String(stringInterpolation: stringInterpolation)
+    let pieces = text.withUTF8 { (buf) -> [TriviaPiece] in
+      // The leading trivia position is a little bit less restrictive (it allows a shebang), so let's use it.
+      let rawPieces = TriviaParser.parseTrivia(SyntaxText(buffer: buf), position: .leading)
+      return rawPieces.map { TriviaPiece.init(raw: $0) }
+    }
+
+    self.init(pieces: pieces)
+
+    if pieces.contains(where: { $0.isUnexpected }) {
+      var diagnostics: [Diagnostic] = []
+      let tree = SourceFileSyntax(statements: [], eofToken: .eof(leadingTrivia: self))
+      var offset = 0
+      for piece in pieces {
+        if case .unexpectedText(let contents) = piece {
+          diagnostics.append(
+            Diagnostic(
+              node: Syntax(tree),
+              position: tree.position.advanced(by: offset),
+              message: UnexpectedTrivia(triviaContents: contents)
+            )
+          )
+        }
+        offset += piece.sourceLength.utf8Length
+      }
+      throw SyntaxStringInterpolationError.diagnostics(diagnostics, tree: Syntax(tree))
+    }
+  }
+
+  @_transparent
+  public init(stringLiteral value: String) {
+    do {
+      try self.init(stringLiteralOrThrow: value)
+    } catch {
+      fatalError(String(describing: error))
+    }
+  }
+
+  /// Initialize a syntax node from a string literal.
+  public init(stringLiteralOrThrow value: String) throws {
+    var interpolation = String.StringInterpolation(literalCapacity: 1, interpolationCount: 0)
+    interpolation.appendLiteral(value)
+    try self.init(stringInterpolationOrThrow: interpolation)
   }
 }

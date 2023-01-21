@@ -18,271 +18,268 @@
 extension Syntax {
   public static var structure: SyntaxNodeStructure {
     return .choices([
-      .node(TokenSyntax.self), 
-      .node(AccessLevelModifierSyntax.self), 
-      .node(AccessPathComponentSyntax.self), 
-      .node(AccessPathSyntax.self), 
-      .node(AccessorBlockSyntax.self), 
-      .node(AccessorDeclSyntax.self), 
-      .node(AccessorListSyntax.self), 
-      .node(AccessorParameterSyntax.self), 
-      .node(ActorDeclSyntax.self), 
-      .node(ArrayElementListSyntax.self), 
-      .node(ArrayElementSyntax.self), 
-      .node(ArrayExprSyntax.self), 
-      .node(ArrayTypeSyntax.self), 
-      .node(ArrowExprSyntax.self), 
-      .node(AsExprSyntax.self), 
-      .node(AsTypePatternSyntax.self), 
-      .node(AssignmentExprSyntax.self), 
-      .node(AssociatedtypeDeclSyntax.self), 
-      .node(AttributeListSyntax.self), 
-      .node(AttributeSyntax.self), 
-      .node(AttributedTypeSyntax.self), 
-      .node(AvailabilityArgumentSyntax.self), 
-      .node(AvailabilityConditionSyntax.self), 
-      .node(AvailabilityEntrySyntax.self), 
-      .node(AvailabilityLabeledArgumentSyntax.self), 
-      .node(AvailabilitySpecListSyntax.self), 
-      .node(AvailabilityVersionRestrictionSyntax.self), 
-      .node(AwaitExprSyntax.self), 
-      .node(BackDeployAttributeSpecListSyntax.self), 
-      .node(BackDeployVersionArgumentSyntax.self), 
-      .node(BackDeployVersionListSyntax.self), 
-      .node(BinaryOperatorExprSyntax.self), 
-      .node(BooleanLiteralExprSyntax.self), 
-      .node(BorrowExprSyntax.self), 
-      .node(BreakStmtSyntax.self), 
-      .node(CaseItemListSyntax.self), 
-      .node(CaseItemSyntax.self), 
-      .node(CatchClauseListSyntax.self), 
-      .node(CatchClauseSyntax.self), 
-      .node(CatchItemListSyntax.self), 
-      .node(CatchItemSyntax.self), 
-      .node(ClassDeclSyntax.self), 
-      .node(ClassRestrictionTypeSyntax.self), 
-      .node(ClosureCaptureItemListSyntax.self), 
-      .node(ClosureCaptureItemSyntax.self), 
-      .node(ClosureCaptureSignatureSyntax.self), 
-      .node(ClosureExprSyntax.self), 
-      .node(ClosureParamListSyntax.self), 
-      .node(ClosureParamSyntax.self), 
-      .node(ClosureSignatureSyntax.self), 
-      .node(CodeBlockItemListSyntax.self), 
-      .node(CodeBlockItemSyntax.self), 
-      .node(CodeBlockSyntax.self), 
-      .node(CompositionTypeElementListSyntax.self), 
-      .node(CompositionTypeElementSyntax.self), 
-      .node(CompositionTypeSyntax.self), 
-      .node(ConditionElementListSyntax.self), 
-      .node(ConditionElementSyntax.self), 
-      .node(ConformanceRequirementSyntax.self), 
-      .node(ConstrainedSugarTypeSyntax.self), 
-      .node(ContinueStmtSyntax.self), 
-      .node(ConventionAttributeArgumentsSyntax.self), 
-      .node(ConventionWitnessMethodAttributeArgumentsSyntax.self), 
-      .node(CustomAttributeSyntax.self), 
-      .node(DeclModifierDetailSyntax.self), 
-      .node(DeclModifierSyntax.self), 
-      .node(DeclNameArgumentListSyntax.self), 
-      .node(DeclNameArgumentSyntax.self), 
-      .node(DeclNameArgumentsSyntax.self), 
-      .node(DeclNameSyntax.self), 
-      .node(DeclarationStmtSyntax.self), 
-      .node(DeferStmtSyntax.self), 
-      .node(DeinitializerDeclSyntax.self), 
-      .node(DerivativeRegistrationAttributeArgumentsSyntax.self), 
-      .node(DesignatedTypeElementSyntax.self), 
-      .node(DesignatedTypeListSyntax.self), 
-      .node(DictionaryElementListSyntax.self), 
-      .node(DictionaryElementSyntax.self), 
-      .node(DictionaryExprSyntax.self), 
-      .node(DictionaryTypeSyntax.self), 
-      .node(DifferentiabilityParamListSyntax.self), 
-      .node(DifferentiabilityParamSyntax.self), 
-      .node(DifferentiabilityParamsClauseSyntax.self), 
-      .node(DifferentiabilityParamsSyntax.self), 
-      .node(DifferentiableAttributeArgumentsSyntax.self), 
-      .node(DiscardAssignmentExprSyntax.self), 
-      .node(DoStmtSyntax.self), 
-      .node(EditorPlaceholderExprSyntax.self), 
-      .node(EnumCaseDeclSyntax.self), 
-      .node(EnumCaseElementListSyntax.self), 
-      .node(EnumCaseElementSyntax.self), 
-      .node(EnumCasePatternSyntax.self), 
-      .node(EnumDeclSyntax.self), 
-      .node(ExprListSyntax.self), 
-      .node(ExpressionPatternSyntax.self), 
-      .node(ExpressionSegmentSyntax.self), 
-      .node(ExpressionStmtSyntax.self), 
-      .node(ExtensionDeclSyntax.self), 
-      .node(FallthroughStmtSyntax.self), 
-      .node(FloatLiteralExprSyntax.self), 
-      .node(ForInStmtSyntax.self), 
-      .node(ForcedValueExprSyntax.self), 
-      .node(FunctionCallExprSyntax.self), 
-      .node(FunctionDeclNameSyntax.self), 
-      .node(FunctionDeclSyntax.self), 
-      .node(FunctionParameterListSyntax.self), 
-      .node(FunctionParameterSyntax.self), 
-      .node(FunctionSignatureSyntax.self), 
-      .node(FunctionTypeSyntax.self), 
-      .node(GenericArgumentClauseSyntax.self), 
-      .node(GenericArgumentListSyntax.self), 
-      .node(GenericArgumentSyntax.self), 
-      .node(GenericParameterClauseSyntax.self), 
-      .node(GenericParameterListSyntax.self), 
-      .node(GenericParameterSyntax.self), 
-      .node(GenericRequirementListSyntax.self), 
-      .node(GenericRequirementSyntax.self), 
-      .node(GenericWhereClauseSyntax.self), 
-      .node(GuardStmtSyntax.self), 
-      .node(HasSymbolConditionSyntax.self), 
-      .node(IdentifierExprSyntax.self), 
-      .node(IdentifierPatternSyntax.self), 
-      .node(IfConfigClauseListSyntax.self), 
-      .node(IfConfigClauseSyntax.self), 
-      .node(IfConfigDeclSyntax.self), 
-      .node(IfStmtSyntax.self), 
-      .node(ImplementsAttributeArgumentsSyntax.self), 
-      .node(ImplicitlyUnwrappedOptionalTypeSyntax.self), 
-      .node(ImportDeclSyntax.self), 
-      .node(InOutExprSyntax.self), 
-      .node(InfixOperatorExprSyntax.self), 
-      .node(InheritedTypeListSyntax.self), 
-      .node(InheritedTypeSyntax.self), 
-      .node(InitializerClauseSyntax.self), 
-      .node(InitializerDeclSyntax.self), 
-      .node(IntegerLiteralExprSyntax.self), 
-      .node(IsExprSyntax.self), 
-      .node(IsTypePatternSyntax.self), 
-      .node(KeyPathComponentListSyntax.self), 
-      .node(KeyPathComponentSyntax.self), 
-      .node(KeyPathExprSyntax.self), 
-      .node(KeyPathOptionalComponentSyntax.self), 
-      .node(KeyPathPropertyComponentSyntax.self), 
-      .node(KeyPathSubscriptComponentSyntax.self), 
-      .node(LabeledSpecializeEntrySyntax.self), 
-      .node(LabeledStmtSyntax.self), 
-      .node(LayoutRequirementSyntax.self), 
-      .node(MacroDeclSyntax.self), 
-      .node(MacroExpansionDeclSyntax.self), 
-      .node(MacroExpansionExprSyntax.self), 
-      .node(MatchingPatternConditionSyntax.self), 
-      .node(MemberAccessExprSyntax.self), 
-      .node(MemberDeclBlockSyntax.self), 
-      .node(MemberDeclListItemSyntax.self), 
-      .node(MemberDeclListSyntax.self), 
-      .node(MemberTypeIdentifierSyntax.self), 
-      .node(MetatypeTypeSyntax.self), 
-      .node(MissingDeclSyntax.self), 
-      .node(MissingExprSyntax.self), 
-      .node(MissingPatternSyntax.self), 
-      .node(MissingStmtSyntax.self), 
-      .node(MissingSyntax.self), 
-      .node(MissingTypeSyntax.self), 
-      .node(ModifierListSyntax.self), 
-      .node(MoveExprSyntax.self), 
-      .node(MultipleTrailingClosureElementListSyntax.self), 
-      .node(MultipleTrailingClosureElementSyntax.self), 
-      .node(NamedAttributeStringArgumentSyntax.self), 
-      .node(NamedOpaqueReturnTypeSyntax.self), 
-      .node(NilLiteralExprSyntax.self), 
-      .node(NonEmptyTokenListSyntax.self), 
-      .node(ObjCSelectorPieceSyntax.self), 
-      .node(ObjCSelectorSyntax.self), 
-      .node(OpaqueReturnTypeOfAttributeArgumentsSyntax.self), 
-      .node(OperatorDeclSyntax.self), 
-      .node(OperatorPrecedenceAndTypesSyntax.self), 
-      .node(OptionalBindingConditionSyntax.self), 
-      .node(OptionalChainingExprSyntax.self), 
-      .node(OptionalPatternSyntax.self), 
-      .node(OptionalTypeSyntax.self), 
-      .node(PackElementExprSyntax.self), 
-      .node(PackExpansionTypeSyntax.self), 
-      .node(PackReferenceTypeSyntax.self), 
-      .node(ParameterClauseSyntax.self), 
-      .node(PatternBindingListSyntax.self), 
-      .node(PatternBindingSyntax.self), 
-      .node(PostfixIfConfigExprSyntax.self), 
-      .node(PostfixUnaryExprSyntax.self), 
-      .node(PoundAssertStmtSyntax.self), 
-      .node(PoundColumnExprSyntax.self), 
-      .node(PoundErrorDeclSyntax.self), 
-      .node(PoundSourceLocationArgsSyntax.self), 
-      .node(PoundSourceLocationSyntax.self), 
-      .node(PoundWarningDeclSyntax.self), 
-      .node(PrecedenceGroupAssignmentSyntax.self), 
-      .node(PrecedenceGroupAssociativitySyntax.self), 
-      .node(PrecedenceGroupAttributeListSyntax.self), 
-      .node(PrecedenceGroupDeclSyntax.self), 
-      .node(PrecedenceGroupNameElementSyntax.self), 
-      .node(PrecedenceGroupNameListSyntax.self), 
-      .node(PrecedenceGroupRelationSyntax.self), 
-      .node(PrefixOperatorExprSyntax.self), 
-      .node(PrimaryAssociatedTypeClauseSyntax.self), 
-      .node(PrimaryAssociatedTypeListSyntax.self), 
-      .node(PrimaryAssociatedTypeSyntax.self), 
-      .node(ProtocolDeclSyntax.self), 
-      .node(QualifiedDeclNameSyntax.self), 
-      .node(RegexLiteralExprSyntax.self), 
-      .node(RepeatWhileStmtSyntax.self), 
-      .node(ReturnClauseSyntax.self), 
-      .node(ReturnStmtSyntax.self), 
-      .node(SameTypeRequirementSyntax.self), 
-      .node(SequenceExprSyntax.self), 
-      .node(SimpleTypeIdentifierSyntax.self), 
-      .node(SourceFileSyntax.self), 
-      .node(SpecializeAttributeSpecListSyntax.self), 
-      .node(SpecializeExprSyntax.self), 
-      .node(StringLiteralExprSyntax.self), 
-      .node(StringLiteralSegmentsSyntax.self), 
-      .node(StringSegmentSyntax.self), 
-      .node(StructDeclSyntax.self), 
-      .node(SubscriptDeclSyntax.self), 
-      .node(SubscriptExprSyntax.self), 
-      .node(SuperRefExprSyntax.self), 
-      .node(SwitchCaseLabelSyntax.self), 
-      .node(SwitchCaseListSyntax.self), 
-      .node(SwitchCaseSyntax.self), 
-      .node(SwitchDefaultLabelSyntax.self), 
-      .node(SwitchStmtSyntax.self), 
-      .node(SymbolicReferenceExprSyntax.self), 
-      .node(TargetFunctionEntrySyntax.self), 
-      .node(TernaryExprSyntax.self), 
-      .node(ThrowStmtSyntax.self), 
-      .node(TokenListSyntax.self), 
-      .node(TryExprSyntax.self), 
-      .node(TupleExprElementListSyntax.self), 
-      .node(TupleExprElementSyntax.self), 
-      .node(TupleExprSyntax.self), 
-      .node(TuplePatternElementListSyntax.self), 
-      .node(TuplePatternElementSyntax.self), 
-      .node(TuplePatternSyntax.self), 
-      .node(TupleTypeElementListSyntax.self), 
-      .node(TupleTypeElementSyntax.self), 
-      .node(TupleTypeSyntax.self), 
-      .node(TypeAnnotationSyntax.self), 
-      .node(TypeExprSyntax.self), 
-      .node(TypeInheritanceClauseSyntax.self), 
-      .node(TypeInitializerClauseSyntax.self), 
-      .node(TypealiasDeclSyntax.self), 
-      .node(UnavailabilityConditionSyntax.self), 
-      .node(UnexpectedNodesSyntax.self), 
-      .node(UnresolvedAsExprSyntax.self), 
-      .node(UnresolvedIsExprSyntax.self), 
-      .node(UnresolvedPatternExprSyntax.self), 
-      .node(UnresolvedTernaryExprSyntax.self), 
-      .node(ValueBindingPatternSyntax.self), 
-      .node(VariableDeclSyntax.self), 
-      .node(VersionTupleSyntax.self), 
-      .node(WhereClauseSyntax.self), 
-      .node(WhileStmtSyntax.self), 
-      .node(WildcardPatternSyntax.self), 
-      .node(YieldExprListElementSyntax.self), 
-      .node(YieldExprListSyntax.self), 
-      .node(YieldListSyntax.self), 
-      .node(YieldStmtSyntax.self), ])
+        .node(TokenSyntax.self), 
+        .node(AccessPathComponentSyntax.self), 
+        .node(AccessPathSyntax.self), 
+        .node(AccessorBlockSyntax.self), 
+        .node(AccessorDeclSyntax.self), 
+        .node(AccessorListSyntax.self), 
+        .node(AccessorParameterSyntax.self), 
+        .node(ActorDeclSyntax.self), 
+        .node(ArrayElementListSyntax.self), 
+        .node(ArrayElementSyntax.self), 
+        .node(ArrayExprSyntax.self), 
+        .node(ArrayTypeSyntax.self), 
+        .node(ArrowExprSyntax.self), 
+        .node(AsExprSyntax.self), 
+        .node(AssignmentExprSyntax.self), 
+        .node(AssociatedtypeDeclSyntax.self), 
+        .node(AttributeListSyntax.self), 
+        .node(AttributeSyntax.self), 
+        .node(AttributedTypeSyntax.self), 
+        .node(AvailabilityArgumentSyntax.self), 
+        .node(AvailabilityConditionSyntax.self), 
+        .node(AvailabilityEntrySyntax.self), 
+        .node(AvailabilityLabeledArgumentSyntax.self), 
+        .node(AvailabilitySpecListSyntax.self), 
+        .node(AvailabilityVersionRestrictionListEntrySyntax.self), 
+        .node(AvailabilityVersionRestrictionListSyntax.self), 
+        .node(AvailabilityVersionRestrictionSyntax.self), 
+        .node(AwaitExprSyntax.self), 
+        .node(BackDeployAttributeSpecListSyntax.self), 
+        .node(BinaryOperatorExprSyntax.self), 
+        .node(BooleanLiteralExprSyntax.self), 
+        .node(BorrowExprSyntax.self), 
+        .node(BreakStmtSyntax.self), 
+        .node(CaseItemListSyntax.self), 
+        .node(CaseItemSyntax.self), 
+        .node(CatchClauseListSyntax.self), 
+        .node(CatchClauseSyntax.self), 
+        .node(CatchItemListSyntax.self), 
+        .node(CatchItemSyntax.self), 
+        .node(ClassDeclSyntax.self), 
+        .node(ClassRestrictionTypeSyntax.self), 
+        .node(ClosureCaptureItemListSyntax.self), 
+        .node(ClosureCaptureItemSpecifierSyntax.self), 
+        .node(ClosureCaptureItemSyntax.self), 
+        .node(ClosureCaptureSignatureSyntax.self), 
+        .node(ClosureExprSyntax.self), 
+        .node(ClosureParamListSyntax.self), 
+        .node(ClosureParamSyntax.self), 
+        .node(ClosureSignatureSyntax.self), 
+        .node(CodeBlockItemListSyntax.self), 
+        .node(CodeBlockItemSyntax.self), 
+        .node(CodeBlockSyntax.self), 
+        .node(CompositionTypeElementListSyntax.self), 
+        .node(CompositionTypeElementSyntax.self), 
+        .node(CompositionTypeSyntax.self), 
+        .node(ConditionElementListSyntax.self), 
+        .node(ConditionElementSyntax.self), 
+        .node(ConformanceRequirementSyntax.self), 
+        .node(ConstrainedSugarTypeSyntax.self), 
+        .node(ContinueStmtSyntax.self), 
+        .node(ConventionAttributeArgumentsSyntax.self), 
+        .node(ConventionWitnessMethodAttributeArgumentsSyntax.self), 
+        .node(DeclModifierDetailSyntax.self), 
+        .node(DeclModifierSyntax.self), 
+        .node(DeclNameArgumentListSyntax.self), 
+        .node(DeclNameArgumentSyntax.self), 
+        .node(DeclNameArgumentsSyntax.self), 
+        .node(DeclNameSyntax.self), 
+        .node(DeferStmtSyntax.self), 
+        .node(DeinitializerDeclSyntax.self), 
+        .node(DerivativeRegistrationAttributeArgumentsSyntax.self), 
+        .node(DesignatedTypeElementSyntax.self), 
+        .node(DesignatedTypeListSyntax.self), 
+        .node(DictionaryElementListSyntax.self), 
+        .node(DictionaryElementSyntax.self), 
+        .node(DictionaryExprSyntax.self), 
+        .node(DictionaryTypeSyntax.self), 
+        .node(DifferentiabilityParamListSyntax.self), 
+        .node(DifferentiabilityParamSyntax.self), 
+        .node(DifferentiabilityParamsClauseSyntax.self), 
+        .node(DifferentiabilityParamsSyntax.self), 
+        .node(DifferentiableAttributeArgumentsSyntax.self), 
+        .node(DiscardAssignmentExprSyntax.self), 
+        .node(DoStmtSyntax.self), 
+        .node(DocumentationAttributeArgumentSyntax.self), 
+        .node(DocumentationAttributeArgumentsSyntax.self), 
+        .node(DynamicReplacementArgumentsSyntax.self), 
+        .node(EditorPlaceholderDeclSyntax.self), 
+        .node(EditorPlaceholderExprSyntax.self), 
+        .node(EffectsArgumentsSyntax.self), 
+        .node(EnumCaseDeclSyntax.self), 
+        .node(EnumCaseElementListSyntax.self), 
+        .node(EnumCaseElementSyntax.self), 
+        .node(EnumDeclSyntax.self), 
+        .node(ExposeAttributeArgumentsSyntax.self), 
+        .node(ExprListSyntax.self), 
+        .node(ExpressionPatternSyntax.self), 
+        .node(ExpressionSegmentSyntax.self), 
+        .node(ExtensionDeclSyntax.self), 
+        .node(FallthroughStmtSyntax.self), 
+        .node(FloatLiteralExprSyntax.self), 
+        .node(ForInStmtSyntax.self), 
+        .node(ForcedValueExprSyntax.self), 
+        .node(FunctionCallExprSyntax.self), 
+        .node(FunctionDeclSyntax.self), 
+        .node(FunctionParameterListSyntax.self), 
+        .node(FunctionParameterSyntax.self), 
+        .node(FunctionSignatureSyntax.self), 
+        .node(FunctionTypeSyntax.self), 
+        .node(GenericArgumentClauseSyntax.self), 
+        .node(GenericArgumentListSyntax.self), 
+        .node(GenericArgumentSyntax.self), 
+        .node(GenericParameterClauseSyntax.self), 
+        .node(GenericParameterListSyntax.self), 
+        .node(GenericParameterSyntax.self), 
+        .node(GenericRequirementListSyntax.self), 
+        .node(GenericRequirementSyntax.self), 
+        .node(GenericWhereClauseSyntax.self), 
+        .node(GuardStmtSyntax.self), 
+        .node(HasSymbolConditionSyntax.self), 
+        .node(IdentifierExprSyntax.self), 
+        .node(IdentifierPatternSyntax.self), 
+        .node(IfConfigClauseListSyntax.self), 
+        .node(IfConfigClauseSyntax.self), 
+        .node(IfConfigDeclSyntax.self), 
+        .node(IfStmtSyntax.self), 
+        .node(ImplementsAttributeArgumentsSyntax.self), 
+        .node(ImplicitlyUnwrappedOptionalTypeSyntax.self), 
+        .node(ImportDeclSyntax.self), 
+        .node(InOutExprSyntax.self), 
+        .node(InfixOperatorExprSyntax.self), 
+        .node(InheritedTypeListSyntax.self), 
+        .node(InheritedTypeSyntax.self), 
+        .node(InitializerClauseSyntax.self), 
+        .node(InitializerDeclSyntax.self), 
+        .node(IntegerLiteralExprSyntax.self), 
+        .node(IsExprSyntax.self), 
+        .node(IsTypePatternSyntax.self), 
+        .node(KeyPathComponentListSyntax.self), 
+        .node(KeyPathComponentSyntax.self), 
+        .node(KeyPathExprSyntax.self), 
+        .node(KeyPathOptionalComponentSyntax.self), 
+        .node(KeyPathPropertyComponentSyntax.self), 
+        .node(KeyPathSubscriptComponentSyntax.self), 
+        .node(LabeledSpecializeEntrySyntax.self), 
+        .node(LabeledStmtSyntax.self), 
+        .node(LayoutRequirementSyntax.self), 
+        .node(MacroDeclSyntax.self), 
+        .node(MacroExpansionDeclSyntax.self), 
+        .node(MacroExpansionExprSyntax.self), 
+        .node(MatchingPatternConditionSyntax.self), 
+        .node(MemberAccessExprSyntax.self), 
+        .node(MemberDeclBlockSyntax.self), 
+        .node(MemberDeclListItemSyntax.self), 
+        .node(MemberDeclListSyntax.self), 
+        .node(MemberTypeIdentifierSyntax.self), 
+        .node(MetatypeTypeSyntax.self), 
+        .node(MissingDeclSyntax.self), 
+        .node(MissingExprSyntax.self), 
+        .node(MissingPatternSyntax.self), 
+        .node(MissingStmtSyntax.self), 
+        .node(MissingSyntax.self), 
+        .node(MissingTypeSyntax.self), 
+        .node(ModifierListSyntax.self), 
+        .node(MoveExprSyntax.self), 
+        .node(MultipleTrailingClosureElementListSyntax.self), 
+        .node(MultipleTrailingClosureElementSyntax.self), 
+        .node(NamedOpaqueReturnTypeSyntax.self), 
+        .node(NilLiteralExprSyntax.self), 
+        .node(ObjCSelectorPieceSyntax.self), 
+        .node(ObjCSelectorSyntax.self), 
+        .node(OpaqueReturnTypeOfAttributeArgumentsSyntax.self), 
+        .node(OperatorDeclSyntax.self), 
+        .node(OperatorPrecedenceAndTypesSyntax.self), 
+        .node(OptionalBindingConditionSyntax.self), 
+        .node(OptionalChainingExprSyntax.self), 
+        .node(OptionalTypeSyntax.self), 
+        .node(OriginallyDefinedInArgumentsSyntax.self), 
+        .node(PackElementExprSyntax.self), 
+        .node(PackExpansionExprSyntax.self), 
+        .node(PackExpansionTypeSyntax.self), 
+        .node(PackReferenceTypeSyntax.self), 
+        .node(ParameterClauseSyntax.self), 
+        .node(PatternBindingListSyntax.self), 
+        .node(PatternBindingSyntax.self), 
+        .node(PostfixIfConfigExprSyntax.self), 
+        .node(PostfixUnaryExprSyntax.self), 
+        .node(PoundAssertStmtSyntax.self), 
+        .node(PoundErrorDeclSyntax.self), 
+        .node(PoundSourceLocationArgsSyntax.self), 
+        .node(PoundSourceLocationSyntax.self), 
+        .node(PoundWarningDeclSyntax.self), 
+        .node(PrecedenceGroupAssignmentSyntax.self), 
+        .node(PrecedenceGroupAssociativitySyntax.self), 
+        .node(PrecedenceGroupAttributeListSyntax.self), 
+        .node(PrecedenceGroupDeclSyntax.self), 
+        .node(PrecedenceGroupNameElementSyntax.self), 
+        .node(PrecedenceGroupNameListSyntax.self), 
+        .node(PrecedenceGroupRelationSyntax.self), 
+        .node(PrefixOperatorExprSyntax.self), 
+        .node(PrimaryAssociatedTypeClauseSyntax.self), 
+        .node(PrimaryAssociatedTypeListSyntax.self), 
+        .node(PrimaryAssociatedTypeSyntax.self), 
+        .node(ProtocolDeclSyntax.self), 
+        .node(QualifiedDeclNameSyntax.self), 
+        .node(RegexLiteralExprSyntax.self), 
+        .node(RepeatWhileStmtSyntax.self), 
+        .node(ReturnClauseSyntax.self), 
+        .node(ReturnStmtSyntax.self), 
+        .node(SameTypeRequirementSyntax.self), 
+        .node(SequenceExprSyntax.self), 
+        .node(SimpleTypeIdentifierSyntax.self), 
+        .node(SourceFileSyntax.self), 
+        .node(SpecializeAttributeSpecListSyntax.self), 
+        .node(SpecializeExprSyntax.self), 
+        .node(StringLiteralExprSyntax.self), 
+        .node(StringLiteralSegmentsSyntax.self), 
+        .node(StringSegmentSyntax.self), 
+        .node(StructDeclSyntax.self), 
+        .node(SubscriptDeclSyntax.self), 
+        .node(SubscriptExprSyntax.self), 
+        .node(SuperRefExprSyntax.self), 
+        .node(SwitchCaseLabelSyntax.self), 
+        .node(SwitchCaseListSyntax.self), 
+        .node(SwitchCaseSyntax.self), 
+        .node(SwitchDefaultLabelSyntax.self), 
+        .node(SwitchStmtSyntax.self), 
+        .node(TargetFunctionEntrySyntax.self), 
+        .node(TernaryExprSyntax.self), 
+        .node(ThrowStmtSyntax.self), 
+        .node(TryExprSyntax.self), 
+        .node(TupleExprElementListSyntax.self), 
+        .node(TupleExprElementSyntax.self), 
+        .node(TupleExprSyntax.self), 
+        .node(TuplePatternElementListSyntax.self), 
+        .node(TuplePatternElementSyntax.self), 
+        .node(TuplePatternSyntax.self), 
+        .node(TupleTypeElementListSyntax.self), 
+        .node(TupleTypeElementSyntax.self), 
+        .node(TupleTypeSyntax.self), 
+        .node(TypeAnnotationSyntax.self), 
+        .node(TypeExprSyntax.self), 
+        .node(TypeInheritanceClauseSyntax.self), 
+        .node(TypeInitializerClauseSyntax.self), 
+        .node(TypealiasDeclSyntax.self), 
+        .node(UnavailableFromAsyncArgumentsSyntax.self), 
+        .node(UnderscorePrivateAttributeArgumentsSyntax.self), 
+        .node(UnexpectedNodesSyntax.self), 
+        .node(UnresolvedAsExprSyntax.self), 
+        .node(UnresolvedIsExprSyntax.self), 
+        .node(UnresolvedPatternExprSyntax.self), 
+        .node(UnresolvedTernaryExprSyntax.self), 
+        .node(ValueBindingPatternSyntax.self), 
+        .node(VariableDeclSyntax.self), 
+        .node(VersionTupleSyntax.self), 
+        .node(WhereClauseSyntax.self), 
+        .node(WhileStmtSyntax.self), 
+        .node(WildcardPatternSyntax.self), 
+        .node(YieldExprListElementSyntax.self), 
+        .node(YieldExprListSyntax.self), 
+        .node(YieldListSyntax.self), 
+        .node(YieldStmtSyntax.self)])
   }
 }
 
@@ -291,8 +288,6 @@ extension SyntaxKind {
     switch self {
     case .token: 
       return TokenSyntax.self
-    case .accessLevelModifier: 
-      return AccessLevelModifierSyntax.self
     case .accessPathComponent: 
       return AccessPathComponentSyntax.self
     case .accessPath: 
@@ -319,8 +314,6 @@ extension SyntaxKind {
       return ArrowExprSyntax.self
     case .asExpr: 
       return AsExprSyntax.self
-    case .asTypePattern: 
-      return AsTypePatternSyntax.self
     case .assignmentExpr: 
       return AssignmentExprSyntax.self
     case .associatedtypeDecl: 
@@ -341,16 +334,16 @@ extension SyntaxKind {
       return AvailabilityLabeledArgumentSyntax.self
     case .availabilitySpecList: 
       return AvailabilitySpecListSyntax.self
+    case .availabilityVersionRestrictionListEntry: 
+      return AvailabilityVersionRestrictionListEntrySyntax.self
+    case .availabilityVersionRestrictionList: 
+      return AvailabilityVersionRestrictionListSyntax.self
     case .availabilityVersionRestriction: 
       return AvailabilityVersionRestrictionSyntax.self
     case .awaitExpr: 
       return AwaitExprSyntax.self
     case .backDeployAttributeSpecList: 
       return BackDeployAttributeSpecListSyntax.self
-    case .backDeployVersionArgument: 
-      return BackDeployVersionArgumentSyntax.self
-    case .backDeployVersionList: 
-      return BackDeployVersionListSyntax.self
     case .binaryOperatorExpr: 
       return BinaryOperatorExprSyntax.self
     case .booleanLiteralExpr: 
@@ -377,6 +370,8 @@ extension SyntaxKind {
       return ClassRestrictionTypeSyntax.self
     case .closureCaptureItemList: 
       return ClosureCaptureItemListSyntax.self
+    case .closureCaptureItemSpecifier: 
+      return ClosureCaptureItemSpecifierSyntax.self
     case .closureCaptureItem: 
       return ClosureCaptureItemSyntax.self
     case .closureCaptureSignature: 
@@ -415,8 +410,6 @@ extension SyntaxKind {
       return ConventionAttributeArgumentsSyntax.self
     case .conventionWitnessMethodAttributeArguments: 
       return ConventionWitnessMethodAttributeArgumentsSyntax.self
-    case .customAttribute: 
-      return CustomAttributeSyntax.self
     case .declModifierDetail: 
       return DeclModifierDetailSyntax.self
     case .declModifier: 
@@ -429,8 +422,6 @@ extension SyntaxKind {
       return DeclNameArgumentsSyntax.self
     case .declName: 
       return DeclNameSyntax.self
-    case .declarationStmt: 
-      return DeclarationStmtSyntax.self
     case .deferStmt: 
       return DeferStmtSyntax.self
     case .deinitializerDecl: 
@@ -463,26 +454,34 @@ extension SyntaxKind {
       return DiscardAssignmentExprSyntax.self
     case .doStmt: 
       return DoStmtSyntax.self
+    case .documentationAttributeArgument: 
+      return DocumentationAttributeArgumentSyntax.self
+    case .documentationAttributeArguments: 
+      return DocumentationAttributeArgumentsSyntax.self
+    case .dynamicReplacementArguments: 
+      return DynamicReplacementArgumentsSyntax.self
+    case .editorPlaceholderDecl: 
+      return EditorPlaceholderDeclSyntax.self
     case .editorPlaceholderExpr: 
       return EditorPlaceholderExprSyntax.self
+    case .effectsArguments: 
+      return EffectsArgumentsSyntax.self
     case .enumCaseDecl: 
       return EnumCaseDeclSyntax.self
     case .enumCaseElementList: 
       return EnumCaseElementListSyntax.self
     case .enumCaseElement: 
       return EnumCaseElementSyntax.self
-    case .enumCasePattern: 
-      return EnumCasePatternSyntax.self
     case .enumDecl: 
       return EnumDeclSyntax.self
+    case .exposeAttributeArguments: 
+      return ExposeAttributeArgumentsSyntax.self
     case .exprList: 
       return ExprListSyntax.self
     case .expressionPattern: 
       return ExpressionPatternSyntax.self
     case .expressionSegment: 
       return ExpressionSegmentSyntax.self
-    case .expressionStmt: 
-      return ExpressionStmtSyntax.self
     case .extensionDecl: 
       return ExtensionDeclSyntax.self
     case .fallthroughStmt: 
@@ -495,8 +494,6 @@ extension SyntaxKind {
       return ForcedValueExprSyntax.self
     case .functionCallExpr: 
       return FunctionCallExprSyntax.self
-    case .functionDeclName: 
-      return FunctionDeclNameSyntax.self
     case .functionDecl: 
       return FunctionDeclSyntax.self
     case .functionParameterList: 
@@ -623,14 +620,10 @@ extension SyntaxKind {
       return MultipleTrailingClosureElementListSyntax.self
     case .multipleTrailingClosureElement: 
       return MultipleTrailingClosureElementSyntax.self
-    case .namedAttributeStringArgument: 
-      return NamedAttributeStringArgumentSyntax.self
     case .namedOpaqueReturnType: 
       return NamedOpaqueReturnTypeSyntax.self
     case .nilLiteralExpr: 
       return NilLiteralExprSyntax.self
-    case .nonEmptyTokenList: 
-      return NonEmptyTokenListSyntax.self
     case .objCSelectorPiece: 
       return ObjCSelectorPieceSyntax.self
     case .objCSelector: 
@@ -645,12 +638,14 @@ extension SyntaxKind {
       return OptionalBindingConditionSyntax.self
     case .optionalChainingExpr: 
       return OptionalChainingExprSyntax.self
-    case .optionalPattern: 
-      return OptionalPatternSyntax.self
     case .optionalType: 
       return OptionalTypeSyntax.self
+    case .originallyDefinedInArguments: 
+      return OriginallyDefinedInArgumentsSyntax.self
     case .packElementExpr: 
       return PackElementExprSyntax.self
+    case .packExpansionExpr: 
+      return PackExpansionExprSyntax.self
     case .packExpansionType: 
       return PackExpansionTypeSyntax.self
     case .packReferenceType: 
@@ -667,8 +662,6 @@ extension SyntaxKind {
       return PostfixUnaryExprSyntax.self
     case .poundAssertStmt: 
       return PoundAssertStmtSyntax.self
-    case .poundColumnExpr: 
-      return PoundColumnExprSyntax.self
     case .poundErrorDecl: 
       return PoundErrorDeclSyntax.self
     case .poundSourceLocationArgs: 
@@ -747,16 +740,12 @@ extension SyntaxKind {
       return SwitchDefaultLabelSyntax.self
     case .switchStmt: 
       return SwitchStmtSyntax.self
-    case .symbolicReferenceExpr: 
-      return SymbolicReferenceExprSyntax.self
     case .targetFunctionEntry: 
       return TargetFunctionEntrySyntax.self
     case .ternaryExpr: 
       return TernaryExprSyntax.self
     case .throwStmt: 
       return ThrowStmtSyntax.self
-    case .tokenList: 
-      return TokenListSyntax.self
     case .tryExpr: 
       return TryExprSyntax.self
     case .tupleExprElementList: 
@@ -787,8 +776,10 @@ extension SyntaxKind {
       return TypeInitializerClauseSyntax.self
     case .typealiasDecl: 
       return TypealiasDeclSyntax.self
-    case .unavailabilityCondition: 
-      return UnavailabilityConditionSyntax.self
+    case .unavailableFromAsyncArguments: 
+      return UnavailableFromAsyncArgumentsSyntax.self
+    case .underscorePrivateAttributeArguments: 
+      return UnderscorePrivateAttributeArgumentsSyntax.self
     case .unexpectedNodes: 
       return UnexpectedNodesSyntax.self
     case .unresolvedAsExpr: 
@@ -826,8 +817,6 @@ extension SyntaxKind {
     switch self {
     case .token: 
       return "token"
-    case .accessLevelModifier: 
-      return "access level modifier"
     case .accessPathComponent: 
       return nil
     case .accessPath: 
@@ -854,8 +843,6 @@ extension SyntaxKind {
       return nil
     case .asExpr: 
       return "'as' expression"
-    case .asTypePattern: 
-      return "'as' pattern"
     case .assignmentExpr: 
       return nil
     case .associatedtypeDecl: 
@@ -867,25 +854,25 @@ extension SyntaxKind {
     case .attributedType: 
       return "type"
     case .availabilityArgument: 
-      return "'@available' argument"
+      return "availability argument"
     case .availabilityCondition: 
-      return "'#availabile' condition"
+      return "availability condition"
     case .availabilityEntry: 
       return "availability entry"
     case .availabilityLabeledArgument: 
-      return "'@available' argument"
+      return "availability argument"
     case .availabilitySpecList: 
       return "'@availability' arguments"
+    case .availabilityVersionRestrictionListEntry: 
+      return "version"
+    case .availabilityVersionRestrictionList: 
+      return "version list"
     case .availabilityVersionRestriction: 
-      return "'@available' argument"
+      return "version restriction"
     case .awaitExpr: 
       return "'await' expression"
     case .backDeployAttributeSpecList: 
       return "'@_backDeploy' arguments"
-    case .backDeployVersionArgument: 
-      return "version"
-    case .backDeployVersionList: 
-      return "version list"
     case .binaryOperatorExpr: 
       return nil
     case .booleanLiteralExpr: 
@@ -912,6 +899,8 @@ extension SyntaxKind {
       return nil
     case .closureCaptureItemList: 
       return nil
+    case .closureCaptureItemSpecifier: 
+      return "closure capture specifier"
     case .closureCaptureItem: 
       return "closure capture item"
     case .closureCaptureSignature: 
@@ -950,8 +939,6 @@ extension SyntaxKind {
       return "@convention(...) arguments"
     case .conventionWitnessMethodAttributeArguments: 
       return "@convention(...) arguments for witness methods"
-    case .customAttribute: 
-      return "attribute"
     case .declModifierDetail: 
       return nil
     case .declModifier: 
@@ -964,8 +951,6 @@ extension SyntaxKind {
       return nil
     case .declName: 
       return "declaration name"
-    case .declarationStmt: 
-      return "declaration"
     case .deferStmt: 
       return "'defer' statement"
     case .deinitializerDecl: 
@@ -998,26 +983,34 @@ extension SyntaxKind {
       return nil
     case .doStmt: 
       return "'do' statement"
+    case .documentationAttributeArgument: 
+      return "@_documentation argument"
+    case .documentationAttributeArguments: 
+      return "@_documentation arguments"
+    case .dynamicReplacementArguments: 
+      return "@_dynamicReplacement argument"
+    case .editorPlaceholderDecl: 
+      return "editor placeholder"
     case .editorPlaceholderExpr: 
       return "editor placeholder"
+    case .effectsArguments: 
+      return "@_effects arguments"
     case .enumCaseDecl: 
       return "enum case"
     case .enumCaseElementList: 
       return nil
     case .enumCaseElement: 
       return nil
-    case .enumCasePattern: 
-      return "enum case pattern"
     case .enumDecl: 
       return "enum"
+    case .exposeAttributeArguments: 
+      return "@_expose arguments"
     case .exprList: 
       return nil
     case .expressionPattern: 
       return "pattern"
     case .expressionSegment: 
       return nil
-    case .expressionStmt: 
-      return "expression"
     case .extensionDecl: 
       return "extension"
     case .fallthroughStmt: 
@@ -1030,8 +1023,6 @@ extension SyntaxKind {
       return "force unwrap"
     case .functionCallExpr: 
       return "function call"
-    case .functionDeclName: 
-      return "function declaration name"
     case .functionDecl: 
       return "function"
     case .functionParameterList: 
@@ -1158,14 +1149,10 @@ extension SyntaxKind {
       return nil
     case .multipleTrailingClosureElement: 
       return "trailing closure"
-    case .namedAttributeStringArgument: 
-      return "attribute argument"
     case .namedOpaqueReturnType: 
       return "named opaque return type"
     case .nilLiteralExpr: 
       return nil
-    case .nonEmptyTokenList: 
-      return "token list"
     case .objCSelectorPiece: 
       return "Objective-C selector piece"
     case .objCSelector: 
@@ -1180,11 +1167,13 @@ extension SyntaxKind {
       return "optional binding"
     case .optionalChainingExpr: 
       return "optional chaining"
-    case .optionalPattern: 
-      return "optional pattern"
     case .optionalType: 
       return "optional type"
+    case .originallyDefinedInArguments: 
+      return "@_originallyDefinedIn arguments"
     case .packElementExpr: 
+      return nil
+    case .packExpansionExpr: 
       return nil
     case .packExpansionType: 
       return "variadic expansion"
@@ -1202,8 +1191,6 @@ extension SyntaxKind {
       return "postfix expression"
     case .poundAssertStmt: 
       return "'#assert' directive"
-    case .poundColumnExpr: 
-      return nil
     case .poundErrorDecl: 
       return "'#error' directive"
     case .poundSourceLocationArgs: 
@@ -1282,16 +1269,12 @@ extension SyntaxKind {
       return nil
     case .switchStmt: 
       return "'switch' statement"
-    case .symbolicReferenceExpr: 
-      return nil
     case .targetFunctionEntry: 
       return "attribute argument"
     case .ternaryExpr: 
       return "ternay expression"
     case .throwStmt: 
       return "'throw' statement"
-    case .tokenList: 
-      return "token list"
     case .tryExpr: 
       return "'try' expression"
     case .tupleExprElementList: 
@@ -1322,8 +1305,10 @@ extension SyntaxKind {
       return nil
     case .typealiasDecl: 
       return "typealias declaration"
-    case .unavailabilityCondition: 
-      return "'#unavailable' condition"
+    case .unavailableFromAsyncArguments: 
+      return "@_unavailableFromAsync argument"
+    case .underscorePrivateAttributeArguments: 
+      return "@_private argument"
     case .unexpectedNodes: 
       return nil
     case .unresolvedAsExpr: 

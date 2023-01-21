@@ -15,20 +15,20 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
-let basicFormatFile = SourceFile {
-  ImportDecl(
+let basicFormatFile = SourceFileSyntax {
+  ImportDeclSyntax(
     leadingTrivia: .docLineComment(generateCopyrightHeader(for: "generate-swiftbasicformat")),
-    path: [AccessPathComponent(name: "SwiftSyntax")]
+    path: [AccessPathComponentSyntax(name: "SwiftSyntax")]
   )
 
-  ClassDecl("open class BasicFormat: SyntaxRewriter") {
-    VariableDecl("public var indentationLevel: Int = 0")
-    VariableDecl("open var indentation: TriviaPiece { .spaces(indentationLevel * 4) }")
-    VariableDecl("public var indentedNewline: Trivia { Trivia(pieces: [.newlines(1), indentation]) }")
-    VariableDecl("private var lastRewrittenToken: TokenSyntax?")
-    VariableDecl("private var putNextTokenOnNewLine: Bool = false")
+  ClassDeclSyntax("open class BasicFormat: SyntaxRewriter") {
+    VariableDeclSyntax("public var indentationLevel: Int = 0")
+    VariableDeclSyntax("open var indentation: TriviaPiece { .spaces(indentationLevel * 4) }")
+    VariableDeclSyntax("public var indentedNewline: Trivia { Trivia(pieces: [.newlines(1), indentation]) }")
+    VariableDeclSyntax("private var lastRewrittenToken: TokenSyntax?")
+    VariableDeclSyntax("private var putNextTokenOnNewLine: Bool = false")
 
-    FunctionDecl("""
+    FunctionDeclSyntax("""
       open override func visitPre(_ node: Syntax) {
         if let keyPath = getKeyPath(node), shouldIndent(keyPath) {
           indentationLevel += 1
@@ -39,7 +39,7 @@ let basicFormatFile = SourceFile {
       }
       """
     )
-    FunctionDecl("""
+    FunctionDeclSyntax("""
       open override func visitPost(_ node: Syntax) {
         if let keyPath = getKeyPath(node), shouldIndent(keyPath) {
           indentationLevel -= 1
@@ -48,7 +48,7 @@ let basicFormatFile = SourceFile {
       """
     )
 
-    FunctionDecl("""
+    FunctionDeclSyntax("""
       open override func visit(_ node: TokenSyntax) -> TokenSyntax {
         var leadingTrivia = node.leadingTrivia
         var trailingTrivia = node.trailingTrivia
@@ -76,99 +76,133 @@ let basicFormatFile = SourceFile {
       """
     )
 
-    FunctionDecl("open func shouldIndent(_ keyPath: AnyKeyPath) -> Bool") {
-      SwitchStmt(expression: Expr("keyPath")) {
+    FunctionDeclSyntax("open func shouldIndent(_ keyPath: AnyKeyPath) -> Bool") {
+      SwitchStmtSyntax(expression: ExprSyntax("keyPath")) {
         for node in SYNTAX_NODES where !node.isBase {
           for child in node.children where child.isIndented {
-            SwitchCase("case \\\(raw: node.type.syntaxBaseName).\(raw: child.swiftName):") {
-              ReturnStmt("return true")
+            SwitchCaseSyntax("case \\\(raw: node.type.syntaxBaseName).\(raw: child.swiftName):") {
+              ReturnStmtSyntax("return true")
             }
           }
         }
-        SwitchCase("default:") {
-          ReturnStmt("return false")
+        SwitchCaseSyntax("default:") {
+          ReturnStmtSyntax("return false")
         }
       }
     }
 
-    FunctionDecl("open func requiresLeadingNewline(_ keyPath: AnyKeyPath) -> Bool") {
-      SwitchStmt(expression: Expr("keyPath")) {
+    FunctionDeclSyntax("open func requiresLeadingNewline(_ keyPath: AnyKeyPath) -> Bool") {
+      SwitchStmtSyntax(expression: ExprSyntax("keyPath")) {
         for node in SYNTAX_NODES where !node.isBase {
           for child in node.children where child.requiresLeadingNewline {
-            SwitchCase("case \\\(raw: node.type.syntaxBaseName).\(raw: child.swiftName):") {
-              ReturnStmt("return true")
+            SwitchCaseSyntax("case \\\(raw: node.type.syntaxBaseName).\(raw: child.swiftName):") {
+              ReturnStmtSyntax("return true")
             }
           }
         }
-        SwitchCase("default:") {
-          ReturnStmt("return putNextTokenOnNewLine")
+        SwitchCaseSyntax("default:") {
+          ReturnStmtSyntax("return putNextTokenOnNewLine")
         }
       }
     }
 
-    FunctionDecl("open func childrenSeparatedByNewline(_ node: Syntax) -> Bool") {
-      SwitchStmt(expression: Expr("node.as(SyntaxEnum.self)")) {
+    FunctionDeclSyntax("open func childrenSeparatedByNewline(_ node: Syntax) -> Bool") {
+      SwitchStmtSyntax(expression: ExprSyntax("node.as(SyntaxEnum.self)")) {
         for node in SYNTAX_NODES where !node.isBase {
           if node.elementsSeparatedByNewline {
-            SwitchCase("case .\(raw: node.swiftSyntaxKind):") {
-              ReturnStmt("return true")
+            SwitchCaseSyntax("case .\(raw: node.swiftSyntaxKind):") {
+              ReturnStmtSyntax("return true")
             }
           }
         }
-        SwitchCase("default:") {
-          ReturnStmt("return false")
+        SwitchCaseSyntax("default:") {
+          ReturnStmtSyntax("return false")
         }
       }
     }
 
-    FunctionDecl("open func requiresLeadingSpace(_ token: TokenSyntax) -> Bool") {
-      SwitchStmt(expression: Expr("token.tokenKind")) {
-        for token in SYNTAX_TOKENS {
-          if token.requiresLeadingSpace {
-            SwitchCase("case .\(raw: token.swiftKind):") {
-              ReturnStmt("return true")
-            }
-          }
-        }
-        SwitchCase("default:") {
-          ReturnStmt("return false")
-        }
-      }
-    }
-
-    FunctionDecl("open func requiresTrailingSpace(_ token: TokenSyntax) -> Bool") {
-      SwitchStmt("""
-        switch (token.tokenKind, token.nextToken(viewMode: .sourceAccurate)?.tokenKind) {
-        case (.asKeyword, .exclamationMark),
-             (.asKeyword, .postfixQuestionMark),
-             (.initKeyword, .leftParen),
-             (.initKeyword, .postfixQuestionMark),
-             (.tryKeyword, .exclamationMark),
-             (.tryKeyword, .postfixQuestionMark):
+    FunctionDeclSyntax("open func requiresLeadingSpace(_ token: TokenSyntax) -> Bool") {
+      SwitchStmtSyntax("""
+        switch (token.previousToken(viewMode: .sourceAccurate)?.tokenKind, token.tokenKind) {
+        case (.leftParen, .binaryOperator):  // Ensures there is no space in @available(*, deprecated)
           return false
         default:
           break
         }
         """)
       
-      SwitchStmt(expression: Expr("token.tokenKind")) {
+      SwitchStmtSyntax(expression: ExprSyntax("token.tokenKind")) {
         for token in SYNTAX_TOKENS {
-          if token.requiresTrailingSpace {
-            SwitchCase("case .\(raw: token.swiftKind):") {
-              ReturnStmt("return true")
+          if token.requiresLeadingSpace {
+            SwitchCaseSyntax("case .\(raw: token.swiftKind):") {
+              ReturnStmtSyntax("return true")
             }
           }
         }
-        SwitchCase(#"case .contextualKeyword("async"):"#) {
-          ReturnStmt("return true")
+        for keyword in KEYWORDS where keyword.requiresLeadingSpace {
+          SwitchCaseSyntax("case .keyword(.\(raw: keyword.escapedName)):") {
+            ReturnStmtSyntax("return true")
+          }
         }
-        SwitchCase("default:") {
-          ReturnStmt("return false")
+        SwitchCaseSyntax("default:") {
+          ReturnStmtSyntax("return false")
         }
       }
     }
 
-    FunctionDecl("""
+    FunctionDeclSyntax("open func requiresTrailingSpace(_ token: TokenSyntax) -> Bool") {
+        SwitchStmtSyntax("""
+        switch (token.tokenKind, token.parent?.kind) {
+        case (.colon, .dictionaryExpr): // Ensures there is not space in `[:]`
+          return false
+        case (.exclamationMark, .tryExpr), // Ensures there is a space in `try! foo`
+             (.postfixQuestionMark, .tryExpr): // Ensures there is a space in `try? foo`
+          return true
+        default:
+          break
+        }
+        """)
+
+      SwitchStmtSyntax("""
+        switch (token.tokenKind, token.nextToken(viewMode: .sourceAccurate)?.tokenKind) {
+        case (.keyword(.as), .exclamationMark), // Ensures there is not space in `as!`
+             (.keyword(.as), .postfixQuestionMark), // Ensures there is not space in `as?`
+             (.exclamationMark, .leftParen), // Ensures there is not space in `myOptionalClosure!()`
+             (.exclamationMark, .period), // Ensures there is not space in `myOptionalBar!.foo()`
+             (.keyword(.`init`), .leftParen), // Ensures there is not space in `init()`
+             (.keyword(.`init`), .postfixQuestionMark), // Ensures there is not space in `init?`
+             (.postfixQuestionMark, .leftParen), // Ensures there is not space in `init?()`
+             (.postfixQuestionMark, .rightAngle), // Ensures there is not space in `ContiguousArray<RawSyntax?>`
+             (.postfixQuestionMark, .rightParen), // Ensures there is not space in `myOptionalClosure?()`
+             (.keyword(.try), .exclamationMark), // Ensures there is not space in `try!`
+             (.keyword(.try), .postfixQuestionMark), // Ensures there is not space in `try?`
+             (.binaryOperator, .comma): // Ensures there is no space in `@available(*, deprecated)`
+          return false
+        default:
+          break
+        }
+        """)
+
+      SwitchStmtSyntax(expression: ExprSyntax("token.tokenKind")) {
+        for token in SYNTAX_TOKENS {
+          if token.requiresTrailingSpace {
+            SwitchCaseSyntax("case .\(raw: token.swiftKind):") {
+              ReturnStmtSyntax("return true")
+            }
+          }
+        }
+        for keyword in KEYWORDS where keyword.requiresTrailingSpace {
+          SwitchCaseSyntax("case .keyword(.\(raw: keyword.escapedName)):") {
+            ReturnStmtSyntax("return true")
+          }
+        }
+        SwitchCaseSyntax("default:") {
+          ReturnStmtSyntax("return false")
+        }
+      }
+    }
+
+    FunctionDeclSyntax("""
       private func getKeyPath(_ node: Syntax) -> AnyKeyPath? {
         guard let parent = node.parent else {
           return nil
@@ -182,50 +216,3 @@ let basicFormatFile = SourceFile {
     )
   }
 }
-
-private func createChildVisitCall(childType: SyntaxBuildableType, rewrittenExpr: ExprSyntaxProtocol) -> FunctionCallExpr {
-  let visitCall: FunctionCallExpr
-  if childType.isOptional {
-    visitCall = FunctionCallExpr("\(rewrittenExpr).map(self.visit)")
-  } else {
-    visitCall = FunctionCallExpr("self.visit(\(rewrittenExpr))")
-  }
-  if childType.baseType?.baseName != "Syntax", childType.baseType?.isSyntaxCollection != true, childType.baseType != nil {
-    let optionalChained = childType.optionalChained(expr: visitCall)
-    return FunctionCallExpr("\(optionalChained).cast(\(raw: childType.syntaxBaseName).self)")
-  } else {
-    return visitCall
-  }
-}
-
-private func makeSyntaxCollectionRewriteFunc(node: Node) -> FunctionDecl {
-  let rewriteResultType = node.type.syntaxBaseName
-  return FunctionDecl("""
-
-    open override func visit(_ node: \(node.type.syntaxBaseName)) -> \(rewriteResultType)
-    """) {
-    let formattedChildrenVarLet = node.elementsSeparatedByNewline ? "var" : "let"
-    VariableDecl(
-      """
-      \(raw: formattedChildrenVarLet) formattedChildren = node.map {
-        \(createChildVisitCall(childType: node.collectionElementType, rewrittenExpr: IdentifierExpr(identifier: .dollarIdentifier("$0"))))
-      }
-      """
-    )
-    if node.elementsSeparatedByNewline {
-      SequenceExpr(
-        """
-        formattedChildren = formattedChildren.map {
-          if $0.leadingTrivia?.first?.isNewline == true {
-            return $0
-          } else {
-            return $0.withLeadingTrivia(indentedNewline + ($0.leadingTrivia ?? []))
-          }
-        }
-        """
-      )
-    }
-    ReturnStmt("return \(raw: node.type.syntaxBaseName)(formattedChildren)")
-  }
-}
-

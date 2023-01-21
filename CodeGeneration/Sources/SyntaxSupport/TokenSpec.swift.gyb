@@ -29,6 +29,7 @@ public class TokenSpec {
   public let isKeyword: Bool
   public let requiresLeadingSpace: Bool
   public let requiresTrailingSpace: Bool
+  public let associatedValueClass: String?
 
   public var swiftKind: String {
     let name = lowercaseFirstWord(name: self.name)
@@ -49,7 +50,8 @@ public class TokenSpec {
     classification: String = "None",
     isKeyword: Bool = false,
     requiresLeadingSpace: Bool = false,
-    requiresTrailingSpace: Bool = false
+    requiresTrailingSpace: Bool = false,
+    associatedValueClass: String? = nil
   ) {
     self.name = name
     self.kind = kind
@@ -64,43 +66,9 @@ public class TokenSpec {
     self.isKeyword = isKeyword
     self.requiresLeadingSpace = requiresLeadingSpace
     self.requiresTrailingSpace = requiresTrailingSpace
+    self.associatedValueClass = associatedValueClass
   }
 }
-
-/// Represents a keyword token.
-public class KeywordSpec: TokenSpec {
-  init(
-    name: String,
-    text: String,
-    classification: String = "Keyword",
-    requiresLeadingSpace: Bool = false,
-    requiresTrailingSpace: Bool = false
-  ) {
-    super.init(
-      name: name,
-      kind: "kw_\(text)",
-      nameForDiagnostics: text,
-      unprefixedKind: text,
-      text: text,
-      classification: classification,
-      isKeyword: true,
-      requiresLeadingSpace: requiresLeadingSpace,
-      requiresTrailingSpace: requiresTrailingSpace
-    )
-  }
-}
-
-public class SwiftKeywordSpec: KeywordSpec { }
-
-public class DeclKeywordSpec: SwiftKeywordSpec { }
-
-public class StmtKeywordSpec: SwiftKeywordSpec { }
-
-public class ExprKeywordSpec: SwiftKeywordSpec { }
-
-public class PatternKeywordSpec: SwiftKeywordSpec { }
-
-public class SilKeywordSpec: KeywordSpec { }
 
 public class PoundKeywordSpec: TokenSpec {
   init(
@@ -243,6 +211,9 @@ public let SYNTAX_TOKENS: [TokenSpec] = [
 %     if token.requires_trailing_space:
 %       parameters += ['requiresTrailingSpace: true']
 %     end
+%   end
+%   if token.associated_value_class:
+%     parameters += [f'associatedValueClass: "{token.associated_value_class}"']
 %   end
   ${class_name}Spec(${", ".join(parameters)}),
 % end

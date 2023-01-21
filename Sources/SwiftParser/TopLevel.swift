@@ -26,7 +26,7 @@ extension Parser {
   /// as unexpected nodes that have the `isMaximumNestingLevelOverflow` bit set.
   /// Check this in places that are likely to cause deep recursion and if this returns non-nil, abort parsing.
   mutating func remainingTokensIfMaximumNestingLevelReached() -> RawUnexpectedNodesSyntax? {
-    if nestingLevel > self.maximumNestingLevel && self.currentToken.tokenKind != .eof {
+    if nestingLevel > self.maximumNestingLevel && self.currentToken.rawTokenKind != .eof {
       let remainingTokens = self.consumeRemainingTokens()
       return RawUnexpectedNodesSyntax(elements: remainingTokens, isMaximumNestingLevelOverflow: true, arena: self.arena)
     } else {
@@ -73,9 +73,7 @@ extension Parser {
           item: .init(lastItem.item)!,
           lastItem.unexpectedBetweenItemAndSemicolon,
           semicolon: self.missingToken(.semicolon, text: nil),
-          lastItem.unexpectedBetweenSemicolonAndErrorTokens,
-          errorTokens: lastItem.errorTokens,
-          lastItem.unexpectedAfterErrorTokens,
+          lastItem.unexpectedAfterSemicolon,
           arena: self.arena
         )
       }
@@ -156,11 +154,10 @@ extension Parser {
         remainingTokens,
         item: .expr(RawExprSyntax(RawMissingExprSyntax(arena: self.arena))),
         semicolon: nil,
-        errorTokens: nil,
         arena: self.arena
       )
     }
-    if self.at(any: [.caseKeyword, .defaultKeyword]) {
+    if self.at(any: [.keyword(.case), .keyword(.default)]) {
       // 'case' and 'default' are invalid in code block items.
       // Parse them and put them in their own CodeBlockItem but as an unexpected node.
       let switchCase = self.parseSwitchCase()
@@ -168,7 +165,6 @@ extension Parser {
         RawUnexpectedNodesSyntax(elements: [RawSyntax(switchCase)], arena: self.arena),
         item: .expr(RawExprSyntax(RawMissingExprSyntax(arena: self.arena))),
         semicolon: nil,
-        errorTokens: nil,
         arena: self.arena
       )
     }
@@ -189,7 +185,6 @@ extension Parser {
       item: item,
       semicolon: semi,
       RawUnexpectedNodesSyntax(trailingSemis, arena: self.arena),
-      errorTokens: nil,
       arena: self.arena
     )
   }
@@ -210,9 +205,7 @@ extension Parser {
             item: .init(lastElement.item)!,
             lastElement.unexpectedBetweenItemAndSemicolon,
             semicolon: parser.missingToken(.semicolon, text: nil),
-            lastElement.unexpectedBetweenSemicolonAndErrorTokens,
-            errorTokens: lastElement.errorTokens,
-            lastElement.unexpectedAfterErrorTokens,
+            lastElement.unexpectedAfterSemicolon,
             arena: parser.arena
           )
         } else {

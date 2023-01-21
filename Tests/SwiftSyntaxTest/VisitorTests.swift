@@ -15,30 +15,30 @@ import SwiftSyntax
 
 public class VisitorTests: XCTestCase {
   public func testVisitMissingNodes() {
-    let node = DeclarationStmtSyntax(declaration: MissingDeclSyntax())
+    let node = ReturnStmtSyntax(returnKeyword: .keyword(.return), expression: ExprSyntax(MissingExprSyntax()))
 
-    class MissingDeclChecker: SyntaxVisitor {
-      var didSeeMissingDeclSyntax = false
+    class MissingExprChecker: SyntaxVisitor {
+      var didSeeMissingExprSyntax = false
 
-      override func visit(_ node: MissingDeclSyntax) -> SyntaxVisitorContinueKind {
-        didSeeMissingDeclSyntax = true
+      override func visit(_ node: MissingExprSyntax) -> SyntaxVisitorContinueKind {
+        didSeeMissingExprSyntax = true
         return .visitChildren
       }
 
       static func check<Tree: SyntaxProtocol>(_ tree: Tree, viewMode: SyntaxTreeViewMode) -> Bool {
-        let visitor = MissingDeclChecker(viewMode: viewMode)
+        let visitor = MissingExprChecker(viewMode: viewMode)
         visitor.walk(tree)
-        return visitor.didSeeMissingDeclSyntax
+        return visitor.didSeeMissingExprSyntax
       }
     }
 
-    XCTAssertTrue(MissingDeclChecker.check(node, viewMode: .sourceAccurate))
-    XCTAssertTrue(MissingDeclChecker.check(node, viewMode: .fixedUp))
+    XCTAssertTrue(MissingExprChecker.check(node, viewMode: .sourceAccurate))
+    XCTAssertTrue(MissingExprChecker.check(node, viewMode: .fixedUp))
   }
 
   public func testVisitMissingToken() {
     let node = ReturnStmtSyntax(
-      returnKeyword: .returnKeyword(presence: .missing)
+      returnKeyword: .keyword(.return, presence: .missing)
     )
 
     class MissingTokenChecker: SyntaxVisitor {
@@ -64,18 +64,18 @@ public class VisitorTests: XCTestCase {
     // This is just bunch of unexpected
     let unexpectedReturnStmt = ReturnStmtSyntax(
       UnexpectedNodesSyntax([Syntax(TokenSyntax.identifier("starting")), Syntax(TokenSyntax.integerLiteral("unexpected"))]),
-      returnKeyword: .returnKeyword(trailingTrivia: [.spaces(1)]),
+      returnKeyword: .keyword(.return, trailingTrivia: [.spaces(1)]),
       UnexpectedNodesSyntax([Syntax(TokenSyntax.identifier("middle"))]),
-      expression: ExprSyntax(NilLiteralExprSyntax(UnexpectedNodesSyntax([Syntax(TokenSyntax.identifier("end"))]), nilKeyword: TokenSyntax.nilKeyword(trailingTrivia: [])))
+      expression: ExprSyntax(NilLiteralExprSyntax(UnexpectedNodesSyntax([Syntax(TokenSyntax.identifier("end"))]), nilKeyword: TokenSyntax.keyword(.nil, trailingTrivia: [])))
     )
 
     // This is more real-world where the user wrote null instead of nil.
     let misspelledNil = ReturnStmtSyntax(
-      returnKeyword: .returnKeyword(trailingTrivia: [.spaces(1)]),
+      returnKeyword: .keyword(.return, trailingTrivia: [.spaces(1)]),
       expression: ExprSyntax(
         NilLiteralExprSyntax(
           UnexpectedNodesSyntax([Syntax(TokenSyntax.identifier("null"))]),
-          nilKeyword: .nilKeyword(presence: .missing)
+          nilKeyword: .keyword(.nil, presence: .missing)
         )
       )
     )

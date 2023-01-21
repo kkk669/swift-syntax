@@ -103,7 +103,7 @@ public class AbsolutePositionTests: XCTestCase {
         CodeBlockItemSyntax(
           item: .init(
             ReturnStmtSyntax(
-              returnKeyword: .returnKeyword(trailingTrivia: .newline)
+              returnKeyword: .keyword(.return, trailingTrivia: .newline)
             )
           )
         )
@@ -135,7 +135,8 @@ public class AbsolutePositionTests: XCTestCase {
         repeating: CodeBlockItemSyntax(
           item: .init(
             ReturnStmtSyntax(
-              returnKeyword: .returnKeyword(
+              returnKeyword: .keyword(
+                .return,
                 leadingTrivia: AbsolutePositionTests.leadingTrivia,
                 trailingTrivia: AbsolutePositionTests.trailingTrivia
               )
@@ -209,7 +210,7 @@ public class AbsolutePositionTests: XCTestCase {
     let item = CodeBlockItemSyntax(
       item: .init(
         ReturnStmtSyntax(
-          returnKeyword: .returnKeyword(leadingTrivia: .newline, trailingTrivia: .newline)
+          returnKeyword: .keyword(.return, leadingTrivia: .newline, trailingTrivia: .newline)
         )
       )
     )

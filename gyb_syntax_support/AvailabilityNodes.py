@@ -11,7 +11,7 @@ AVAILABILITY_NODES = [
     #                     | identifier ','?
     #                     | availability-version-restriction ','?
     #                     | availability-versioned-argument ','?
-    Node('AvailabilityArgument', name_for_diagnostics="'@available' argument",
+    Node('AvailabilityArgument', name_for_diagnostics="availability argument",
          kind='Syntax',
          description='''
          A single argument to an `@available` argument like `*`, `iOS 10.1`,
@@ -22,12 +22,11 @@ AVAILABILITY_NODES = [
                    description='The actual argument',
                    node_choices=[
                        Child('Token', kind='Token', 
-                             token_choices=['SpacedBinaryOperatorToken', 'IdentifierToken']),
+                             token_choices=['BinaryOperatorToken', 'IdentifierToken']),
                        Child('AvailabilityVersionRestriction',
                              kind='AvailabilityVersionRestriction'),
                        Child('AvailabilityLabeledArgument',
                              kind='AvailabilityLabeledArgument'),
-                       Child('TokenList', kind='TokenList'),
                    ]),
              Child('TrailingComma', kind='CommaToken', is_optional=True,
                    description='''
@@ -38,7 +37,7 @@ AVAILABILITY_NODES = [
 
     # Representation of 'deprecated: 2.3', 'message: "Hello world"' etc.
     # availability-versioned-argument -> identifier ':' version-tuple
-    Node('AvailabilityLabeledArgument', name_for_diagnostics="'@available' argument",
+    Node('AvailabilityLabeledArgument', name_for_diagnostics="availability argument",
          kind='Syntax',
          description='''
          A argument to an `@available` attribute that consists of a label and
@@ -51,14 +50,14 @@ AVAILABILITY_NODES = [
                    description='The colon separating label and value'),
              Child('Value', kind='Syntax', name_for_diagnostics='value',
                    node_choices=[
-                       Child('String', 'StringLiteralToken'),
+                       Child('String', 'StringLiteralExpr'),
                        Child('Version', 'VersionTuple'),
                    ], description='The value of this labeled argument',),
          ]),
 
     # Representation for 'iOS 10', 'swift 3.4' etc.
     # availability-version-restriction -> identifier version-tuple
-    Node('AvailabilityVersionRestriction', name_for_diagnostics="'@available' argument",
+    Node('AvailabilityVersionRestriction', name_for_diagnostics="version restriction",
          kind='Syntax',
          description='''
          An argument to `@available` that restricts the availability on a

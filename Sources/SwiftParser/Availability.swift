@@ -13,72 +13,48 @@
 @_spi(RawSyntax) import SwiftSyntax
 
 extension Parser {
-  enum AvailabilitySpecSource {
-    case available
-    case unavailable
-    case macro
-  }
-
   /// Parse a list of availability arguments.
   ///
   /// Grammar
   /// =======
   ///
   ///     availability-arguments → availability-argument | availability-argument , availability-arguments
-  mutating func parseAvailabilitySpecList(
-    from source: AvailabilitySpecSource
-  ) -> RawAvailabilitySpecListSyntax {
+  mutating func parseAvailabilitySpecList() -> RawAvailabilitySpecListSyntax {
     var elements = [RawAvailabilityArgumentSyntax]()
     do {
       var keepGoing: RawTokenSyntax? = nil
       var availablityArgumentProgress = LoopProgressCondition()
       repeat {
         let entry: RawAvailabilityArgumentSyntax.Entry
-        switch source {
-        case .available where self.at(.identifier),
-          .unavailable where self.at(.identifier):
+        if self.at(.identifier) {
           entry = .availabilityVersionRestriction(self.parseAvailabilityMacro())
-        default:
+        } else {
           entry = self.parseAvailabilitySpec()
         }
 
+        let unexpectedBeforeKeepGoing: RawUnexpectedNodesSyntax?
         keepGoing = self.consume(if: .comma)
+        if keepGoing == nil, let orOperator = self.consumeIfContextualPunctuator("||") {
+          unexpectedBeforeKeepGoing = RawUnexpectedNodesSyntax([orOperator], arena: self.arena)
+          keepGoing = missingToken(.comma)
+        } else {
+          unexpectedBeforeKeepGoing = nil
+        }
         elements.append(
           RawAvailabilityArgumentSyntax(
             entry: entry,
+            unexpectedBeforeKeepGoing,
             trailingComma: keepGoing,
             arena: self.arena
           )
         )
-
-        // Before continuing to parse the next specification, we check that it's
-        // also in the shorthand syntax and recover from it.
-        if keepGoing != nil,
-          let (_, handle) = self.at(anyIn: AvailabilityArgumentKind.self)
-        {
-          var tokens = [RawTokenSyntax]()
-          tokens.append(self.eat(handle))
-          var recoveryProgress = LoopProgressCondition()
-          while !self.at(any: [.eof, .comma, .rightParen]) && recoveryProgress.evaluate(currentToken) {
-            tokens.append(self.consumeAnyToken())
-          }
-          let syntax = RawTokenListSyntax(elements: tokens, arena: self.arena)
-          keepGoing = self.consume(if: .comma)
-          elements.append(
-            RawAvailabilityArgumentSyntax(
-              entry: .tokenList(syntax),
-              trailingComma: keepGoing,
-              arena: self.arena
-            )
-          )
-        }
       } while keepGoing != nil && availablityArgumentProgress.evaluate(currentToken)
     }
 
     return RawAvailabilitySpecListSyntax(elements: elements, arena: self.arena)
   }
 
-  enum AvailabilityArgumentKind: SyntaxText, ContextualKeywords {
+  enum AvailabilityArgumentKind: RawTokenKindSubset {
     case message
     case renamed
     case introduced
@@ -86,98 +62,121 @@ extension Parser {
     case obsoleted
     case unavailable
     case noasync
+    case star
+    case identifier
+
+    init?(lexeme: Lexer.Lexeme) {
+      switch lexeme {
+      case RawTokenKindMatch(.message): self = .message
+      case RawTokenKindMatch(.renamed): self = .renamed
+      case RawTokenKindMatch(.introduced): self = .introduced
+      case RawTokenKindMatch(.deprecated): self = .deprecated
+      case RawTokenKindMatch(.obsoleted): self = .obsoleted
+      case RawTokenKindMatch(.unavailable): self = .unavailable
+      case RawTokenKindMatch(.noasync): self = .noasync
+      case RawTokenKindMatch(.binaryOperator) where lexeme.tokenText == "*": self = .star
+      case RawTokenKindMatch(.identifier): self = .identifier
+      default: return nil
+      }
+    }
+
+    var rawTokenKind: RawTokenKind {
+      switch self {
+      case .message: return .keyword(.message)
+      case .renamed: return .keyword(.renamed)
+      case .introduced: return .keyword(.introduced)
+      case .deprecated: return .keyword(.deprecated)
+      case .obsoleted: return .keyword(.obsoleted)
+      case .unavailable: return .keyword(.unavailable)
+      case .noasync: return .keyword(.noasync)
+      case .star: return .binaryOperator
+      case .identifier: return .identifier
+      }
+    }
   }
 
-  mutating func parseExtendedAvailabilitySpecList() -> RawAvailabilitySpecListSyntax {
+  mutating func parseAvailabilityArgumentSpecList() -> RawAvailabilitySpecListSyntax {
     var elements = [RawAvailabilityArgumentSyntax]()
+    var keepGoing: RawTokenSyntax? = nil
 
-    // Parse the platform from the first element.
-    let platform = self.consumeAnyToken()
-    var keepGoing: RawTokenSyntax? = self.consume(if: .comma)
-    elements.append(
-      RawAvailabilityArgumentSyntax(
-        entry: .token(platform),
-        trailingComma: keepGoing,
-        arena: self.arena
-      )
-    )
+    var loopProgressCondition = LoopProgressCondition()
+    LOOP: repeat {
+      let entry: RawAvailabilityArgumentSyntax.Entry
+      switch self.at(anyIn: AvailabilityArgumentKind.self) {
+      case (.message, let handle)?,
+        (.renamed, let handle)?:
+        let argumentLabel = self.eat(handle)
+        let (unexpectedBeforeColon, colon) = self.expect(.colon)
+        // FIXME: Make sure this is a string literal with no interpolation.
+        let stringValue = self.parseStringLiteral()
 
-    do {
-      var loopProgressCondition = LoopProgressCondition()
-      while keepGoing != nil && loopProgressCondition.evaluate(currentToken) {
-        let entry: RawAvailabilityArgumentSyntax.Entry
-        switch self.at(anyIn: AvailabilityArgumentKind.self) {
-        case (.message, let handle)?,
-          (.renamed, let handle)?:
-          let argumentLabel = self.eat(handle)
-          let (unexpectedBeforeColon, colon) = self.expect(.colon)
-          // FIXME: Make sure this is a string literal with no interpolation.
-          let stringValue = self.consumeAnyToken()
-
-          entry = .availabilityLabeledArgument(
-            RawAvailabilityLabeledArgumentSyntax(
-              label: argumentLabel,
-              unexpectedBeforeColon,
-              colon: colon,
-              value: .string(stringValue),
-              arena: self.arena
-            )
+        entry = .availabilityLabeledArgument(
+          RawAvailabilityLabeledArgumentSyntax(
+            label: argumentLabel,
+            unexpectedBeforeColon,
+            colon: colon,
+            value: .string(stringValue),
+            arena: self.arena
           )
-        case (.introduced, let handle)?,
-          (.obsoleted, let handle)?:
-          let argumentLabel = self.eat(handle)
-          let (unexpectedBeforeColon, colon) = self.expect(.colon)
+        )
+      case (.introduced, let handle)?,
+        (.obsoleted, let handle)?:
+        let argumentLabel = self.eat(handle)
+        let (unexpectedBeforeColon, colon) = self.expect(.colon)
+        let version = self.parseVersionTuple()
+        entry = .availabilityLabeledArgument(
+          RawAvailabilityLabeledArgumentSyntax(
+            label: argumentLabel,
+            unexpectedBeforeColon,
+            colon: colon,
+            value: .version(version),
+            arena: self.arena
+          )
+        )
+      case (.deprecated, let handle)?:
+        let argumentLabel = self.eat(handle)
+        if let colon = self.consume(if: .colon) {
           let version = self.parseVersionTuple()
           entry = .availabilityLabeledArgument(
             RawAvailabilityLabeledArgumentSyntax(
               label: argumentLabel,
-              unexpectedBeforeColon,
               colon: colon,
               value: .version(version),
               arena: self.arena
             )
           )
-        case (.deprecated, let handle)?:
-          let argumentLabel = self.eat(handle)
-          if let colon = self.consume(if: .colon) {
-            let version = self.parseVersionTuple()
-            entry = .availabilityLabeledArgument(
-              RawAvailabilityLabeledArgumentSyntax(
-                label: argumentLabel,
-                colon: colon,
-                value: .version(version),
-                arena: self.arena
-              )
-            )
-          } else {
-            entry = .token(argumentLabel)
-          }
-        case (.unavailable, let handle)?,
-          (.noasync, let handle)?:
-          let argument = self.eat(handle)
-          // FIXME: Can we model this in SwiftSyntax by making the
-          // 'labeled' argument part optional?
-          entry = .token(argument)
-        case nil:
-          // Not sure what this label is but, let's just eat it and
-          // keep going.
-          var tokens = [RawTokenSyntax]()
-          while !self.at(any: [.eof, .comma, .rightParen]) {
-            tokens.append(self.consumeAnyToken())
-          }
-          entry = .tokenList(RawTokenListSyntax(elements: tokens, arena: self.arena))
+        } else {
+          entry = .token(argumentLabel)
         }
-
-        keepGoing = self.consume(if: .comma)
-        elements.append(
-          RawAvailabilityArgumentSyntax(
-            entry: entry,
-            trailingComma: keepGoing,
-            arena: self.arena
-          )
-        )
+      case (.unavailable, let handle)?,
+        (.noasync, let handle)?:
+        let argument = self.eat(handle)
+        // FIXME: Can we model this in SwiftSyntax by making the
+        // 'labeled' argument part optional?
+        entry = .token(argument)
+      case (.star, _)?:
+        entry = self.parseAvailabilitySpec()
+      case (.identifier, let handle)?:
+        if self.peek().rawTokenKind == .comma {
+          // An argument like `_iOS13Aligned` that isn't followed by a version.
+          let version = self.eat(handle)
+          entry = .token(version)
+        } else {
+          entry = self.parseAvailabilitySpec()
+        }
+      case nil:
+        break LOOP
       }
-    }
+
+      keepGoing = self.consume(if: .comma)
+      elements.append(
+        RawAvailabilityArgumentSyntax(
+          entry: entry,
+          trailingComma: keepGoing,
+          arena: self.arena
+        )
+      )
+    } while keepGoing != nil && loopProgressCondition.evaluate(currentToken)
     return RawAvailabilitySpecListSyntax(elements: elements, arena: self.arena)
   }
 
@@ -195,49 +194,7 @@ extension Parser {
       return .token(star)
     }
 
-    if self.at(any: [.identifier, .wildcardKeyword]) {
-      if self.atContextualKeyword("swift") || self.atContextualKeyword("_PackageDescription") {
-        return .availabilityVersionRestriction(self.parsePlatformAgnosticVersionConstraintSpec())
-      }
-    }
-
-    return .availabilityVersionRestriction(self.parsePlatformVersionConstraintSpec())
-  }
-
-  mutating func parsePlatformAgnosticVersionConstraintSpec() -> RawAvailabilityVersionRestrictionSyntax {
-    let (unexpectedBeforePlatform, platform) = self.expectAny([.identifier, .wildcardKeyword], default: .identifier)
-    let version = self.parseVersionTuple()
-    return RawAvailabilityVersionRestrictionSyntax(
-      unexpectedBeforePlatform,
-      platform: platform,
-      version: version,
-      arena: self.arena
-    )
-  }
-
-  /// Parse a platform-specific version constraint.
-  ///
-  /// The grammar calls out Apple-specific names, even though the Swift compiler
-  /// will accept any identifier here. The compiler will diagnose usages of platforms it
-  /// doesn't know about later.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     platform-name → iOS | iOSApplicationExtension
-  ///     platform-name → macOS | macOSApplicationExtension
-  ///     platform-name → macCatalyst | macCatalystApplicationExtension
-  ///     platform-name → watchOS
-  ///     platform-name → tvOS
-  mutating func parsePlatformVersionConstraintSpec() -> RawAvailabilityVersionRestrictionSyntax {
-    // Register the platform name as a keyword token.
-    let plaform = self.consumeAnyToken(remapping: .contextualKeyword)
-    let version = self.parseVersionTuple()
-    return RawAvailabilityVersionRestrictionSyntax(
-      platform: plaform,
-      version: version,
-      arena: self.arena
-    )
+    return .availabilityVersionRestriction(self.parseAvailabilityMacro())
   }
 
   /// Parse an availability macro.
@@ -248,19 +205,28 @@ extension Parser {
   /// =======
   ///
   ///     availability-argument → macro-name platform-version
-  mutating func parseAvailabilityMacro() -> RawAvailabilityVersionRestrictionSyntax {
-    let platform = self.consumeAnyToken()
+  ///
+  /// If `allowStarAsVersionNumber` is `true`, versions like `* 13.0` are accepted.
+  /// This is to match the behavior of `@_originallyDefinedIn` in the old parser that accepted such versions
+  mutating func parseAvailabilityMacro(allowStarAsVersionNumber: Bool = false) -> RawAvailabilityVersionRestrictionSyntax {
+    let unexpectedBeforePlatform: RawUnexpectedNodesSyntax?
+    let platform: RawTokenSyntax
+    if allowStarAsVersionNumber, self.atContextualPunctuator("*") {
+      unexpectedBeforePlatform = nil
+      platform = self.consumeAnyToken(remapping: .identifier)
+    } else {
+      (unexpectedBeforePlatform, platform) = self.expect(.identifier)
+    }
 
     let version: RawVersionTupleSyntax?
-    if self.at(.integerLiteral) {
-      version = self.parseVersionTuple()
-    } else if self.at(.floatingLiteral) {
+    if self.at(any: [.integerLiteral, .floatingLiteral]) {
       version = self.parseVersionTuple()
     } else {
       version = nil
     }
 
     return RawAvailabilityVersionRestrictionSyntax(
+      unexpectedBeforePlatform,
       platform: platform,
       version: version,
       arena: self.arena
@@ -276,28 +242,29 @@ extension Parser {
   ///     platform-version → decimal-digits '.' decimal-digits
   ///     platform-version → decimal-digits '.' decimal-digits '.' decimal-digits
   mutating func parseVersionTuple() -> RawVersionTupleSyntax {
-    if let major = self.consume(if: .integerLiteral) {
-      return RawVersionTupleSyntax(
-        majorMinor: major,
-        patchPeriod: nil,
-        patchVersion: nil,
-        arena: self.arena
-      )
-    }
-
-    let majorMinor = self.consumeAnyToken()
-    let period = self.consume(if: .period)
-
+    let (unexpectedBeforeMajorMinor, majorMinor) = self.expectAny([.integerLiteral, .floatingLiteral], default: .integerLiteral)
+    let patchPeriod: RawTokenSyntax?
+    let unexpectedBeforePatch: RawUnexpectedNodesSyntax?
     let patch: RawTokenSyntax?
-    if period != nil {
-      patch = self.consumeAnyToken()
+    if majorMinor.tokenKind == .floatingLiteral {
+      patchPeriod = self.consume(if: .period)
+      if patchPeriod != nil {
+        (unexpectedBeforePatch, patch) = self.expect(.integerLiteral)
+      } else {
+        unexpectedBeforePatch = nil
+        patch = nil
+      }
     } else {
+      patchPeriod = nil
+      unexpectedBeforePatch = nil
       patch = nil
     }
 
     return RawVersionTupleSyntax(
+      unexpectedBeforeMajorMinor,
       majorMinor: majorMinor,
-      patchPeriod: period,
+      patchPeriod: patchPeriod,
+      unexpectedBeforePatch,
       patchVersion: patch,
       arena: self.arena
     )

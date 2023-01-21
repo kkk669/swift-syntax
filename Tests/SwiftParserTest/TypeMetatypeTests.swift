@@ -52,14 +52,14 @@ final class TypeMetatypeTests: XCTestCase {
       var parser = Parser(baseType)
       let baseTypeSyntax = TypeSyntax.parse(from: &parser)
 
-      for metaKind in ["Type", "Protocol"] {
+      for metaKind in [.`Type`, .`Protocol`] as [Keyword] {
         AssertParse(
           "\(baseType).\(metaKind)",
           TypeSyntax.parse,
           substructure: Syntax(
             MetatypeTypeSyntax(
               baseType: baseTypeSyntax,
-              typeOrProtocol: .contextualKeyword(metaKind)
+              typeOrProtocol: .keyword(metaKind)
             )
           ),
           line: line

@@ -30,7 +30,8 @@ public let DECL_NODES: [Node] = [
        nameForDiagnostics: "typealias declaration",
        kind: "Decl",
        traits: [
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -42,9 +43,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "TypealiasKeyword",
-               kind: "TypealiasToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Typealias"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "typealias"
                ]),
          Child(name: "Identifier",
                kind: "IdentifierToken",
@@ -65,7 +69,8 @@ public let DECL_NODES: [Node] = [
        nameForDiagnostics: "associatedtype declaration",
        kind: "Decl",
        traits: [
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -77,9 +82,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "AssociatedtypeKeyword",
-               kind: "AssociatedtypeToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Associatedtype"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "associatedtype"
                ]),
          Child(name: "Identifier",
                kind: "IdentifierToken",
@@ -145,21 +153,24 @@ public let DECL_NODES: [Node] = [
          Child(name: "Input",
                kind: "ParameterClause"),
          Child(name: "AsyncOrReasyncKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                isOptional: true,
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "async",
                  "reasync"
                ]),
          Child(name: "ThrowsOrRethrowsKeyword",
-               kind: "Token",
+               kind: "KeywordToken",
                isOptional: true,
                tokenChoices: [
-                 "Throws",
-                 "Rethrows"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "throws",
+                 "rethrows"
                ]),
          Child(name: "Output",
                kind: "ReturnClause",
@@ -316,10 +327,7 @@ public let DECL_NODES: [Node] = [
                  "Colon"
                ]),
          Child(name: "FileName",
-               kind: "StringLiteralToken",
-               tokenChoices: [
-                 "StringLiteral"
-               ]),
+               kind: "StringLiteralExpr"),
          Child(name: "Comma",
                kind: "CommaToken",
                tokenChoices: [
@@ -454,7 +462,8 @@ public let DECL_NODES: [Node] = [
        kind: "Decl",
        traits: [
          "DeclGroup",
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -466,9 +475,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "ClassKeyword",
-               kind: "ClassToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Class"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "class"
                ]),
          Child(name: "Identifier",
                kind: "IdentifierToken",
@@ -493,7 +505,8 @@ public let DECL_NODES: [Node] = [
        kind: "Decl",
        traits: [
          "DeclGroup",
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -505,9 +518,9 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "ActorKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "actor"
@@ -535,7 +548,8 @@ public let DECL_NODES: [Node] = [
        kind: "Decl",
        traits: [
          "DeclGroup",
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -547,9 +561,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "StructKeyword",
-               kind: "StructToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Struct"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "struct"
                ]),
          Child(name: "Identifier",
                kind: "IdentifierToken",
@@ -574,7 +591,8 @@ public let DECL_NODES: [Node] = [
        kind: "Decl",
        traits: [
          "DeclGroup",
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -586,9 +604,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "ProtocolKeyword",
-               kind: "ProtocolToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Protocol"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "protocol"
                ]),
          Child(name: "Identifier",
                kind: "IdentifierToken",
@@ -612,7 +633,8 @@ public let DECL_NODES: [Node] = [
        nameForDiagnostics: "extension",
        kind: "Decl",
        traits: [
-         "DeclGroup"
+         "DeclGroup",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -624,9 +646,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "ExtensionKeyword",
-               kind: "ExtensionToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Extension"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "extension"
                ]),
          Child(name: "ExtendedType",
                kind: "Type"),
@@ -721,7 +746,8 @@ public let DECL_NODES: [Node] = [
        nameForDiagnostics: "parameter",
        kind: "Syntax",
        traits: [
-         "WithTrailingComma"
+         "WithTrailingComma",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -783,7 +809,8 @@ public let DECL_NODES: [Node] = [
        nameForDiagnostics: "function",
        kind: "Decl",
        traits: [
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -795,16 +822,18 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "FuncKeyword",
-               kind: "FuncToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Func"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "func"
                ]),
          Child(name: "Identifier",
                kind: "Token",
                tokenChoices: [
                  "Identifier",
-                 "UnspacedBinaryOperator",
-                 "SpacedBinaryOperator",
+                 "BinaryOperator",
                  "PrefixOperator",
                  "PostfixOperator"
                ]),
@@ -824,6 +853,9 @@ public let DECL_NODES: [Node] = [
   Node(name: "InitializerDecl",
        nameForDiagnostics: "initializer",
        kind: "Decl",
+       traits: [
+         "Attributed"
+       ],
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -834,9 +866,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "InitKeyword",
-               kind: "InitToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Init"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "init"
                ]),
          Child(name: "OptionalMark",
                kind: "Token",
@@ -862,6 +897,9 @@ public let DECL_NODES: [Node] = [
   Node(name: "DeinitializerDecl",
        nameForDiagnostics: "deinitializer",
        kind: "Decl",
+       traits: [
+         "Attributed"
+       ],
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -872,9 +910,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "DeinitKeyword",
-               kind: "DeinitToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Deinit"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "deinit"
                ]),
          Child(name: "Body",
                kind: "CodeBlock",
@@ -884,6 +925,9 @@ public let DECL_NODES: [Node] = [
   Node(name: "SubscriptDecl",
        nameForDiagnostics: "subscript",
        kind: "Decl",
+       traits: [
+         "Attributed"
+       ],
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -894,9 +938,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "SubscriptKeyword",
-               kind: "SubscriptToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Subscript"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "subscript"
                ]),
          Child(name: "GenericParameterClause",
                kind: "GenericParameterClause",
@@ -917,20 +964,6 @@ public let DECL_NODES: [Node] = [
                  Child(name: "Getter",
                        kind: "CodeBlock")
                ])
-       ]),
-
-  Node(name: "AccessLevelModifier",
-       nameForDiagnostics: "access level modifier",
-       kind: "Syntax",
-       children: [
-         Child(name: "Name",
-               kind: "IdentifierToken",
-               tokenChoices: [
-                 "Identifier"
-               ]),
-         Child(name: "Modifier",
-               kind: "DeclModifierDetail",
-               isOptional: true)
        ]),
 
   Node(name: "AccessPathComponent",
@@ -958,6 +991,9 @@ public let DECL_NODES: [Node] = [
   Node(name: "ImportDecl",
        nameForDiagnostics: "import",
        kind: "Decl",
+       traits: [
+         "Attributed"
+       ],
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -968,22 +1004,28 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "ImportTok",
-               kind: "ImportToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Import"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "import"
                ]),
          Child(name: "ImportKind",
-               kind: "Token",
+               kind: "KeywordToken",
                isOptional: true,
                tokenChoices: [
-                 "Typealias",
-                 "Struct",
-                 "Class",
-                 "Enum",
-                 "Protocol",
-                 "Var",
-                 "Let",
-                 "Func"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "typealias",
+                 "struct",
+                 "class",
+                 "enum",
+                 "protocol",
+                 "var",
+                 "let",
+                 "func"
                ]),
          Child(name: "Path",
                kind: "AccessPath",
@@ -1017,6 +1059,10 @@ public let DECL_NODES: [Node] = [
   Node(name: "AccessorDecl",
        nameForDiagnostics: "accessor",
        kind: "Decl",
+       traits: [
+         "Attributed"
+       ],
+       parserFunction: "parseAccessorDecl",
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -1045,20 +1091,23 @@ public let DECL_NODES: [Node] = [
                kind: "AccessorParameter",
                isOptional: true),
          Child(name: "AsyncKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                isOptional: true,
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "async"
                ]),
          Child(name: "ThrowsKeyword",
-               kind: "Token",
+               kind: "KeywordToken",
                isOptional: true,
                tokenChoices: [
-                 "Throws",
-                 "Rethrows"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "throws",
+                 "rethrows"
                ]),
          Child(name: "Body",
                kind: "CodeBlock",
@@ -1068,7 +1117,8 @@ public let DECL_NODES: [Node] = [
   Node(name: "AccessorList",
        nameForDiagnostics: nil,
        kind: "SyntaxCollection",
-       element: "AccessorDecl"),
+       element: "AccessorDecl",
+       elementsSeparatedByNewline: true),
 
   Node(name: "AccessorBlock",
        nameForDiagnostics: nil,
@@ -1084,12 +1134,14 @@ public let DECL_NODES: [Node] = [
                ]),
          Child(name: "Accessors",
                kind: "AccessorList",
-               collectionElementName: "Accessor"),
+               collectionElementName: "Accessor",
+               isIndented: true),
          Child(name: "RightBrace",
                kind: "RightBraceToken",
                tokenChoices: [
                  "RightBrace"
-               ])
+               ],
+               requiresLeadingNewline: true)
        ]),
 
   Node(name: "PatternBinding",
@@ -1132,6 +1184,9 @@ public let DECL_NODES: [Node] = [
   Node(name: "VariableDecl",
        nameForDiagnostics: "variable",
        kind: "Decl",
+       traits: [
+         "Attributed"
+       ],
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -1142,10 +1197,13 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "LetOrVarKeyword",
-               kind: "Token",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Let",
-                 "Var"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "let",
+                 "var"
                ]),
          Child(name: "Bindings",
                kind: "PatternBindingList",
@@ -1193,6 +1251,9 @@ public let DECL_NODES: [Node] = [
        nameForDiagnostics: "enum case",
        description: "A `case` declaration of a Swift `enum`. It can have 1 or more`EnumCaseElement`s inside, each declaring a different case of theenum.",
        kind: "Decl",
+       traits: [
+         "Attributed"
+       ],
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -1205,10 +1266,13 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "CaseKeyword",
-               kind: "CaseToken",
+               kind: "KeywordToken",
                description: "The `case` keyword for this case.",
                tokenChoices: [
-                 "Case"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "case"
                ]),
          Child(name: "Elements",
                kind: "EnumCaseElementList",
@@ -1221,7 +1285,9 @@ public let DECL_NODES: [Node] = [
        description: "A Swift `enum` declaration.",
        kind: "Decl",
        traits: [
-         "IdentifiedDecl"
+         "DeclGroup",
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -1235,10 +1301,13 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "EnumKeyword",
-               kind: "EnumToken",
+               kind: "KeywordToken",
                description: "The `enum` keyword for this declaration.",
                tokenChoices: [
-                 "Enum"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "enum"
                ]),
          Child(name: "Identifier",
                kind: "IdentifierToken",
@@ -1268,7 +1337,8 @@ public let DECL_NODES: [Node] = [
        description: "A Swift `operator` declaration.",
        kind: "Decl",
        traits: [
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -1283,15 +1353,17 @@ public let DECL_NODES: [Node] = [
                collectionElementName: "Modifier",
                classification: "Attribute"),
          Child(name: "OperatorKeyword",
-               kind: "OperatorToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Operator"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "operator"
                ]),
          Child(name: "Identifier",
                kind: "Token",
                tokenChoices: [
-                 "UnspacedBinaryOperator",
-                 "SpacedBinaryOperator",
+                 "BinaryOperator",
                  "PrefixOperator",
                  "PostfixOperator"
                ],
@@ -1350,7 +1422,8 @@ public let DECL_NODES: [Node] = [
        description: "A Swift `precedencegroup` declaration.",
        kind: "Decl",
        traits: [
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -1364,9 +1437,12 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "PrecedencegroupKeyword",
-               kind: "PrecedencegroupToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Precedencegroup"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "precedencegroup"
                ]),
          Child(name: "Identifier",
                kind: "IdentifierToken",
@@ -1465,11 +1541,14 @@ public let DECL_NODES: [Node] = [
                  "Colon"
                ]),
          Child(name: "Flag",
-               kind: "Token",
+               kind: "KeywordToken",
                description: "When true, an operator in the corresponding precedence groupuses the same grouping rules during optional chaining as theassignment operators from the standard library. Otherwise,operators in the precedence group follows the same optionalchaining rules as operators that don't perform assignment.",
                tokenChoices: [
-                 "True",
-                 "False"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "true",
+                 "false"
                ])
        ]),
 
@@ -1509,7 +1588,8 @@ public let DECL_NODES: [Node] = [
        nameForDiagnostics: "macro",
        kind: "Decl",
        traits: [
-         "IdentifiedDecl"
+         "IdentifiedDecl",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",
@@ -1521,9 +1601,9 @@ public let DECL_NODES: [Node] = [
                isOptional: true,
                collectionElementName: "Modifier"),
          Child(name: "MacroKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "macro"
@@ -1592,6 +1672,17 @@ public let DECL_NODES: [Node] = [
                kind: "MultipleTrailingClosureElementList",
                isOptional: true,
                collectionElementName: "AdditionalTrailingClosure")
+       ]),
+
+  Node(name: "EditorPlaceholderDecl",
+       nameForDiagnostics: "editor placeholder",
+       kind: "Decl",
+       children: [
+         Child(name: "Identifier",
+               kind: "IdentifierToken",
+               tokenChoices: [
+                 "Identifier"
+               ])
        ]),
 
 ]

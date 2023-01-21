@@ -5,7 +5,7 @@ GENERIC_NODES = [
     # generic-where-clause -> 'where' requirement-list
     Node('GenericWhereClause', name_for_diagnostics="'where' clause", kind='Syntax',
          children=[
-             Child('WhereKeyword', kind='WhereToken'),
+             Child('WhereKeyword', kind='KeywordToken', text_choices=['where']),
              Child('RequirementList', kind='GenericRequirementList',
                    collection_element_name='Requirement'),
          ]),
@@ -39,8 +39,7 @@ GENERIC_NODES = [
              Child('LeftTypeIdentifier', kind='Type', name_for_diagnostics='left-hand type'),
              Child('EqualityToken', kind='Token',
                    token_choices=[
-                       'SpacedBinaryOperatorToken',
-                       'UnspacedBinaryOperatorToken',
+                       'BinaryOperatorToken',
                        'PrefixOperatorToken',
                        'PostfixOperatorToken',
                    ]),
@@ -71,7 +70,7 @@ GENERIC_NODES = [
     #                    | type-name : type-identifier
     #                    | type-name : protocol-composition-type
     Node('GenericParameter', name_for_diagnostics='generic parameter', kind='Syntax',
-         traits=['WithTrailingComma'],
+         traits=['WithTrailingComma', 'Attributed'],
          children=[
              Child('Attributes', kind='AttributeList',
                    collection_element_name='Attribute', is_optional=True),

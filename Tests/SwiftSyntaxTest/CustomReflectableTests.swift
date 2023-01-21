@@ -30,22 +30,16 @@ public class CustomReflectableTests: XCTestCase {
 
     let testCases: [UInt: TestCase] = [
       #line: .init(
-        syntax: TokenListSyntax([]),
+        syntax: TokenSyntax.keyword(.associatedtype, leadingTrivia: [], trailingTrivia: []),
         expectedDumped: """
-          - TokenListSyntax
-
-          """
-      ),
-      #line: .init(
-        syntax: TokenSyntax.associatedtypeKeyword(leadingTrivia: [], trailingTrivia: []),
-        expectedDumped: """
-          ▿ associatedtypeKeyword
+          ▿ keyword(SwiftSyntax.Keyword.associatedtype)
             - text: "associatedtype"
             ▿ leadingTrivia: []
               - pieces: 0 elements
             ▿ trailingTrivia: []
               - pieces: 0 elements
-            - tokenKind: SwiftSyntax.TokenKind.associatedtypeKeyword
+            ▿ tokenKind: SwiftSyntax.TokenKind.keyword
+              - keyword: SwiftSyntax.Keyword.associatedtype
 
           """
       ),

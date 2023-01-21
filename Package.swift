@@ -65,14 +65,8 @@ let package = Package(
         "CMakeLists.txt",
         "Raw/RawSyntaxNodes.swift.gyb",
         "Raw/RawSyntaxValidation.swift.gyb",
-        "SyntaxCollections.swift.gyb",
         "SyntaxFactory.swift.gyb",
         "SyntaxNodes.swift.gyb.template",
-        "SyntaxRewriter.swift.gyb",
-        "SyntaxTransform.swift.gyb",
-        "SyntaxVisitor.swift.gyb",
-        "TokenKind.swift.gyb",
-        "Tokens.swift.gyb",
         "Trivia.swift.gyb",
       ],
       swiftSettings: swiftSyntaxSwiftSettings
@@ -102,7 +96,7 @@ let package = Package(
     ),
     .target(
       name: "SwiftParser",
-      dependencies: ["SwiftDiagnostics", "SwiftSyntax"],
+      dependencies: ["SwiftSyntax"],
       exclude: [
         "CMakeLists.txt",
         "README.md",

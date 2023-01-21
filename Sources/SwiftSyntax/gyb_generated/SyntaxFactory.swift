@@ -123,15 +123,13 @@ public enum SyntaxFactory {
     }
   }
   @available(*, deprecated, message: "Use initializer on CodeBlockItemSyntax")
-  public static func makeCodeBlockItem(_ unexpectedBeforeItem: UnexpectedNodesSyntax? = nil, item: Syntax, _ unexpectedBetweenItemAndSemicolon: UnexpectedNodesSyntax? = nil, semicolon: TokenSyntax?, _ unexpectedBetweenSemicolonAndErrorTokens: UnexpectedNodesSyntax? = nil, errorTokens: Syntax?, _ unexpectedAfterErrorTokens: UnexpectedNodesSyntax? = nil) -> CodeBlockItemSyntax {
+  public static func makeCodeBlockItem(_ unexpectedBeforeItem: UnexpectedNodesSyntax? = nil, item: Syntax, _ unexpectedBetweenItemAndSemicolon: UnexpectedNodesSyntax? = nil, semicolon: TokenSyntax?, _ unexpectedAfterSemicolon: UnexpectedNodesSyntax? = nil) -> CodeBlockItemSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeItem?.raw,
       item.raw,
       unexpectedBetweenItemAndSemicolon?.raw,
       semicolon?.raw,
-      unexpectedBetweenSemicolonAndErrorTokens?.raw,
-      errorTokens?.raw,
-      unexpectedAfterErrorTokens?.raw,
+      unexpectedAfterSemicolon?.raw,
     ]
     return withExtendedLifetime(SyntaxArena()) { arena in
       let raw = RawSyntax.makeLayout(kind: SyntaxKind.codeBlockItem,
@@ -148,8 +146,6 @@ public enum SyntaxFactory {
         from: [
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missing, arena: arena),
-        nil,
-        nil,
         nil,
         nil,
         nil,
@@ -263,33 +259,6 @@ public enum SyntaxFactory {
       return InOutExprSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on PoundColumnExprSyntax")
-  public static func makePoundColumnExpr(_ unexpectedBeforePoundColumn: UnexpectedNodesSyntax? = nil, poundColumn: TokenSyntax, _ unexpectedAfterPoundColumn: UnexpectedNodesSyntax? = nil) -> PoundColumnExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundColumn?.raw,
-      poundColumn.raw,
-      unexpectedAfterPoundColumn?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.poundColumnExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return PoundColumnExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on PoundColumnExprSyntax")
-  public static func makeBlankPoundColumnExpr(presence: SourcePresence = .present) -> PoundColumnExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .poundColumnExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundColumnKeyword, arena: arena),
-        nil,
-      ], arena: arena))
-      return PoundColumnExprSyntax(data)
-    }
-  }
   @available(*, deprecated, message: "Use initializer on TupleExprElementListSyntax")
   public static func makeTupleExprElementList(
     _ elements: [TupleExprElementSyntax]) -> TupleExprElementListSyntax {
@@ -395,7 +364,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .tryExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.tryKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.try), arena: arena),
         nil,
         nil,
         nil,
@@ -428,7 +397,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .awaitExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.contextualKeyword(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.await), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -459,7 +428,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .moveExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.contextualKeyword(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(._move), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -490,7 +459,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .borrowExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.contextualKeyword(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(._borrow), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -636,7 +605,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .superRefExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.superKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.super), arena: arena),
         nil,
       ], arena: arena))
       return SuperRefExprSyntax(data)
@@ -663,7 +632,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .nilLiteralExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.nilKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.nil), arena: arena),
         nil,
       ], arena: arena))
       return NilLiteralExprSyntax(data)
@@ -690,7 +659,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .discardAssignmentExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.wildcardKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.wildcard, arena: arena),
         nil,
       ], arena: arena))
       return DiscardAssignmentExprSyntax(data)
@@ -723,6 +692,37 @@ public enum SyntaxFactory {
       return AssignmentExprSyntax(data)
     }
   }
+  @available(*, deprecated, message: "Use initializer on PackExpansionExprSyntax")
+  public static func makePackExpansionExpr(_ unexpectedBeforeRepeatKeyword: UnexpectedNodesSyntax? = nil, repeatKeyword: TokenSyntax, _ unexpectedBetweenRepeatKeywordAndPatternExpr: UnexpectedNodesSyntax? = nil, patternExpr: ExprSyntax, _ unexpectedAfterPatternExpr: UnexpectedNodesSyntax? = nil) -> PackExpansionExprSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeRepeatKeyword?.raw,
+      repeatKeyword.raw,
+      unexpectedBetweenRepeatKeywordAndPatternExpr?.raw,
+      patternExpr.raw,
+      unexpectedAfterPatternExpr?.raw,
+    ]
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.packExpansionExpr,
+        from: layout, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return PackExpansionExprSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on PackExpansionExprSyntax")
+  public static func makeBlankPackExpansionExpr(presence: SourcePresence = .present) -> PackExpansionExprSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .packExpansionExpr,
+        from: [
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.repeat), arena: arena),
+        nil,
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
+        nil,
+      ], arena: arena))
+      return PackExpansionExprSyntax(data)
+    }
+  }
   @available(*, deprecated, message: "Use initializer on PackElementExprSyntax")
   public static func makePackElementExpr(_ unexpectedBeforeEachKeyword: UnexpectedNodesSyntax? = nil, eachKeyword: TokenSyntax, _ unexpectedBetweenEachKeywordAndPackRefExpr: UnexpectedNodesSyntax? = nil, packRefExpr: ExprSyntax, _ unexpectedAfterPackRefExpr: UnexpectedNodesSyntax? = nil) -> PackElementExprSyntax {
     let layout: [RawSyntax?] = [
@@ -746,7 +746,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .packElementExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.contextualKeyword(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.each), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -801,37 +801,6 @@ public enum SyntaxFactory {
       return ExprListSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on SymbolicReferenceExprSyntax")
-  public static func makeSymbolicReferenceExpr(_ unexpectedBeforeIdentifier: UnexpectedNodesSyntax? = nil, identifier: TokenSyntax, _ unexpectedBetweenIdentifierAndGenericArgumentClause: UnexpectedNodesSyntax? = nil, genericArgumentClause: GenericArgumentClauseSyntax?, _ unexpectedAfterGenericArgumentClause: UnexpectedNodesSyntax? = nil) -> SymbolicReferenceExprSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeIdentifier?.raw,
-      identifier.raw,
-      unexpectedBetweenIdentifierAndGenericArgumentClause?.raw,
-      genericArgumentClause?.raw,
-      unexpectedAfterGenericArgumentClause?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.symbolicReferenceExpr,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return SymbolicReferenceExprSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on SymbolicReferenceExprSyntax")
-  public static func makeBlankSymbolicReferenceExpr(presence: SourcePresence = .present) -> SymbolicReferenceExprSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .symbolicReferenceExpr,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
-        nil,
-        nil,
-        nil,
-      ], arena: arena))
-      return SymbolicReferenceExprSyntax(data)
-    }
-  }
   @available(*, deprecated, message: "Use initializer on PrefixOperatorExprSyntax")
   public static func makePrefixOperatorExpr(_ unexpectedBeforeOperatorToken: UnexpectedNodesSyntax? = nil, operatorToken: TokenSyntax?, _ unexpectedBetweenOperatorTokenAndPostfixExpression: UnexpectedNodesSyntax? = nil, postfixExpression: ExprSyntax, _ unexpectedAfterPostfixExpression: UnexpectedNodesSyntax? = nil) -> PrefixOperatorExprSyntax {
     let layout: [RawSyntax?] = [
@@ -884,7 +853,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .binaryOperatorExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.binaryOperator(""), arena: arena),
         nil,
       ], arena: arena))
       return BinaryOperatorExprSyntax(data)
@@ -1249,7 +1218,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .booleanLiteralExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.trueKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.true), arena: arena),
         nil,
       ], arena: arena))
       return BooleanLiteralExprSyntax(data)
@@ -1393,7 +1362,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .unresolvedIsExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.isKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.is), arena: arena),
         nil,
       ], arena: arena))
       return UnresolvedIsExprSyntax(data)
@@ -1426,7 +1395,7 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.isKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.is), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
         nil,
@@ -1457,7 +1426,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .unresolvedAsExpr,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.asKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.as), arena: arena),
         nil,
         nil,
         nil,
@@ -1494,7 +1463,7 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.asKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.as), arena: arena),
         nil,
         nil,
         nil,
@@ -1531,8 +1500,47 @@ public enum SyntaxFactory {
       return TypeExprSyntax(data)
     }
   }
+  @available(*, deprecated, message: "Use initializer on ClosureCaptureItemSpecifierSyntax")
+  public static func makeClosureCaptureItemSpecifier(_ unexpectedBeforeSpecifier: UnexpectedNodesSyntax? = nil, specifier: TokenSyntax, _ unexpectedBetweenSpecifierAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax?, _ unexpectedBetweenLeftParenAndDetail: UnexpectedNodesSyntax? = nil, detail: TokenSyntax?, _ unexpectedBetweenDetailAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax?, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> ClosureCaptureItemSpecifierSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeSpecifier?.raw,
+      specifier.raw,
+      unexpectedBetweenSpecifierAndLeftParen?.raw,
+      leftParen?.raw,
+      unexpectedBetweenLeftParenAndDetail?.raw,
+      detail?.raw,
+      unexpectedBetweenDetailAndRightParen?.raw,
+      rightParen?.raw,
+      unexpectedAfterRightParen?.raw,
+    ]
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.closureCaptureItemSpecifier,
+        from: layout, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return ClosureCaptureItemSpecifierSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on ClosureCaptureItemSpecifierSyntax")
+  public static func makeBlankClosureCaptureItemSpecifier(presence: SourcePresence = .present) -> ClosureCaptureItemSpecifierSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .closureCaptureItemSpecifier,
+        from: [
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: arena),
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+      ], arena: arena))
+      return ClosureCaptureItemSpecifierSyntax(data)
+    }
+  }
   @available(*, deprecated, message: "Use initializer on ClosureCaptureItemSyntax")
-  public static func makeClosureCaptureItem(_ unexpectedBeforeSpecifier: UnexpectedNodesSyntax? = nil, specifier: TokenListSyntax?, _ unexpectedBetweenSpecifierAndName: UnexpectedNodesSyntax? = nil, name: TokenSyntax?, _ unexpectedBetweenNameAndAssignToken: UnexpectedNodesSyntax? = nil, assignToken: TokenSyntax?, _ unexpectedBetweenAssignTokenAndExpression: UnexpectedNodesSyntax? = nil, expression: ExprSyntax, _ unexpectedBetweenExpressionAndTrailingComma: UnexpectedNodesSyntax? = nil, trailingComma: TokenSyntax?, _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil) -> ClosureCaptureItemSyntax {
+  public static func makeClosureCaptureItem(_ unexpectedBeforeSpecifier: UnexpectedNodesSyntax? = nil, specifier: ClosureCaptureItemSpecifierSyntax?, _ unexpectedBetweenSpecifierAndName: UnexpectedNodesSyntax? = nil, name: TokenSyntax?, _ unexpectedBetweenNameAndAssignToken: UnexpectedNodesSyntax? = nil, assignToken: TokenSyntax?, _ unexpectedBetweenAssignTokenAndExpression: UnexpectedNodesSyntax? = nil, expression: ExprSyntax, _ unexpectedBetweenExpressionAndTrailingComma: UnexpectedNodesSyntax? = nil, trailingComma: TokenSyntax?, _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil) -> ClosureCaptureItemSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeSpecifier?.raw,
       specifier?.raw,
@@ -1725,7 +1733,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.inKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.in), arena: arena),
         nil,
       ], arena: arena))
       return ClosureSignatureSyntax(data)
@@ -2134,7 +2142,7 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.tupleExprElementList, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.stringInterpolationAnchor, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.rightParen, arena: arena),
         nil,
       ], arena: arena))
       return ExpressionSegmentSyntax(data)
@@ -2625,7 +2633,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.typealiasKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.typealias), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -2676,7 +2684,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.associatedtypeKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.associatedtype), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -3019,7 +3027,7 @@ public enum SyntaxFactory {
     }
   }
   @available(*, deprecated, message: "Use initializer on PoundSourceLocationArgsSyntax")
-  public static func makePoundSourceLocationArgs(_ unexpectedBeforeFileArgLabel: UnexpectedNodesSyntax? = nil, fileArgLabel: TokenSyntax, _ unexpectedBetweenFileArgLabelAndFileArgColon: UnexpectedNodesSyntax? = nil, fileArgColon: TokenSyntax, _ unexpectedBetweenFileArgColonAndFileName: UnexpectedNodesSyntax? = nil, fileName: TokenSyntax, _ unexpectedBetweenFileNameAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax, _ unexpectedBetweenCommaAndLineArgLabel: UnexpectedNodesSyntax? = nil, lineArgLabel: TokenSyntax, _ unexpectedBetweenLineArgLabelAndLineArgColon: UnexpectedNodesSyntax? = nil, lineArgColon: TokenSyntax, _ unexpectedBetweenLineArgColonAndLineNumber: UnexpectedNodesSyntax? = nil, lineNumber: TokenSyntax, _ unexpectedAfterLineNumber: UnexpectedNodesSyntax? = nil) -> PoundSourceLocationArgsSyntax {
+  public static func makePoundSourceLocationArgs(_ unexpectedBeforeFileArgLabel: UnexpectedNodesSyntax? = nil, fileArgLabel: TokenSyntax, _ unexpectedBetweenFileArgLabelAndFileArgColon: UnexpectedNodesSyntax? = nil, fileArgColon: TokenSyntax, _ unexpectedBetweenFileArgColonAndFileName: UnexpectedNodesSyntax? = nil, fileName: StringLiteralExprSyntax, _ unexpectedBetweenFileNameAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax, _ unexpectedBetweenCommaAndLineArgLabel: UnexpectedNodesSyntax? = nil, lineArgLabel: TokenSyntax, _ unexpectedBetweenLineArgLabelAndLineArgColon: UnexpectedNodesSyntax? = nil, lineArgColon: TokenSyntax, _ unexpectedBetweenLineArgColonAndLineNumber: UnexpectedNodesSyntax? = nil, lineNumber: TokenSyntax, _ unexpectedAfterLineNumber: UnexpectedNodesSyntax? = nil) -> PoundSourceLocationArgsSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeFileArgLabel?.raw,
       fileArgLabel.raw,
@@ -3055,7 +3063,7 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.stringLiteral(""), arena: arena),
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.stringLiteralExpr, arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.comma, arena: arena),
         nil,
@@ -3256,7 +3264,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.classKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.class), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -3311,7 +3319,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.contextualKeyword(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.actor), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -3366,7 +3374,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.structKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.struct), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -3421,7 +3429,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.protocolKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.protocol), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -3474,7 +3482,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.extensionKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.extension), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
         nil,
@@ -3754,7 +3762,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.funcKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.func), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -3809,7 +3817,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.initKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.`init`), arena: arena),
         nil,
         nil,
         nil,
@@ -3856,7 +3864,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.deinitKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.deinit), arena: arena),
         nil,
         nil,
         nil,
@@ -3903,7 +3911,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.subscriptKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.subscript), arena: arena),
         nil,
         nil,
         nil,
@@ -3917,37 +3925,6 @@ public enum SyntaxFactory {
         nil,
       ], arena: arena))
       return SubscriptDeclSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on AccessLevelModifierSyntax")
-  public static func makeAccessLevelModifier(_ unexpectedBeforeName: UnexpectedNodesSyntax? = nil, name: TokenSyntax, _ unexpectedBetweenNameAndModifier: UnexpectedNodesSyntax? = nil, modifier: DeclModifierDetailSyntax?, _ unexpectedAfterModifier: UnexpectedNodesSyntax? = nil) -> AccessLevelModifierSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeName?.raw,
-      name.raw,
-      unexpectedBetweenNameAndModifier?.raw,
-      modifier?.raw,
-      unexpectedAfterModifier?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.accessLevelModifier,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return AccessLevelModifierSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on AccessLevelModifierSyntax")
-  public static func makeBlankAccessLevelModifier(presence: SourcePresence = .present) -> AccessLevelModifierSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .accessLevelModifier,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
-        nil,
-        nil,
-        nil,
-      ], arena: arena))
-      return AccessLevelModifierSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on AccessPathComponentSyntax")
@@ -4034,7 +4011,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.importKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.import), arena: arena),
         nil,
         nil,
         nil,
@@ -4279,7 +4256,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.letKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.let), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.patternBindingList, arena: arena),
         nil,
@@ -4377,7 +4354,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.caseKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.case), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.enumCaseElementList, arena: arena),
         nil,
@@ -4424,7 +4401,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.enumKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.enum), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -4473,9 +4450,9 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.operatorKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.operator), arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.unspacedBinaryOperator(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.binaryOperator(""), arena: arena),
         nil,
         nil,
         nil,
@@ -4606,7 +4583,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.precedencegroupKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.precedencegroup), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -4755,7 +4732,7 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.trueKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.true), arena: arena),
         nil,
       ], arena: arena))
       return PrecedenceGroupAssignmentSyntax(data)
@@ -4835,7 +4812,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.contextualKeyword(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.macro), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
@@ -4906,91 +4883,35 @@ public enum SyntaxFactory {
       return MacroExpansionDeclSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on TokenListSyntax")
-  public static func makeTokenList(
-    _ elements: [TokenSyntax]) -> TokenListSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.tokenList,
-        from: elements.map { $0.raw }, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return TokenListSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on TokenListSyntax")
-  public static func makeBlankTokenList(presence: SourcePresence = .present) -> TokenListSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .tokenList,
-        from: [
-      ], arena: arena))
-      return TokenListSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on NonEmptyTokenListSyntax")
-  public static func makeNonEmptyTokenList(
-    _ elements: [TokenSyntax]) -> NonEmptyTokenListSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.nonEmptyTokenList,
-        from: elements.map { $0.raw }, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return NonEmptyTokenListSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on NonEmptyTokenListSyntax")
-  public static func makeBlankNonEmptyTokenList(presence: SourcePresence = .present) -> NonEmptyTokenListSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .nonEmptyTokenList,
-        from: [
-      ], arena: arena))
-      return NonEmptyTokenListSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on CustomAttributeSyntax")
-  public static func makeCustomAttribute(_ unexpectedBeforeAtSignToken: UnexpectedNodesSyntax? = nil, atSignToken: TokenSyntax, _ unexpectedBetweenAtSignTokenAndAttributeName: UnexpectedNodesSyntax? = nil, attributeName: TypeSyntax, _ unexpectedBetweenAttributeNameAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax?, _ unexpectedBetweenLeftParenAndArgumentList: UnexpectedNodesSyntax? = nil, argumentList: TupleExprElementListSyntax?, _ unexpectedBetweenArgumentListAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax?, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> CustomAttributeSyntax {
+  @available(*, deprecated, message: "Use initializer on EditorPlaceholderDeclSyntax")
+  public static func makeEditorPlaceholderDecl(_ unexpectedBeforeIdentifier: UnexpectedNodesSyntax? = nil, identifier: TokenSyntax, _ unexpectedAfterIdentifier: UnexpectedNodesSyntax? = nil) -> EditorPlaceholderDeclSyntax {
     let layout: [RawSyntax?] = [
-      unexpectedBeforeAtSignToken?.raw,
-      atSignToken.raw,
-      unexpectedBetweenAtSignTokenAndAttributeName?.raw,
-      attributeName.raw,
-      unexpectedBetweenAttributeNameAndLeftParen?.raw,
-      leftParen?.raw,
-      unexpectedBetweenLeftParenAndArgumentList?.raw,
-      argumentList?.raw,
-      unexpectedBetweenArgumentListAndRightParen?.raw,
-      rightParen?.raw,
-      unexpectedAfterRightParen?.raw,
+      unexpectedBeforeIdentifier?.raw,
+      identifier.raw,
+      unexpectedAfterIdentifier?.raw,
     ]
     return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.customAttribute,
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.editorPlaceholderDecl,
         from: layout, arena: arena)
       let data = SyntaxData.forRoot(raw)
-      return CustomAttributeSyntax(data)
+      return EditorPlaceholderDeclSyntax(data)
     }
   }
 
-  @available(*, deprecated, message: "Use initializer on CustomAttributeSyntax")
-  public static func makeBlankCustomAttribute(presence: SourcePresence = .present) -> CustomAttributeSyntax {
+  @available(*, deprecated, message: "Use initializer on EditorPlaceholderDeclSyntax")
+  public static func makeBlankEditorPlaceholderDecl(presence: SourcePresence = .present) -> EditorPlaceholderDeclSyntax {
     return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .customAttribute,
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .editorPlaceholderDecl,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.atSign, arena: arena),
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
-        nil,
-        nil,
-        nil,
-        nil,
-        nil,
-        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
       ], arena: arena))
-      return CustomAttributeSyntax(data)
+      return EditorPlaceholderDeclSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on AttributeSyntax")
-  public static func makeAttribute(_ unexpectedBeforeAtSignToken: UnexpectedNodesSyntax? = nil, atSignToken: TokenSyntax, _ unexpectedBetweenAtSignTokenAndAttributeName: UnexpectedNodesSyntax? = nil, attributeName: TokenSyntax, _ unexpectedBetweenAttributeNameAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax?, _ unexpectedBetweenLeftParenAndArgument: UnexpectedNodesSyntax? = nil, argument: Syntax?, _ unexpectedBetweenArgumentAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax?, _ unexpectedBetweenRightParenAndTokenList: UnexpectedNodesSyntax? = nil, tokenList: TokenListSyntax?, _ unexpectedAfterTokenList: UnexpectedNodesSyntax? = nil) -> AttributeSyntax {
+  public static func makeAttribute(_ unexpectedBeforeAtSignToken: UnexpectedNodesSyntax? = nil, atSignToken: TokenSyntax, _ unexpectedBetweenAtSignTokenAndAttributeName: UnexpectedNodesSyntax? = nil, attributeName: TypeSyntax, _ unexpectedBetweenAttributeNameAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax?, _ unexpectedBetweenLeftParenAndArgument: UnexpectedNodesSyntax? = nil, argument: Syntax?, _ unexpectedBetweenArgumentAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax?, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> AttributeSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeAtSignToken?.raw,
       atSignToken.raw,
@@ -5002,9 +4923,7 @@ public enum SyntaxFactory {
       argument?.raw,
       unexpectedBetweenArgumentAndRightParen?.raw,
       rightParen?.raw,
-      unexpectedBetweenRightParenAndTokenList?.raw,
-      tokenList?.raw,
-      unexpectedAfterTokenList?.raw,
+      unexpectedAfterRightParen?.raw,
     ]
     return withExtendedLifetime(SyntaxArena()) { arena in
       let raw = RawSyntax.makeLayout(kind: SyntaxKind.attribute,
@@ -5022,9 +4941,7 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.atSign, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: arena),
-        nil,
-        nil,
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
         nil,
         nil,
         nil,
@@ -5191,41 +5108,6 @@ public enum SyntaxFactory {
         nil,
       ], arena: arena))
       return TargetFunctionEntrySyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on NamedAttributeStringArgumentSyntax")
-  public static func makeNamedAttributeStringArgument(_ unexpectedBeforeNameTok: UnexpectedNodesSyntax? = nil, nameTok: TokenSyntax, _ unexpectedBetweenNameTokAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndStringOrDeclname: UnexpectedNodesSyntax? = nil, stringOrDeclname: Syntax, _ unexpectedAfterStringOrDeclname: UnexpectedNodesSyntax? = nil) -> NamedAttributeStringArgumentSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeNameTok?.raw,
-      nameTok.raw,
-      unexpectedBetweenNameTokAndColon?.raw,
-      colon.raw,
-      unexpectedBetweenColonAndStringOrDeclname?.raw,
-      stringOrDeclname.raw,
-      unexpectedAfterStringOrDeclname?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.namedAttributeStringArgument,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return NamedAttributeStringArgumentSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on NamedAttributeStringArgumentSyntax")
-  public static func makeBlankNamedAttributeStringArgument(presence: SourcePresence = .present) -> NamedAttributeStringArgumentSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .namedAttributeStringArgument,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missing, arena: arena),
-        nil,
-      ], arena: arena))
-      return NamedAttributeStringArgumentSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on DeclNameSyntax")
@@ -5505,7 +5387,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .differentiabilityParam,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.selfKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
         nil,
         nil,
@@ -5603,39 +5485,8 @@ public enum SyntaxFactory {
       return QualifiedDeclNameSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on FunctionDeclNameSyntax")
-  public static func makeFunctionDeclName(_ unexpectedBeforeName: UnexpectedNodesSyntax? = nil, name: TokenSyntax, _ unexpectedBetweenNameAndArguments: UnexpectedNodesSyntax? = nil, arguments: DeclNameArgumentsSyntax?, _ unexpectedAfterArguments: UnexpectedNodesSyntax? = nil) -> FunctionDeclNameSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeName?.raw,
-      name.raw,
-      unexpectedBetweenNameAndArguments?.raw,
-      arguments?.raw,
-      unexpectedAfterArguments?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.functionDeclName,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return FunctionDeclNameSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on FunctionDeclNameSyntax")
-  public static func makeBlankFunctionDeclName(presence: SourcePresence = .present) -> FunctionDeclNameSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .functionDeclName,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
-        nil,
-        nil,
-        nil,
-      ], arena: arena))
-      return FunctionDeclNameSyntax(data)
-    }
-  }
   @available(*, deprecated, message: "Use initializer on BackDeployAttributeSpecListSyntax")
-  public static func makeBackDeployAttributeSpecList(_ unexpectedBeforeBeforeLabel: UnexpectedNodesSyntax? = nil, beforeLabel: TokenSyntax, _ unexpectedBetweenBeforeLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndVersionList: UnexpectedNodesSyntax? = nil, versionList: BackDeployVersionListSyntax, _ unexpectedAfterVersionList: UnexpectedNodesSyntax? = nil) -> BackDeployAttributeSpecListSyntax {
+  public static func makeBackDeployAttributeSpecList(_ unexpectedBeforeBeforeLabel: UnexpectedNodesSyntax? = nil, beforeLabel: TokenSyntax, _ unexpectedBetweenBeforeLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndVersionList: UnexpectedNodesSyntax? = nil, versionList: AvailabilityVersionRestrictionListSyntax, _ unexpectedAfterVersionList: UnexpectedNodesSyntax? = nil) -> BackDeployAttributeSpecListSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeBeforeLabel?.raw,
       beforeLabel.raw,
@@ -5663,34 +5514,34 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
         nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.backDeployVersionList, arena: arena),
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.availabilityVersionRestrictionList, arena: arena),
         nil,
       ], arena: arena))
       return BackDeployAttributeSpecListSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on BackDeployVersionListSyntax")
-  public static func makeBackDeployVersionList(
-    _ elements: [BackDeployVersionArgumentSyntax]) -> BackDeployVersionListSyntax {
+  @available(*, deprecated, message: "Use initializer on AvailabilityVersionRestrictionListSyntax")
+  public static func makeAvailabilityVersionRestrictionList(
+    _ elements: [AvailabilityVersionRestrictionListEntrySyntax]) -> AvailabilityVersionRestrictionListSyntax {
     return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.backDeployVersionList,
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.availabilityVersionRestrictionList,
         from: elements.map { $0.raw }, arena: arena)
       let data = SyntaxData.forRoot(raw)
-      return BackDeployVersionListSyntax(data)
+      return AvailabilityVersionRestrictionListSyntax(data)
     }
   }
 
-  @available(*, deprecated, message: "Use initializer on BackDeployVersionListSyntax")
-  public static func makeBlankBackDeployVersionList(presence: SourcePresence = .present) -> BackDeployVersionListSyntax {
+  @available(*, deprecated, message: "Use initializer on AvailabilityVersionRestrictionListSyntax")
+  public static func makeBlankAvailabilityVersionRestrictionList(presence: SourcePresence = .present) -> AvailabilityVersionRestrictionListSyntax {
     return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .backDeployVersionList,
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .availabilityVersionRestrictionList,
         from: [
       ], arena: arena))
-      return BackDeployVersionListSyntax(data)
+      return AvailabilityVersionRestrictionListSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on BackDeployVersionArgumentSyntax")
-  public static func makeBackDeployVersionArgument(_ unexpectedBeforeAvailabilityVersionRestriction: UnexpectedNodesSyntax? = nil, availabilityVersionRestriction: AvailabilityVersionRestrictionSyntax, _ unexpectedBetweenAvailabilityVersionRestrictionAndTrailingComma: UnexpectedNodesSyntax? = nil, trailingComma: TokenSyntax?, _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil) -> BackDeployVersionArgumentSyntax {
+  @available(*, deprecated, message: "Use initializer on AvailabilityVersionRestrictionListEntrySyntax")
+  public static func makeAvailabilityVersionRestrictionListEntry(_ unexpectedBeforeAvailabilityVersionRestriction: UnexpectedNodesSyntax? = nil, availabilityVersionRestriction: AvailabilityVersionRestrictionSyntax, _ unexpectedBetweenAvailabilityVersionRestrictionAndTrailingComma: UnexpectedNodesSyntax? = nil, trailingComma: TokenSyntax?, _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil) -> AvailabilityVersionRestrictionListEntrySyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeAvailabilityVersionRestriction?.raw,
       availabilityVersionRestriction.raw,
@@ -5699,17 +5550,17 @@ public enum SyntaxFactory {
       unexpectedAfterTrailingComma?.raw,
     ]
     return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.backDeployVersionArgument,
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.availabilityVersionRestrictionListEntry,
         from: layout, arena: arena)
       let data = SyntaxData.forRoot(raw)
-      return BackDeployVersionArgumentSyntax(data)
+      return AvailabilityVersionRestrictionListEntrySyntax(data)
     }
   }
 
-  @available(*, deprecated, message: "Use initializer on BackDeployVersionArgumentSyntax")
-  public static func makeBlankBackDeployVersionArgument(presence: SourcePresence = .present) -> BackDeployVersionArgumentSyntax {
+  @available(*, deprecated, message: "Use initializer on AvailabilityVersionRestrictionListEntrySyntax")
+  public static func makeBlankAvailabilityVersionRestrictionListEntry(presence: SourcePresence = .present) -> AvailabilityVersionRestrictionListEntrySyntax {
     return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .backDeployVersionArgument,
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .availabilityVersionRestrictionListEntry,
         from: [
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.availabilityVersionRestriction, arena: arena),
@@ -5717,11 +5568,11 @@ public enum SyntaxFactory {
         nil,
         nil,
       ], arena: arena))
-      return BackDeployVersionArgumentSyntax(data)
+      return AvailabilityVersionRestrictionListEntrySyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on OpaqueReturnTypeOfAttributeArgumentsSyntax")
-  public static func makeOpaqueReturnTypeOfAttributeArguments(_ unexpectedBeforeMangledName: UnexpectedNodesSyntax? = nil, mangledName: TokenSyntax, _ unexpectedBetweenMangledNameAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax, _ unexpectedBetweenCommaAndOrdinal: UnexpectedNodesSyntax? = nil, ordinal: TokenSyntax, _ unexpectedAfterOrdinal: UnexpectedNodesSyntax? = nil) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
+  public static func makeOpaqueReturnTypeOfAttributeArguments(_ unexpectedBeforeMangledName: UnexpectedNodesSyntax? = nil, mangledName: StringLiteralExprSyntax, _ unexpectedBetweenMangledNameAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax, _ unexpectedBetweenCommaAndOrdinal: UnexpectedNodesSyntax? = nil, ordinal: TokenSyntax, _ unexpectedAfterOrdinal: UnexpectedNodesSyntax? = nil) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeMangledName?.raw,
       mangledName.raw,
@@ -5745,7 +5596,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .opaqueReturnTypeOfAttributeArguments,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.stringLiteral(""), arena: arena),
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.stringLiteralExpr, arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.comma, arena: arena),
         nil,
@@ -5756,7 +5607,7 @@ public enum SyntaxFactory {
     }
   }
   @available(*, deprecated, message: "Use initializer on ConventionAttributeArgumentsSyntax")
-  public static func makeConventionAttributeArguments(_ unexpectedBeforeConventionLabel: UnexpectedNodesSyntax? = nil, conventionLabel: TokenSyntax, _ unexpectedBetweenConventionLabelAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax?, _ unexpectedBetweenCommaAndCTypeLabel: UnexpectedNodesSyntax? = nil, cTypeLabel: TokenSyntax?, _ unexpectedBetweenCTypeLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax?, _ unexpectedBetweenColonAndCTypeString: UnexpectedNodesSyntax? = nil, cTypeString: TokenSyntax?, _ unexpectedAfterCTypeString: UnexpectedNodesSyntax? = nil) -> ConventionAttributeArgumentsSyntax {
+  public static func makeConventionAttributeArguments(_ unexpectedBeforeConventionLabel: UnexpectedNodesSyntax? = nil, conventionLabel: TokenSyntax, _ unexpectedBetweenConventionLabelAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax?, _ unexpectedBetweenCommaAndCTypeLabel: UnexpectedNodesSyntax? = nil, cTypeLabel: TokenSyntax?, _ unexpectedBetweenCTypeLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax?, _ unexpectedBetweenColonAndCTypeString: UnexpectedNodesSyntax? = nil, cTypeString: StringLiteralExprSyntax?, _ unexpectedAfterCTypeString: UnexpectedNodesSyntax? = nil) -> ConventionAttributeArgumentsSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforeConventionLabel?.raw,
       conventionLabel.raw,
@@ -5833,6 +5684,268 @@ public enum SyntaxFactory {
       return ConventionWitnessMethodAttributeArgumentsSyntax(data)
     }
   }
+  @available(*, deprecated, message: "Use initializer on ExposeAttributeArgumentsSyntax")
+  public static func makeExposeAttributeArguments(_ unexpectedBeforeLanguage: UnexpectedNodesSyntax? = nil, language: TokenSyntax, _ unexpectedBetweenLanguageAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax?, _ unexpectedBetweenCommaAndCxxName: UnexpectedNodesSyntax? = nil, cxxName: StringLiteralExprSyntax?, _ unexpectedAfterCxxName: UnexpectedNodesSyntax? = nil) -> ExposeAttributeArgumentsSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeLanguage?.raw,
+      language.raw,
+      unexpectedBetweenLanguageAndComma?.raw,
+      comma?.raw,
+      unexpectedBetweenCommaAndCxxName?.raw,
+      cxxName?.raw,
+      unexpectedAfterCxxName?.raw,
+    ]
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.exposeAttributeArguments,
+        from: layout, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return ExposeAttributeArgumentsSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on ExposeAttributeArgumentsSyntax")
+  public static func makeBlankExposeAttributeArguments(presence: SourcePresence = .present) -> ExposeAttributeArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .exposeAttributeArguments,
+        from: [
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.unknown(""), arena: arena),
+        nil,
+        nil,
+        nil,
+        nil,
+        nil,
+      ], arena: arena))
+      return ExposeAttributeArgumentsSyntax(data)
+    }
+  }
+  @available(*, deprecated, message: "Use initializer on OriginallyDefinedInArgumentsSyntax")
+  public static func makeOriginallyDefinedInArguments(_ unexpectedBeforeModuleLabel: UnexpectedNodesSyntax? = nil, moduleLabel: TokenSyntax, _ unexpectedBetweenModuleLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndModuleName: UnexpectedNodesSyntax? = nil, moduleName: StringLiteralExprSyntax, _ unexpectedBetweenModuleNameAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax, _ unexpectedBetweenCommaAndPlatforms: UnexpectedNodesSyntax? = nil, platforms: AvailabilityVersionRestrictionListSyntax, _ unexpectedAfterPlatforms: UnexpectedNodesSyntax? = nil) -> OriginallyDefinedInArgumentsSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeModuleLabel?.raw,
+      moduleLabel.raw,
+      unexpectedBetweenModuleLabelAndColon?.raw,
+      colon.raw,
+      unexpectedBetweenColonAndModuleName?.raw,
+      moduleName.raw,
+      unexpectedBetweenModuleNameAndComma?.raw,
+      comma.raw,
+      unexpectedBetweenCommaAndPlatforms?.raw,
+      platforms.raw,
+      unexpectedAfterPlatforms?.raw,
+    ]
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.originallyDefinedInArguments,
+        from: layout, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return OriginallyDefinedInArgumentsSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on OriginallyDefinedInArgumentsSyntax")
+  public static func makeBlankOriginallyDefinedInArguments(presence: SourcePresence = .present) -> OriginallyDefinedInArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .originallyDefinedInArguments,
+        from: [
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
+        nil,
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.stringLiteralExpr, arena: arena),
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.comma, arena: arena),
+        nil,
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.availabilityVersionRestrictionList, arena: arena),
+        nil,
+      ], arena: arena))
+      return OriginallyDefinedInArgumentsSyntax(data)
+    }
+  }
+  @available(*, deprecated, message: "Use initializer on UnderscorePrivateAttributeArgumentsSyntax")
+  public static func makeUnderscorePrivateAttributeArguments(_ unexpectedBeforeSourceFileLabel: UnexpectedNodesSyntax? = nil, sourceFileLabel: TokenSyntax, _ unexpectedBetweenSourceFileLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndFilename: UnexpectedNodesSyntax? = nil, filename: StringLiteralExprSyntax, _ unexpectedAfterFilename: UnexpectedNodesSyntax? = nil) -> UnderscorePrivateAttributeArgumentsSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeSourceFileLabel?.raw,
+      sourceFileLabel.raw,
+      unexpectedBetweenSourceFileLabelAndColon?.raw,
+      colon.raw,
+      unexpectedBetweenColonAndFilename?.raw,
+      filename.raw,
+      unexpectedAfterFilename?.raw,
+    ]
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.underscorePrivateAttributeArguments,
+        from: layout, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return UnderscorePrivateAttributeArgumentsSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on UnderscorePrivateAttributeArgumentsSyntax")
+  public static func makeBlankUnderscorePrivateAttributeArguments(presence: SourcePresence = .present) -> UnderscorePrivateAttributeArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .underscorePrivateAttributeArguments,
+        from: [
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
+        nil,
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.stringLiteralExpr, arena: arena),
+        nil,
+      ], arena: arena))
+      return UnderscorePrivateAttributeArgumentsSyntax(data)
+    }
+  }
+  @available(*, deprecated, message: "Use initializer on DynamicReplacementArgumentsSyntax")
+  public static func makeDynamicReplacementArguments(_ unexpectedBeforeForLabel: UnexpectedNodesSyntax? = nil, forLabel: TokenSyntax, _ unexpectedBetweenForLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndDeclname: UnexpectedNodesSyntax? = nil, declname: DeclNameSyntax, _ unexpectedAfterDeclname: UnexpectedNodesSyntax? = nil) -> DynamicReplacementArgumentsSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeForLabel?.raw,
+      forLabel.raw,
+      unexpectedBetweenForLabelAndColon?.raw,
+      colon.raw,
+      unexpectedBetweenColonAndDeclname?.raw,
+      declname.raw,
+      unexpectedAfterDeclname?.raw,
+    ]
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.dynamicReplacementArguments,
+        from: layout, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return DynamicReplacementArgumentsSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on DynamicReplacementArgumentsSyntax")
+  public static func makeBlankDynamicReplacementArguments(presence: SourcePresence = .present) -> DynamicReplacementArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .dynamicReplacementArguments,
+        from: [
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
+        nil,
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.declName, arena: arena),
+        nil,
+      ], arena: arena))
+      return DynamicReplacementArgumentsSyntax(data)
+    }
+  }
+  @available(*, deprecated, message: "Use initializer on UnavailableFromAsyncArgumentsSyntax")
+  public static func makeUnavailableFromAsyncArguments(_ unexpectedBeforeMessageLabel: UnexpectedNodesSyntax? = nil, messageLabel: TokenSyntax, _ unexpectedBetweenMessageLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndMessage: UnexpectedNodesSyntax? = nil, message: StringLiteralExprSyntax, _ unexpectedAfterMessage: UnexpectedNodesSyntax? = nil) -> UnavailableFromAsyncArgumentsSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeMessageLabel?.raw,
+      messageLabel.raw,
+      unexpectedBetweenMessageLabelAndColon?.raw,
+      colon.raw,
+      unexpectedBetweenColonAndMessage?.raw,
+      message.raw,
+      unexpectedAfterMessage?.raw,
+    ]
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.unavailableFromAsyncArguments,
+        from: layout, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return UnavailableFromAsyncArgumentsSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on UnavailableFromAsyncArgumentsSyntax")
+  public static func makeBlankUnavailableFromAsyncArguments(presence: SourcePresence = .present) -> UnavailableFromAsyncArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .unavailableFromAsyncArguments,
+        from: [
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
+        nil,
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.stringLiteralExpr, arena: arena),
+        nil,
+      ], arena: arena))
+      return UnavailableFromAsyncArgumentsSyntax(data)
+    }
+  }
+  @available(*, deprecated, message: "Use initializer on EffectsArgumentsSyntax")
+  public static func makeEffectsArguments(
+    _ elements: [TokenSyntax]) -> EffectsArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.effectsArguments,
+        from: elements.map { $0.raw }, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return EffectsArgumentsSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on EffectsArgumentsSyntax")
+  public static func makeBlankEffectsArguments(presence: SourcePresence = .present) -> EffectsArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .effectsArguments,
+        from: [
+      ], arena: arena))
+      return EffectsArgumentsSyntax(data)
+    }
+  }
+  @available(*, deprecated, message: "Use initializer on DocumentationAttributeArgumentSyntax")
+  public static func makeDocumentationAttributeArgument(_ unexpectedBeforeLabel: UnexpectedNodesSyntax? = nil, label: TokenSyntax, _ unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? = nil, colon: TokenSyntax, _ unexpectedBetweenColonAndValue: UnexpectedNodesSyntax? = nil, value: Syntax, _ unexpectedBetweenValueAndTrailingComma: UnexpectedNodesSyntax? = nil, trailingComma: TokenSyntax?, _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil) -> DocumentationAttributeArgumentSyntax {
+    let layout: [RawSyntax?] = [
+      unexpectedBeforeLabel?.raw,
+      label.raw,
+      unexpectedBetweenLabelAndColon?.raw,
+      colon.raw,
+      unexpectedBetweenColonAndValue?.raw,
+      value.raw,
+      unexpectedBetweenValueAndTrailingComma?.raw,
+      trailingComma?.raw,
+      unexpectedAfterTrailingComma?.raw,
+    ]
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.documentationAttributeArgument,
+        from: layout, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return DocumentationAttributeArgumentSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on DocumentationAttributeArgumentSyntax")
+  public static func makeBlankDocumentationAttributeArgument(presence: SourcePresence = .present) -> DocumentationAttributeArgumentSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .documentationAttributeArgument,
+        from: [
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
+        nil,
+        RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
+        nil,
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missing, arena: arena),
+        nil,
+        nil,
+        nil,
+      ], arena: arena))
+      return DocumentationAttributeArgumentSyntax(data)
+    }
+  }
+  @available(*, deprecated, message: "Use initializer on DocumentationAttributeArgumentsSyntax")
+  public static func makeDocumentationAttributeArguments(
+    _ elements: [DocumentationAttributeArgumentSyntax]) -> DocumentationAttributeArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.documentationAttributeArguments,
+        from: elements.map { $0.raw }, arena: arena)
+      let data = SyntaxData.forRoot(raw)
+      return DocumentationAttributeArgumentsSyntax(data)
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer on DocumentationAttributeArgumentsSyntax")
+  public static func makeBlankDocumentationAttributeArguments(presence: SourcePresence = .present) -> DocumentationAttributeArgumentsSyntax {
+    return withExtendedLifetime(SyntaxArena()) { arena in
+      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .documentationAttributeArguments,
+        from: [
+      ], arena: arena))
+      return DocumentationAttributeArgumentsSyntax(data)
+    }
+  }
   @available(*, deprecated, message: "Use initializer on LabeledStmtSyntax")
   public static func makeLabeledStmt(_ unexpectedBeforeLabelName: UnexpectedNodesSyntax? = nil, labelName: TokenSyntax, _ unexpectedBetweenLabelNameAndLabelColon: UnexpectedNodesSyntax? = nil, labelColon: TokenSyntax, _ unexpectedBetweenLabelColonAndStatement: UnexpectedNodesSyntax? = nil, statement: StmtSyntax, _ unexpectedAfterStatement: UnexpectedNodesSyntax? = nil) -> LabeledStmtSyntax {
     let layout: [RawSyntax?] = [
@@ -5891,7 +6004,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .continueStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.continueKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.continue), arena: arena),
         nil,
         nil,
         nil,
@@ -5924,7 +6037,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .whileStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.whileKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.while), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.conditionElementList, arena: arena),
         nil,
@@ -5957,39 +6070,12 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .deferStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.deferKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.defer), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena),
         nil,
       ], arena: arena))
       return DeferStmtSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on ExpressionStmtSyntax")
-  public static func makeExpressionStmt(_ unexpectedBeforeExpression: UnexpectedNodesSyntax? = nil, expression: ExprSyntax, _ unexpectedAfterExpression: UnexpectedNodesSyntax? = nil) -> ExpressionStmtSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeExpression?.raw,
-      expression.raw,
-      unexpectedAfterExpression?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.expressionStmt,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return ExpressionStmtSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on ExpressionStmtSyntax")
-  public static func makeBlankExpressionStmt(presence: SourcePresence = .present) -> ExpressionStmtSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .expressionStmt,
-        from: [
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
-        nil,
-      ], arena: arena))
-      return ExpressionStmtSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on SwitchCaseListSyntax")
@@ -6039,11 +6125,11 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .repeatWhileStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.repeatKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.repeat), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.whileKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.while), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -6078,11 +6164,11 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .guardStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.guardKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.guard), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.conditionElementList, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.elseKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.else), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena),
         nil,
@@ -6113,7 +6199,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .whereClause,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.whereKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.where), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -6160,7 +6246,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .forInStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.forKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.for), arena: arena),
         nil,
         nil,
         nil,
@@ -6172,7 +6258,7 @@ public enum SyntaxFactory {
         nil,
         nil,
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.inKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.in), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -6213,7 +6299,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .switchStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.switchKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.switch), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -6272,7 +6358,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .doStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.doKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.do), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.codeBlock, arena: arena),
         nil,
@@ -6305,7 +6391,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .returnStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.returnKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.return), arena: arena),
         nil,
         nil,
         nil,
@@ -6336,7 +6422,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .yieldStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.yield, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.yield), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missing, arena: arena),
         nil,
@@ -6400,7 +6486,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .fallthroughStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.fallthroughKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.fallthrough), arena: arena),
         nil,
       ], arena: arena))
       return FallthroughStmtSyntax(data)
@@ -6429,7 +6515,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .breakStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.breakKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.break), arena: arena),
         nil,
         nil,
         nil,
@@ -6509,11 +6595,11 @@ public enum SyntaxFactory {
     }
   }
   @available(*, deprecated, message: "Use initializer on AvailabilityConditionSyntax")
-  public static func makeAvailabilityCondition(_ unexpectedBeforePoundAvailableKeyword: UnexpectedNodesSyntax? = nil, poundAvailableKeyword: TokenSyntax, _ unexpectedBetweenPoundAvailableKeywordAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax, _ unexpectedBetweenLeftParenAndAvailabilitySpec: UnexpectedNodesSyntax? = nil, availabilitySpec: AvailabilitySpecListSyntax, _ unexpectedBetweenAvailabilitySpecAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> AvailabilityConditionSyntax {
+  public static func makeAvailabilityCondition(_ unexpectedBeforeAvailabilityKeyword: UnexpectedNodesSyntax? = nil, availabilityKeyword: TokenSyntax, _ unexpectedBetweenAvailabilityKeywordAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax, _ unexpectedBetweenLeftParenAndAvailabilitySpec: UnexpectedNodesSyntax? = nil, availabilitySpec: AvailabilitySpecListSyntax, _ unexpectedBetweenAvailabilitySpecAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> AvailabilityConditionSyntax {
     let layout: [RawSyntax?] = [
-      unexpectedBeforePoundAvailableKeyword?.raw,
-      poundAvailableKeyword.raw,
-      unexpectedBetweenPoundAvailableKeywordAndLeftParen?.raw,
+      unexpectedBeforeAvailabilityKeyword?.raw,
+      availabilityKeyword.raw,
+      unexpectedBetweenAvailabilityKeywordAndLeftParen?.raw,
       leftParen.raw,
       unexpectedBetweenLeftParenAndAvailabilitySpec?.raw,
       availabilitySpec.raw,
@@ -6574,7 +6660,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .matchingPatternCondition,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.caseKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.case), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingPattern, arena: arena),
         nil,
@@ -6613,7 +6699,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .optionalBindingCondition,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.letKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.let), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingPattern, arena: arena),
         nil,
@@ -6623,45 +6709,6 @@ public enum SyntaxFactory {
         nil,
       ], arena: arena))
       return OptionalBindingConditionSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on UnavailabilityConditionSyntax")
-  public static func makeUnavailabilityCondition(_ unexpectedBeforePoundUnavailableKeyword: UnexpectedNodesSyntax? = nil, poundUnavailableKeyword: TokenSyntax, _ unexpectedBetweenPoundUnavailableKeywordAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax, _ unexpectedBetweenLeftParenAndAvailabilitySpec: UnexpectedNodesSyntax? = nil, availabilitySpec: AvailabilitySpecListSyntax, _ unexpectedBetweenAvailabilitySpecAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> UnavailabilityConditionSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePoundUnavailableKeyword?.raw,
-      poundUnavailableKeyword.raw,
-      unexpectedBetweenPoundUnavailableKeywordAndLeftParen?.raw,
-      leftParen.raw,
-      unexpectedBetweenLeftParenAndAvailabilitySpec?.raw,
-      availabilitySpec.raw,
-      unexpectedBetweenAvailabilitySpecAndRightParen?.raw,
-      rightParen.raw,
-      unexpectedAfterRightParen?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.unavailabilityCondition,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return UnavailabilityConditionSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on UnavailabilityConditionSyntax")
-  public static func makeBlankUnavailabilityCondition(presence: SourcePresence = .present) -> UnavailabilityConditionSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .unavailabilityCondition,
-        from: [
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.poundUnavailableKeyword, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.leftParen, arena: arena),
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.availabilitySpecList, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.rightParen, arena: arena),
-        nil,
-      ], arena: arena))
-      return UnavailabilityConditionSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on HasSymbolConditionSyntax")
@@ -6723,33 +6770,6 @@ public enum SyntaxFactory {
       return ConditionElementListSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on DeclarationStmtSyntax")
-  public static func makeDeclarationStmt(_ unexpectedBeforeDeclaration: UnexpectedNodesSyntax? = nil, declaration: DeclSyntax, _ unexpectedAfterDeclaration: UnexpectedNodesSyntax? = nil) -> DeclarationStmtSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeDeclaration?.raw,
-      declaration.raw,
-      unexpectedAfterDeclaration?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.declarationStmt,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return DeclarationStmtSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on DeclarationStmtSyntax")
-  public static func makeBlankDeclarationStmt(presence: SourcePresence = .present) -> DeclarationStmtSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .declarationStmt,
-        from: [
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingDecl, arena: arena),
-        nil,
-      ], arena: arena))
-      return DeclarationStmtSyntax(data)
-    }
-  }
   @available(*, deprecated, message: "Use initializer on ThrowStmtSyntax")
   public static func makeThrowStmt(_ unexpectedBeforeThrowKeyword: UnexpectedNodesSyntax? = nil, throwKeyword: TokenSyntax, _ unexpectedBetweenThrowKeywordAndExpression: UnexpectedNodesSyntax? = nil, expression: ExprSyntax, _ unexpectedAfterExpression: UnexpectedNodesSyntax? = nil) -> ThrowStmtSyntax {
     let layout: [RawSyntax?] = [
@@ -6773,7 +6793,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .throwStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.throwKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.throw), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingExpr, arena: arena),
         nil,
@@ -6810,7 +6830,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .ifStmt,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.ifKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.if), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.conditionElementList, arena: arena),
         nil,
@@ -6882,7 +6902,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .switchDefaultLabel,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.defaultKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.default), arena: arena),
         nil,
         RawSyntax.makeMissingToken(kind: TokenKind.colon, arena: arena),
         nil,
@@ -6985,7 +7005,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .switchCaseLabel,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.caseKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.case), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.caseItemList, arena: arena),
         nil,
@@ -7020,7 +7040,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .catchClause,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.catchKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.catch), arena: arena),
         nil,
         nil,
         nil,
@@ -7031,7 +7051,7 @@ public enum SyntaxFactory {
     }
   }
   @available(*, deprecated, message: "Use initializer on PoundAssertStmtSyntax")
-  public static func makePoundAssertStmt(_ unexpectedBeforePoundAssert: UnexpectedNodesSyntax? = nil, poundAssert: TokenSyntax, _ unexpectedBetweenPoundAssertAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax, _ unexpectedBetweenLeftParenAndCondition: UnexpectedNodesSyntax? = nil, condition: ExprSyntax, _ unexpectedBetweenConditionAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax?, _ unexpectedBetweenCommaAndMessage: UnexpectedNodesSyntax? = nil, message: TokenSyntax?, _ unexpectedBetweenMessageAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> PoundAssertStmtSyntax {
+  public static func makePoundAssertStmt(_ unexpectedBeforePoundAssert: UnexpectedNodesSyntax? = nil, poundAssert: TokenSyntax, _ unexpectedBetweenPoundAssertAndLeftParen: UnexpectedNodesSyntax? = nil, leftParen: TokenSyntax, _ unexpectedBetweenLeftParenAndCondition: UnexpectedNodesSyntax? = nil, condition: ExprSyntax, _ unexpectedBetweenConditionAndComma: UnexpectedNodesSyntax? = nil, comma: TokenSyntax?, _ unexpectedBetweenCommaAndMessage: UnexpectedNodesSyntax? = nil, message: StringLiteralExprSyntax?, _ unexpectedBetweenMessageAndRightParen: UnexpectedNodesSyntax? = nil, rightParen: TokenSyntax, _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil) -> PoundAssertStmtSyntax {
     let layout: [RawSyntax?] = [
       unexpectedBeforePoundAssert?.raw,
       poundAssert.raw,
@@ -7100,7 +7120,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .genericWhereClause,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.whereKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.where), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.genericRequirementList, arena: arena),
         nil,
@@ -7186,7 +7206,7 @@ public enum SyntaxFactory {
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.spacedBinaryOperator(""), arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.binaryOperator(""), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
         nil,
@@ -7567,7 +7587,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .classRestrictionType,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.classKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.class), arena: arena),
         nil,
       ], arena: arena))
       return ClassRestrictionTypeSyntax(data)
@@ -7858,13 +7878,13 @@ public enum SyntaxFactory {
     }
   }
   @available(*, deprecated, message: "Use initializer on PackExpansionTypeSyntax")
-  public static func makePackExpansionType(_ unexpectedBeforePatternType: UnexpectedNodesSyntax? = nil, patternType: TypeSyntax, _ unexpectedBetweenPatternTypeAndEllipsis: UnexpectedNodesSyntax? = nil, ellipsis: TokenSyntax, _ unexpectedAfterEllipsis: UnexpectedNodesSyntax? = nil) -> PackExpansionTypeSyntax {
+  public static func makePackExpansionType(_ unexpectedBeforeRepeatKeyword: UnexpectedNodesSyntax? = nil, repeatKeyword: TokenSyntax, _ unexpectedBetweenRepeatKeywordAndPatternType: UnexpectedNodesSyntax? = nil, patternType: TypeSyntax, _ unexpectedAfterPatternType: UnexpectedNodesSyntax? = nil) -> PackExpansionTypeSyntax {
     let layout: [RawSyntax?] = [
-      unexpectedBeforePatternType?.raw,
+      unexpectedBeforeRepeatKeyword?.raw,
+      repeatKeyword.raw,
+      unexpectedBetweenRepeatKeywordAndPatternType?.raw,
       patternType.raw,
-      unexpectedBetweenPatternTypeAndEllipsis?.raw,
-      ellipsis.raw,
-      unexpectedAfterEllipsis?.raw,
+      unexpectedAfterPatternType?.raw,
     ]
     return withExtendedLifetime(SyntaxArena()) { arena in
       let raw = RawSyntax.makeLayout(kind: SyntaxKind.packExpansionType,
@@ -7880,9 +7900,9 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .packExpansionType,
         from: [
         nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.repeat), arena: arena),
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.ellipsis, arena: arena),
+        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
         nil,
       ], arena: arena))
       return PackExpansionTypeSyntax(data)
@@ -8263,45 +8283,6 @@ public enum SyntaxFactory {
       return TypeAnnotationSyntax(data)
     }
   }
-  @available(*, deprecated, message: "Use initializer on EnumCasePatternSyntax")
-  public static func makeEnumCasePattern(_ unexpectedBeforeType: UnexpectedNodesSyntax? = nil, type: TypeSyntax?, _ unexpectedBetweenTypeAndPeriod: UnexpectedNodesSyntax? = nil, period: TokenSyntax, _ unexpectedBetweenPeriodAndCaseName: UnexpectedNodesSyntax? = nil, caseName: TokenSyntax, _ unexpectedBetweenCaseNameAndAssociatedTuple: UnexpectedNodesSyntax? = nil, associatedTuple: TuplePatternSyntax?, _ unexpectedAfterAssociatedTuple: UnexpectedNodesSyntax? = nil) -> EnumCasePatternSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeType?.raw,
-      type?.raw,
-      unexpectedBetweenTypeAndPeriod?.raw,
-      period.raw,
-      unexpectedBetweenPeriodAndCaseName?.raw,
-      caseName.raw,
-      unexpectedBetweenCaseNameAndAssociatedTuple?.raw,
-      associatedTuple?.raw,
-      unexpectedAfterAssociatedTuple?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.enumCasePattern,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return EnumCasePatternSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on EnumCasePatternSyntax")
-  public static func makeBlankEnumCasePattern(presence: SourcePresence = .present) -> EnumCasePatternSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .enumCasePattern,
-        from: [
-        nil,
-        nil,
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.period, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
-        nil,
-        nil,
-        nil,
-      ], arena: arena))
-      return EnumCasePatternSyntax(data)
-    }
-  }
   @available(*, deprecated, message: "Use initializer on IsTypePatternSyntax")
   public static func makeIsTypePattern(_ unexpectedBeforeIsKeyword: UnexpectedNodesSyntax? = nil, isKeyword: TokenSyntax, _ unexpectedBetweenIsKeywordAndType: UnexpectedNodesSyntax? = nil, type: TypeSyntax, _ unexpectedAfterType: UnexpectedNodesSyntax? = nil) -> IsTypePatternSyntax {
     let layout: [RawSyntax?] = [
@@ -8325,43 +8306,12 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .isTypePattern,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.isKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.is), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
         nil,
       ], arena: arena))
       return IsTypePatternSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on OptionalPatternSyntax")
-  public static func makeOptionalPattern(_ unexpectedBeforeSubPattern: UnexpectedNodesSyntax? = nil, subPattern: PatternSyntax, _ unexpectedBetweenSubPatternAndQuestionMark: UnexpectedNodesSyntax? = nil, questionMark: TokenSyntax, _ unexpectedAfterQuestionMark: UnexpectedNodesSyntax? = nil) -> OptionalPatternSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforeSubPattern?.raw,
-      subPattern.raw,
-      unexpectedBetweenSubPatternAndQuestionMark?.raw,
-      questionMark.raw,
-      unexpectedAfterQuestionMark?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.optionalPattern,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return OptionalPatternSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on OptionalPatternSyntax")
-  public static func makeBlankOptionalPattern(presence: SourcePresence = .present) -> OptionalPatternSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .optionalPattern,
-        from: [
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingPattern, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.postfixQuestionMark, arena: arena),
-        nil,
-      ], arena: arena))
-      return OptionalPatternSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on IdentifierPatternSyntax")
@@ -8385,45 +8335,10 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .identifierPattern,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.selfKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.identifier(""), arena: arena),
         nil,
       ], arena: arena))
       return IdentifierPatternSyntax(data)
-    }
-  }
-  @available(*, deprecated, message: "Use initializer on AsTypePatternSyntax")
-  public static func makeAsTypePattern(_ unexpectedBeforePattern: UnexpectedNodesSyntax? = nil, pattern: PatternSyntax, _ unexpectedBetweenPatternAndAsKeyword: UnexpectedNodesSyntax? = nil, asKeyword: TokenSyntax, _ unexpectedBetweenAsKeywordAndType: UnexpectedNodesSyntax? = nil, type: TypeSyntax, _ unexpectedAfterType: UnexpectedNodesSyntax? = nil) -> AsTypePatternSyntax {
-    let layout: [RawSyntax?] = [
-      unexpectedBeforePattern?.raw,
-      pattern.raw,
-      unexpectedBetweenPatternAndAsKeyword?.raw,
-      asKeyword.raw,
-      unexpectedBetweenAsKeywordAndType?.raw,
-      type.raw,
-      unexpectedAfterType?.raw,
-    ]
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.asTypePattern,
-        from: layout, arena: arena)
-      let data = SyntaxData.forRoot(raw)
-      return AsTypePatternSyntax(data)
-    }
-  }
-
-  @available(*, deprecated, message: "Use initializer on AsTypePatternSyntax")
-  public static func makeBlankAsTypePattern(presence: SourcePresence = .present) -> AsTypePatternSyntax {
-    return withExtendedLifetime(SyntaxArena()) { arena in
-      let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .asTypePattern,
-        from: [
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingPattern, arena: arena),
-        nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.asKeyword, arena: arena),
-        nil,
-        RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingType, arena: arena),
-        nil,
-      ], arena: arena))
-      return AsTypePatternSyntax(data)
     }
   }
   @available(*, deprecated, message: "Use initializer on TuplePatternSyntax")
@@ -8484,7 +8399,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .wildcardPattern,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.wildcardKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.wildcard, arena: arena),
         nil,
         nil,
         nil,
@@ -8601,7 +8516,7 @@ public enum SyntaxFactory {
       let data = SyntaxData.forRoot(RawSyntax.makeLayout(kind: .valueBindingPattern,
         from: [
         nil,
-        RawSyntax.makeMissingToken(kind: TokenKind.letKeyword, arena: arena),
+        RawSyntax.makeMissingToken(kind: TokenKind.keyword(.let), arena: arena),
         nil,
         RawSyntax.makeEmptyLayout(kind: SyntaxKind.missingPattern, arena: arena),
         nil,
@@ -8765,489 +8680,12 @@ public enum SyntaxFactory {
 /// MARK: Token Creation APIs
 
 
-  @available(*, deprecated, message: "Use TokenSyntax.associatedtypeKeywordKeyword instead")
-  public static func makeAssociatedtypeKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.associatedtypeKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.classKeywordKeyword instead")
-  public static func makeClassKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.classKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.deinitKeywordKeyword instead")
-  public static func makeDeinitKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.deinitKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.enumKeywordKeyword instead")
-  public static func makeEnumKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.enumKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.extensionKeywordKeyword instead")
-  public static func makeExtensionKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.extensionKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.funcKeywordKeyword instead")
-  public static func makeFuncKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.funcKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.importKeywordKeyword instead")
-  public static func makeImportKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.importKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.initKeywordKeyword instead")
-  public static func makeInitKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.initKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.inoutKeywordKeyword instead")
-  public static func makeInoutKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.inoutKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.letKeywordKeyword instead")
-  public static func makeLetKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.letKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.operatorKeywordKeyword instead")
-  public static func makeOperatorKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.operatorKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.precedencegroupKeywordKeyword instead")
-  public static func makePrecedencegroupKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.precedencegroupKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.protocolKeywordKeyword instead")
-  public static func makeProtocolKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.protocolKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.structKeywordKeyword instead")
-  public static func makeStructKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.structKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.subscriptKeywordKeyword instead")
-  public static func makeSubscriptKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.subscriptKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.typealiasKeywordKeyword instead")
-  public static func makeTypealiasKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.typealiasKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.varKeywordKeyword instead")
-  public static func makeVarKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.varKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.fileprivateKeywordKeyword instead")
-  public static func makeFileprivateKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.fileprivateKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.internalKeywordKeyword instead")
-  public static func makeInternalKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.internalKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.privateKeywordKeyword instead")
-  public static func makePrivateKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.privateKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.publicKeywordKeyword instead")
-  public static func makePublicKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.publicKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.staticKeywordKeyword instead")
-  public static func makeStaticKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.staticKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.deferKeywordKeyword instead")
-  public static func makeDeferKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.deferKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.ifKeywordKeyword instead")
-  public static func makeIfKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.ifKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.guardKeywordKeyword instead")
-  public static func makeGuardKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.guardKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.doKeywordKeyword instead")
-  public static func makeDoKeyword(
+  @available(*, deprecated, message: "Use TokenSyntax.wildcardToken instead")
+  public static func makeWildcardToken(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = []
   ) -> TokenSyntax {
-    return makeToken(.doKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.repeatKeywordKeyword instead")
-  public static func makeRepeatKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.repeatKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.elseKeywordKeyword instead")
-  public static func makeElseKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.elseKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.forKeywordKeyword instead")
-  public static func makeForKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.forKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.inKeywordKeyword instead")
-  public static func makeInKeyword(
-    leadingTrivia: Trivia = .space,
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.inKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.whileKeywordKeyword instead")
-  public static func makeWhileKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.whileKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.returnKeywordKeyword instead")
-  public static func makeReturnKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.returnKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.breakKeywordKeyword instead")
-  public static func makeBreakKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.breakKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.continueKeywordKeyword instead")
-  public static func makeContinueKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.continueKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.fallthroughKeywordKeyword instead")
-  public static func makeFallthroughKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.fallthroughKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.switchKeywordKeyword instead")
-  public static func makeSwitchKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.switchKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.caseKeywordKeyword instead")
-  public static func makeCaseKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.caseKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.defaultKeywordKeyword instead")
-  public static func makeDefaultKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.defaultKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.whereKeywordKeyword instead")
-  public static func makeWhereKeyword(
-    leadingTrivia: Trivia = .space,
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.whereKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.catchKeywordKeyword instead")
-  public static func makeCatchKeyword(
-    leadingTrivia: Trivia = .space,
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.catchKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.throwKeywordKeyword instead")
-  public static func makeThrowKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.throwKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.asKeywordKeyword instead")
-  public static func makeAsKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.asKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.anyKeywordKeyword instead")
-  public static func makeAnyKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.anyKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.falseKeywordKeyword instead")
-  public static func makeFalseKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.falseKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.isKeywordKeyword instead")
-  public static func makeIsKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.isKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.nilKeywordKeyword instead")
-  public static func makeNilKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.nilKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.rethrowsKeywordKeyword instead")
-  public static func makeRethrowsKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.rethrowsKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.superKeywordKeyword instead")
-  public static func makeSuperKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.superKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.selfKeywordKeyword instead")
-  public static func makeSelfKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.selfKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.capitalSelfKeywordKeyword instead")
-  public static func makeCapitalSelfKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.capitalSelfKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.trueKeywordKeyword instead")
-  public static func makeTrueKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.trueKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.tryKeywordKeyword instead")
-  public static func makeTryKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.tryKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.throwsKeywordKeyword instead")
-  public static func makeThrowsKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.throwsKeyword, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.wildcardKeywordKeyword instead")
-  public static func makeWildcardKeyword(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = .space
-  ) -> TokenSyntax {
-    return makeToken(.wildcardKeyword, presence: .present,
+    return makeToken(.wildcard, presence: .present,
                      leadingTrivia: leadingTrivia,
                      trailingTrivia: trailingTrivia)
   }
@@ -9307,8 +8745,8 @@ public enum SyntaxFactory {
   }
   @available(*, deprecated, message: "Use TokenSyntax.leftAngleToken instead")
   public static func makeLeftAngleToken(
-    leadingTrivia: Trivia = .space,
-    trailingTrivia: Trivia = .space
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = []
   ) -> TokenSyntax {
     return makeToken(.leftAngle, presence: .present,
                      leadingTrivia: leadingTrivia,
@@ -9316,8 +8754,8 @@ public enum SyntaxFactory {
   }
   @available(*, deprecated, message: "Use TokenSyntax.rightAngleToken instead")
   public static func makeRightAngleToken(
-    leadingTrivia: Trivia = .space,
-    trailingTrivia: Trivia = .space
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = []
   ) -> TokenSyntax {
     return makeToken(.rightAngle, presence: .present,
                      leadingTrivia: leadingTrivia,
@@ -9712,16 +9150,6 @@ public enum SyntaxFactory {
                      leadingTrivia: leadingTrivia,
                      trailingTrivia: trailingTrivia)
   }
-  @available(*, deprecated, message: "Use TokenSyntax.stringLiteral instead")
-  public static func makeStringLiteral(
-    _ text: String,
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.stringLiteral(text), presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
   @available(*, deprecated, message: "Use TokenSyntax.regexLiteral instead")
   public static func makeRegexLiteral(
     _ text: String,
@@ -9752,23 +9180,13 @@ public enum SyntaxFactory {
                      leadingTrivia: leadingTrivia,
                      trailingTrivia: trailingTrivia)
   }
-  @available(*, deprecated, message: "Use TokenSyntax.unspacedBinaryOperator instead")
-  public static func makeUnspacedBinaryOperator(
-    _ text: String,
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.unspacedBinaryOperator(text), presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.spacedBinaryOperator instead")
-  public static func makeSpacedBinaryOperator(
+  @available(*, deprecated, message: "Use TokenSyntax.binaryOperator instead")
+  public static func makeBinaryOperator(
     _ text: String,
     leadingTrivia: Trivia = .space,
     trailingTrivia: Trivia = .space
   ) -> TokenSyntax {
-    return makeToken(.spacedBinaryOperator(text), presence: .present,
+    return makeToken(.binaryOperator(text), presence: .present,
                      leadingTrivia: leadingTrivia,
                      trailingTrivia: trailingTrivia)
   }
@@ -9802,13 +9220,13 @@ public enum SyntaxFactory {
                      leadingTrivia: leadingTrivia,
                      trailingTrivia: trailingTrivia)
   }
-  @available(*, deprecated, message: "Use TokenSyntax.contextualKeyword instead")
-  public static func makeContextualKeyword(
-    _ text: String,
+  @available(*, deprecated, message: "Use TokenSyntax.keyword instead")
+  public static func makeKeyword(
+    _ value: Keyword,
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = []
   ) -> TokenSyntax {
-    return makeToken(.contextualKeyword(text), presence: .present,
+    return makeToken(.keyword(value), presence: .present,
                      leadingTrivia: leadingTrivia,
                      trailingTrivia: trailingTrivia)
   }
@@ -9829,24 +9247,6 @@ public enum SyntaxFactory {
     trailingTrivia: Trivia = []
   ) -> TokenSyntax {
     return makeToken(.stringSegment(text), presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.stringInterpolationAnchorToken instead")
-  public static func makeStringInterpolationAnchorToken(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.stringInterpolationAnchor, presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
-  }
-  @available(*, deprecated, message: "Use TokenSyntax.yieldToken instead")
-  public static func makeYieldToken(
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []
-  ) -> TokenSyntax {
-    return makeToken(.yield, presence: .present,
                      leadingTrivia: leadingTrivia,
                      trailingTrivia: trailingTrivia)
   }
@@ -9921,16 +9321,6 @@ public enum SyntaxFactory {
     trailingTrivia: Trivia = []) -> TokenSyntax {
     return makeIdentifier("Protocol", leadingTrivia: leadingTrivia,
                           trailingTrivia: trailingTrivia)
-  }
-
-  @available(*, deprecated, message: "Use TokenSyntax.spacedBinaryOperator")
-  public static func makeBinaryOperator(_ name: String,
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = []) -> TokenSyntax {
-    return makeToken(.spacedBinaryOperator(name),
-                     presence: .present,
-                     leadingTrivia: leadingTrivia,
-                     trailingTrivia: trailingTrivia)
   }
 
   @available(*, deprecated, message: "Use initializer on StringLiteralExprSyntax")

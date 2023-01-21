@@ -26,17 +26,6 @@ public let EXPR_NODES: [Node] = [
                kind: "Expr")
        ]),
 
-  Node(name: "PoundColumnExpr",
-       nameForDiagnostics: nil,
-       kind: "Expr",
-       children: [
-         Child(name: "PoundColumn",
-               kind: "PoundColumnToken",
-               tokenChoices: [
-                 "PoundColumn"
-               ])
-       ]),
-
   Node(name: "TupleExprElementList",
        nameForDiagnostics: nil,
        kind: "SyntaxCollection",
@@ -64,9 +53,12 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "TryKeyword",
-               kind: "TryToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Try"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "try"
                ]),
          Child(name: "QuestionOrExclamationMark",
                kind: "Token",
@@ -84,9 +76,9 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "AwaitKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "await"
@@ -100,9 +92,9 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "MoveKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "_move"
@@ -116,9 +108,9 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "BorrowKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "_borrow"
@@ -175,10 +167,9 @@ public let EXPR_NODES: [Node] = [
                kind: "Token",
                tokenChoices: [
                  "Identifier",
-                 "Self",
-                 "CapitalSelf",
+                 "Keyword",
                  "DollarIdentifier",
-                 "SpacedBinaryOperator"
+                 "BinaryOperator"
                ]),
          Child(name: "DeclNameArguments",
                kind: "DeclNameArguments",
@@ -190,9 +181,12 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "SuperKeyword",
-               kind: "SuperToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Super"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "super"
                ])
        ]),
 
@@ -201,9 +195,12 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "NilKeyword",
-               kind: "NilToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Nil"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "nil"
                ])
        ]),
 
@@ -229,14 +226,30 @@ public let EXPR_NODES: [Node] = [
                ])
        ]),
 
+  Node(name: "PackExpansionExpr",
+       nameForDiagnostics: nil,
+       kind: "Expr",
+       children: [
+         Child(name: "RepeatKeyword",
+               kind: "KeywordToken",
+               tokenChoices: [
+                 "Keyword"
+               ],
+               textChoices: [
+                 "repeat"
+               ]),
+         Child(name: "PatternExpr",
+               kind: "Expr")
+       ]),
+
   Node(name: "PackElementExpr",
        nameForDiagnostics: nil,
        kind: "Expr",
        children: [
          Child(name: "EachKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "each"
@@ -261,20 +274,6 @@ public let EXPR_NODES: [Node] = [
        element: "Expr",
        elementName: "Expression"),
 
-  Node(name: "SymbolicReferenceExpr",
-       nameForDiagnostics: nil,
-       kind: "Expr",
-       children: [
-         Child(name: "Identifier",
-               kind: "IdentifierToken",
-               tokenChoices: [
-                 "Identifier"
-               ]),
-         Child(name: "GenericArgumentClause",
-               kind: "GenericArgumentClause",
-               isOptional: true)
-       ]),
-
   Node(name: "PrefixOperatorExpr",
        nameForDiagnostics: "prefix operator expression",
        kind: "Expr",
@@ -294,7 +293,10 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "OperatorToken",
-               kind: "BinaryOperatorToken")
+               kind: "BinaryOperatorToken",
+               tokenChoices: [
+                 "BinaryOperator"
+               ])
        ]),
 
   Node(name: "ArrowExpr",
@@ -302,20 +304,17 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "AsyncKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                isOptional: true,
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "async"
                ]),
          Child(name: "ThrowsToken",
                kind: "ThrowsToken",
-               isOptional: true,
-               tokenChoices: [
-                 "Throws"
-               ]),
+               isOptional: true),
          Child(name: "ArrowToken",
                kind: "ArrowToken",
                tokenChoices: [
@@ -380,7 +379,8 @@ public let EXPR_NODES: [Node] = [
                ]),
          Child(name: "Elements",
                kind: "ArrayElementList",
-               collectionElementName: "Element"),
+               collectionElementName: "Element",
+               isIndented: true),
          Child(name: "RightSquare",
                kind: "RightSquareBracketToken",
                tokenChoices: [
@@ -407,7 +407,8 @@ public let EXPR_NODES: [Node] = [
                        ]),
                  Child(name: "Elements",
                        kind: "DictionaryElementList")
-               ]),
+               ],
+               isIndented: true),
          Child(name: "RightSquare",
                kind: "RightSquareBracketToken",
                tokenChoices: [
@@ -477,7 +478,8 @@ public let EXPR_NODES: [Node] = [
                  "Colon"
                ]),
          Child(name: "ValueExpression",
-               kind: "Expr"),
+               kind: "Expr",
+               isIndented: true),
          Child(name: "TrailingComma",
                kind: "CommaToken",
                isOptional: true,
@@ -502,10 +504,13 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "BooleanLiteral",
-               kind: "Token",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "True",
-                 "False"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "true",
+                 "false"
                ])
        ]),
 
@@ -573,9 +578,12 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "IsTok",
-               kind: "IsToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Is"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "is"
                ])
        ]),
 
@@ -586,9 +594,12 @@ public let EXPR_NODES: [Node] = [
          Child(name: "Expression",
                kind: "Expr"),
          Child(name: "IsTok",
-               kind: "IsToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Is"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "is"
                ]),
          Child(name: "TypeName",
                kind: "Type")
@@ -599,9 +610,12 @@ public let EXPR_NODES: [Node] = [
        kind: "Expr",
        children: [
          Child(name: "AsTok",
-               kind: "AsToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "As"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "as"
                ]),
          Child(name: "QuestionOrExclamationMark",
                kind: "Token",
@@ -619,9 +633,12 @@ public let EXPR_NODES: [Node] = [
          Child(name: "Expression",
                kind: "Expr"),
          Child(name: "AsTok",
-               kind: "AsToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "As"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "as"
                ]),
          Child(name: "QuestionOrExclamationMark",
                kind: "Token",
@@ -642,6 +659,37 @@ public let EXPR_NODES: [Node] = [
                kind: "Type")
        ]),
 
+  Node(name: "ClosureCaptureItemSpecifier",
+       nameForDiagnostics: "closure capture specifier",
+       kind: "Syntax",
+       children: [
+         Child(name: "Specifier",
+               kind: "ContextualKeywordToken",
+               textChoices: [
+                 "weak",
+                 "unowned"
+               ]),
+         Child(name: "LeftParen",
+               kind: "LeftParenToken",
+               isOptional: true,
+               tokenChoices: [
+                 "LeftParen"
+               ]),
+         Child(name: "Detail",
+               kind: "ContextualKeywordToken",
+               isOptional: true,
+               textChoices: [
+                 "safe",
+                 "unsafe"
+               ]),
+         Child(name: "RightParen",
+               kind: "RightParenToken",
+               isOptional: true,
+               tokenChoices: [
+                 "RightParen"
+               ])
+       ]),
+
   Node(name: "ClosureCaptureItem",
        nameForDiagnostics: "closure capture item",
        kind: "Syntax",
@@ -650,9 +698,8 @@ public let EXPR_NODES: [Node] = [
        ],
        children: [
          Child(name: "Specifier",
-               kind: "TokenList",
-               isOptional: true,
-               collectionElementName: "SpecifierToken"),
+               kind: "ClosureCaptureItemSpecifier",
+               isOptional: true),
          Child(name: "Name",
                kind: "IdentifierToken",
                isOptional: true,
@@ -729,6 +776,9 @@ public let EXPR_NODES: [Node] = [
   Node(name: "ClosureSignature",
        nameForDiagnostics: "closure signature",
        kind: "Syntax",
+       traits: [
+         "Attributed"
+       ],
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -747,27 +797,33 @@ public let EXPR_NODES: [Node] = [
                        kind: "ParameterClause")
                ]),
          Child(name: "AsyncKeyword",
-               kind: "ContextualKeywordToken",
+               kind: "KeywordToken",
                isOptional: true,
                tokenChoices: [
-                 "ContextualKeyword"
+                 "Keyword"
                ],
                textChoices: [
                  "async"
                ]),
          Child(name: "ThrowsTok",
-               kind: "ThrowsToken",
+               kind: "KeywordToken",
                isOptional: true,
                tokenChoices: [
-                 "Throws"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "throws"
                ]),
          Child(name: "Output",
                kind: "ReturnClause",
                isOptional: true),
          Child(name: "InTok",
-               kind: "InToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "In"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "in"
                ])
        ]),
 
@@ -979,9 +1035,9 @@ public let EXPR_NODES: [Node] = [
                kind: "TupleExprElementList",
                collectionElementName: "Expression"),
          Child(name: "RightParen",
-               kind: "StringInterpolationAnchorToken",
+               kind: "RightParenToken",
                tokenChoices: [
-                 "StringInterpolationAnchor"
+                 "RightParen"
                ],
                classification: "StringInterpolationAnchor",
                forceClassification: true)
@@ -1083,10 +1139,9 @@ public let EXPR_NODES: [Node] = [
                kind: "Token",
                tokenChoices: [
                  "Identifier",
-                 "Self",
-                 "CapitalSelf",
+                 "Keyword",
                  "DollarIdentifier",
-                 "SpacedBinaryOperator",
+                 "BinaryOperator",
                  "IntegerLiteral"
                ]),
          Child(name: "DeclNameArguments",

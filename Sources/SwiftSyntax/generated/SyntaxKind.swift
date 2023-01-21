@@ -14,11 +14,10 @@
 //
 //===----------------------------------------------------------------------===//
 
+/// Enumerates the known kinds of Syntax represented in the Syntax tree.
 @frozen // FIXME: Not actually stable, works around a miscompile
 public enum SyntaxKind {
   case token
-  
-  case accessLevelModifier
   
   case accessPathComponent
   
@@ -46,8 +45,6 @@ public enum SyntaxKind {
   
   case asExpr
   
-  case asTypePattern
-  
   case assignmentExpr
   
   case associatedtypeDecl
@@ -68,15 +65,15 @@ public enum SyntaxKind {
   
   case availabilitySpecList
   
+  case availabilityVersionRestrictionListEntry
+  
+  case availabilityVersionRestrictionList
+  
   case availabilityVersionRestriction
   
   case awaitExpr
   
   case backDeployAttributeSpecList
-  
-  case backDeployVersionArgument
-  
-  case backDeployVersionList
   
   case binaryOperatorExpr
   
@@ -103,6 +100,8 @@ public enum SyntaxKind {
   case classRestrictionType
   
   case closureCaptureItemList
+  
+  case closureCaptureItemSpecifier
   
   case closureCaptureItem
   
@@ -142,8 +141,6 @@ public enum SyntaxKind {
   
   case conventionWitnessMethodAttributeArguments
   
-  case customAttribute
-  
   case declModifierDetail
   
   case declModifier
@@ -155,8 +152,6 @@ public enum SyntaxKind {
   case declNameArguments
   
   case declName
-  
-  case declarationStmt
   
   case deferStmt
   
@@ -190,7 +185,17 @@ public enum SyntaxKind {
   
   case doStmt
   
+  case documentationAttributeArgument
+  
+  case documentationAttributeArguments
+  
+  case dynamicReplacementArguments
+  
+  case editorPlaceholderDecl
+  
   case editorPlaceholderExpr
+  
+  case effectsArguments
   
   case enumCaseDecl
   
@@ -198,17 +203,15 @@ public enum SyntaxKind {
   
   case enumCaseElement
   
-  case enumCasePattern
-  
   case enumDecl
+  
+  case exposeAttributeArguments
   
   case exprList
   
   case expressionPattern
   
   case expressionSegment
-  
-  case expressionStmt
   
   case extensionDecl
   
@@ -221,8 +224,6 @@ public enum SyntaxKind {
   case forcedValueExpr
   
   case functionCallExpr
-  
-  case functionDeclName
   
   case functionDecl
   
@@ -350,13 +351,9 @@ public enum SyntaxKind {
   
   case multipleTrailingClosureElement
   
-  case namedAttributeStringArgument
-  
   case namedOpaqueReturnType
   
   case nilLiteralExpr
-  
-  case nonEmptyTokenList
   
   case objCSelectorPiece
   
@@ -372,11 +369,13 @@ public enum SyntaxKind {
   
   case optionalChainingExpr
   
-  case optionalPattern
-  
   case optionalType
   
+  case originallyDefinedInArguments
+  
   case packElementExpr
+  
+  case packExpansionExpr
   
   case packExpansionType
   
@@ -393,8 +392,6 @@ public enum SyntaxKind {
   case postfixUnaryExpr
   
   case poundAssertStmt
-  
-  case poundColumnExpr
   
   case poundErrorDecl
   
@@ -474,15 +471,11 @@ public enum SyntaxKind {
   
   case switchStmt
   
-  case symbolicReferenceExpr
-  
   case targetFunctionEntry
   
   case ternaryExpr
   
   case throwStmt
-  
-  case tokenList
   
   case tryExpr
   
@@ -514,7 +507,9 @@ public enum SyntaxKind {
   
   case typealiasDecl
   
-  case unavailabilityCondition
+  case unavailableFromAsyncArguments
+  
+  case underscorePrivateAttributeArguments
   
   case unexpectedNodes
   
@@ -558,7 +553,7 @@ public enum SyntaxKind {
       return true
     case .availabilitySpecList: 
       return true
-    case .backDeployVersionList: 
+    case .availabilityVersionRestrictionList: 
       return true
     case .caseItemList: 
       return true
@@ -584,6 +579,10 @@ public enum SyntaxKind {
       return true
     case .differentiabilityParamList: 
       return true
+    case .documentationAttributeArguments: 
+      return true
+    case .effectsArguments: 
+      return true
     case .enumCaseElementList: 
       return true
     case .exprList: 
@@ -608,8 +607,6 @@ public enum SyntaxKind {
       return true
     case .multipleTrailingClosureElementList: 
       return true
-    case .nonEmptyTokenList: 
-      return true
     case .objCSelector: 
       return true
     case .patternBindingList: 
@@ -625,8 +622,6 @@ public enum SyntaxKind {
     case .stringLiteralSegments: 
       return true
     case .switchCaseList: 
-      return true
-    case .tokenList: 
       return true
     case .tupleExprElementList: 
       return true

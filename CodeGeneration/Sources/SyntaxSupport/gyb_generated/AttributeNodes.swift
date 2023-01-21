@@ -13,50 +13,6 @@
 //===----------------------------------------------------------------------===//
 
 public let ATTRIBUTE_NODES: [Node] = [
-  Node(name: "TokenList",
-       nameForDiagnostics: "token list",
-       kind: "SyntaxCollection",
-       element: "Token"),
-
-  Node(name: "NonEmptyTokenList",
-       nameForDiagnostics: "token list",
-       kind: "SyntaxCollection",
-       element: "Token",
-       omitWhenEmpty: true),
-
-  Node(name: "CustomAttribute",
-       nameForDiagnostics: "attribute",
-       description: "A custom `@` attribute.",
-       kind: "Syntax",
-       children: [
-         Child(name: "AtSignToken",
-               kind: "AtSignToken",
-               description: "The `@` sign.",
-               tokenChoices: [
-                 "AtSign"
-               ]),
-         Child(name: "AttributeName",
-               kind: "Type",
-               description: "The name of the attribute.",
-               classification: "Attribute"),
-         Child(name: "LeftParen",
-               kind: "LeftParenToken",
-               isOptional: true,
-               tokenChoices: [
-                 "LeftParen"
-               ]),
-         Child(name: "ArgumentList",
-               kind: "TupleExprElementList",
-               isOptional: true,
-               collectionElementName: "Argument"),
-         Child(name: "RightParen",
-               kind: "RightParenToken",
-               isOptional: true,
-               tokenChoices: [
-                 "RightParen"
-               ])
-       ]),
-
   Node(name: "Attribute",
        nameForDiagnostics: "attribute",
        description: "An `@` attribute.",
@@ -70,7 +26,7 @@ public let ATTRIBUTE_NODES: [Node] = [
                  "AtSign"
                ]),
          Child(name: "AttributeName",
-               kind: "Token",
+               kind: "Type",
                description: "The name of the attribute.",
                classification: "Attribute"),
          Child(name: "LeftParen",
@@ -85,14 +41,11 @@ public let ATTRIBUTE_NODES: [Node] = [
                description: "The arguments of the attribute. In case the attributetakes multiple arguments, they are gather in theappropriate takes first.",
                isOptional: true,
                nodeChoices: [
+                 Child(name: "ArgumentList",
+                       kind: "TupleExprElementList"),
                  Child(name: "Token",
-                       kind: "Token",
-                       tokenChoices: [
-                         "Identifier",
-                         "StringLiteral",
-                         "IntegerLiteral"
-                       ]),
-                 Child(name: "StringExpr",
+                       kind: "Token"),
+                 Child(name: "String",
                        kind: "StringLiteralExpr"),
                  Child(name: "Availability",
                        kind: "AvailabilitySpecList"),
@@ -106,8 +59,6 @@ public let ATTRIBUTE_NODES: [Node] = [
                        kind: "DifferentiableAttributeArguments"),
                  Child(name: "DerivativeRegistrationArguments",
                        kind: "DerivativeRegistrationAttributeArguments"),
-                 Child(name: "NamedAttributeString",
-                       kind: "NamedAttributeStringArgument"),
                  Child(name: "BackDeployArguments",
                        kind: "BackDeployAttributeSpecList"),
                  Child(name: "ConventionArguments",
@@ -116,9 +67,20 @@ public let ATTRIBUTE_NODES: [Node] = [
                        kind: "ConventionWitnessMethodAttributeArguments"),
                  Child(name: "OpaqueReturnTypeOfAttributeArguments",
                        kind: "OpaqueReturnTypeOfAttributeArguments"),
-                 Child(name: "TokenList",
-                       kind: "TokenList",
-                       collectionElementName: "Token")
+                 Child(name: "ExposeAttributeArguments",
+                       kind: "ExposeAttributeArguments"),
+                 Child(name: "OriginallyDefinedInArguments",
+                       kind: "OriginallyDefinedInArguments"),
+                 Child(name: "UnderscorePrivateAttributeArguments",
+                       kind: "UnderscorePrivateAttributeArguments"),
+                 Child(name: "DynamicReplacementArguments",
+                       kind: "DynamicReplacementArguments"),
+                 Child(name: "UnavailableFromAsyncArguments",
+                       kind: "UnavailableFromAsyncArguments"),
+                 Child(name: "EffectsArguments",
+                       kind: "EffectsArguments"),
+                 Child(name: "DocumentationArguments",
+                       kind: "DocumentationAttributeArguments")
                ]),
          Child(name: "RightParen",
                kind: "RightParenToken",
@@ -126,11 +88,7 @@ public let ATTRIBUTE_NODES: [Node] = [
                isOptional: true,
                tokenChoices: [
                  "RightParen"
-               ]),
-         Child(name: "TokenList",
-               kind: "TokenList",
-               isOptional: true,
-               collectionElementName: "Token")
+               ])
        ]),
 
   Node(name: "AttributeList",
@@ -138,7 +96,7 @@ public let ATTRIBUTE_NODES: [Node] = [
        kind: "SyntaxCollection",
        element: "Syntax",
        elementName: "Attribute",
-       elementChoices: ["Attribute", "CustomAttribute", "IfConfigDecl"],
+       elementChoices: ["Attribute", "IfConfigDecl"],
        omitWhenEmpty: true),
 
   Node(name: "SpecializeAttributeSpecList",
@@ -237,33 +195,6 @@ public let ATTRIBUTE_NODES: [Node] = [
                isOptional: true,
                tokenChoices: [
                  "Comma"
-               ])
-       ]),
-
-  Node(name: "NamedAttributeStringArgument",
-       nameForDiagnostics: "attribute argument",
-       description: "The argument for the `@_dynamic_replacement` or `@_private`attribute of the form `for: \"function()\"` or `sourceFile:\"Src.swift\"`",
-       kind: "Syntax",
-       children: [
-         Child(name: "NameTok",
-               kind: "Token",
-               description: "The label of the argument"),
-         Child(name: "Colon",
-               kind: "ColonToken",
-               description: "The colon separating the label and the value",
-               tokenChoices: [
-                 "Colon"
-               ]),
-         Child(name: "StringOrDeclname",
-               kind: "Syntax",
-               nodeChoices: [
-                 Child(name: "String",
-                       kind: "StringLiteralToken",
-                       tokenChoices: [
-                         "StringLiteral"
-                       ]),
-                 Child(name: "Declname",
-                       kind: "DeclName")
                ])
        ]),
 
@@ -436,9 +367,9 @@ public let ATTRIBUTE_NODES: [Node] = [
          Child(name: "Parameter",
                kind: "Token",
                tokenChoices: [
-                 "Self",
                  "Identifier",
-                 "IntegerLiteral"
+                 "IntegerLiteral",
+                 "Keyword"
                ]),
          Child(name: "TrailingComma",
                kind: "CommaToken",
@@ -520,29 +451,9 @@ public let ATTRIBUTE_NODES: [Node] = [
                description: "The base name of the referenced function.",
                tokenChoices: [
                  "Identifier",
-                 "UnspacedBinaryOperator",
-                 "SpacedBinaryOperator",
+                 "BinaryOperator",
                  "PrefixOperator",
                  "PostfixOperator"
-               ]),
-         Child(name: "Arguments",
-               kind: "DeclNameArguments",
-               description: "The argument labels of the referenced function, optionallyspecified.",
-               isOptional: true)
-       ]),
-
-  Node(name: "FunctionDeclName",
-       nameForDiagnostics: "function declaration name",
-       description: "A function declaration name (e.g. `foo(_:_:)`).",
-       kind: "Syntax",
-       children: [
-         Child(name: "Name",
-               kind: "Token",
-               description: "The base name of the referenced function.",
-               tokenChoices: [
-                 "Identifier",
-                 "PrefixOperator",
-                 "SpacedBinaryOperator"
                ]),
          Child(name: "Arguments",
                kind: "DeclNameArguments",
@@ -571,19 +482,19 @@ public let ATTRIBUTE_NODES: [Node] = [
                  "Colon"
                ]),
          Child(name: "VersionList",
-               kind: "BackDeployVersionList",
+               kind: "AvailabilityVersionRestrictionList",
                description: "The list of OS versions in which the declaration became ABIstable.",
                collectionElementName: "Availability")
        ]),
 
-  Node(name: "BackDeployVersionList",
+  Node(name: "AvailabilityVersionRestrictionList",
        nameForDiagnostics: "version list",
        kind: "SyntaxCollection",
-       element: "BackDeployVersionArgument"),
+       element: "AvailabilityVersionRestrictionListEntry"),
 
-  Node(name: "BackDeployVersionArgument",
+  Node(name: "AvailabilityVersionRestrictionListEntry",
        nameForDiagnostics: "version",
-       description: "A single platform/version pair in a `@_backDeploy` attribute,e.g. `iOS 10.1`.",
+       description: "A single platform/version pair in an attribute, e.g. `iOS 10.1`.",
        kind: "Syntax",
        children: [
          Child(name: "AvailabilityVersionRestriction",
@@ -604,11 +515,8 @@ public let ATTRIBUTE_NODES: [Node] = [
        kind: "Syntax",
        children: [
          Child(name: "MangledName",
-               kind: "StringLiteralToken",
-               description: "The mangled name of a declaration.",
-               tokenChoices: [
-                 "StringLiteral"
-               ]),
+               kind: "StringLiteralExpr",
+               description: "The mangled name of a declaration."),
          Child(name: "Comma",
                kind: "CommaToken",
                tokenChoices: [
@@ -662,11 +570,8 @@ public let ATTRIBUTE_NODES: [Node] = [
                  "Colon"
                ]),
          Child(name: "CTypeString",
-               kind: "StringLiteralToken",
-               isOptional: true,
-               tokenChoices: [
-                 "StringLiteral"
-               ])
+               kind: "StringLiteralExpr",
+               isOptional: true)
        ]),
 
   Node(name: "ConventionWitnessMethodAttributeArguments",
@@ -690,5 +595,173 @@ public let ATTRIBUTE_NODES: [Node] = [
                  "Identifier"
                ])
        ]),
+
+  Node(name: "ExposeAttributeArguments",
+       nameForDiagnostics: "@_expose arguments",
+       description: "The arguments for the '@_expose' attribute",
+       kind: "Syntax",
+       children: [
+         Child(name: "Language",
+               kind: "Token"),
+         Child(name: "Comma",
+               kind: "CommaToken",
+               isOptional: true,
+               tokenChoices: [
+                 "Comma"
+               ]),
+         Child(name: "CxxName",
+               kind: "StringLiteralExpr",
+               isOptional: true)
+       ]),
+
+  Node(name: "OriginallyDefinedInArguments",
+       nameForDiagnostics: "@_originallyDefinedIn arguments",
+       description: "The arguments for the '@_originallyDefinedIn' attribute",
+       kind: "Syntax",
+       children: [
+         Child(name: "ModuleLabel",
+               kind: "IdentifierToken",
+               tokenChoices: [
+                 "Identifier"
+               ],
+               textChoices: [
+                 "module"
+               ]),
+         Child(name: "Colon",
+               kind: "ColonToken",
+               tokenChoices: [
+                 "Colon"
+               ]),
+         Child(name: "ModuleName",
+               kind: "StringLiteralExpr"),
+         Child(name: "Comma",
+               kind: "CommaToken",
+               tokenChoices: [
+                 "Comma"
+               ]),
+         Child(name: "Platforms",
+               kind: "AvailabilityVersionRestrictionList",
+               collectionElementName: "Platform")
+       ]),
+
+  Node(name: "UnderscorePrivateAttributeArguments",
+       nameForDiagnostics: "@_private argument",
+       description: "The arguments for the '@_private' attribute",
+       kind: "Syntax",
+       children: [
+         Child(name: "SourceFileLabel",
+               kind: "IdentifierToken",
+               tokenChoices: [
+                 "Identifier"
+               ],
+               textChoices: [
+                 "sourceFile"
+               ]),
+         Child(name: "Colon",
+               kind: "ColonToken",
+               tokenChoices: [
+                 "Colon"
+               ]),
+         Child(name: "Filename",
+               kind: "StringLiteralExpr")
+       ]),
+
+  Node(name: "DynamicReplacementArguments",
+       nameForDiagnostics: "@_dynamicReplacement argument",
+       description: "The arguments for the '@_dynamicReplacement' attribute",
+       kind: "Syntax",
+       children: [
+         Child(name: "ForLabel",
+               kind: "IdentifierToken",
+               tokenChoices: [
+                 "Identifier"
+               ],
+               textChoices: [
+                 "for"
+               ]),
+         Child(name: "Colon",
+               kind: "ColonToken",
+               tokenChoices: [
+                 "Colon"
+               ]),
+         Child(name: "Declname",
+               kind: "DeclName")
+       ]),
+
+  Node(name: "UnavailableFromAsyncArguments",
+       nameForDiagnostics: "@_unavailableFromAsync argument",
+       description: "The arguments for the '@_unavailableFromAsync' attribute",
+       kind: "Syntax",
+       children: [
+         Child(name: "MessageLabel",
+               kind: "IdentifierToken",
+               tokenChoices: [
+                 "Identifier"
+               ],
+               textChoices: [
+                 "message"
+               ]),
+         Child(name: "Colon",
+               kind: "ColonToken",
+               tokenChoices: [
+                 "Colon"
+               ]),
+         Child(name: "Message",
+               kind: "StringLiteralExpr")
+       ]),
+
+  Node(name: "EffectsArguments",
+       nameForDiagnostics: "@_effects arguments",
+       description: "The arguments of the '@_effect' attribute. These will be parsed during the SIL stage.",
+       kind: "SyntaxCollection",
+       element: "Token"),
+
+  Node(name: "DocumentationAttributeArgument",
+       nameForDiagnostics: "@_documentation argument",
+       kind: "Syntax",
+       traits: [
+         "WithTrailingComma"
+       ],
+       children: [
+         Child(name: "Label",
+               kind: "IdentifierToken",
+               tokenChoices: [
+                 "Identifier"
+               ],
+               textChoices: [
+                 "visibility",
+                 "metadata"
+               ]),
+         Child(name: "Colon",
+               kind: "ColonToken",
+               tokenChoices: [
+                 "Colon"
+               ]),
+         Child(name: "Value",
+               kind: "Syntax",
+               nodeChoices: [
+                 Child(name: "Token",
+                       kind: "Token",
+                       tokenChoices: [
+                         "Identifier",
+                         "Keyword"
+                       ]),
+                 Child(name: "String",
+                       kind: "StringLiteralExpr")
+               ]),
+         Child(name: "TrailingComma",
+               kind: "CommaToken",
+               description: "A trailing comma if this argument is followed by another one",
+               isOptional: true,
+               tokenChoices: [
+                 "Comma"
+               ])
+       ]),
+
+  Node(name: "DocumentationAttributeArguments",
+       nameForDiagnostics: "@_documentation arguments",
+       description: "The arguments of the '@_documentation' attribute",
+       kind: "SyntaxCollection",
+       element: "DocumentationAttributeArgument"),
 
 ]

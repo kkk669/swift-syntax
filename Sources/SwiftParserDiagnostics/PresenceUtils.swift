@@ -76,7 +76,7 @@ class PresentMaker: SyntaxRewriter {
         attributes: node.attributes,
         node.unexpectedBetweenAttributesAndModifiers,
         modifiers: node.modifiers,
-        structKeyword: .structKeyword(presence: .missing),
+        structKeyword: .keyword(.struct, presence: .missing),
         identifier: .identifier("<#declaration#>", leadingTrivia: leadingTriviaBeforePlaceholder),
         members: MemberDeclBlockSyntax(
           leftBrace: .leftBraceToken(presence: .missing),
@@ -97,8 +97,14 @@ class PresentMaker: SyntaxRewriter {
 
   override func visit(_ node: MissingStmtSyntax) -> StmtSyntax {
     return StmtSyntax(
-      ExpressionStmtSyntax(
-        expression: IdentifierExprSyntax(identifier: .identifier("<#statement#>"))
+      DoStmtSyntax(
+        doKeyword: .keyword(.do, presence: .missing),
+        UnexpectedNodesSyntax([Syntax(TokenSyntax.identifier("<#statement#>"))]),
+        body: CodeBlockSyntax(
+          leftBrace: .leftBraceToken(presence: .missing),
+          statements: CodeBlockItemListSyntax([]),
+          rightBrace: .rightBraceToken(presence: .missing)
+        )
       )
     )
   }

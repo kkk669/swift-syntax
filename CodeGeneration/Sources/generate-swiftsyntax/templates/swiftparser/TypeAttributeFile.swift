@@ -15,8 +15,8 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
-let typeAttributeFile = SourceFile {
-  ImportDecl(
+let typeAttributeFile = SourceFileSyntax {
+  ImportDeclSyntax(
     """
     \(raw: generateCopyrightHeader(for: "generate-swiftparser"))
     @_spi(RawSyntax) import SwiftSyntax
@@ -24,10 +24,39 @@ let typeAttributeFile = SourceFile {
     """
   )
   
-  ExtensionDecl("extension Parser") {
-    EnumDecl("enum TypeAttribute: SyntaxText, ContextualKeywords") {
+  ExtensionDeclSyntax("extension Parser") {
+    EnumDeclSyntax("enum TypeAttribute: RawTokenKindSubset") {
       for attribute in TYPE_ATTR_KINDS {
-        EnumCaseDecl("case \(raw: attribute.name) = \"\(raw: attribute.name)\"")
+        EnumCaseDeclSyntax("case \(raw: attribute.name)")
+      }
+
+      InitializerDeclSyntax("init?(lexeme: Lexer.Lexeme)") {
+        SwitchStmtSyntax(switchKeyword: .keyword(.switch), expression: ExprSyntax("lexeme")) {
+          for attribute in TYPE_ATTR_KINDS {
+            SwitchCaseSyntax("case RawTokenKindMatch(.\(raw: attribute.name)):") {
+              SequenceExprSyntax("self = .\(raw: attribute.swiftName)")
+            }
+          }
+          SwitchCaseSyntax("default:") {
+            ReturnStmtSyntax("return nil")
+          }
+        }
+      }
+
+      VariableDeclSyntax(
+        name: IdentifierPatternSyntax("rawTokenKind"),
+        type: TypeAnnotationSyntax(
+          colon: .colonToken(),
+          type: SimpleTypeIdentifierSyntax("RawTokenKind")
+        )
+      ) {
+        SwitchStmtSyntax(switchKeyword: .keyword(.switch), expression: ExprSyntax("self")) {
+          for attribute in TYPE_ATTR_KINDS {
+            SwitchCaseSyntax("case .\(raw: attribute.swiftName):") {
+              ReturnStmtSyntax("return .keyword(.\(raw: attribute.name))")
+            }
+          }
+        }
       }
     }
   }

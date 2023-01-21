@@ -79,6 +79,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/PrecedenceGroupDeclSyntax>
 - <doc:SwiftSyntax/MacroDeclSyntax>
 - <doc:SwiftSyntax/MacroExpansionDeclSyntax>
+- <doc:SwiftSyntax/EditorPlaceholderDeclSyntax>
 
 ### Statements
 
@@ -88,7 +89,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/ContinueStmtSyntax>
 - <doc:SwiftSyntax/WhileStmtSyntax>
 - <doc:SwiftSyntax/DeferStmtSyntax>
-- <doc:SwiftSyntax/ExpressionStmtSyntax>
 - <doc:SwiftSyntax/RepeatWhileStmtSyntax>
 - <doc:SwiftSyntax/GuardStmtSyntax>
 - <doc:SwiftSyntax/ForInStmtSyntax>
@@ -98,7 +98,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/YieldStmtSyntax>
 - <doc:SwiftSyntax/FallthroughStmtSyntax>
 - <doc:SwiftSyntax/BreakStmtSyntax>
-- <doc:SwiftSyntax/DeclarationStmtSyntax>
 - <doc:SwiftSyntax/ThrowStmtSyntax>
 - <doc:SwiftSyntax/IfStmtSyntax>
 - <doc:SwiftSyntax/PoundAssertStmtSyntax>
@@ -108,7 +107,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/ExprSyntax>
 - <doc:SwiftSyntax/ExprSyntaxProtocol>
 - <doc:SwiftSyntax/InOutExprSyntax>
-- <doc:SwiftSyntax/PoundColumnExprSyntax>
 - <doc:SwiftSyntax/TryExprSyntax>
 - <doc:SwiftSyntax/AwaitExprSyntax>
 - <doc:SwiftSyntax/MoveExprSyntax>
@@ -118,9 +116,9 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/NilLiteralExprSyntax>
 - <doc:SwiftSyntax/DiscardAssignmentExprSyntax>
 - <doc:SwiftSyntax/AssignmentExprSyntax>
+- <doc:SwiftSyntax/PackExpansionExprSyntax>
 - <doc:SwiftSyntax/PackElementExprSyntax>
 - <doc:SwiftSyntax/SequenceExprSyntax>
-- <doc:SwiftSyntax/SymbolicReferenceExprSyntax>
 - <doc:SwiftSyntax/PrefixOperatorExprSyntax>
 - <doc:SwiftSyntax/BinaryOperatorExprSyntax>
 - <doc:SwiftSyntax/ArrowExprSyntax>
@@ -179,11 +177,8 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 
 - <doc:SwiftSyntax/PatternSyntax>
 - <doc:SwiftSyntax/PatternSyntaxProtocol>
-- <doc:SwiftSyntax/EnumCasePatternSyntax>
 - <doc:SwiftSyntax/IsTypePatternSyntax>
-- <doc:SwiftSyntax/OptionalPatternSyntax>
 - <doc:SwiftSyntax/IdentifierPatternSyntax>
-- <doc:SwiftSyntax/AsTypePatternSyntax>
 - <doc:SwiftSyntax/TuplePatternSyntax>
 - <doc:SwiftSyntax/WildcardPatternSyntax>
 - <doc:SwiftSyntax/ExpressionPatternSyntax>
@@ -240,8 +235,10 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/ObjCSelectorPieceSyntax>
 - <doc:SwiftSyntax/DifferentiabilityParamListSyntax>
 - <doc:SwiftSyntax/DifferentiabilityParamSyntax>
-- <doc:SwiftSyntax/BackDeployVersionListSyntax>
-- <doc:SwiftSyntax/BackDeployVersionArgumentSyntax>
+- <doc:SwiftSyntax/AvailabilityVersionRestrictionListSyntax>
+- <doc:SwiftSyntax/AvailabilityVersionRestrictionListEntrySyntax>
+- <doc:SwiftSyntax/DocumentationAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/DocumentationAttributeArgumentSyntax>
 - <doc:SwiftSyntax/CatchClauseListSyntax>
 - <doc:SwiftSyntax/CatchClauseSyntax>
 - <doc:SwiftSyntax/CaseItemListSyntax>
@@ -286,6 +283,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/TupleExprElementSyntax>
 - <doc:SwiftSyntax/ArrayElementSyntax>
 - <doc:SwiftSyntax/DictionaryElementSyntax>
+- <doc:SwiftSyntax/ClosureCaptureItemSpecifierSyntax>
 - <doc:SwiftSyntax/ClosureCaptureItemSyntax>
 - <doc:SwiftSyntax/ClosureCaptureItemListSyntax>
 - <doc:SwiftSyntax/ClosureCaptureSignatureSyntax>
@@ -323,7 +321,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/InitializerClauseSyntax>
 - <doc:SwiftSyntax/FunctionParameterSyntax>
 - <doc:SwiftSyntax/ModifierListSyntax>
-- <doc:SwiftSyntax/AccessLevelModifierSyntax>
 - <doc:SwiftSyntax/AccessPathComponentSyntax>
 - <doc:SwiftSyntax/AccessPathSyntax>
 - <doc:SwiftSyntax/AccessorParameterSyntax>
@@ -342,16 +339,12 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/PrecedenceGroupNameElementSyntax>
 - <doc:SwiftSyntax/PrecedenceGroupAssignmentSyntax>
 - <doc:SwiftSyntax/PrecedenceGroupAssociativitySyntax>
-- <doc:SwiftSyntax/TokenListSyntax>
-- <doc:SwiftSyntax/NonEmptyTokenListSyntax>
-- <doc:SwiftSyntax/CustomAttributeSyntax>
 - <doc:SwiftSyntax/AttributeSyntax>
 - <doc:SwiftSyntax/AttributeListSyntax>
 - <doc:SwiftSyntax/SpecializeAttributeSpecListSyntax>
 - <doc:SwiftSyntax/AvailabilityEntrySyntax>
 - <doc:SwiftSyntax/LabeledSpecializeEntrySyntax>
 - <doc:SwiftSyntax/TargetFunctionEntrySyntax>
-- <doc:SwiftSyntax/NamedAttributeStringArgumentSyntax>
 - <doc:SwiftSyntax/DeclNameSyntax>
 - <doc:SwiftSyntax/ImplementsAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/ObjCSelectorPieceSyntax>
@@ -363,13 +356,20 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/DifferentiabilityParamSyntax>
 - <doc:SwiftSyntax/DerivativeRegistrationAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/QualifiedDeclNameSyntax>
-- <doc:SwiftSyntax/FunctionDeclNameSyntax>
 - <doc:SwiftSyntax/BackDeployAttributeSpecListSyntax>
-- <doc:SwiftSyntax/BackDeployVersionListSyntax>
-- <doc:SwiftSyntax/BackDeployVersionArgumentSyntax>
+- <doc:SwiftSyntax/AvailabilityVersionRestrictionListSyntax>
+- <doc:SwiftSyntax/AvailabilityVersionRestrictionListEntrySyntax>
 - <doc:SwiftSyntax/OpaqueReturnTypeOfAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/ConventionAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/ConventionWitnessMethodAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/ExposeAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/OriginallyDefinedInArgumentsSyntax>
+- <doc:SwiftSyntax/UnderscorePrivateAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/DynamicReplacementArgumentsSyntax>
+- <doc:SwiftSyntax/UnavailableFromAsyncArgumentsSyntax>
+- <doc:SwiftSyntax/EffectsArgumentsSyntax>
+- <doc:SwiftSyntax/DocumentationAttributeArgumentSyntax>
+- <doc:SwiftSyntax/DocumentationAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/SwitchCaseListSyntax>
 - <doc:SwiftSyntax/WhereClauseSyntax>
 - <doc:SwiftSyntax/CatchClauseListSyntax>
@@ -380,7 +380,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/AvailabilityConditionSyntax>
 - <doc:SwiftSyntax/MatchingPatternConditionSyntax>
 - <doc:SwiftSyntax/OptionalBindingConditionSyntax>
-- <doc:SwiftSyntax/UnavailabilityConditionSyntax>
 - <doc:SwiftSyntax/HasSymbolConditionSyntax>
 - <doc:SwiftSyntax/ConditionElementListSyntax>
 - <doc:SwiftSyntax/SwitchCaseSyntax>
@@ -428,6 +427,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 
 ### Traits
 
+- <doc:SwiftSyntax/AttributedSyntax>
 - <doc:SwiftSyntax/DeclGroupSyntax>
 - <doc:SwiftSyntax/BracedSyntax>
 - <doc:SwiftSyntax/IdentifiedDeclSyntax>

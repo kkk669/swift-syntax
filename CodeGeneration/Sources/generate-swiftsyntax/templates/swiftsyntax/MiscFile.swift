@@ -15,30 +15,30 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
-let miscFile = SourceFile {
-  ExtensionDecl("""
+let miscFile = SourceFileSyntax {
+  ExtensionDeclSyntax("""
     \(generateCopyrightHeader(for: "generate-swiftsyntax"))
     extension Syntax
     """) {
-    VariableDecl(
-      modifiers: [DeclModifierSyntax(name: Token.public), DeclModifier(name: Token.static)],
-      name: IdentifierPattern("structure"),
-      type: TypeAnnotation(
-        colon: .colon,
-        type: SimpleTypeIdentifier("SyntaxNodeStructure")
+    VariableDeclSyntax(
+      modifiers: [DeclModifierSyntax(name: .keyword(.public)), DeclModifierSyntax(name: .keyword(.static))],
+      name: IdentifierPatternSyntax("structure"),
+      type: TypeAnnotationSyntax(
+        colon: .colonToken(),
+        type: SimpleTypeIdentifierSyntax("SyntaxNodeStructure")
       )
     ) {
-      ReturnStmt(
-        expression: FunctionCallExpr(callee: MemberAccessExpr(".choices")) {
-          TupleExprElement(
+      ReturnStmtSyntax(
+        expression: FunctionCallExprSyntax(callee: MemberAccessExprSyntax(".choices")) {
+          TupleExprElementSyntax(
             expression: ArrayExprSyntax {
-              ArrayElement(
-                expression: FunctionCallExpr("\n.node(TokenSyntax.self)"),
-                trailingComma: Token.comma)
+              ArrayElementSyntax(
+                expression: FunctionCallExprSyntax("\n.node(TokenSyntax.self)")
+              )
               for node in NON_BASE_SYNTAX_NODES {
-                ArrayElement(
-                  expression: FunctionCallExpr("\n.node(\(raw: node.name).self)"),
-                  trailingComma: Token.comma)
+                ArrayElementSyntax(
+                  expression: FunctionCallExprSyntax("\n.node(\(raw: node.name).self)")
+                )
               }
             })
         }
@@ -46,45 +46,45 @@ let miscFile = SourceFile {
     }
   }
   
-  ExtensionDecl("extension SyntaxKind") {
-    VariableDecl(
-      modifiers: [DeclModifier(name: Token.public)],
-      name: IdentifierPattern("syntaxNodeType"),
-      type: TypeAnnotation(
-        colon: .colon,
-        type: MemberTypeIdentifier("SyntaxProtocol.Type")
+  ExtensionDeclSyntax("extension SyntaxKind") {
+    VariableDeclSyntax(
+      modifiers: [DeclModifierSyntax(name: .keyword(.public))],
+      name: IdentifierPatternSyntax("syntaxNodeType"),
+      type: TypeAnnotationSyntax(
+        colon: .colonToken(),
+        type: MetatypeTypeSyntax("SyntaxProtocol.Type")
       )
     ) {
-      SwitchStmt(expression: Expr("self")) {
-        SwitchCase("case .token:") {
-          ReturnStmt("return TokenSyntax.self")
+      SwitchStmtSyntax(expression: ExprSyntax("self")) {
+        SwitchCaseSyntax("case .token:") {
+          ReturnStmtSyntax("return TokenSyntax.self")
         }
         for node in NON_BASE_SYNTAX_NODES {
-          SwitchCase("case .\(raw: node.swiftSyntaxKind):") {
-            ReturnStmt("return \(raw: node.name).self")
+          SwitchCaseSyntax("case .\(raw: node.swiftSyntaxKind):") {
+            ReturnStmtSyntax("return \(raw: node.name).self")
           }
         }
       }
     }
     
-    VariableDecl(
-      modifiers: [DeclModifier(name: Token.public)],
-      name: IdentifierPattern("nameForDiagnostics"),
-      type: TypeAnnotation(
-        colon: .colon,
-        type: OptionalType("String?")
+    VariableDeclSyntax(
+      modifiers: [DeclModifierSyntax(name: .keyword(.public))],
+      name: IdentifierPatternSyntax("nameForDiagnostics"),
+      type: TypeAnnotationSyntax(
+        colon: .colonToken(),
+        type: OptionalTypeSyntax("String?")
       )
     ) {
-      SwitchStmt(expression: Expr("self")) {
-        SwitchCase("case .token:") {
-          ReturnStmt(#"return "token""#)
+      SwitchStmtSyntax(expression: ExprSyntax("self")) {
+        SwitchCaseSyntax("case .token:") {
+          ReturnStmtSyntax(#"return "token""#)
         }
         for node in NON_BASE_SYNTAX_NODES {
-          SwitchCase("case .\(raw: node.swiftSyntaxKind):") {
+          SwitchCaseSyntax("case .\(raw: node.swiftSyntaxKind):") {
             if let nameForDiagnostics = node.nameForDiagnostics {
-              ReturnStmt("return \"\(raw: nameForDiagnostics)\"")
+              ReturnStmtSyntax("return \"\(raw: nameForDiagnostics)\"")
             } else {
-              ReturnStmt("return nil")
+              ReturnStmtSyntax("return nil")
             }
           }
         }

@@ -18,9 +18,12 @@ public let GENERIC_NODES: [Node] = [
        kind: "Syntax",
        children: [
          Child(name: "WhereKeyword",
-               kind: "WhereToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Where"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "where"
                ]),
          Child(name: "RequirementList",
                kind: "GenericRequirementList",
@@ -67,8 +70,7 @@ public let GENERIC_NODES: [Node] = [
          Child(name: "EqualityToken",
                kind: "Token",
                tokenChoices: [
-                 "SpacedBinaryOperator",
-                 "UnspacedBinaryOperator",
+                 "BinaryOperator",
                  "PrefixOperator",
                  "PostfixOperator"
                ]),
@@ -133,7 +135,8 @@ public let GENERIC_NODES: [Node] = [
        nameForDiagnostics: "generic parameter",
        kind: "Syntax",
        traits: [
-         "WithTrailingComma"
+         "WithTrailingComma",
+         "Attributed"
        ],
        children: [
          Child(name: "Attributes",

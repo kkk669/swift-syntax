@@ -150,7 +150,7 @@ extension Parser {
     introucerHandle: RecoveryConsumptionHandle
   ) -> T where T: NominalTypeDeclarationTrait {
     let (unexpectedBeforeIntroducerKeyword, introducerKeyword) = self.eat(introucerHandle)
-    let (unexpectedBeforeName, name) = self.expectIdentifier(keywordRecovery: true)
+    let (unexpectedBeforeName, name) = self.expectIdentifier(allowIdentifierLikeKeywords: false, keywordRecovery: true)
     if unexpectedBeforeName == nil && name.isMissing && self.currentToken.isAtStartOfLine {
       return T.init(
         attributes: attrs.attributes,
@@ -188,7 +188,7 @@ extension Parser {
 
     // Parse a 'where' clause if present.
     let whereClause: RawGenericWhereClauseSyntax?
-    if self.at(.whereKeyword) {
+    if self.at(.keyword(.where)) {
       whereClause = self.parseGenericWhereClause()
     } else {
       whereClause = nil
@@ -220,7 +220,7 @@ extension Parser {
       var loopProgress = LoopProgressCondition()
       repeat {
         let type: RawTypeSyntax
-        if let classKeyword = self.consume(if: .classKeyword) {
+        if let classKeyword = self.consume(if: .keyword(.class)) {
           type = RawTypeSyntax(
             RawClassRestrictionTypeSyntax(
               classKeyword: classKeyword,

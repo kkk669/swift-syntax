@@ -138,7 +138,7 @@ extension Parser.Lookahead {
 extension Parser.Lookahead {
   mutating func skipTypeAttribute() {
     // These are keywords that we accept as attribute names.
-    guard self.at(.identifier) || self.at(any: [.inKeyword, .inoutKeyword]) else {
+    guard self.at(.identifier) || self.at(any: [.keyword(.in), .keyword(.inout)]) else {
       return
     }
 
@@ -158,7 +158,7 @@ extension Parser.Lookahead {
       return
     }
 
-    if let (_, handle) = self.at(anyIn: Parser.DeclarationAttribute.self) {
+    if let (_, handle) = self.at(anyIn: Parser.DeclarationAttributeWithSpecialSyntax.self) {
       // This is a valid decl attribute so they should have put it on the decl
       // instead of the type.
       //
@@ -169,7 +169,7 @@ extension Parser.Lookahead {
         backtrack.skipSingle()
         // If we found '->', or 'throws' after paren, it's likely a parameter
         // of function type.
-        guard backtrack.at(any: [.arrow, .throwsKeyword, .rethrowsKeyword, .throwKeyword]) else {
+        guard backtrack.at(any: [.arrow, .keyword(.throws), .keyword(.rethrows), .keyword(.throw)]) else {
           self.skipSingle()
           return
         }
@@ -261,12 +261,12 @@ extension Parser.Lookahead {
     // If we have a 'didSet' or a 'willSet' label, disambiguate immediately as
     // an accessor block.
     let nextToken = self.peek()
-    if nextToken.isContextualKeyword(["didSet", "willSet"]) {
+    if RawTokenKindMatch(.keyword(.didSet)) ~= nextToken || RawTokenKindMatch(.keyword(.willSet)) ~= nextToken {
       return true
     }
 
     // If we don't have attributes, then it cannot be an accessor block.
-    if nextToken.tokenKind != .atSign {
+    if nextToken.rawTokenKind != .atSign {
       return false
     }
 
@@ -286,7 +286,7 @@ extension Parser.Lookahead {
     }
 
     // Check if we have 'didSet'/'willSet' after attributes.
-    return lookahead.at(any: [], contextualKeywords: ["didSet", "willSet"])
+    return lookahead.at(any: [.keyword(.didSet), .keyword(.willSet)])
   }
 }
 
@@ -307,6 +307,13 @@ extension Parser.Lookahead {
     return skip(initialState: .skipSingle)
   }
 
+  // Note: We don't need to treat string quotes as bracketed tokens because:
+  //  - If we skip over the opening quote, we also automatically skip over
+  //    closing quote since it has the same token kind
+  //  - It is very unlikely that we look for string segments, so we
+  //    automatically skip over those as individual tokens
+  //  - String interpolation contains parentheses, so it automatically skips
+  //    until the closing parenthesis.
   private enum BracketedTokens: RawTokenKindSubset {
     case leftParen
     case leftBrace
@@ -316,7 +323,7 @@ extension Parser.Lookahead {
     case poundElseifKeyword
 
     init?(lexeme: Lexer.Lexeme) {
-      switch lexeme.tokenKind {
+      switch lexeme.rawTokenKind {
       case .leftParen: self = .leftParen
       case .leftBrace: self = .leftBrace
       case .leftSquareBracket: self = .leftSquareBracket

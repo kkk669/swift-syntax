@@ -30,11 +30,12 @@ final class OriginalDefinedInAttrTests: XCTestCase {
   func testOriginalDefinedInAttr2() {
     AssertParse(
       #"""
-      @_originallyDefinedIn(modulename: "foo", OSX 13.13) 
+      @_originallyDefinedIn(1️⃣modulename: "foo", OSX 13.13)
       public func foo1() {}
       """#,
       diagnostics: [
-        // TODO: Old parser expected error on line 1: expected 'module: "original"' in the first argument to @_originallyDefinedIn
+        DiagnosticSpec(message: "expected 'module' in @_originallyDefinedIn arguments"),
+        DiagnosticSpec(message: "unexpected code 'modulename' before @_originallyDefinedIn arguments"),
       ]
     )
   }
@@ -55,11 +56,11 @@ final class OriginalDefinedInAttrTests: XCTestCase {
   func testOriginalDefinedInAttr4() {
     AssertParse(
       #"""
-      @_originallyDefinedIn(module: "foo") 
+      @_originallyDefinedIn(module: "foo"1️⃣)
       public class ToplevelClass1 {}
       """#,
       diagnostics: [
-        // TODO: Old parser expected error on line 1: expected at least one platform version in '@_originallyDefinedIn' attribute
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected ',' and version list in @_originallyDefinedIn arguments")
       ]
     )
   }
@@ -67,11 +68,11 @@ final class OriginalDefinedInAttrTests: XCTestCase {
   func testOriginalDefinedInAttr5() {
     AssertParse(
       """
-      @_originallyDefinedIn(OSX 13.13.3) 
+      @_originallyDefinedIn(1️⃣OSX 13.13.3)
       public class ToplevelClass2 {}
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 1: expected 'module: "original"' in the first argument to @_originallyDefinedIn
+        DiagnosticSpec(message: "expected 'module:', string literal, and ',' in @_originallyDefinedIn arguments")
       ]
     )
   }
@@ -79,13 +80,12 @@ final class OriginalDefinedInAttrTests: XCTestCase {
   func testOriginalDefinedInAttr6() {
     AssertParse(
       #"""
-      @_originallyDefinedIn(module: "foo",
-      public class ToplevelClass3 {}1️⃣
+      @_originallyDefinedIn(module: "foo",1️⃣
+      public class ToplevelClass3 {}
       """#,
       diagnostics: [
-        // TODO: Old parser expected error on line 2: expected platform in '@_originallyDefinedIn' attribute
+        DiagnosticSpec(message: "expected version restriction in version"),
         DiagnosticSpec(message: "expected ')' to end attribute"),
-        DiagnosticSpec(message: "expected declaration after attribute"),
       ]
     )
   }
@@ -95,23 +95,36 @@ final class OriginalDefinedInAttrTests: XCTestCase {
       #"""
       @available(OSX 13.10, *)
       @_originallyDefinedIn(module: "foo", * 13.13) 
+      public class ToplevelClass4 {}
+      """#
+    )
+
+    AssertParse(
+      #"""
+      @available(OSX 13.10, *)
       @_originallyDefinedIn(module: "foo", OSX 13.13, iOS 7.0)
-      @_originallyDefinedIn(module: "foo", OSX 13.14, * 7.0) 
+      public class ToplevelClass4 {}
+      """#
+    )
+
+    AssertParse(
+      #"""
+      @available(OSX 13.10, *)
+      @_originallyDefinedIn(module: "foo", OSX 13.14, * 7.0)
+      public class ToplevelClass4 {}
+      """#
+    )
+
+    AssertParse(
+      #"""
       public class ToplevelClass4 {
-      	@_originallyDefinedIn(module: "foo", OSX 13.13) 
-      	subscript(index: Int) -> Int {
+        @_originallyDefinedIn(module: "foo", OSX 13.13)
+        subscript(index: Int) -> Int {
               get { return 1 }
               set(newValue) {}
-      	}
+        }
       }
-      """#,
-      diagnostics: [
-        // TODO: Old parser expected warning on line 2: * as platform name has no effect
-        // TODO: Old parser expected error on line 2: expected at least one platform version in '@_originallyDefinedIn' attribute
-        // TODO: Old parser expected warning on line 4: * as platform name has no effect
-        // TODO: Old parser expected error on line 4: '@_originallyDefinedIn' contains multiple versions for macOS
-        // TODO: Old parser expected error on line 6: '@_originallyDefinedIn' attribute cannot be applied to this declaration
-      ]
+      """#
     )
   }
 
@@ -167,6 +180,15 @@ final class OriginalDefinedInAttrTests: XCTestCase {
       diagnostics: [
         // TODO: Old parser expected warning on line 2: '@_originallyDefinedIn' does not have any effect on internal declarations
       ]
+    )
+  }
+
+  func testOrinalDefinedInAttr12() {
+    AssertParse(
+      """
+      @_originallyDefinedIn(module: "ToasterKit", _iOS13Aligned)
+      struct Vehicle {}
+      """
     )
   }
 

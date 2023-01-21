@@ -261,16 +261,16 @@ final class StringInterpolationTests: XCTestCase {
   }
 
   func testParserBuilderInStringInterpolation() {
-    let cases = SwitchCaseList {
+    let cases = SwitchCaseListSyntax {
       for i in 0..<2 {
-        SwitchCase(
+        SwitchCaseSyntax(
           """
           case \(raw: i):
             return \(raw: i + 1)
           """
         )
       }
-      SwitchCase(
+      SwitchCaseSyntax(
         """
         default:
           return -1
@@ -306,16 +306,16 @@ final class StringInterpolationTests: XCTestCase {
   }
 
   func testParserBuilderInStringInterpolationLiteral() {
-    let cases = SwitchCaseList {
+    let cases = SwitchCaseListSyntax {
       for i in 0..<2 {
-        SwitchCase(
+        SwitchCaseSyntax(
           """
           case \(literal: i):
             return \(literal: i + 1)
           """
         )
       }
-      SwitchCase(
+      SwitchCaseSyntax(
         """
         default:
           return -1
@@ -352,16 +352,16 @@ final class StringInterpolationTests: XCTestCase {
 
   @available(*, deprecated)
   func testParserBuilderInStringInterpolationDeprecated() {
-    let cases = SwitchCaseList {
+    let cases = SwitchCaseListSyntax {
       for i in 0..<2 {
-        SwitchCase(
+        SwitchCaseSyntax(
           """
           case \(i):
             return \(i + 1)
           """
         )
       }
-      SwitchCase(
+      SwitchCaseSyntax(
         """
         default:
           return -1
@@ -397,8 +397,8 @@ final class StringInterpolationTests: XCTestCase {
   }
 
   func testStringInterpolationInBuilder() {
-    let ext = ExtensionDecl(extendedType: TypeSyntax("MyType")) {
-      FunctionDecl(
+    let ext = ExtensionDeclSyntax(extendedType: TypeSyntax("MyType")) {
+      FunctionDeclSyntax(
         """
         ///
         /// Satisfies conformance to `SyntaxBuildable`.
@@ -420,5 +420,69 @@ final class StringInterpolationTests: XCTestCase {
       }
       """
     )
+  }
+
+  func testAccessorInterpolation() {
+    let setter: AccessorDeclSyntax =
+      """
+      set(newValue) {
+        _storage = newValue
+      }
+      """
+    XCTAssertTrue(setter.is(AccessorDeclSyntax.self))
+    AssertStringsEqualWithDiff(
+      setter.description,
+      """
+      set(newValue) {
+        _storage = newValue
+      }
+      """
+    )
+  }
+
+  func testTrivia() {
+    XCTAssertEqual(
+      "/// doc comment" as Trivia,
+      [
+        .docLineComment("/// doc comment")
+      ]
+    )
+
+    XCTAssertEqual(
+      """
+      /// doc comment
+      /// another doc comment
+      """ as Trivia,
+      [
+        .docLineComment("/// doc comment"),
+        .newlines(1),
+        .docLineComment("/// another doc comment"),
+      ]
+    )
+
+    XCTAssertEqual(
+      """
+      // 1 + 1 = \(1 + 1)
+      """ as Trivia,
+      [
+        .lineComment("// 1 + 1 = 2")
+      ]
+    )
+  }
+
+  func testInvalidTrivia() {
+    var interpolation = String.StringInterpolation(literalCapacity: 1, interpolationCount: 0)
+    interpolation.appendLiteral("/*comment*/ invalid /*comm*/")
+    XCTAssertThrowsError(try Trivia(stringInterpolationOrThrow: interpolation)) { error in
+      AssertStringsEqualWithDiff(
+        String(describing: error),
+        """
+
+        1 │ /*comment*/ invalid /*comm*/
+          ∣             ╰─ unexpected trivia 'invalid'
+
+        """
+      )
+    }
   }
 }

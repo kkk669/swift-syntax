@@ -8,6 +8,7 @@
     "RawSyntaxValidation.swift",
   ],
   "Syntax": [
+    "Keyword.swift",
     "SyntaxChildren.swift",
     "SyntaxData.swift",
     "SyntaxEnum.swift",
@@ -51,7 +52,8 @@
     "Utils.swift",
   ],
   "Parse": [
-    "IncrementalParseTransition.swift"
+    "IncrementalParseTransition.swift",
+    "LexerError.swift",
   ],
   "Internal": [
     "SyntaxArena.swift",

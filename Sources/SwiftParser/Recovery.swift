@@ -42,26 +42,20 @@ public struct RecoveryConsumptionHandle {
 }
 
 extension Parser.Lookahead {
-  /// Tries eating tokens until it finds a token whose kind is in `kinds` or a
-  /// contextual keyword with a text in `contextualKeywords` without skipping
-  /// tokens that have a precedence that's higher than the lowest precedence in
-  /// `kinds`. If it found a token of `kind` in this way, returns `true`,
-  /// otherwise `false`.
+  /// Tries eating tokens until it finds a token whose kind is in `kinds`
+  /// without skipping tokens that have a precedence that's higher than the
+  /// lowest precedence in `kinds`. If it found a token of `kind` in this way,
+  /// returns `true`, otherwise `false`.
   /// If this method returns `true`, the parser probably wants to consume the
   /// tokens this lookahead skipped over to find `kind` by consuming
   /// `lookahead.tokensConsumed` as unexpected.
   mutating func canRecoverTo(
     _ kinds: [RawTokenKind],
-    contextualKeywords: [SyntaxText] = [],
     recoveryPrecedence: TokenPrecedence? = nil
   ) -> RecoveryConsumptionHandle? {
     let initialTokensConsumed = self.tokensConsumed
 
-    var precedences = kinds.map(TokenPrecedence.init)
-    if !contextualKeywords.isEmpty {
-      precedences += [TokenPrecedence(.identifier), TokenPrecedence(.contextualKeyword)]
-    }
-    let recoveryPrecedence = recoveryPrecedence ?? precedences.min()!
+    let recoveryPrecedence = recoveryPrecedence ?? kinds.map(TokenPrecedence.init).min()!
 
     while !self.at(.eof) {
       if !recoveryPrecedence.shouldSkipOverNewlines,
@@ -69,16 +63,16 @@ extension Parser.Lookahead {
       {
         break
       }
-      if self.at(any: kinds, contextualKeywords: contextualKeywords) {
+      if self.at(any: kinds) {
         return RecoveryConsumptionHandle(
           unexpectedTokens: self.tokensConsumed - initialTokensConsumed,
           tokenConsumptionHandle: TokenConsumptionHandle(
-            tokenKind: self.currentToken.tokenKind,
-            remappedKind: self.at(any: [], contextualKeywords: contextualKeywords) ? .contextualKeyword : nil
+            tokenKind: self.currentToken.rawTokenKind,
+            remappedKind: nil
           )
         )
       }
-      let currentTokenPrecedence = TokenPrecedence(self.currentToken.tokenKind)
+      let currentTokenPrecedence = TokenPrecedence(self.currentToken.rawTokenKind)
       if currentTokenPrecedence >= recoveryPrecedence {
         break
       }
@@ -114,7 +108,8 @@ extension Parser.Lookahead {
           return TokenPrecedence($0.rawTokenKind)
         }
       }).min()!
-    while !self.at(.eof) {
+    var loopProgress = LoopProgressCondition()
+    while !self.at(.eof) && loopProgress.evaluate(self.currentToken) {
       if !recoveryPrecedence.shouldSkipOverNewlines,
         self.currentToken.isAtStartOfLine
       {
@@ -129,7 +124,7 @@ extension Parser.Lookahead {
           )
         )
       }
-      let currentTokenPrecedence = TokenPrecedence(self.currentToken.tokenKind)
+      let currentTokenPrecedence = TokenPrecedence(self.currentToken.rawTokenKind)
       if currentTokenPrecedence >= recoveryPrecedence {
         break
       }

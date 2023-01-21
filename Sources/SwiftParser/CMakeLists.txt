@@ -13,8 +13,6 @@ add_swift_host_library(SwiftParser
   Declarations.swift
   Directives.swift
   Expressions.swift
-  Lexer.swift
-  LexerDiagnosticMessages.swift
   Lookahead.swift
   LoopProgressCondition.swift
   Modifiers.swift
@@ -22,9 +20,11 @@ add_swift_host_library(SwiftParser
   Nominals.swift
   Parser.swift
   Patterns.swift
+  RawTokenKindMatch.swift
   RawTokenKindSubset.swift
   Recovery.swift
   Statements.swift
+  StringLiterals.swift
   SyntaxUtils.swift
   TokenConsumer.swift
   TokenPrecedence.swift
@@ -32,10 +32,16 @@ add_swift_host_library(SwiftParser
   TriviaParser.swift
   Types.swift
 
-  generated/DeclarationAttribute.swift
   generated/DeclarationModifier.swift
   generated/Parser+Entry.swift
-  generated/TypeAttribute.swift)
+  generated/TypeAttribute.swift
+
+  Lexer/Cursor.swift
+  Lexer/Lexeme.swift
+  Lexer/LexemeSequence.swift
+  Lexer/Lexer.swift
+  Lexer/UnicodeScalarExtensions.swift
+)
 
 target_link_libraries(SwiftParser PUBLIC
   SwiftSyntax

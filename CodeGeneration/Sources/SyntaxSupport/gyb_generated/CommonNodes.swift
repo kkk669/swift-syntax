@@ -45,6 +45,9 @@ public let COMMON_NODES: [Node] = [
   Node(name: "MissingDecl",
        nameForDiagnostics: "declaration",
        kind: "Decl",
+       traits: [
+         "Attributed"
+       ],
        children: [
          Child(name: "Attributes",
                kind: "AttributeList",
@@ -86,11 +89,7 @@ public let COMMON_NODES: [Node] = [
                  Child(name: "Stmt",
                        kind: "Stmt"),
                  Child(name: "Expr",
-                       kind: "Expr"),
-                 Child(name: "TokenList",
-                       kind: "TokenList"),
-                 Child(name: "NonEmptyTokenList",
-                       kind: "NonEmptyTokenList")
+                       kind: "Expr")
                ]),
          Child(name: "Semicolon",
                kind: "SemicolonToken",
@@ -98,10 +97,7 @@ public let COMMON_NODES: [Node] = [
                isOptional: true,
                tokenChoices: [
                  "Semicolon"
-               ]),
-         Child(name: "ErrorTokens",
-               kind: "Syntax",
-               isOptional: true)
+               ])
        ],
        omitWhenEmpty: true),
 

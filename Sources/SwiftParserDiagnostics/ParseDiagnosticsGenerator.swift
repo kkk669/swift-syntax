@@ -11,8 +11,24 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftDiagnostics
-@_spi(LexerDiagnostics) import SwiftParser
+import SwiftParser
 @_spi(RawSyntax) import SwiftSyntax
+
+fileprivate extension TokenSyntax {
+  /// Assuming this token is a `poundAvailableKeyword` or `poundUnavailableKeyword`
+  /// returns the opposite keyword.
+  var negatedAvailabilityKeyword: TokenSyntax {
+    switch self.tokenKind {
+    case .poundAvailableKeyword:
+      return self.withKind(.poundUnavailableKeyword)
+    case .poundUnavailableKeyword:
+      return self.withKind(.poundAvailableKeyword)
+    default:
+      assertionFailure("The availability token of an AvailabilityConditionSyntax should always be #available or #unavailable")
+      return self
+    }
+  }
+}
 
 public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
   private var diagnostics: [Diagnostic] = []
@@ -180,9 +196,9 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       suppressRemainingDiagnostics = true
       return .skipChildren
     }
-    if let tryKeyword = node.onlyToken(where: { $0.tokenKind == .tryKeyword }),
+    if let tryKeyword = node.onlyToken(where: { $0.tokenKind == .keyword(.try) }),
       let nextToken = tryKeyword.nextToken(viewMode: .sourceAccurate),
-      nextToken.tokenKind.isKeyword
+      nextToken.tokenKind.isLexerClassifiedKeyword
     {
       addDiagnostic(node, TryCannotBeUsed(nextToken: nextToken))
     } else if let semicolons = node.onlyTokens(satisfying: { $0.tokenKind == .semicolon }) {
@@ -232,19 +248,16 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     return .skipChildren
   }
 
-  public override func visit(_ node: TokenSyntax) -> SyntaxVisitorContinueKind {
-    if shouldSkip(node) {
+  public override func visit(_ token: TokenSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(token) {
       return .skipChildren
     }
 
-    if node.presence == .missing {
-      handleMissingToken(node)
+    if token.presence == .missing {
+      handleMissingToken(token)
     } else {
-      node.syntaxTextBytes.withUnsafeBufferPointer { buf in
-        var cursor = Lexer.Cursor(input: buf, previous: 0)
-        _ = cursor.nextToken(cursor) { [self] offset, diagnostic in
-          self.addDiagnostic(node, position: node.position.advanced(by: offset), diagnostic)
-        }
+      if let lexerError = token.lexerError {
+        self.addDiagnostic(token, position: token.positionAfterSkippingLeadingTrivia.advanced(by: Int(lexerError.byteOffset)), lexerError.diagnostic(in: token))
       }
     }
 
@@ -259,7 +272,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
     exchangeTokens(
       unexpected: node.unexpectedAfterArrowToken,
-      unexpectedTokenCondition: { $0.tokenKind == .contextualKeyword("async") || $0.tokenKind == .throwsKeyword },
+      unexpectedTokenCondition: { $0.tokenKind == .keyword(.async) || $0.tokenKind == .keyword(.throws) },
       correctTokens: [node.asyncKeyword, node.throwsToken],
       message: { EffectsSpecifierAfterArrow(effectsSpecifiersAfterArrow: $0) },
       moveFixIt: { MoveTokensInFrontOfFixIt(movedTokens: $0, inFrontOf: .arrow) }
@@ -295,6 +308,38 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         handledNodes: [argument.id]
       )
       return .visitChildren
+    }
+    return .visitChildren
+  }
+
+  public override func visit(_ node: AvailabilityArgumentSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+    if let trailingComma = node.trailingComma {
+      exchangeTokens(
+        unexpected: node.unexpectedBetweenEntryAndTrailingComma,
+        unexpectedTokenCondition: { $0.text == "||" },
+        correctTokens: [node.trailingComma],
+        message: { _ in .joinPlatformsUsingComma },
+        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: trailingComma) }
+      )
+    }
+    return .visitChildren
+  }
+
+  public override func visit(_ node: ConditionElementSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+    if let trailingComma = node.trailingComma {
+      exchangeTokens(
+        unexpected: node.unexpectedBetweenConditionAndTrailingComma,
+        unexpectedTokenCondition: { $0.text == "&&" },
+        correctTokens: [node.trailingComma],
+        message: { _ in .joinConditionsUsingComma },
+        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: trailingComma) }
+      )
     }
     return .visitChildren
   }
@@ -439,7 +484,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
     exchangeTokens(
       unexpected: node.output?.unexpectedBetweenArrowAndReturnType,
-      unexpectedTokenCondition: { $0.tokenKind == .throwsKeyword },
+      unexpectedTokenCondition: { $0.tokenKind == .keyword(.throws) },
       correctTokens: [node.throwsOrRethrowsKeyword],
       message: { _ in .throwsInReturnPosition },
       moveFixIt: { MoveTokensInFrontOfFixIt(movedTokens: $0, inFrontOf: .arrow) }
@@ -454,7 +499,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if let inheritedTypeName = node.inheritedType?.as(SimpleTypeIdentifierSyntax.self)?.name {
       exchangeTokens(
         unexpected: node.unexpectedBetweenColonAndInheritedType,
-        unexpectedTokenCondition: { $0.tokenKind == .classKeyword },
+        unexpectedTokenCondition: { $0.tokenKind == .keyword(.class) },
         correctTokens: [inheritedTypeName],
         message: { _ in StaticParserError.classConstraintCanOnlyBeUsedInProtocol },
         moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: inheritedTypeName) }
@@ -467,11 +512,39 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if shouldSkip(node) {
       return .skipChildren
     }
-    if node.identifier.presence == .missing,
-      let unexpected = node.unexpectedBeforeIdentifier,
-      unexpected.first?.as(TokenSyntax.self)?.tokenKind == .pound
-    {
-      addDiagnostic(unexpected, UnknownDirectiveError(unexpected: unexpected), handledNodes: [unexpected.id, node.identifier.id])
+    if node.identifier.presence == .missing, let unexpected = node.unexpectedBeforeIdentifier {
+      if unexpected.first?.as(TokenSyntax.self)?.tokenKind == .pound {
+        addDiagnostic(unexpected, UnknownDirectiveError(unexpected: unexpected), handledNodes: [unexpected.id, node.identifier.id])
+      } else if let availability = unexpected.first?.as(AvailabilityConditionSyntax.self) {
+        if let prefixOperatorExpr = node.parent?.as(PrefixOperatorExprSyntax.self),
+          let operatorToken = prefixOperatorExpr.operatorToken,
+          operatorToken.text == "!",
+          let conditionElement = prefixOperatorExpr.parent?.as(ConditionElementSyntax.self)
+        {
+          // Diagnose !#available(...) and !#unavailable(...)
+
+          let negatedAvailabilityKeyword = availability.availabilityKeyword.negatedAvailabilityKeyword
+          let negatedCoditionElement = ConditionElementSyntax(
+            condition: .availability(availability.withAvailabilityKeyword(negatedAvailabilityKeyword)),
+            trailingComma: conditionElement.trailingComma
+          )
+          addDiagnostic(
+            unexpected,
+            NegatedAvailabilityCondition(avaialabilityCondition: availability, negatedAvailabilityKeyword: negatedAvailabilityKeyword),
+            fixIts: [
+              FixIt(
+                message: ReplaceTokensFixIt(replaceTokens: [operatorToken, availability.availabilityKeyword], replacement: negatedAvailabilityKeyword),
+                changes: [
+                  .replace(oldNode: Syntax(conditionElement), newNode: Syntax(negatedCoditionElement))
+                ]
+              )
+            ],
+            handledNodes: [unexpected.id, node.identifier.id]
+          )
+        } else {
+          addDiagnostic(unexpected, AvailabilityConditionInExpression(avaialabilityCondition: availability), handledNodes: [unexpected.id, node.identifier.id])
+        }
+      }
     }
     return .visitChildren
   }
@@ -604,10 +677,10 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if node.expression != nil {
       exchangeTokens(
         unexpected: node.unexpectedBeforeReturnKeyword,
-        unexpectedTokenCondition: { $0.tokenKind == .tryKeyword },
+        unexpectedTokenCondition: { $0.tokenKind == .keyword(.try) },
         correctTokens: [node.expression?.as(TryExprSyntax.self)?.tryKeyword],
         message: { _ in .tryMustBePlacedOnReturnedExpr },
-        moveFixIt: { MoveTokensAfterFixIt(movedTokens: $0, after: .returnKeyword) }
+        moveFixIt: { MoveTokensAfterFixIt(movedTokens: $0, after: .keyword(.return)) }
       )
     }
     return .visitChildren
@@ -628,7 +701,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
     if let unexpected = node.unexpectedBetweenSubscriptKeywordAndGenericParameterClause,
-      let nameTokens = unexpected.onlyTokens(satisfying: { !$0.tokenKind.isKeyword })
+      let nameTokens = unexpected.onlyTokens(satisfying: { !$0.tokenKind.isLexerClassifiedKeyword })
     {
       addDiagnostic(
         unexpected,
@@ -640,7 +713,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       )
     }
     if let unexpected = node.indices.unexpectedBeforeLeftParen,
-      let nameTokens = unexpected.onlyTokens(satisfying: { !$0.tokenKind.isKeyword })
+      let nameTokens = unexpected.onlyTokens(satisfying: { !$0.tokenKind.isLexerClassifiedKeyword })
     {
       addDiagnostic(
         unexpected,
@@ -675,7 +748,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if shouldSkip(node) {
       return .skipChildren
     }
-    if let unexpected = node.unexpectedBetweenDefaultKeywordAndColon, unexpected.first?.as(TokenSyntax.self)?.tokenKind == .whereKeyword {
+    if let unexpected = node.unexpectedBetweenDefaultKeywordAndColon, unexpected.first?.as(TokenSyntax.self)?.tokenKind == .keyword(.where) {
       addDiagnostic(unexpected, .defaultCannotBeUsedWithWhere, handledNodes: [unexpected.id])
     }
     return .visitChildren
@@ -687,10 +760,10 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
     exchangeTokens(
       unexpected: node.unexpectedBeforeThrowKeyword,
-      unexpectedTokenCondition: { $0.tokenKind == .tryKeyword },
+      unexpectedTokenCondition: { $0.tokenKind == .keyword(.try) },
       correctTokens: [node.expression.as(TryExprSyntax.self)?.tryKeyword],
       message: { _ in .tryMustBePlacedOnThrownExpr },
-      moveFixIt: { MoveTokensAfterFixIt(movedTokens: $0, after: .throwKeyword) }
+      moveFixIt: { MoveTokensAfterFixIt(movedTokens: $0, after: .keyword(.throw)) }
     )
     return .visitChildren
   }
@@ -789,7 +862,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     })
     exchangeTokens(
       unexpected: node.unexpectedBetweenModifiersAndLetOrVarKeyword,
-      unexpectedTokenCondition: { $0.tokenKind == .tryKeyword },
+      unexpectedTokenCondition: { $0.tokenKind == .keyword(.try) },
       correctTokens: missingTries,
       message: { _ in .tryOnInitialValueExpression },
       moveFixIt: { MoveTokensAfterFixIt(movedTokens: $0, after: .equal) },

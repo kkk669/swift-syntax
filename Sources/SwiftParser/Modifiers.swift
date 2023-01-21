@@ -19,16 +19,16 @@ extension Parser {
     var modifierLoopCondition = LoopProgressCondition()
     MODIFIER_LOOP: while modifierLoopCondition.evaluate(currentToken) {
       switch self.at(anyIn: DeclarationModifier.self) {
-      case (.privateKeyword, _)?,
-        (.fileprivateKeyword, _)?,
-        (.internalKeyword, _)?,
-        (.publicKeyword, _)?:
+      case (.private, _)?,
+        (.fileprivate, _)?,
+        (.internal, _)?,
+        (.public, _)?:
         elements.append(parseAccessLevelModifier())
       case (.package, _)?:
         elements.append(parsePackageAccessLevelModifier())
       case (.open, _)?:
         elements.append(parseOpenAccessLevelModifier())
-      case (.staticKeyword, let handle)?:
+      case (.static, let handle)?:
         let staticKeyword = self.eat(handle)
         elements.append(
           RawDeclModifierSyntax(
@@ -37,14 +37,14 @@ extension Parser {
             arena: self.arena
           )
         )
-      case (.classKeyword, let handle)?:
+      case (.class, let handle)?:
         var lookahead = self.lookahead()
-        lookahead.eat(.classKeyword)
+        lookahead.eat(.keyword(.class))
         // When followed by an 'override' or CC token inside a class,
         // treat 'class' as a modifier in the case of a following CC
         // token, we cannot be sure there is no intention to override
         // or witness something static.
-        if lookahead.atStartOfDeclaration() || lookahead.atContextualKeyword("override") {
+        if lookahead.atStartOfDeclaration() || lookahead.at(.keyword(.override)) {
           let classKeyword = self.eat(handle)
           elements.append(
             RawDeclModifierSyntax(
@@ -59,30 +59,31 @@ extension Parser {
         }
       case (.unowned, _)?:
         elements.append(self.parseUnownedModifier())
-      case (.final, _)?,
-        (.required, _)?,
-        (.optional, _)?,
-        (.lazy, _)?,
-        (.dynamic, _)?,
-        (.infix, _)?,
-        (.prefix, _)?,
-        (.postfix, _)?,
-        (.__consuming, _)?,
-        (.mutating, _)?,
-        (.nonmutating, _)?,
-        (.convenience, _)?,
-        (.override, _)?,
-        (.weak, _)?,
-        (.indirect, _)?,
-        (.isolated, _)?,
-        (.async, _)?,
-        (.nonisolated, _)?,
-        (.distributed, _)?,
-        (._const, _)?,
-        (._local, _)?,
-        (.__setter_access, _)?,
-        (.reasync, _)?:
-        elements.append(self.parseSimpleModifier())
+      case (.final, let handle)?,
+        (.required, let handle)?,
+        (.optional, let handle)?,
+        (.lazy, let handle)?,
+        (.dynamic, let handle)?,
+        (.infix, let handle)?,
+        (.prefix, let handle)?,
+        (.postfix, let handle)?,
+        (.__consuming, let handle)?,
+        (.mutating, let handle)?,
+        (.nonmutating, let handle)?,
+        (.convenience, let handle)?,
+        (.override, let handle)?,
+        (.weak, let handle)?,
+        (.indirect, let handle)?,
+        (.isolated, let handle)?,
+        (.async, let handle)?,
+        (.nonisolated, let handle)?,
+        (.distributed, let handle)?,
+        (._const, let handle)?,
+        (._local, let handle)?,
+        (.__setter_access, let handle)?,
+        (.reasync, let handle)?:
+        let keyword = self.eat(handle)
+        elements.append(RawDeclModifierSyntax(name: keyword, detail: nil, arena: self.arena))
       case (.rethrows, _)?:
         fallthrough
       case nil:
@@ -94,11 +95,6 @@ extension Parser {
 }
 
 extension Parser {
-  mutating func parseSimpleModifier() -> RawDeclModifierSyntax {
-    let keyword = self.consumeAnyToken(remapping: .contextualKeyword)
-    return RawDeclModifierSyntax(name: keyword, detail: nil, arena: self.arena)
-  }
-
   mutating func parseModifierDetail() -> RawDeclModifierDetailSyntax {
     let (unexpectedBeforeLeftParen, leftParen) = self.expect(.leftParen)
     let detailToken = self.consumeAnyToken()
@@ -114,7 +110,7 @@ extension Parser {
   }
 
   mutating func parseUnownedModifier() -> RawDeclModifierSyntax {
-    let (unexpectedBeforeKeyword, keyword) = self.expectContextualKeyword("unowned")
+    let (unexpectedBeforeKeyword, keyword) = self.expect(.keyword(.unowned))
 
     let detail: RawDeclModifierDetailSyntax?
     if self.at(.leftParen) {
@@ -132,7 +128,7 @@ extension Parser {
   }
 
   mutating func parsePackageAccessLevelModifier() -> RawDeclModifierSyntax {
-    let (unexpectedBeforeName, name) = self.expectContextualKeyword("package")
+    let (unexpectedBeforeName, name) = self.expect(.keyword(.package))
     let details = self.parseAccessModifierDetails()
     return RawDeclModifierSyntax(
       unexpectedBeforeName,
@@ -143,7 +139,7 @@ extension Parser {
   }
 
   mutating func parseOpenAccessLevelModifier() -> RawDeclModifierSyntax {
-    let (unexpectedBeforeName, name) = self.expectContextualKeyword("open")
+    let (unexpectedBeforeName, name) = self.expect(.keyword(.open))
     let details = self.parseAccessModifierDetails()
     return RawDeclModifierSyntax(
       unexpectedBeforeName,
@@ -155,8 +151,8 @@ extension Parser {
 
   mutating func parseAccessLevelModifier() -> RawDeclModifierSyntax {
     let (unexpectedBeforeName, name) = expectAny(
-      [.privateKeyword, .fileprivateKeyword, .internalKeyword, .publicKeyword],
-      default: .internalKeyword
+      [.keyword(.private), .keyword(.fileprivate), .keyword(.internal), .keyword(.public)],
+      default: .keyword(.internal)
     )
     let details = self.parseAccessModifierDetails()
     return RawDeclModifierSyntax(
@@ -174,12 +170,12 @@ extension Parser {
 
     let unexpectedBeforeDetail: RawUnexpectedNodesSyntax?
     let detail: RawTokenSyntax
-    if let setHandle = canRecoverToContextualKeyword("set", precedence: .weakBracketClose) {
+    if let setHandle = canRecoverTo(.keyword(.set), recoveryPrecedence: .weakBracketClose) {
       (unexpectedBeforeDetail, detail) = eat(setHandle)
     } else {
       unexpectedBeforeDetail = nil
       detail = RawTokenSyntax(
-        missing: .contextualKeyword,
+        missing: .keyword(.set),
         text: "set",
         arena: arena
       )

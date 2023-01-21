@@ -15,17 +15,17 @@
 
 // MARK: - BinaryOperatorExpr
 
-extension BinaryOperatorExpr {
+extension BinaryOperatorExprSyntax {
   public init(text: String) {
-    self.init(operatorToken: .spacedBinaryOperator(text))
+    self.init(operatorToken: .binaryOperator(text))
   }
 }
 
 // MARK: - BooleanLiteralExpr
 
-extension BooleanLiteralExpr: ExpressibleByBooleanLiteral {
+extension BooleanLiteralExprSyntax: ExpressibleByBooleanLiteral {
   public init(_ value: Bool) {
-    self.init(booleanLiteral: value ? .true : .false)
+    self.init(booleanLiteral: value ? .keyword(.true) : .keyword(.false))
   }
 
   public init(booleanLiteral value: Bool) {
@@ -35,16 +35,16 @@ extension BooleanLiteralExpr: ExpressibleByBooleanLiteral {
 
 // MARK: - CatchClause
 
-extension CatchClause {
+extension CatchClauseSyntax {
   /// A convenience initializer that calculates spacing around the `catch` keyword.
   public init(
     leadingTrivia: Trivia = [],
-    _ catchItems: CatchItemList,
+    _ catchItems: CatchItemListSyntax,
     @CodeBlockItemListBuilder bodyBuilder: () -> CodeBlockItemListSyntax
   ) {
     self.init(
       leadingTrivia: leadingTrivia,
-      catchKeyword: .catchKeyword(trailingTrivia: catchItems.isEmpty ? [] : .space),
+      catchKeyword: .keyword(.catch, trailingTrivia: catchItems.isEmpty ? [] : .space),
       catchItems: catchItems,
       body: CodeBlockSyntax(statements: bodyBuilder())
     )
@@ -53,33 +53,33 @@ extension CatchClause {
 
 // MARK: - CustomAttribute
 
-extension CustomAttribute {
+extension AttributeSyntax {
   /// A convenience initializer that allows passing in arguments using a result builder
   /// and automatically adds parentheses as needed, similar to the convenience
   /// initializer for ``FunctionCallExpr``.
   public init(
     _ attributeName: TypeSyntax,
-    @TupleExprElementListBuilder argumentList: () -> TupleExprElementList? = { nil }
+    @TupleExprElementListBuilder argumentList: () -> TupleExprElementListSyntax? = { nil }
   ) {
     let argumentList = argumentList()
     self.init(
       attributeName: attributeName,
-      leftParen: argumentList != nil ? .leftParen : nil,
-      argumentList: argumentList,
-      rightParen: argumentList != nil ? .rightParen : nil
+      leftParen: argumentList != nil ? .leftParenToken() : nil,
+      argument: argumentList.map(AttributeSyntax.Argument.argumentList),
+      rightParen: argumentList != nil ? .rightParenToken() : nil
     )
   }
 }
 
 // MARK: - DictionaryExpr
 
-extension DictionaryExpr {
+extension DictionaryExprSyntax {
   /// A convenience initializer that allows passing in members using a result builder
   /// instead of having to wrap them in a `DictionaryElementList`.
   public init(
-    leftSquare: Token = .`leftSquareBracket`,
-    rightSquare: Token = .`rightSquareBracket`,
-    @DictionaryElementListBuilder contentBuilder: () -> DictionaryElementListSyntax = { DictionaryElementList([]) }
+    leftSquare: TokenSyntax = .leftSquareBracketToken(),
+    rightSquare: TokenSyntax = .rightSquareBracketToken(),
+    @DictionaryElementListBuilder contentBuilder: () -> DictionaryElementListSyntax = { DictionaryElementListSyntax([]) }
   ) {
     let elementList = contentBuilder()
     self.init(
@@ -92,7 +92,7 @@ extension DictionaryExpr {
 
 // MARK: - Expr
 
-extension Expr {
+extension ExprSyntax {
   /// Returns a syntax tree for an expression that represents the value of the
   /// provided instance. For example, passing an `Array<String>` will result in
   /// an array literal containing string literals:
@@ -130,7 +130,7 @@ extension Expr {
 
 extension FloatLiteralExprSyntax: ExpressibleByFloatLiteral {
   public init(_ value: Float) {
-    self.init(floatingDigits: String(value))
+    self.init(floatingDigits: .floatingLiteral(String(value)))
   }
 
   public init(floatLiteral value: Float) {
@@ -140,23 +140,23 @@ extension FloatLiteralExprSyntax: ExpressibleByFloatLiteral {
 
 // MARK: - FunctionCallExpr
 
-extension FunctionCallExpr {
+extension FunctionCallExprSyntax {
   /// A convenience initializer that allows passing in arguments using a result builder
   /// instead of having to wrap them in a `TupleExprElementList`.
   /// The presence of the parenthesis will be inferred based on the presence of arguments and the trailing closure.
   public init<C: ExprSyntaxProtocol>(
     callee: C,
     trailingClosure: ClosureExprSyntax? = nil,
-    additionalTrailingClosures: MultipleTrailingClosureElementList? = nil,
-    @TupleExprElementListBuilder argumentList: () -> TupleExprElementList = { [] }
+    additionalTrailingClosures: MultipleTrailingClosureElementListSyntax? = nil,
+    @TupleExprElementListBuilder argumentList: () -> TupleExprElementListSyntax = { [] }
   ) {
     let argumentList = argumentList()
     let shouldOmitParens = argumentList.isEmpty && trailingClosure != nil
     self.init(
       calledExpression: callee,
-      leftParen: shouldOmitParens ? nil : .leftParen,
+      leftParen: shouldOmitParens ? nil : .leftParenToken(),
       argumentList: argumentList,
-      rightParen: shouldOmitParens ? nil : .rightParen,
+      rightParen: shouldOmitParens ? nil : .rightParenToken(),
       trailingClosure: trailingClosure,
       additionalTrailingClosures: additionalTrailingClosures
     )
@@ -171,7 +171,7 @@ extension FunctionCallExpr {
 // `SyntaxExpressibleByStringInterpolation`, allowing this initializer to be
 // removed. In general we shouldn't allow the builder to take arbitrary
 // strings, only literals.
-extension FunctionParameter {
+extension FunctionParameterSyntax {
   public init(
     _ source: String,
     for subject: Parser.ParameterSubject
@@ -180,7 +180,7 @@ extension FunctionParameter {
       source: Array(source.utf8),
       parse: {
         let raw = RawSyntax($0.parseFunctionParameter(for: subject))
-        return Syntax(raw: raw).cast(FunctionParameter.self)
+        return Syntax(raw: raw).cast(FunctionParameterSyntax.self)
       }
     )
   }
@@ -188,32 +188,32 @@ extension FunctionParameter {
 
 // MARK: - IfStmt
 
-extension IfStmt {
+extension IfStmtSyntax {
   /// A convenience initializer that uses builder closures to express an
   /// if body, potentially with a second trailing builder closure for an else
   /// body.
   public init(
     leadingTrivia: Trivia = [],
-    conditions: ConditionElementList,
-    @CodeBlockItemListBuilder body: () -> CodeBlockItemList,
-    @CodeBlockItemListBuilder elseBody: () -> CodeBlockItemList? = { nil }
+    conditions: ConditionElementListSyntax,
+    @CodeBlockItemListBuilder body: () -> CodeBlockItemListSyntax,
+    @CodeBlockItemListBuilder elseBody: () -> CodeBlockItemListSyntax? = { nil }
   ) {
     let generatedElseBody = elseBody()
     self.init(
       leadingTrivia: leadingTrivia,
       conditions: conditions,
       body: CodeBlockSyntax(statements: body()),
-      elseKeyword: generatedElseBody == nil ? nil : .elseKeyword(leadingTrivia: .space),
-      elseBody: generatedElseBody.map { .codeBlock(CodeBlock(statements: $0)) }
+      elseKeyword: generatedElseBody == nil ? nil : .keyword(.else, leadingTrivia: .space),
+      elseBody: generatedElseBody.map { .codeBlock(CodeBlockSyntax(statements: $0)) }
     )
   }
 }
 
 // MARK: - IntegerLiteralExpr
 
-extension IntegerLiteralExpr: ExpressibleByIntegerLiteral {
+extension IntegerLiteralExprSyntax: ExpressibleByIntegerLiteral {
   public init(_ value: Int) {
-    self.init(digits: String(value))
+    self.init(digits: .integerLiteral(String(value)))
   }
 
   public init(integerLiteral value: Int) {
@@ -223,11 +223,11 @@ extension IntegerLiteralExpr: ExpressibleByIntegerLiteral {
 
 // MARK: - MemberAccessExpr
 
-extension MemberAccessExpr {
+extension MemberAccessExprSyntax {
   /// Creates a `MemberAccessExpr` using the provided parameters.
   public init(
     base: ExprSyntax? = nil,
-    dot: Token = .period,
+    dot: TokenSyntax = .periodToken(),
     name: String,
     declNameArguments: DeclNameArgumentsSyntax? = nil
   ) {
@@ -239,14 +239,26 @@ extension MemberAccessExpr {
 
 extension String {
   /// Replace literal newlines with "\r", "\n", "\u{2028}", and ASCII control characters with "\0", "\u{7}"
-  fileprivate func escapingForStringLiteral(usingDelimiter delimiter: String) -> String {
+  fileprivate func escapingForStringLiteral(usingDelimiter delimiter: String, isMultiline: Bool) -> String {
     // String literals cannot contain "unprintable" ASCII characters (control
     // characters, etc.) besides tab. As a matter of style, we also choose to
     // escape Unicode newlines like "\u{2028}" even though swiftc will allow
     // them in string literals.
     func needsEscaping(_ scalar: UnicodeScalar) -> Bool {
-      return (scalar.isASCII && scalar != "\t" && !scalar.isPrintableASCII)
-        || Character(scalar).isNewline
+      if Character(scalar).isNewline {
+        return true
+      }
+
+      if !scalar.isASCII || scalar.isPrintableASCII {
+        return false
+      }
+
+      if scalar == "\t" {
+        // Tabs need to be escaped in single-line string literals but not
+        // multi-line string literals.
+        return !isMultiline
+      }
+      return true
     }
 
     // Work at the Unicode scalar level so that "\r\n" isn't combined.
@@ -261,6 +273,8 @@ extension String {
         result += "r".unicodeScalars
       case "\n":
         result += "n".unicodeScalars
+      case "\t":
+        result += "t".unicodeScalars
       case "\0":
         result += "0".unicodeScalars
       case let other:
@@ -274,7 +288,7 @@ extension String {
   }
 }
 
-extension StringLiteralExpr {
+extension StringLiteralExprSyntax {
   private enum PoundState {
     case afterQuote, afterBackslash, none
   }
@@ -311,11 +325,11 @@ extension StringLiteralExpr {
   /// If `openDelimiter` and `closeDelimiter` are `nil`, automatically determines
   /// the number of `#`s needed to express the string as-is without any escapes.
   public init(
-    openDelimiter: Token? = nil,
-    openQuote: Token = .stringQuote,
+    openDelimiter: TokenSyntax? = nil,
+    openQuote: TokenSyntax = .stringQuoteToken(),
     content: String,
-    closeQuote: Token = .stringQuote,
-    closeDelimiter: Token? = nil
+    closeQuote: TokenSyntax = .stringQuoteToken(),
+    closeDelimiter: TokenSyntax? = nil
   ) {
     var openDelimiter = openDelimiter
     var closeDelimiter = closeDelimiter
@@ -324,15 +338,15 @@ extension StringLiteralExpr {
       let (requiresEscaping, poundCount) = Self.requiresEscaping(content)
       if requiresEscaping {
         // Use a delimiter that is exactly one longer
-        openDelimiter = Token.rawStringDelimiter(String(repeating: "#", count: poundCount + 1))
+        openDelimiter = TokenSyntax.rawStringDelimiter(String(repeating: "#", count: poundCount + 1))
         closeDelimiter = openDelimiter
       }
     }
 
-    let escapedContent = content.escapingForStringLiteral(usingDelimiter: closeDelimiter?.text ?? "")
-    let contentToken = Token.stringSegment(escapedContent)
-    let segment = StringSegment(content: contentToken)
-    let segments = StringLiteralSegments([.stringSegment(segment)])
+    let escapedContent = content.escapingForStringLiteral(usingDelimiter: closeDelimiter?.text ?? "", isMultiline: openQuote.rawTokenKind == .multilineStringQuote)
+    let contentToken = TokenSyntax.stringSegment(escapedContent)
+    let segment = StringSegmentSyntax(content: contentToken)
+    let segments = StringLiteralSegmentsSyntax([.stringSegment(segment)])
 
     self.init(
       openDelimiter: openDelimiter,
@@ -346,8 +360,8 @@ extension StringLiteralExpr {
 
 // MARK: - SwitchCase
 
-extension SwitchCase {
-  public init(_ label: SwitchCase, @CodeBlockItemListBuilder statementsBuilder: () -> CodeBlockItemListSyntax) {
+extension SwitchCaseSyntax {
+  public init(_ label: SwitchCaseSyntax, @CodeBlockItemListBuilder statementsBuilder: () -> CodeBlockItemListSyntax) {
     self = label
     self.statements = statementsBuilder()
   }
@@ -355,7 +369,7 @@ extension SwitchCase {
 
 // MARK: - TernaryExpr
 
-extension TernaryExpr {
+extension TernaryExprSyntax {
   public init<C: ExprSyntaxProtocol, F: ExprSyntaxProtocol, S: ExprSyntaxProtocol>(
     if condition: C,
     then firstChoice: F,
@@ -373,7 +387,7 @@ extension TernaryExpr {
 
 // MARK: - TupleExprElement
 
-extension TupleExprElement {
+extension TupleExprElementSyntax {
   /// A convenience initializer that allows passing in label as an optional string.
   /// The presence of the colon will be inferred based on the presence of the label.
   public init<E: ExprSyntaxProtocol>(label: String? = nil, expression: E) {
@@ -387,24 +401,24 @@ extension TupleExprElement {
 
 // MARK: - VariableDecl
 
-extension VariableDecl {
+extension VariableDeclSyntax {
   /// Creates an optionally initialized property.
   public init(
     leadingTrivia: Trivia = [],
-    attributes: AttributeList? = nil,
-    modifiers: ModifierList? = nil,
-    _ letOrVarKeyword: Token,
-    name: IdentifierPattern,
-    type: TypeAnnotation? = nil,
-    initializer: InitializerClause? = nil
+    attributes: AttributeListSyntax? = nil,
+    modifiers: ModifierListSyntax? = nil,
+    _ letOrVarKeyword: Keyword,
+    name: IdentifierPatternSyntax,
+    type: TypeAnnotationSyntax? = nil,
+    initializer: InitializerClauseSyntax? = nil
   ) {
     self.init(
       leadingTrivia: leadingTrivia,
       attributes: attributes?.withTrailingTrivia(.space),
       modifiers: modifiers,
-      letOrVarKeyword: letOrVarKeyword
+      letOrVarKeyword: .keyword(letOrVarKeyword)
     ) {
-      PatternBinding(
+      PatternBindingSyntax(
         pattern: name,
         typeAnnotation: type,
         initializer: initializer
@@ -415,22 +429,22 @@ extension VariableDecl {
   /// Creates a computed property with the given accessor.
   public init(
     leadingTrivia: Trivia = [],
-    attributes: AttributeList? = nil,
-    modifiers: ModifierList? = nil,
-    name: IdentifierPattern,
-    type: TypeAnnotation,
-    @CodeBlockItemListBuilder accessor: () -> CodeBlockItemList
+    attributes: AttributeListSyntax? = nil,
+    modifiers: ModifierListSyntax? = nil,
+    name: IdentifierPatternSyntax,
+    type: TypeAnnotationSyntax,
+    @CodeBlockItemListBuilder accessor: () -> CodeBlockItemListSyntax
   ) {
     self.init(
       leadingTrivia: leadingTrivia,
       attributes: attributes?.withTrailingTrivia(.space),
       modifiers: modifiers,
-      letOrVarKeyword: .var
+      letOrVarKeyword: .keyword(.var)
     ) {
-      PatternBinding(
+      PatternBindingSyntax(
         pattern: name,
         typeAnnotation: type,
-        accessor: .getter(CodeBlock(statements: accessor()))
+        accessor: .getter(CodeBlockSyntax(statements: accessor()))
       )
     }
   }

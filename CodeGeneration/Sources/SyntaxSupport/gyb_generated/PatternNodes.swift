@@ -26,52 +26,20 @@ public let PATTERN_NODES: [Node] = [
                kind: "Type")
        ]),
 
-  Node(name: "EnumCasePattern",
-       nameForDiagnostics: "enum case pattern",
-       kind: "Pattern",
-       children: [
-         Child(name: "Type",
-               kind: "Type",
-               isOptional: true),
-         Child(name: "Period",
-               kind: "PeriodToken",
-               tokenChoices: [
-                 "Period"
-               ]),
-         Child(name: "CaseName",
-               kind: "IdentifierToken",
-               tokenChoices: [
-                 "Identifier"
-               ]),
-         Child(name: "AssociatedTuple",
-               kind: "TuplePattern",
-               isOptional: true)
-       ]),
-
   Node(name: "IsTypePattern",
        nameForDiagnostics: "'is' pattern",
        kind: "Pattern",
        children: [
          Child(name: "IsKeyword",
-               kind: "IsToken",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Is"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "is"
                ]),
          Child(name: "Type",
                kind: "Type")
-       ]),
-
-  Node(name: "OptionalPattern",
-       nameForDiagnostics: "optional pattern",
-       kind: "Pattern",
-       children: [
-         Child(name: "SubPattern",
-               kind: "Pattern"),
-         Child(name: "QuestionMark",
-               kind: "PostfixQuestionMarkToken",
-               tokenChoices: [
-                 "PostfixQuestionMark"
-               ])
        ]),
 
   Node(name: "IdentifierPattern",
@@ -81,24 +49,9 @@ public let PATTERN_NODES: [Node] = [
          Child(name: "Identifier",
                kind: "Token",
                tokenChoices: [
-                 "Self",
-                 "Identifier"
+                 "Identifier",
+                 "Keyword"
                ])
-       ]),
-
-  Node(name: "AsTypePattern",
-       nameForDiagnostics: "'as' pattern",
-       kind: "Pattern",
-       children: [
-         Child(name: "Pattern",
-               kind: "Pattern"),
-         Child(name: "AsKeyword",
-               kind: "AsToken",
-               tokenChoices: [
-                 "As"
-               ]),
-         Child(name: "Type",
-               kind: "Type")
        ]),
 
   Node(name: "TuplePattern",
@@ -184,10 +137,13 @@ public let PATTERN_NODES: [Node] = [
        kind: "Pattern",
        children: [
          Child(name: "LetOrVarKeyword",
-               kind: "Token",
+               kind: "KeywordToken",
                tokenChoices: [
-                 "Let",
-                 "Var"
+                 "Keyword"
+               ],
+               textChoices: [
+                 "let",
+                 "var"
                ]),
          Child(name: "ValuePattern",
                kind: "Pattern")

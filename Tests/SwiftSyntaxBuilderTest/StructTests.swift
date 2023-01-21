@@ -17,7 +17,7 @@ import SwiftSyntaxBuilder
 final class StructTests: XCTestCase {
   func testEmptyStruct() {
     let leadingTrivia = Trivia.unexpectedText("␣")
-    let buildable = StructDecl(leadingTrivia: leadingTrivia, identifier: "TestStruct") {}
+    let buildable = StructDeclSyntax(leadingTrivia: leadingTrivia, identifier: "TestStruct") {}
 
     AssertBuildResult(
       buildable,
@@ -29,7 +29,7 @@ final class StructTests: XCTestCase {
   }
 
   func testNestedStruct() {
-    let nestedStruct = StructDecl(
+    let nestedStruct = StructDeclSyntax(
       """
       /// A nested struct
       /// with multi line comment
@@ -37,27 +37,27 @@ final class StructTests: XCTestCase {
       """
     ) {}
 
-    let carriateReturnsStruct = StructDecl(
+    let carriateReturnsStruct = StructDeclSyntax(
       leadingTrivia: [
         .docLineComment("/// A nested struct"),
         .carriageReturns(1),
         .docLineComment("/// with multi line comment where the newline is a CR"),
         .carriageReturns(1),
       ],
-      structKeyword: .struct,
+      structKeyword: .keyword(.struct),
       identifier: "CarriateReturnsStruct"
     )
-    let carriageReturnFormFeedsStruct = StructDecl(
+    let carriageReturnFormFeedsStruct = StructDeclSyntax(
       leadingTrivia: [
         .docLineComment("/// A nested struct"),
         .carriageReturnLineFeeds(1),
         .docLineComment("/// with multi line comment where the newline is a CRLF"),
         .carriageReturnLineFeeds(1),
       ],
-      structKeyword: .struct,
+      structKeyword: .keyword(.struct),
       identifier: "CarriageReturnFormFeedsStruct"
     )
-    let testStruct = StructDecl("public struct TestStruct") {
+    let testStruct = StructDeclSyntax("public struct TestStruct") {
       nestedStruct
       carriateReturnsStruct
       carriageReturnFormFeedsStruct
@@ -69,7 +69,7 @@ final class StructTests: XCTestCase {
       public struct TestStruct {
           /// A nested struct
           /// with multi line comment
-          struct NestedStruct < A, B: C, D > where A: X, A.P == D {
+          struct NestedStruct<A, B: C, D> where A: X, A.P == D {
           }
           /// A nested struct\r\
           /// with multi line comment where the newline is a CR\r\
@@ -85,13 +85,13 @@ final class StructTests: XCTestCase {
   }
 
   func testControlWithLoopAndIf() {
-    let myStruct = StructDecl(identifier: "MyStruct") {
+    let myStruct = StructDeclSyntax(identifier: "MyStruct") {
       for i in 0..<5 {
         if i.isMultiple(of: 2) {
-          VariableDecl(letOrVarKeyword: .let) {
-            PatternBinding(
-              pattern: IdentifierPattern("var\(raw: i)"),
-              typeAnnotation: TypeAnnotation(type: Type("String"))
+          VariableDeclSyntax(letOrVarKeyword: .keyword(.let)) {
+            PatternBindingSyntax(
+              pattern: IdentifierPatternSyntax("var\(raw: i)"),
+              typeAnnotation: TypeAnnotationSyntax(type: TypeSyntax("String"))
             )
           }
         }

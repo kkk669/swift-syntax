@@ -16,34 +16,34 @@ import SwiftSyntaxBuilder
 
 final class DoStmtTests: XCTestCase {
   func testDoStmt() {
-    let buildable = DoStmt(
-      body: CodeBlock(statementsBuilder: {
-        TryExpr(expression: FunctionCallExpr(callee: ExprSyntax("a.b")))
+    let buildable = DoStmtSyntax(
+      body: CodeBlockSyntax(statementsBuilder: {
+        TryExprSyntax(expression: FunctionCallExprSyntax(callee: ExprSyntax("a.b")))
       }),
       catchClauses: [
-        CatchClause(
-          CatchItemList {
-            CatchItem(pattern: PatternSyntax("Error1"))
-            CatchItem(pattern: PatternSyntax("Error2"))
+        CatchClauseSyntax(
+          CatchItemListSyntax {
+            CatchItemSyntax(pattern: PatternSyntax("Error1"))
+            CatchItemSyntax(pattern: PatternSyntax("Error2"))
           }
         ) {
-          FunctionCallExpr(callee: ExprSyntax("print")) {
-            TupleExprElement(expression: StringLiteralExpr(content: "Known error"))
+          FunctionCallExprSyntax(callee: ExprSyntax("print")) {
+            TupleExprElementSyntax(expression: StringLiteralExprSyntax(content: "Known error"))
           }
         },
-        CatchClause(
-          CatchItemList {
-            CatchItem(
+        CatchClauseSyntax(
+          CatchItemListSyntax {
+            CatchItemSyntax(
               pattern: PatternSyntax("Error3"),
-              whereClause: WhereClause(guardResult: MemberAccessExpr(base: "error", name: "isError4"))
+              whereClause: WhereClauseSyntax(guardResult: MemberAccessExprSyntax(base: "error", name: "isError4"))
             )
           }
         ) {
-          ThrowStmt(expression: MemberAccessExpr(base: "Error4", name: "error3"))
+          ThrowStmtSyntax(expression: MemberAccessExprSyntax(base: "Error4", name: "error3"))
         },
-        CatchClause {
-          FunctionCallExpr(callee: ExprSyntax("print")) {
-            TupleExprElement(expression: Expr("error"))
+        CatchClauseSyntax {
+          FunctionCallExprSyntax(callee: ExprSyntax("print")) {
+            TupleExprElementSyntax(expression: ExprSyntax("error"))
           }
         },
       ]
@@ -54,6 +54,106 @@ final class DoStmtTests: XCTestCase {
       """
       do {
           try a.b()
+      } catch Error1, Error2 {
+          print("Known error")
+      } catch Error3 where error.isError4 {
+          throw Error4.error3
+      } catch {
+          print(error)
+      }
+      """
+    )
+  }
+
+  func testDoStmtWithExclamationMark() {
+    let buildable = DoStmtSyntax(
+      body: CodeBlockSyntax(statementsBuilder: {
+        TryExprSyntax(questionOrExclamationMark: .exclamationMarkToken(), expression: FunctionCallExprSyntax(callee: ExprSyntax("a.b")))
+      }),
+      catchClauses: [
+        CatchClauseSyntax(
+          CatchItemListSyntax {
+            CatchItemSyntax(pattern: PatternSyntax("Error1"))
+            CatchItemSyntax(pattern: PatternSyntax("Error2"))
+          }
+        ) {
+          FunctionCallExprSyntax(callee: ExprSyntax("print")) {
+            TupleExprElementSyntax(expression: StringLiteralExprSyntax(content: "Known error"))
+          }
+        },
+        CatchClauseSyntax(
+          CatchItemListSyntax {
+            CatchItemSyntax(
+              pattern: PatternSyntax("Error3"),
+              whereClause: WhereClauseSyntax(guardResult: MemberAccessExprSyntax(base: "error", name: "isError4"))
+            )
+          }
+        ) {
+          ThrowStmtSyntax(expression: MemberAccessExprSyntax(base: "Error4", name: "error3"))
+        },
+        CatchClauseSyntax {
+          FunctionCallExprSyntax(callee: ExprSyntax("print")) {
+            TupleExprElementSyntax(expression: ExprSyntax("error"))
+          }
+        },
+      ]
+    )
+
+    AssertBuildResult(
+      buildable,
+      """
+      do {
+          try! a.b()
+      } catch Error1, Error2 {
+          print("Known error")
+      } catch Error3 where error.isError4 {
+          throw Error4.error3
+      } catch {
+          print(error)
+      }
+      """
+    )
+  }
+
+  func testDoStmtWithPostfixQuestionMark() {
+    let buildable = DoStmtSyntax(
+      body: CodeBlockSyntax(statementsBuilder: {
+        TryExprSyntax(questionOrExclamationMark: .postfixQuestionMarkToken(), expression: FunctionCallExprSyntax(callee: ExprSyntax("a.b")))
+      }),
+      catchClauses: [
+        CatchClauseSyntax(
+          CatchItemListSyntax {
+            CatchItemSyntax(pattern: PatternSyntax("Error1"))
+            CatchItemSyntax(pattern: PatternSyntax("Error2"))
+          }
+        ) {
+          FunctionCallExprSyntax(callee: ExprSyntax("print")) {
+            TupleExprElementSyntax(expression: StringLiteralExprSyntax(content: "Known error"))
+          }
+        },
+        CatchClauseSyntax(
+          CatchItemListSyntax {
+            CatchItemSyntax(
+              pattern: PatternSyntax("Error3"),
+              whereClause: WhereClauseSyntax(guardResult: MemberAccessExprSyntax(base: "error", name: "isError4"))
+            )
+          }
+        ) {
+          ThrowStmtSyntax(expression: MemberAccessExprSyntax(base: "Error4", name: "error3"))
+        },
+        CatchClauseSyntax {
+          FunctionCallExprSyntax(callee: ExprSyntax("print")) {
+            TupleExprElementSyntax(expression: ExprSyntax("error"))
+          }
+        },
+      ]
+    )
+
+    AssertBuildResult(
+      buildable,
+      """
+      do {
+          try? a.b()
       } catch Error1, Error2 {
           print("Known error")
       } catch Error3 where error.isError4 {

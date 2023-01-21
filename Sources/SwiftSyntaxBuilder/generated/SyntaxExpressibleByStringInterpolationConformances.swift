@@ -26,7 +26,12 @@ extension SyntaxParseable {
   }
 }
 
-extension AccessorDeclSyntax: SyntaxExpressibleByStringInterpolation { 
+extension AccessorDeclSyntax: SyntaxExpressibleByStringInterpolation {
+  public init(stringInterpolationOrThrow stringInterpolation: SyntaxStringInterpolation) throws {
+    self = try performParse(source: stringInterpolation.sourceText, parse: { parser in 
+        return Self.parse(from: &parser)
+      })
+  }
 }
 
 extension ActorDeclSyntax: SyntaxExpressibleByStringInterpolation { 
@@ -42,9 +47,6 @@ extension ArrowExprSyntax: SyntaxExpressibleByStringInterpolation {
 }
 
 extension AsExprSyntax: SyntaxExpressibleByStringInterpolation { 
-}
-
-extension AsTypePatternSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
 extension AssignmentExprSyntax: SyntaxExpressibleByStringInterpolation { 
@@ -125,9 +127,6 @@ extension DeclSyntax: SyntaxExpressibleByStringInterpolation {
   }
 }
 
-extension DeclarationStmtSyntax: SyntaxExpressibleByStringInterpolation { 
-}
-
 extension DeferStmtSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
@@ -146,13 +145,13 @@ extension DiscardAssignmentExprSyntax: SyntaxExpressibleByStringInterpolation {
 extension DoStmtSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
+extension EditorPlaceholderDeclSyntax: SyntaxExpressibleByStringInterpolation { 
+}
+
 extension EditorPlaceholderExprSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
 extension EnumCaseDeclSyntax: SyntaxExpressibleByStringInterpolation { 
-}
-
-extension EnumCasePatternSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
 extension EnumDeclSyntax: SyntaxExpressibleByStringInterpolation { 
@@ -179,9 +178,6 @@ extension ExprSyntax: SyntaxExpressibleByStringInterpolation {
 }
 
 extension ExpressionPatternSyntax: SyntaxExpressibleByStringInterpolation { 
-}
-
-extension ExpressionStmtSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
 extension ExtensionDeclSyntax: SyntaxExpressibleByStringInterpolation { 
@@ -302,13 +298,13 @@ extension OperatorDeclSyntax: SyntaxExpressibleByStringInterpolation {
 extension OptionalChainingExprSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
-extension OptionalPatternSyntax: SyntaxExpressibleByStringInterpolation { 
-}
-
 extension OptionalTypeSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
 extension PackElementExprSyntax: SyntaxExpressibleByStringInterpolation { 
+}
+
+extension PackExpansionExprSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
 extension PackExpansionTypeSyntax: SyntaxExpressibleByStringInterpolation { 
@@ -344,9 +340,6 @@ extension PostfixUnaryExprSyntax: SyntaxExpressibleByStringInterpolation {
 }
 
 extension PoundAssertStmtSyntax: SyntaxExpressibleByStringInterpolation { 
-}
-
-extension PoundColumnExprSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
 extension PoundErrorDeclSyntax: SyntaxExpressibleByStringInterpolation { 
@@ -439,9 +432,6 @@ extension SwitchCaseSyntax: SyntaxExpressibleByStringInterpolation {
 extension SwitchStmtSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
-extension SymbolicReferenceExprSyntax: SyntaxExpressibleByStringInterpolation { 
-}
-
 extension TernaryExprSyntax: SyntaxExpressibleByStringInterpolation { 
 }
 
@@ -515,7 +505,7 @@ extension YieldStmtSyntax: SyntaxExpressibleByStringInterpolation {
 
 // TODO: This should be fileprivate, but is currently used in
 // `ConvenienceInitializers.swift`. See the corresponding TODO there.
-func performParse < SyntaxType: SyntaxProtocol > (source: [UInt8], parse: (inout Parser) throws -> SyntaxType) throws -> SyntaxType {
+func performParse<SyntaxType: SyntaxProtocol>(source: [UInt8], parse: (inout Parser) throws -> SyntaxType) throws -> SyntaxType {
   return try source.withUnsafeBufferPointer { buffer in 
     var parser = Parser(buffer)
     // FIXME: When the parser supports incremental parsing, put the

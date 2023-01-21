@@ -15,8 +15,8 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
-let declarationModifierFile = SourceFile {
-  ImportDecl(
+let declarationModifierFile = SourceFileSyntax {
+  ImportDeclSyntax(
     """
     \(raw: generateCopyrightHeader(for: "generate-swiftparser"))
     @_spi(RawSyntax) import SwiftSyntax
@@ -24,63 +24,39 @@ let declarationModifierFile = SourceFile {
     """
   )
   
-  EnumDecl("enum DeclarationModifier: SyntaxText, ContextualKeywords, RawTokenKindSubset") {
+  EnumDeclSyntax("enum DeclarationModifier: RawTokenKindSubset") {
     for attribute in DECL_MODIFIER_KINDS {
-      EnumCaseDecl("case \(raw: attribute.swiftName) = \"\(raw: attribute.name)\"")
+      EnumCaseDeclSyntax("case \(raw: attribute.swiftName)")
     }
-    InitializerDecl("init?(lexeme: Lexer.Lexeme)") {
-      SwitchStmt(switchKeyword: .switch, expression: Expr("lexeme.tokenKind")) {
-        for attribute in DECL_MODIFIER_KINDS where attribute.swiftName.hasSuffix("Keyword") {
-          SwitchCase("case .\(raw: attribute.swiftName):") {
-            SequenceExpr("self = .\(raw: attribute.swiftName)")
+    InitializerDeclSyntax("init?(lexeme: Lexer.Lexeme)") {
+      SwitchStmtSyntax(expression: ExprSyntax("lexeme")) {
+        for attribute in DECL_MODIFIER_KINDS {
+          SwitchCaseSyntax("case RawTokenKindMatch(.\(raw: attribute.swiftName)):") {
+            SequenceExprSyntax("self = .\(raw: attribute.swiftName)")
           }
         }
-        SwitchCase("case .identifier:") {
-          FunctionCallExpr("self.init(rawValue: lexeme.tokenText)")
-        }
-        SwitchCase("default:") {
-          ReturnStmt("return nil")
+        SwitchCaseSyntax("default:") {
+          ReturnStmtSyntax("return nil")
         }
       }
     }
     
-    VariableDecl(
-      name: IdentifierPattern("rawTokenKind"),
-      type: TypeAnnotation(
-        colon: .colon,
-        type: SimpleTypeIdentifier("RawTokenKind")
+    VariableDeclSyntax(
+      name: IdentifierPatternSyntax("rawTokenKind"),
+      type: TypeAnnotationSyntax(
+        colon: .colonToken(),
+        type: SimpleTypeIdentifierSyntax("RawTokenKind")
       )
     ) {
-      SwitchStmt(switchKeyword: .switch, expression: Expr("self")) {
+      SwitchStmtSyntax(expression: ExprSyntax("self")) {
         for attribute in DECL_MODIFIER_KINDS {
-          SwitchCase("case .\(raw: attribute.swiftName):") {
+          SwitchCaseSyntax("case .\(raw: attribute.swiftName):") {
             if attribute.swiftName.hasSuffix("Keyword") {
-              ReturnStmt("return .\(raw: attribute.swiftName)")
+              ReturnStmtSyntax("return .\(raw: attribute.swiftName)")
             } else {
-              ReturnStmt("return .identifier")
+              ReturnStmtSyntax("return .keyword(.\(raw: attribute.swiftName))")
             }
           }
-        }
-      }
-    }
-    
-    
-    VariableDecl(
-      name: IdentifierPattern("contextualKeyword"),
-      type: TypeAnnotation(
-        colon: .colon,
-        type: OptionalType("SyntaxText?")
-      )
-    ) {
-      SwitchStmt(switchKeyword: .switch, expression: Expr("self")) {
-        for attribute in DECL_MODIFIER_KINDS where !attribute.swiftName.hasSuffix("Keyword") {
-          SwitchCase("case .\(raw: attribute.swiftName):") {
-            ReturnStmt("return \"\(raw: attribute.name)\"")
-          }
-        }
-        
-        SwitchCase("default:") {
-          ReturnStmt("return nil")
         }
       }
     }

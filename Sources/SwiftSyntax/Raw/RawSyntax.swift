@@ -55,7 +55,28 @@ internal struct RawSyntaxData {
 
     var presence: SourcePresence
 
-    var hasLexerError: Bool
+    /// Store the members of `LexerError` individually so the compiler can pack
+    /// `ParsedToken` more efficiently (saving 2 bytes)
+    /// `lexerErrorByteOffset` is ignored if `lexerErrorKind` is `nil`
+    private var lexerErrorKind: LexerError.Kind?
+    private var lexerErrorByteOffset: UInt16
+
+    var lexerError: LexerError? {
+      if let kind = lexerErrorKind {
+        return LexerError(kind, byteOffset: lexerErrorByteOffset)
+      } else {
+        return nil
+      }
+    }
+
+    init(tokenKind: RawTokenKind, wholeText: SyntaxText, textRange: Range<SyntaxText.Index>, presence: SourcePresence, lexerError: LexerError?) {
+      self.tokenKind = tokenKind
+      self.wholeText = wholeText
+      self.textRange = textRange
+      self.presence = presence
+      self.lexerErrorKind = lexerError?.kind
+      self.lexerErrorByteOffset = lexerError?.byteOffset ?? 0
+    }
   }
 
   /// Token typically created with `TokenSyntax.<someToken>`.
@@ -160,7 +181,7 @@ extension RawSyntax {
     switch view {
     case .token(let tokenView):
       var recursiveFlags: RecursiveRawSyntaxFlags = []
-      if tokenView.hasLexerError || tokenView.presence == .missing {
+      if tokenView.lexerError != nil || tokenView.presence == .missing {
         recursiveFlags.insert(.hasError)
       }
       return recursiveFlags
@@ -451,7 +472,7 @@ extension RawSyntax {
     textRange: Range<SyntaxText.Index>,
     presence: SourcePresence,
     arena: SyntaxArena,
-    hasLexerError: Bool
+    lexerError: LexerError?
   ) -> RawSyntax {
     assert(
       arena.contains(text: wholeText),
@@ -466,7 +487,7 @@ extension RawSyntax {
       wholeText: wholeText,
       textRange: textRange,
       presence: presence,
-      hasLexerError: hasLexerError
+      lexerError: lexerError
     )
     return RawSyntax(arena: arena, payload: .parsedToken(payload))
   }
@@ -526,6 +547,7 @@ extension RawSyntax {
     initializingLeadingTriviaWith: (UnsafeMutableBufferPointer<RawTriviaPiece>) -> Void,
     initializingTrailingTriviaWith: (UnsafeMutableBufferPointer<RawTriviaPiece>) -> Void
   ) -> RawSyntax {
+    assert(kind.defaultText == nil || text.isEmpty || kind.defaultText == text)
     let totalTriviaCount = leadingTriviaPieceCount + trailingTriviaPieceCount
     let triviaBuffer = arena.allocateRawTriviaPieceBuffer(count: totalTriviaCount)
     initializingLeadingTriviaWith(
@@ -716,12 +738,12 @@ extension RawSyntax {
       if let leadingTrivia = leadingTrivia,
         let idx = layout.firstIndex(where: { $0 != nil })
       {
-        layout[idx] = layout[idx]!.withLeadingTrivia(leadingTrivia, arena: arena)
+        layout[idx] = layout[idx]!.withLeadingTrivia(leadingTrivia + (layout[idx]?.formLeadingTrivia() ?? []), arena: arena)
       }
       if let trailingTrivia = trailingTrivia,
         let idx = layout.lastIndex(where: { $0 != nil })
       {
-        layout[idx] = layout[idx]!.withTrailingTrivia(trailingTrivia, arena: arena)
+        layout[idx] = layout[idx]!.withTrailingTrivia((layout[idx]?.formTrailingTrivia() ?? []) + trailingTrivia, arena: arena)
       }
       return .makeLayout(kind: kind, from: layout, arena: arena)
     }

@@ -14,7 +14,7 @@ import XCTest
 import SwiftSyntax
 
 fileprivate func cannedStructDecl() -> StructDeclSyntax {
-  let structKW = TokenSyntax.structKeyword(trailingTrivia: .space)
+  let structKW = TokenSyntax.keyword(.struct, trailingTrivia: .space)
   let fooID = TokenSyntax.identifier("Foo", trailingTrivia: .space)
   let rBrace = TokenSyntax.rightBraceToken(leadingTrivia: .newline)
   let members = MemberDeclBlockSyntax(
@@ -77,7 +77,7 @@ public class SyntaxCreationTests: XCTestCase {
   }
 
   public func testTokenSyntax() {
-    let tok = TokenSyntax.structKeyword(trailingTrivia: .space)
+    let tok = TokenSyntax.keyword(.struct, trailingTrivia: .space)
     XCTAssertEqual("\(tok)", "struct ")
     XCTAssertEqual(tok.presence, .present)
 
@@ -200,7 +200,7 @@ public class SyntaxCreationTests: XCTestCase {
     )
     let operatorNames = ["==", "!=", "+", "-", "*", "/", "<", ">", "<=", ">="]
     operatorNames.forEach { operatorName in
-      let operatorToken = TokenSyntax.spacedBinaryOperator(operatorName, leadingTrivia: .space, trailingTrivia: .space)
+      let operatorToken = TokenSyntax.binaryOperator(operatorName, leadingTrivia: .space, trailingTrivia: .space)
       let operatorExpr = BinaryOperatorExprSyntax(operatorToken: operatorToken)
       let exprList = ExprListSyntax([
         ExprSyntax(first),
@@ -210,5 +210,28 @@ public class SyntaxCreationTests: XCTestCase {
 
       XCTAssertEqual("\(exprList)", "1 \(operatorName) 1")
     }
+  }
+
+  func testTriviaInInitializxerDoesNotOverrideFirstNode() {
+    let node = ExpressionPatternSyntax(
+      leadingTrivia: .lineComment("// Outer leading") + .newline,
+      expression: IntegerLiteralExprSyntax(
+        leadingTrivia: .lineComment("// Inner leading") + .newline,
+        digits: .integerLiteral("42"),
+        trailingTrivia: .newline + .lineComment("// Inner trailing")
+      ),
+      trailingTrivia: .newline + .lineComment("// Outer trailing")
+    )
+
+    XCTAssertEqual(
+      node.description,
+      """
+      // Outer leading
+      // Inner leading
+      42
+      // Inner trailing
+      // Outer trailing
+      """
+    )
   }
 }

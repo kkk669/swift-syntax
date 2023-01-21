@@ -134,6 +134,15 @@ extension DiagnosticMessage where Self == StaticParserError {
   public static var invalidWhitespaceAfterPeriod: Self {
     .init("extraneous whitespace after '.' is not permitted")
   }
+  public static var joinConditionsUsingComma: Self {
+    .init("expected ',' joining parts of a multi-clause condition")
+  }
+  public static var joinPlatformsUsingComma: Self {
+    .init("expected ',' joining platforms in availability condition")
+  }
+  public static var maximumNestingLevelOverflow: Self {
+    .init("parsing has exceeded the maximum nesting level")
+  }
   public static var missingColonAndExprInTernaryExpr: Self {
     .init("expected ':' and expression after '? ...' in ternary expression")
   }
@@ -146,14 +155,17 @@ extension DiagnosticMessage where Self == StaticParserError {
   public static var standaloneSemicolonStatement: Self {
     .init("standalone ';' statements are not allowed")
   }
-  public static var maximumNestingLevelOverflow: Self {
-    .init("parsing has exceeded the maximum nesting level")
-  }
   public static var subscriptsCannotHaveNames: Self {
     .init("subscripts cannot have a name")
   }
   public static var throwsInReturnPosition: Self {
     .init("'throws' may only occur before '->'")
+  }
+  public static var tooManyClosingRawStringDelimiters: Self {
+    .init("too many '#' characters in closing delimiter")
+  }
+  public static var tooManyRawStringDelimitersToStartInterpolation: Self {
+    .init("too many '#' characters to start string interpolation")
   }
   public static var tryMustBePlacedOnReturnedExpr: Self {
     .init("'try' must be placed on the returned expression")
@@ -170,6 +182,14 @@ extension DiagnosticMessage where Self == StaticParserError {
 }
 
 // MARK: - Diagnostics (please sort alphabetically)
+
+public struct AvailabilityConditionInExpression: ParserError {
+  public let avaialabilityCondition: AvailabilityConditionSyntax
+
+  public var message: String {
+    return "\(nodesDescription([avaialabilityCondition], format: false)) cannot be used in an expression, only as a condition of 'if' or 'guard'"
+  }
+}
 
 public struct EffectsSpecifierAfterArrow: ParserError {
   public let effectsSpecifiersAfterArrow: [TokenSyntax]
@@ -206,9 +226,9 @@ public struct InvalidIdentifierError: ParserError {
     case .unknown(let text) where text.first?.isNumber == true:
       let name = missingIdentifier.childNameInParent ?? "identifier"
       return "\(name) can only start with a letter or underscore, not a number"
-    case .wildcardKeyword:
+    case .wildcard:
       return "'\(invalidIdentifier.text)' cannot be used as an identifier here"
-    case let tokenKind where tokenKind.isKeyword:
+    case let tokenKind where tokenKind.isLexerClassifiedKeyword:
       return "keyword '\(invalidIdentifier.text)' cannot be used as an identifier here"
     default:
       return "'\(invalidIdentifier.text)' is not a valid identifier"
@@ -218,10 +238,19 @@ public struct InvalidIdentifierError: ParserError {
 
 public struct MissingAttributeArgument: ParserError {
   /// The name of the attribute that's missing the argument, without `@`.
-  public let attributeName: TokenSyntax
+  public let attributeName: TypeSyntax
 
   public var message: String {
     return "expected argument for '@\(attributeName)' attribute"
+  }
+}
+
+public struct NegatedAvailabilityCondition: ParserError {
+  public let avaialabilityCondition: AvailabilityConditionSyntax
+  public let negatedAvailabilityKeyword: TokenSyntax
+
+  public var message: String {
+    return "\(nodesDescription([avaialabilityCondition], format: false)) cannot be used in an expression; did you mean \(nodesDescription([negatedAvailabilityKeyword], format: false))?"
   }
 }
 
@@ -321,6 +350,9 @@ extension FixItMessage where Self == StaticParserFixIt {
   }
   public static var joinIdentifiersWithCamelCase: Self {
     .init("join the identifiers together with camel-case")
+  }
+  public static var removeExtraneousDelimiters: Self {
+    .init("remove extraneous delimiters")
   }
   public static var removeExtraneousWhitespace: Self {
     .init("remove whitespace")

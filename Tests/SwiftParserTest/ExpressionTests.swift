@@ -425,15 +425,22 @@ final class ExpressionTests: XCTestCase {
 
     AssertParse(
       #"""
-      1️⃣"\(()
+      "\(()1️⃣
       """#,
       diagnostics: [
-        DiagnosticSpec(message: #"extraneous code '"\(()' at top level"#)
+        DiagnosticSpec(message: #"expected ')' in string literal"#),
+        DiagnosticSpec(message: #"expected '"' to end string literal"#),
       ]
     )
   }
 
   func testStringLiterals() {
+    AssertParse(
+      #"""
+      "–"
+      """#
+    )
+
     AssertParse(
       #"""
       ""
@@ -606,6 +613,22 @@ final class ExpressionTests: XCTestCase {
     )
   }
 
+  func testAdjacentRawStringLiterals() {
+    AssertParse(
+      """
+      "normal literal"
+      #"raw literal"#
+      """
+    )
+
+    AssertParse(
+      """
+      #"raw literal"#
+      #"second raw literal"#
+      """
+    )
+  }
+
   func testSingleQuoteStringLiteral() {
     AssertParse(
       #"""
@@ -647,6 +670,15 @@ final class ExpressionTests: XCTestCase {
       diagnostics: [
         DiagnosticSpec(message: #"expected '"' to end string literal"#)
       ]
+    )
+  }
+
+  func testPoundsInStringInterpolationWhereNotNecessary() {
+    AssertParse(
+      ##"""
+      "\#(1)"
+      """##,
+      substructure: Syntax(StringSegmentSyntax(content: .stringSegment(##"\#(1)"##)))
     )
   }
 
@@ -756,7 +788,7 @@ final class ExpressionTests: XCTestCase {
     AssertParse(
       "Foo 1️⃣async ->2️⃣",
       { ExprSyntax.parse(from: &$0) },
-      substructure: Syntax(TokenSyntax.contextualKeyword("async")),
+      substructure: Syntax(TokenSyntax.keyword(.async)),
       substructureAfterMarker: "1️⃣",
       diagnostics: [
         DiagnosticSpec(locationMarker: "2️⃣", message: "expected expression")
@@ -817,7 +849,7 @@ final class ExpressionTests: XCTestCase {
   func testOperatorReference() {
     AssertParse(
       "reduce(0, 1️⃣+)",
-      substructure: Syntax(TokenSyntax.unspacedBinaryOperator("+")),
+      substructure: Syntax(TokenSyntax.binaryOperator("+")),
       substructureAfterMarker: "1️⃣"
     )
   }
@@ -851,6 +883,21 @@ final class ExpressionTests: XCTestCase {
         print("This is a test")
       }
       """
+    )
+  }
+
+  func testNewlineInInterpolationOfSingleLineString() {
+    AssertParse(
+      #"""
+      "test \(label:1️⃣
+      foo2️⃣)"
+      """#,
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected value in string literal"),
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected ')' in string literal"),
+        DiagnosticSpec(locationMarker: "1️⃣", message: #"expected '"' to end string literal"#),
+        DiagnosticSpec(locationMarker: "2️⃣", message: #"extraneous code ')"' at top level"#),
+      ]
     )
   }
 }

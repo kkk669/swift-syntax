@@ -53,15 +53,17 @@ public struct SyntaxBuildableType: Hashable {
   /// with fixed test), return an expression of the form ` = defaultValue`
   /// that can be used as the default value for a function parameter.
   /// Otherwise, return the empty string.
-  public var defaultInitialization: Expr? {
+  public var defaultInitialization: ExprSyntax? {
     if isOptional {
-      return Expr(NilLiteralExpr())
-    } else if isToken {
-      if let token = token, token.text != nil {
-        return Expr(MemberAccessExpr(base: "Token", name: lowercaseFirstWord(name: token.name).backticked))
-      } else if tokenKind == "EOFToken" {
-        return Expr(MemberAccessExpr(base: "Token", name: "eof"))
+      return ExprSyntax(NilLiteralExprSyntax())
+    } else if let token = token {
+      if token.isKeyword {
+        return ExprSyntax(".\(raw: token.swiftKind)()")
+      } else if token.text != nil {
+        return ExprSyntax(".\(raw: lowercaseFirstWord(name: token.name))Token()")
       }
+    } else if tokenKind == "EOFToken" {
+      return ExprSyntax(".eof()")
     }
     return nil
   }
@@ -86,8 +88,8 @@ public struct SyntaxBuildableType: Hashable {
   ///  - For base kinds: `<BaseKind>Buildable`, e.g. `ExprBuildable` (these are implemented as protocols)
   ///  - For token: `TokenSyntax` (tokens don't have a dedicated type in SwiftSyntaxBuilder)
   /// If the type is optional, the type is wrapped in an `OptionalType`.
-  public var buildable: Type {
-    optionalWrapped(type: SimpleTypeIdentifier(name: .identifier(shorthandName)))
+  public var buildable: TypeSyntax {
+    optionalWrapped(type: SimpleTypeIdentifierSyntax(name: .identifier(syntaxBaseName)))
   }
 
   /// Whether parameters of this type should be initializable by a result builder.
@@ -101,15 +103,9 @@ public struct SyntaxBuildableType: Hashable {
   /// returns `CodeBlockItemList` for `CodeBlock`) and otherwise itself.
   public var builderInitializableType: Self {
     Self(
-      syntaxKind: BUILDER_INITIALIZABLE_TYPES[shorthandName].flatMap { $0 } ?? shorthandName,
+      syntaxKind: BUILDER_INITIALIZABLE_TYPES[syntaxKind].flatMap { $0 } ?? syntaxKind,
       isOptional: isOptional
     )
-  }
-
-  /// The type name without the `Syntax`. `SwiftSyntaxBuilder` declares typealiases
-  /// that map these to the corresponding `*Syntax` nodes.
-  public var shorthandName: String {
-    return syntaxKind
   }
 
   /// The corresponding `*Syntax` type defined in the `SwiftSyntax` module,
@@ -126,7 +122,7 @@ public struct SyntaxBuildableType: Hashable {
   /// which will eventually get built from `SwiftSyntaxBuilder`. If the type
   /// is optional, this terminates with a `?`.
   public var syntax: TypeSyntax {
-    return optionalWrapped(type: SimpleTypeIdentifier(name: .identifier(syntaxBaseName)))
+    return optionalWrapped(type: SimpleTypeIdentifierSyntax(name: .identifier(syntaxBaseName)))
   }
 
   /// The type that is used for paramters in SwiftSyntaxBuilder that take this
@@ -135,12 +131,12 @@ public struct SyntaxBuildableType: Hashable {
     if isBaseType {
       return "\(syntaxBaseName)Protocol"
     } else {
-      return shorthandName
+      return syntaxBaseName
     }
   }
 
   public var parameterType: TypeSyntax {
-    return optionalWrapped(type: SimpleTypeIdentifier(name: .identifier(parameterBaseType)))
+    return optionalWrapped(type: SimpleTypeIdentifierSyntax(name: .identifier(parameterBaseType)))
   }
 
   /// Assuming that this is a collection type, the non-optional type of the result builder
@@ -167,25 +163,25 @@ public struct SyntaxBuildableType: Hashable {
   /// Wraps a type in an optional depending on whether `isOptional` is true.
   public func optionalWrapped<TypeNode: TypeSyntaxProtocol>(type: TypeNode) -> TypeSyntax {
     if isOptional {
-      return TypeSyntax(OptionalType(wrappedType: type))
+      return TypeSyntax(OptionalTypeSyntax(wrappedType: type))
     } else {
       return TypeSyntax(type)
     }
   }
 
   /// Wraps a type in an optional chaining depending on whether `isOptional` is true.
-  public func optionalChained(expr: ExprSyntaxProtocol) -> Expr {
+  public func optionalChained(expr: ExprSyntaxProtocol) -> ExprSyntax {
     if isOptional {
-      return Expr(OptionalChainingExpr(expression: expr))
+      return ExprSyntax(OptionalChainingExprSyntax(expression: expr))
     } else {
-      return Expr(expr)
+      return ExprSyntax(expr)
     }
   }
 
   /// Wraps a type in a force unwrap expression depending on whether `isOptional` is true.
   public func forceUnwrappedIfNeeded(expr: ExprSyntaxProtocol) -> ExprSyntax {
     if isOptional {
-      return ExprSyntax(ForcedValueExpr(expression: expr))
+      return ExprSyntax(ForcedValueExprSyntax(expression: expr))
     } else {
       return ExprSyntax(expr)
     }

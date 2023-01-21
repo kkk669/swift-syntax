@@ -307,7 +307,7 @@ extension ParseDiagnosticsGenerator {
 
     if node.tokenKind.isIdentifier {
       let fixIts: [FixIt]
-      if invalidToken.tokenKind.isKeyword || invalidToken.tokenKind.isDollarIdentifier {
+      if invalidToken.tokenKind.isLexerClassifiedKeyword || invalidToken.tokenKind.isDollarIdentifier {
         // TODO: Should the parser add the text with backticks to the missing
         // node? Then this could just make missing/present.
         fixIts = [
@@ -354,6 +354,31 @@ extension ParseDiagnosticsGenerator {
         let fixIt = FixIt(message: .removeExtraneousWhitespace, changes: changes)
         addDiagnostic(invalidToken, .invalidWhitespaceAfterPeriod, fixIts: [fixIt], handledNodes: [unexpectedTokens.id])
       }
+    } else if node.rawTokenKind == .rawStringDelimiter, invalidToken.rawTokenKind == .rawStringDelimiter {
+      let message: DiagnosticMessage
+      if node.parent?.is(ExpressionSegmentSyntax.self) == true {
+        message = .tooManyRawStringDelimitersToStartInterpolation
+      } else {
+        assert(
+          node.parent?.is(StringLiteralExprSyntax.self) == true,
+          "Raw string delimiters should only occur in string interpolation and at the end of a string literal"
+        )
+        message = .tooManyClosingRawStringDelimiters
+      }
+      let fixIt = FixIt(
+        message: .removeExtraneousDelimiters,
+        changes: [
+          .makeMissing(invalidToken),
+          .makePresentBeforeTrivia(node),
+        ]
+      )
+      addDiagnostic(
+        invalidToken,
+        position: invalidToken.positionAfterSkippingLeadingTrivia.advanced(by: node.contentLength.utf8Length),
+        message,
+        fixIts: [fixIt],
+        handledNodes: [unexpectedTokens.id]
+      )
     } else {
       _ = handleMissingSyntax(node)
     }

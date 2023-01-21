@@ -11,6 +11,7 @@ add_swift_host_library(SwiftSyntax
   BumpPtrAllocator.swift
   CommonAncestor.swift
   IncrementalParseTransition.swift
+  LexerError.swift
   SourceLength.swift
   SourceLocation.swift
   SourcePresence.swift
@@ -31,19 +32,20 @@ add_swift_host_library(SwiftSyntax
   Raw/gyb_generated/RawSyntaxNodes.swift
   Raw/gyb_generated/RawSyntaxValidation.swift
 
+  generated/Keyword.swift
   generated/Misc.swift
   generated/SyntaxAnyVisitor.swift
   generated/SyntaxBaseNodes.swift
-  gyb_generated/SyntaxCollections.swift
+  generated/SyntaxCollections.swift
   generated/SyntaxEnum.swift
   gyb_generated/SyntaxFactory.swift
   generated/SyntaxKind.swift
-  gyb_generated/SyntaxRewriter.swift
+  generated/SyntaxRewriter.swift
   generated/SyntaxTraits.swift
-  gyb_generated/SyntaxTransform.swift
-  gyb_generated/SyntaxVisitor.swift
-  gyb_generated/TokenKind.swift
-  gyb_generated/Tokens.swift
+  generated/SyntaxTransform.swift
+  generated/SyntaxVisitor.swift
+  generated/TokenKind.swift
+  generated/Tokens.swift
   gyb_generated/Trivia.swift
 
   gyb_generated/syntax_nodes/SyntaxDeclNodes.swift

@@ -10,29 +10,11 @@ PATTERN_NODES = [
              Child('Type', kind='Type'),
          ]),
 
-    # enum-case-pattern -> type-identifier? '.' identifier tuple-pattern?
-    Node('EnumCasePattern', name_for_diagnostics='enum case pattern', kind='Pattern',
-         children=[
-             Child('Type', kind='Type',
-                   is_optional=True),
-             Child('Period', kind='PeriodToken'),
-             Child('CaseName', kind='IdentifierToken', name_for_diagnostics='case name'),
-             Child('AssociatedTuple', kind='TuplePattern', name_for_diagnostics='associated values',
-                   is_optional=True),
-         ]),
-
     # is-type-pattern -> 'is' type
     Node('IsTypePattern', name_for_diagnostics="'is' pattern", kind='Pattern',
          children=[
-             Child('IsKeyword', kind='IsToken'),
+             Child('IsKeyword', kind='KeywordToken', text_choices=['is']),
              Child('Type', kind='Type'),
-         ]),
-
-    # optional-pattern -> pattern '?'
-    Node('OptionalPattern', name_for_diagnostics='optional pattern', kind='Pattern',
-         children=[
-             Child('SubPattern', kind='Pattern'),
-             Child('QuestionMark', kind='PostfixQuestionMarkToken'),
          ]),
 
     # identifier-pattern -> identifier
@@ -40,17 +22,9 @@ PATTERN_NODES = [
          children=[
              Child('Identifier', kind='Token',
                    token_choices=[
-                       'SelfToken',
                        'IdentifierToken',
+                       'KeywordToken',
                    ]),
-         ]),
-
-    # as-pattern -> pattern 'as' type
-    Node('AsTypePattern', name_for_diagnostics="'as' pattern", kind='Pattern',
-         children=[
-             Child('Pattern', kind='Pattern'),
-             Child('AsKeyword', kind='AsToken'),
-             Child('Type', kind='Type'),
          ]),
 
     # tuple-pattern -> '(' tuple-pattern-element-list ')'
@@ -100,11 +74,8 @@ PATTERN_NODES = [
     Node('ValueBindingPattern', name_for_diagnostics='value binding pattern',
          kind='Pattern',
          children=[
-             Child('LetOrVarKeyword', kind='Token',
-                   token_choices=[
-                       'LetToken',
-                       'VarToken',
-                   ]),
+             Child('LetOrVarKeyword', kind='KeywordToken',
+                   text_choices=['let', 'var']),
              Child('ValuePattern', kind='Pattern'),
          ]),
 ]

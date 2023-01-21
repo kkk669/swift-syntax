@@ -23,6 +23,7 @@ public class TokenSpec {
   public let isKeyword: Bool
   public let requiresLeadingSpace: Bool
   public let requiresTrailingSpace: Bool
+  public let associatedValueClass: String?
 
   public var swiftKind: String {
     let name = lowercaseFirstWord(name: self.name)
@@ -43,7 +44,8 @@ public class TokenSpec {
     classification: String = "None",
     isKeyword: Bool = false,
     requiresLeadingSpace: Bool = false,
-    requiresTrailingSpace: Bool = false
+    requiresTrailingSpace: Bool = false,
+    associatedValueClass: String? = nil
   ) {
     self.name = name
     self.kind = kind
@@ -58,43 +60,9 @@ public class TokenSpec {
     self.isKeyword = isKeyword
     self.requiresLeadingSpace = requiresLeadingSpace
     self.requiresTrailingSpace = requiresTrailingSpace
+    self.associatedValueClass = associatedValueClass
   }
 }
-
-/// Represents a keyword token.
-public class KeywordSpec: TokenSpec {
-  init(
-    name: String,
-    text: String,
-    classification: String = "Keyword",
-    requiresLeadingSpace: Bool = false,
-    requiresTrailingSpace: Bool = false
-  ) {
-    super.init(
-      name: name,
-      kind: "kw_\(text)",
-      nameForDiagnostics: text,
-      unprefixedKind: text,
-      text: text,
-      classification: classification,
-      isKeyword: true,
-      requiresLeadingSpace: requiresLeadingSpace,
-      requiresTrailingSpace: requiresTrailingSpace
-    )
-  }
-}
-
-public class SwiftKeywordSpec: KeywordSpec { }
-
-public class DeclKeywordSpec: SwiftKeywordSpec { }
-
-public class StmtKeywordSpec: SwiftKeywordSpec { }
-
-public class ExprKeywordSpec: SwiftKeywordSpec { }
-
-public class PatternKeywordSpec: SwiftKeywordSpec { }
-
-public class SilKeywordSpec: KeywordSpec { }
 
 public class PoundKeywordSpec: TokenSpec {
   init(
@@ -201,68 +169,15 @@ public class LiteralSpec: TokenSpec { }
 public class MiscSpec: TokenSpec { }
 
 public let SYNTAX_TOKENS: [TokenSpec] = [
-  DeclKeywordSpec(name: "Associatedtype", text: "associatedtype", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Class", text: "class", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Deinit", text: "deinit", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Enum", text: "enum", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Extension", text: "extension", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Func", text: "func", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Import", text: "import", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Init", text: "init", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Inout", text: "inout", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Let", text: "let", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Operator", text: "operator", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Precedencegroup", text: "precedencegroup", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Protocol", text: "protocol", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Struct", text: "struct", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Subscript", text: "subscript", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Typealias", text: "typealias", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Var", text: "var", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Fileprivate", text: "fileprivate", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Internal", text: "internal", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Private", text: "private", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Public", text: "public", requiresTrailingSpace: true),
-  DeclKeywordSpec(name: "Static", text: "static", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Defer", text: "defer", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "If", text: "if", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Guard", text: "guard", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Do", text: "do"),
-  StmtKeywordSpec(name: "Repeat", text: "repeat", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Else", text: "else", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "For", text: "for", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "In", text: "in", requiresLeadingSpace: true, requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "While", text: "while", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Return", text: "return", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Break", text: "break", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Continue", text: "continue", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Fallthrough", text: "fallthrough", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Switch", text: "switch", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Case", text: "case", requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Default", text: "default"),
-  StmtKeywordSpec(name: "Where", text: "where", requiresLeadingSpace: true, requiresTrailingSpace: true),
-  StmtKeywordSpec(name: "Catch", text: "catch", requiresLeadingSpace: true),
-  StmtKeywordSpec(name: "Throw", text: "throw", requiresTrailingSpace: true),
-  ExprKeywordSpec(name: "As", text: "as", requiresTrailingSpace: true),
-  ExprKeywordSpec(name: "Any", text: "Any", requiresTrailingSpace: true),
-  ExprKeywordSpec(name: "False", text: "false"),
-  ExprKeywordSpec(name: "Is", text: "is", requiresTrailingSpace: true),
-  ExprKeywordSpec(name: "Nil", text: "nil"),
-  ExprKeywordSpec(name: "Rethrows", text: "rethrows", requiresTrailingSpace: true),
-  ExprKeywordSpec(name: "Super", text: "super"),
-  ExprKeywordSpec(name: "Self", text: "self"),
-  ExprKeywordSpec(name: "CapitalSelf", text: "Self"),
-  ExprKeywordSpec(name: "True", text: "true"),
-  ExprKeywordSpec(name: "Try", text: "try", requiresTrailingSpace: true),
-  ExprKeywordSpec(name: "Throws", text: "throws", requiresTrailingSpace: true),
-  PatternKeywordSpec(name: "Wildcard", text: "_", requiresTrailingSpace: true),
+  MiscSpec(name: "Wildcard", kind: "_", nameForDiagnostics: "wildcard", text: "_"),
   PunctuatorSpec(name: "LeftParen", kind: "l_paren", text: "("),
   PunctuatorSpec(name: "RightParen", kind: "r_paren", text: ")"),
   PunctuatorSpec(name: "LeftBrace", kind: "l_brace", text: "{", requiresLeadingSpace: true),
   PunctuatorSpec(name: "RightBrace", kind: "r_brace", text: "}"),
   PunctuatorSpec(name: "LeftSquareBracket", kind: "l_square", text: "["),
   PunctuatorSpec(name: "RightSquareBracket", kind: "r_square", text: "]"),
-  PunctuatorSpec(name: "LeftAngle", kind: "l_angle", text: "<", requiresLeadingSpace: true, requiresTrailingSpace: true),
-  PunctuatorSpec(name: "RightAngle", kind: "r_angle", text: ">", requiresLeadingSpace: true, requiresTrailingSpace: true),
+  PunctuatorSpec(name: "LeftAngle", kind: "l_angle", text: "<"),
+  PunctuatorSpec(name: "RightAngle", kind: "r_angle", text: ">"),
   PunctuatorSpec(name: "Period", kind: "period", text: "."),
   PunctuatorSpec(name: "Comma", kind: "comma", text: ",", requiresTrailingSpace: true),
   PunctuatorSpec(name: "Ellipsis", kind: "ellipsis", text: "..."),
@@ -306,20 +221,16 @@ public let SYNTAX_TOKENS: [TokenSpec] = [
   PoundConfigSpec(name: "PoundHasSymbol", kind: "pound__hasSymbol", text: "#_hasSymbol"),
   LiteralSpec(name: "IntegerLiteral", kind: "integer_literal", nameForDiagnostics: "integer literal", classification: "IntegerLiteral"),
   LiteralSpec(name: "FloatingLiteral", kind: "floating_literal", nameForDiagnostics: "floating literal", classification: "FloatingLiteral"),
-  LiteralSpec(name: "StringLiteral", kind: "string_literal", nameForDiagnostics: "string literal", classification: "StringLiteral"),
   LiteralSpec(name: "RegexLiteral", kind: "regex_literal", nameForDiagnostics: "regex literal"),
   MiscSpec(name: "Unknown", kind: "unknown", nameForDiagnostics: "token"),
   MiscSpec(name: "Identifier", kind: "identifier", nameForDiagnostics: "identifier", classification: "Identifier"),
-  MiscSpec(name: "UnspacedBinaryOperator", kind: "oper_binary_unspaced", nameForDiagnostics: "binary operator", classification: "OperatorIdentifier"),
-  MiscSpec(name: "SpacedBinaryOperator", kind: "oper_binary_spaced", nameForDiagnostics: "binary operator", classification: "OperatorIdentifier", requiresLeadingSpace: true, requiresTrailingSpace: true),
+  MiscSpec(name: "BinaryOperator", kind: "oper_binary", nameForDiagnostics: "binary operator", classification: "OperatorIdentifier", requiresLeadingSpace: true, requiresTrailingSpace: true),
   MiscSpec(name: "PostfixOperator", kind: "oper_postfix", nameForDiagnostics: "postfix operator", classification: "OperatorIdentifier"),
   MiscSpec(name: "PrefixOperator", kind: "oper_prefix", nameForDiagnostics: "prefix operator", classification: "OperatorIdentifier"),
   MiscSpec(name: "DollarIdentifier", kind: "dollarident", nameForDiagnostics: "dollar identifier", classification: "DollarIdentifier"),
-  MiscSpec(name: "ContextualKeyword", kind: "contextual_keyword", nameForDiagnostics: "keyword", classification: "Keyword"),
+  MiscSpec(name: "Keyword", kind: "keyword", nameForDiagnostics: "keyword", classification: "Keyword", associatedValueClass: "Keyword"),
   MiscSpec(name: "RawStringDelimiter", kind: "raw_string_delimiter", nameForDiagnostics: "raw string delimiter"),
   MiscSpec(name: "StringSegment", kind: "string_segment", nameForDiagnostics: "string segment", classification: "StringLiteral"),
-  MiscSpec(name: "StringInterpolationAnchor", kind: "string_interpolation_anchor", nameForDiagnostics: "string interpolation anchor", text: ")", classification: "StringInterpolationAnchor"),
-  MiscSpec(name: "Yield", kind: "kw_yield", nameForDiagnostics: "yield", text: "yield"),
 ]
 
 public let SYNTAX_TOKEN_MAP = Dictionary(uniqueKeysWithValues: SYNTAX_TOKENS.map { ("\($0.name)Token", $0) })

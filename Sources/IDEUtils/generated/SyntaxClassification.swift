@@ -89,8 +89,6 @@ extension SyntaxClassification {
     // Separate checks for token nodes (most common checks) versus checks for layout nodes.
     if childKind == .token {
       switch (parentKind, indexInParent) {
-      case (.attribute, 3): 
-        return (.attribute, false)
       case (.availabilityVersionRestriction, 1): 
         return (.keyword, false)
       case (.constrainedSugarType, 1): 
@@ -120,12 +118,12 @@ extension SyntaxClassification {
       default: 
         return nil
       }
-    } else {
+    }else {
       switch (parentKind, indexInParent) {
-      case (.backDeployVersionArgument, 1): 
-        return (.keyword, false)
-      case (.customAttribute, 3): 
+      case (.attribute, 3): 
         return (.attribute, false)
+      case (.availabilityVersionRestrictionListEntry, 1): 
+        return (.keyword, false)
       case (.ifConfigClause, 3): 
         return (.buildConfigId, false)
       case (.operatorDecl, 3): 
@@ -140,114 +138,8 @@ extension SyntaxClassification {
 extension RawTokenKind {
   internal var classification: SyntaxClassification {
     switch self {
-    case .associatedtypeKeyword: 
-      return .keyword
-    case .classKeyword: 
-      return .keyword
-    case .deinitKeyword: 
-      return .keyword
-    case .enumKeyword: 
-      return .keyword
-    case .extensionKeyword: 
-      return .keyword
-    case .funcKeyword: 
-      return .keyword
-    case .importKeyword: 
-      return .keyword
-    case .initKeyword: 
-      return .keyword
-    case .inoutKeyword: 
-      return .keyword
-    case .letKeyword: 
-      return .keyword
-    case .operatorKeyword: 
-      return .keyword
-    case .precedencegroupKeyword: 
-      return .keyword
-    case .protocolKeyword: 
-      return .keyword
-    case .structKeyword: 
-      return .keyword
-    case .subscriptKeyword: 
-      return .keyword
-    case .typealiasKeyword: 
-      return .keyword
-    case .varKeyword: 
-      return .keyword
-    case .fileprivateKeyword: 
-      return .keyword
-    case .internalKeyword: 
-      return .keyword
-    case .privateKeyword: 
-      return .keyword
-    case .publicKeyword: 
-      return .keyword
-    case .staticKeyword: 
-      return .keyword
-    case .deferKeyword: 
-      return .keyword
-    case .ifKeyword: 
-      return .keyword
-    case .guardKeyword: 
-      return .keyword
-    case .doKeyword: 
-      return .keyword
-    case .repeatKeyword: 
-      return .keyword
-    case .elseKeyword: 
-      return .keyword
-    case .forKeyword: 
-      return .keyword
-    case .inKeyword: 
-      return .keyword
-    case .whileKeyword: 
-      return .keyword
-    case .returnKeyword: 
-      return .keyword
-    case .breakKeyword: 
-      return .keyword
-    case .continueKeyword: 
-      return .keyword
-    case .fallthroughKeyword: 
-      return .keyword
-    case .switchKeyword: 
-      return .keyword
-    case .caseKeyword: 
-      return .keyword
-    case .defaultKeyword: 
-      return .keyword
-    case .whereKeyword: 
-      return .keyword
-    case .catchKeyword: 
-      return .keyword
-    case .throwKeyword: 
-      return .keyword
-    case .asKeyword: 
-      return .keyword
-    case .anyKeyword: 
-      return .keyword
-    case .falseKeyword: 
-      return .keyword
-    case .isKeyword: 
-      return .keyword
-    case .nilKeyword: 
-      return .keyword
-    case .rethrowsKeyword: 
-      return .keyword
-    case .superKeyword: 
-      return .keyword
-    case .selfKeyword: 
-      return .keyword
-    case .capitalSelfKeyword: 
-      return .keyword
-    case .trueKeyword: 
-      return .keyword
-    case .tryKeyword: 
-      return .keyword
-    case .throwsKeyword: 
-      return .keyword
-    case .wildcardKeyword: 
-      return .keyword
+    case .wildcard: 
+      return .none
     case .leftParen: 
       return .none
     case .rightParen: 
@@ -350,17 +242,13 @@ extension RawTokenKind {
       return .integerLiteral
     case .floatingLiteral: 
       return .floatingLiteral
-    case .stringLiteral: 
-      return .stringLiteral
     case .regexLiteral: 
       return .none
     case .unknown: 
       return .none
     case .identifier: 
       return .identifier
-    case .unspacedBinaryOperator: 
-      return .operatorIdentifier
-    case .spacedBinaryOperator: 
+    case .binaryOperator: 
       return .operatorIdentifier
     case .postfixOperator: 
       return .operatorIdentifier
@@ -368,16 +256,12 @@ extension RawTokenKind {
       return .operatorIdentifier
     case .dollarIdentifier: 
       return .dollarIdentifier
-    case .contextualKeyword: 
+    case .keyword: 
       return .keyword
     case .rawStringDelimiter: 
       return .none
     case .stringSegment: 
       return .stringLiteral
-    case .stringInterpolationAnchor: 
-      return .stringInterpolationAnchor
-    case .yield: 
-      return .none
     case .eof: 
       return .none
     }

@@ -13,11 +13,47 @@
 import XCTest
 @_spi(RawSyntax) import SwiftSyntax
 @_spi(Testing)@_spi(RawSyntax) import SwiftParser
-import SwiftParserDiagnostics
+@_spi(RawSyntax) import SwiftParserDiagnostics
 import SwiftDiagnostics
 import _SwiftSyntaxTestSupport
 
 // MARK: Lexing Assertions
+
+struct LexemeSpec {
+  let rawTokenKind: RawTokenKind
+  let leadingTrivia: SyntaxText
+  let tokenText: SyntaxText
+  let trailingTrivia: SyntaxText
+  let errorLocationMarker: String
+  let error: String?
+  let flags: Lexer.Lexeme.Flags
+
+  /// The file and line at which this `LexemeSpec` was created, so that assertion failures can be reported at its location.
+  let file: StaticString
+  let line: UInt
+
+  init(
+    _ rawTokenKind: RawTokenKind,
+    leading: SyntaxText = "",
+    text: SyntaxText,
+    trailing: SyntaxText = "",
+    errorLocationMarker: String = "1️⃣",
+    error: String? = nil,
+    flags: Lexer.Lexeme.Flags = [],
+    file: StaticString = #file,
+    line: UInt = #line
+  ) {
+    self.rawTokenKind = rawTokenKind
+    self.leadingTrivia = leading
+    self.tokenText = text
+    self.trailingTrivia = trailing
+    self.errorLocationMarker = errorLocationMarker
+    self.error = error
+    self.flags = flags
+    self.file = file
+    self.line = line
+  }
+}
 
 /// Asserts that two lexical streams are structurally equal, including their trivia and any
 /// text.
@@ -29,45 +65,137 @@ import _SwiftSyntaxTestSupport
 ///     which this function was called.
 ///   - line: The line number on which failure occurred. Defaults to the line number on which this
 ///     function was called.
-func AssertEqualTokens(_ actual: [Lexer.Lexeme], _ expected: [Lexer.Lexeme], file: StaticString = #file, line: UInt = #line) {
+private func AssertTokens(
+  _ actual: [Lexer.Lexeme],
+  _ expected: [LexemeSpec],
+  markerLocations: [String: Int],
+  file: StaticString = #file,
+  line: UInt = #line
+) {
   guard actual.count == expected.count else {
-    return XCTFail("Number of tokens does not match! \(actual.count) != \(expected.count)", file: file, line: line)
+    return XCTFail(
+      """
+      Expected \(expected.count) tokens but got \(actual.count):
+      \(actual.map({ "\($0.rawTokenKind) '\($0.tokenText)'" }).joined(separator: "\n"))
+      """,
+      file: file,
+      line: line
+    )
   }
 
-  for (idx, (l, r)) in zip(actual, expected).enumerated() {
-    guard l.tokenKind == r.tokenKind else {
-      return XCTFail("Token at index \(idx) does not match! \(l.tokenKind) != \(r.tokenKind)", file: file, line: line)
+  // The byte offset at which the leading trivia of `actualLexeme` starts.
+  var lexemeStartOffset = 0
+  for (actualLexeme, expectedLexeme) in zip(actual, expected) {
+    defer {
+      lexemeStartOffset = actualLexeme.byteLength
     }
-
-    guard l.leadingTriviaText == r.leadingTriviaText else {
-      return FailStringsEqualWithDiff(
-        String(syntaxText: l.leadingTriviaText),
-        String(syntaxText: r.leadingTriviaText),
-        "Token at index \(idx) does not have matching leading trivia",
-        file: file,
-        line: line
+    if actualLexeme.rawTokenKind != expectedLexeme.rawTokenKind {
+      XCTFail(
+        "Expected token kind \(expectedLexeme.rawTokenKind) but got \(actualLexeme.rawTokenKind)",
+        file: expectedLexeme.file,
+        line: expectedLexeme.line
       )
     }
 
-    guard l.tokenText.debugDescription == r.tokenText.debugDescription else {
-      return FailStringsEqualWithDiff(
-        l.tokenText.debugDescription,
-        r.tokenText.debugDescription,
-        "Text at index \(idx) does not have matching text",
-        file: file,
-        line: line
+    if actualLexeme.leadingTriviaText != expectedLexeme.leadingTrivia {
+      FailStringsEqualWithDiff(
+        String(syntaxText: actualLexeme.leadingTriviaText),
+        String(syntaxText: expectedLexeme.leadingTrivia),
+        "Leading trivia does not match",
+        file: expectedLexeme.file,
+        line: expectedLexeme.line
       )
     }
 
-    guard l.trailingTriviaText == r.trailingTriviaText else {
-      return FailStringsEqualWithDiff(
-        String(syntaxText: l.trailingTriviaText),
-        String(syntaxText: r.trailingTriviaText),
-        "Token at index \(idx) does not have matching trailing trivia",
-        file: file,
-        line: line
+    if actualLexeme.tokenText.debugDescription != expectedLexeme.tokenText.debugDescription {
+      FailStringsEqualWithDiff(
+        actualLexeme.tokenText.debugDescription,
+        expectedLexeme.tokenText.debugDescription,
+        "Token text does not match",
+        file: expectedLexeme.file,
+        line: expectedLexeme.line
       )
     }
+
+    if actualLexeme.trailingTriviaText != expectedLexeme.trailingTrivia {
+      FailStringsEqualWithDiff(
+        String(syntaxText: actualLexeme.trailingTriviaText),
+        String(syntaxText: expectedLexeme.trailingTrivia),
+        "Trailing trivia does not match",
+        file: expectedLexeme.file,
+        line: expectedLexeme.line
+      )
+    }
+
+    switch (actualLexeme.error, expectedLexeme.error) {
+    case (nil, nil): break
+    case (nil, .some):
+      XCTFail(
+        "Expected an error but did not receive one",
+        file: expectedLexeme.file,
+        line: expectedLexeme.line
+      )
+    case (let actualError?, nil):
+      XCTFail(
+        "Did not expect an error but got \(actualError.kind) at \(actualError.byteOffset)",
+        file: expectedLexeme.file,
+        line: expectedLexeme.line
+      )
+    case (let actualError?, let expectedError?):
+      AssertStringsEqualWithDiff(
+        actualError.diagnostic(tokenText: actualLexeme.tokenText).message,
+        expectedError,
+        file: expectedLexeme.file,
+        line: expectedLexeme.line
+      )
+      if let location = markerLocations[expectedLexeme.errorLocationMarker] {
+        XCTAssertEqual(
+          Int(actualError.byteOffset),
+          location - lexemeStartOffset - actualLexeme.leadingTriviaByteLength,
+          "Expected location did not match",
+          file: expectedLexeme.file,
+          line: expectedLexeme.line
+        )
+      } else {
+        XCTFail(
+          "Did not find marker \(expectedLexeme.errorLocationMarker) in the source code",
+          file: expectedLexeme.file,
+          line: expectedLexeme.line
+        )
+      }
+    }
+
+    if actualLexeme.flags != expectedLexeme.flags {
+      XCTFail(
+        "Expected flags \(expectedLexeme.flags.debugDescription) but got \(actualLexeme.flags.debugDescription)",
+        file: expectedLexeme.file,
+        line: expectedLexeme.line
+      )
+    }
+  }
+}
+
+func AssertLexemes(
+  _ markedSource: String,
+  lexemes expectedLexemes: [LexemeSpec],
+  file: StaticString = #file,
+  line: UInt = #line
+) {
+  var (markerLocations, source) = extractMarkers(markedSource)
+  var expectedLexemes = expectedLexemes
+  if expectedLexemes.last?.rawTokenKind != .eof {
+    expectedLexemes.append(LexemeSpec(.eof, text: ""))
+  }
+  source.withUTF8 { buf in
+    var lexemes = [Lexer.Lexeme]()
+    for token in Lexer.tokenize(buf, from: 0) {
+      lexemes.append(token)
+
+      if token.rawTokenKind == .eof {
+        break
+      }
+    }
+    AssertTokens(lexemes, expectedLexemes, markerLocations: markerLocations, file: file, line: line)
   }
 }
 
@@ -271,7 +399,9 @@ func AssertDiagnostic<T: SyntaxProtocol>(
       """
       Diagnostic message should only span a single line. Message was:
       \(diag.message)
-      """
+      """,
+      file: file,
+      line: line
     )
   }
   if let highlight = spec.highlight {
@@ -316,6 +446,7 @@ func AssertParse(
   _ markedSource: String,
   substructure expectedSubstructure: Syntax? = nil,
   substructureAfterMarker: String = "START",
+  substructureCheckTrivia: Bool = false,
   diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
   applyFixIts: [String]? = nil,
   fixedSource expectedFixedSource: String? = nil,
@@ -327,6 +458,7 @@ func AssertParse(
     { SourceFileSyntax.parse(from: &$0) },
     substructure: expectedSubstructure,
     substructureAfterMarker: substructureAfterMarker,
+    substructureCheckTrivia: substructureCheckTrivia,
     diagnostics: expectedDiagnostics,
     applyFixIts: applyFixIts,
     fixedSource: expectedFixedSource,
@@ -343,6 +475,7 @@ func AssertParse<S: SyntaxProtocol>(
   _ parse: (inout Parser) -> S,
   substructure expectedSubstructure: Syntax? = nil,
   substructureAfterMarker: String = "START",
+  substructureCheckTrivia: Bool = false,
   diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
   applyFixIts: [String]? = nil,
   fixedSource expectedFixedSource: String? = nil,
@@ -357,6 +490,7 @@ func AssertParse<S: SyntaxProtocol>(
     },
     substructure: expectedSubstructure,
     substructureAfterMarker: substructureAfterMarker,
+    substructureCheckTrivia: substructureCheckTrivia,
     diagnostics: expectedDiagnostics,
     applyFixIts: applyFixIts,
     fixedSource: expectedFixedSource,
@@ -388,6 +522,7 @@ func AssertParse<S: SyntaxProtocol>(
   _ parse: (String) -> S,
   substructure expectedSubstructure: Syntax? = nil,
   substructureAfterMarker: String = "START",
+  substructureCheckTrivia: Bool = false,
   diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
   applyFixIts: [String]? = nil,
   fixedSource expectedFixedSource: String? = nil,
@@ -418,7 +553,7 @@ func AssertParse<S: SyntaxProtocol>(
   if let expectedSubstructure = expectedSubstructure {
     let subtreeMatcher = SubtreeMatcher(Syntax(tree), markers: markerLocations)
     do {
-      try subtreeMatcher.assertSameStructure(afterMarker: substructureAfterMarker, Syntax(expectedSubstructure), file: file, line: line)
+      try subtreeMatcher.assertSameStructure(afterMarker: substructureAfterMarker, Syntax(expectedSubstructure), includeTrivia: substructureCheckTrivia, file: file, line: line)
     } catch {
       XCTFail("Matching for a subtree failed with error: \(error)", file: file, line: line)
     }
