@@ -45,7 +45,7 @@ private func replaceFirstLabel(
 
   return tuple.replacing(
     childAt: 0,
-    with: firstElement.withLabel(.identifier(newLabel))
+    with: firstElement.with(\.label, .identifier(newLabel))
   )
 }
 
@@ -60,7 +60,7 @@ public struct ColorLiteralMacro: ExpressionMacro {
     )
     let initSyntax: ExprSyntax = ".init(\(argList))"
     if let leadingTrivia = macro.leadingTrivia {
-      return initSyntax.withLeadingTrivia(leadingTrivia)
+      return initSyntax.with(\.leadingTrivia, leadingTrivia)
     }
     return initSyntax
   }
@@ -77,7 +77,7 @@ public struct FileLiteralMacro: ExpressionMacro {
     )
     let initSyntax: ExprSyntax = ".init(\(argList))"
     if let leadingTrivia = macro.leadingTrivia {
-      return initSyntax.withLeadingTrivia(leadingTrivia)
+      return initSyntax.with(\.leadingTrivia, leadingTrivia)
     }
     return initSyntax
   }
@@ -94,7 +94,7 @@ public struct ImageLiteralMacro: ExpressionMacro {
     )
     let initSyntax: ExprSyntax = ".init(\(argList))"
     if let leadingTrivia = macro.leadingTrivia {
-      return initSyntax.withLeadingTrivia(leadingTrivia)
+      return initSyntax.with(\.leadingTrivia, leadingTrivia)
     }
     return initSyntax
   }
@@ -109,7 +109,7 @@ public struct FileIDMacro: ExpressionMacro {
     let fileID = "\(context.moduleName)/\(context.fileName)"
     let fileLiteral: ExprSyntax = "\(literal: fileID)"
     if let leadingTrivia = macro.leadingTrivia {
-      return fileLiteral.withLeadingTrivia(leadingTrivia)
+      return fileLiteral.with(\.leadingTrivia, leadingTrivia)
     }
     return fileLiteral
   }
@@ -154,7 +154,7 @@ extension SimpleDiagnosticMessage: FixItMessage {
   var fixItID: MessageID { diagnosticID }
 }
 
-public struct ErrorMacro: FreestandingDeclarationMacro {
+public struct ErrorMacro: DeclarationMacro {
   public static func expansion(
     of node: MacroExpansionDeclSyntax,
     in context: inout MacroExpansionContext
@@ -183,7 +183,7 @@ public struct ErrorMacro: FreestandingDeclarationMacro {
   }
 }
 
-struct DefineBitwidthNumberedStructsMacro: FreestandingDeclarationMacro {
+struct DefineBitwidthNumberedStructsMacro: DeclarationMacro {
   static func expansion(
     of node: MacroExpansionDeclSyntax,
     in context: inout MacroExpansionContext
@@ -210,7 +210,7 @@ struct DefineBitwidthNumberedStructsMacro: FreestandingDeclarationMacro {
 
 public struct PropertyWrapper {}
 
-extension PropertyWrapper: AccessorDeclarationMacro {
+extension PropertyWrapper: AccessorMacro {
   public static func expansion(
     of node: AttributeSyntax,
     attachedTo declaration: DeclSyntax,
@@ -241,7 +241,7 @@ extension PropertyWrapper: AccessorDeclarationMacro {
   }
 }
 
-extension PropertyWrapper: PeerDeclarationMacro {
+extension PropertyWrapper: PeerMacro {
   public static func expansion(
     of node: AttributeSyntax,
     attachedTo declaration: DeclSyntax,
@@ -278,7 +278,7 @@ extension PropertyWrapper: PeerDeclarationMacro {
   }
 }
 
-public struct AddCompletionHandler: PeerDeclarationMacro {
+public struct AddCompletionHandler: PeerMacro {
   public static func expansion(
     of node: AttributeSyntax,
     attachedTo declaration: DeclSyntax,
@@ -291,14 +291,14 @@ public struct AddCompletionHandler: PeerDeclarationMacro {
     }
 
     // This only makes sense for async functions.
-    if funcDecl.signature.asyncOrReasyncKeyword == nil {
+    if funcDecl.signature.effectSpecifiers?.asyncSpecifier == nil {
       throw CustomError.message(
         "@addCompletionHandler requires an async function"
       )
     }
 
     // Form the completion handler parameter.
-    let resultType: TypeSyntax? = funcDecl.signature.output?.returnType.withoutTrivia()
+    let resultType: TypeSyntax? = funcDecl.signature.output?.returnType.with(\.leadingTrivia, []).with(\.trailingTrivia, [])
 
     let completionHandlerParam =
       FunctionParameterSyntax(
@@ -314,7 +314,8 @@ public struct AddCompletionHandler: PeerDeclarationMacro {
       // We need to add a trailing comma to the preceding list.
       newParameterList = parameterList.removingLast()
         .appending(
-          lastParam.withTrailingComma(
+          lastParam.with(
+            \.trailingComma,
             .commaToken(trailingTrivia: .space)
           )
         )
@@ -331,10 +332,10 @@ public struct AddCompletionHandler: PeerDeclarationMacro {
       }
 
       if let paramName = param.firstName, paramName.text != "_" {
-        return "\(paramName.withoutTrivia()): \(argName.withoutTrivia())"
+        return "\(paramName.text): \(argName.text)"
       }
 
-      return "\(argName.withoutTrivia())"
+      return "\(argName.text)"
     }
 
     let call: ExprSyntax =
@@ -364,16 +365,22 @@ public struct AddCompletionHandler: PeerDeclarationMacro {
 
     let newFunc =
       funcDecl
-      .withSignature(
+      .with(
+        \.signature,
         funcDecl.signature
-          .withAsyncOrReasyncKeyword(nil)  // drop async
-          .withOutput(nil)  // drop result type
-          .withInput(  // add completion handler parameter
-            funcDecl.signature.input.withParameterList(newParameterList)
-              .withoutTrailingTrivia()
+          .with(
+            \.effectSpecifiers,
+            funcDecl.signature.effectSpecifiers?.with(\.asyncSpecifier, nil)  // drop async
+          )
+          .with(\.output, nil)  // drop result type
+          .with(
+            \.input,  // add completion handler parameter
+            funcDecl.signature.input.with(\.parameterList, newParameterList)
+              .with(\.trailingTrivia, [])
           )
       )
-      .withBody(
+      .with(
+        \.body,
         CodeBlockSyntax(
           leftBrace: .leftBraceToken(leadingTrivia: .space),
           statements: CodeBlockItemListSyntax(
@@ -382,14 +389,14 @@ public struct AddCompletionHandler: PeerDeclarationMacro {
           rightBrace: .rightBraceToken(leadingTrivia: .newline)
         )
       )
-      .withAttributes(newAttributeList)
-      .withLeadingTrivia(.newlines(2))
+      .with(\.attributes, newAttributeList)
+      .with(\.leadingTrivia, .newlines(2))
 
     return [DeclSyntax(newFunc)]
   }
 }
 
-public struct AddBackingStorage: MemberDeclarationMacro {
+public struct AddBackingStorage: MemberMacro {
   public static func expansion(
     of node: AttributeSyntax,
     attachedTo decl: DeclSyntax,
@@ -399,7 +406,7 @@ public struct AddBackingStorage: MemberDeclarationMacro {
   {
     let storage: DeclSyntax = "var _storage: Storage<Self>"
     return [
-      storage.withLeadingTrivia([.newlines(1), .spaces(2)])
+      storage.with(\.leadingTrivia, [.newlines(1), .spaces(2)])
     ]
   }
 }
@@ -421,7 +428,7 @@ public struct WrapAllProperties: MemberAttributeMacro {
           name: .identifier("Wrapper")
         )
       )
-      .withLeadingTrivia([.newlines(1), .spaces(2)])
+      .with(\.leadingTrivia, [.newlines(1), .spaces(2)])
     ]
   }
 }
@@ -463,14 +470,14 @@ public struct WrapStoredProperties: MemberAttributeMacro {
           name: .identifier("Wrapper")
         )
       )
-      .withLeadingTrivia([.newlines(1), .spaces(2)])
+      .with(\.leadingTrivia, [.newlines(1), .spaces(2)])
     ]
   }
 }
 
 struct CustomTypeWrapperMacro {}
 
-extension CustomTypeWrapperMacro: MemberDeclarationMacro {
+extension CustomTypeWrapperMacro: MemberMacro {
   static func expansion(
     of node: AttributeSyntax,
     attachedTo declaration: DeclSyntax,
@@ -498,12 +505,12 @@ extension CustomTypeWrapperMacro: MemberAttributeMacro {
           name: .identifier("customTypeWrapper")
         )
       )
-      .withLeadingTrivia([.newlines(1), .spaces(2)])
+      .with(\.leadingTrivia, [.newlines(1), .spaces(2)])
     ]
   }
 }
 
-extension CustomTypeWrapperMacro: AccessorDeclarationMacro {
+extension CustomTypeWrapperMacro: AccessorMacro {
   static func expansion(
     of node: AttributeSyntax,
     attachedTo declaration: DeclSyntax,

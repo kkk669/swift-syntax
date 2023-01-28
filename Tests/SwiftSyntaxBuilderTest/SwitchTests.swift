@@ -23,7 +23,34 @@ final class SwitchTests: XCTestCase {
         }
       }
       SwitchCaseSyntax("default:") {
-        BreakStmtSyntax("break")
+        StmtSyntax("break")
+      }
+    }
+
+    AssertBuildResult(
+      syntax,
+      """
+      switch count {
+      case 1:
+          print(count)
+      case 2:
+          print(count)
+      default:
+          break
+      }
+      """
+    )
+  }
+
+  func testSwitchStmtSyntaxWithStringParsing() throws {
+    let syntax = try SwitchStmtSyntax("switch count") {
+      for num in 1..<3 {
+        SwitchCaseSyntax("case \(literal: num):") {
+          ExprSyntax("print(count)")
+        }
+      }
+      SwitchCaseSyntax("default:") {
+        StmtSyntax("break")
       }
     }
 

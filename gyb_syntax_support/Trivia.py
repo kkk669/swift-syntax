@@ -9,6 +9,10 @@ class Trivia(object):
         self.comment = comment
         self.characters = tuple(characters)
         self.lower_name = lowercase_first_word(name)
+        if name == "Backslash":
+            self.plural_name = "backslashes"
+        else:
+            self.plural_name = f"{lowercase_first_word(name)}s"
         self.is_new_line = is_new_line
         self.is_comment = is_comment
 
@@ -30,9 +34,11 @@ class Trivia(object):
 TRIVIAS = [
     Trivia('Space', 'A space \' \' character.', characters=[' ']),
     Trivia('Tab', 'A tab \'\\t\' character.', characters=['\\t']),
+    # Swift don't support vertical tab '\v' so we use the raw unicode
     Trivia('VerticalTab', 'A vertical tab \'\\v\' character.',
-           characters=['\\v'], swift_characters=['\\u{2B7F}']),
-    Trivia('Formfeed', 'A form-feed \'f\' character.', characters=['\\f'],
+           characters=['\\u{b}'], swift_characters=['\\u{2B7F}']),
+    # Swift don't support form feed '\f' so we use the raw unicode
+    Trivia('Formfeed', 'A form-feed \'f\' character.', characters=['\\u{c}'],
            swift_characters=['\\u{240C}']),
     Trivia('Newline', 'A newline \'\\n\' character.', characters=['\\n'],
            is_new_line=True),
@@ -54,6 +60,8 @@ TRIVIAS = [
            'A documentation block comment, starting with \'/**\' and ending '
            'with \'*/\'.',
            is_comment=True),
+    Trivia('Backslash', 'A backslash that is at the end of a line in a multi-line string literal to escape the newline.', characters=['\\\\']),
+    Trivia('Pound', 'A \'#\' that is at the end of a line in a multi-line string literal to escape the newline.', characters=['#']),
     Trivia('UnexpectedText', 'Any skipped unexpected text.'),
     Trivia('Shebang', 'A script command, starting with \'#!\'.'),
 ]

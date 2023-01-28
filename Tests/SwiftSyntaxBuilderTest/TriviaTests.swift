@@ -54,13 +54,13 @@ final class TriviaTests: XCTestCase {
   }
 
   func testAttachedTrivia() {
-    let testCases: [UInt: (VariableDeclSyntax, String)] = [
+    let testCases: [UInt: (DeclSyntax, String)] = [
       #line: (
-        VariableDeclSyntax("let x: Int").withLeadingTrivia(.space),
+        DeclSyntax("let x: Int").with(\.leadingTrivia, .space),
         " let x: Int"
       ),
       #line: (
-        VariableDeclSyntax("let x: Int").withTrailingTrivia(.space),
+        DeclSyntax("let x: Int").with(\.trailingTrivia, .space),
         "let x: Int "
       ),
     ]
@@ -74,14 +74,14 @@ final class TriviaTests: XCTestCase {
     let testCases: [UInt: (AttributeListSyntax, String)] = [
       #line: (
         AttributeListSyntax {
-          AttributeSyntax(attributeName: TypeSyntax("Test")).withLeadingTrivia(.space)
+          AttributeSyntax(attributeName: TypeSyntax("Test")).with(\.leadingTrivia, .space)
         },
         " @Test"
       ),
       #line: (
         AttributeListSyntax {
-          AttributeSyntax(attributeName: TypeSyntax("A")).withTrailingTrivia(.space)
-          AttributeSyntax(attributeName: TypeSyntax("B")).withTrailingTrivia(.space)
+          AttributeSyntax(attributeName: TypeSyntax("A")).with(\.trailingTrivia, .space)
+          AttributeSyntax(attributeName: TypeSyntax("B")).with(\.trailingTrivia, .space)
         },
         "@A @B "
       ),

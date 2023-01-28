@@ -31,7 +31,7 @@ protocol RawTokenKindSubset: CaseIterable {
 
 extension RawTokenKindSubset {
   var remappedKind: RawTokenKind? {
-    if case .keyword = self.rawTokenKind {
+    if .keyword == self.rawTokenKind.base {
       return self.rawTokenKind
     } else {
       return nil
@@ -104,7 +104,6 @@ enum CanBeStatementStart: RawTokenKindSubset {
   case forKeyword
   case guardKeyword
   case ifKeyword
-  case poundAssertKeyword
   case repeatKeyword
   case returnKeyword
   case switchKeyword
@@ -122,7 +121,6 @@ enum CanBeStatementStart: RawTokenKindSubset {
     case RawTokenKindMatch(.for): self = .forKeyword
     case RawTokenKindMatch(.guard): self = .guardKeyword
     case RawTokenKindMatch(.if): self = .ifKeyword
-    case RawTokenKindMatch(.poundAssertKeyword): self = .poundAssertKeyword
     case RawTokenKindMatch(.repeat): self = .repeatKeyword
     case RawTokenKindMatch(.return): self = .returnKeyword
     case RawTokenKindMatch(.switch): self = .switchKeyword
@@ -143,7 +141,6 @@ enum CanBeStatementStart: RawTokenKindSubset {
     case .forKeyword: return .keyword(.for)
     case .guardKeyword: return .keyword(.guard)
     case .ifKeyword: return .keyword(.if)
-    case .poundAssertKeyword: return .poundAssertKeyword
     case .repeatKeyword: return .keyword(.repeat)
     case .returnKeyword: return .keyword(.return)
     case .switchKeyword: return .keyword(.switch)
@@ -326,43 +323,6 @@ enum DeclarationStart: RawTokenKindSubset {
   }
 }
 
-enum EffectsSpecifier: RawTokenKindSubset {
-  case asyncKeyword
-  case awaitKeyword
-  case reasyncKeyword
-  case rethrowsKeyword
-  case throwKeyword
-  case throwsKeyword
-  case tryKeyword
-
-  init?(lexeme: Lexer.Lexeme) {
-    // We'll take 'await', 'throw' and 'try' too for recovery but they have to
-    // be on the same line as the declaration they're modifying.
-    switch lexeme {
-    case RawTokenKindMatch(.async): self = .asyncKeyword
-    case RawTokenKindMatch(.await) where !lexeme.isAtStartOfLine: self = .awaitKeyword
-    case RawTokenKindMatch(.reasync): self = .reasyncKeyword
-    case RawTokenKindMatch(.rethrows): self = .rethrowsKeyword
-    case RawTokenKindMatch(.throw) where !lexeme.isAtStartOfLine: self = .throwKeyword
-    case RawTokenKindMatch(.throws): self = .throwsKeyword
-    case RawTokenKindMatch(.try) where !lexeme.isAtStartOfLine: self = .tryKeyword
-    default: return nil
-    }
-  }
-
-  var rawTokenKind: RawTokenKind {
-    switch self {
-    case .asyncKeyword: return .keyword(.async)
-    case .awaitKeyword: return .keyword(.await)
-    case .reasyncKeyword: return .keyword(.reasync)
-    case .rethrowsKeyword: return .keyword(.rethrows)
-    case .throwKeyword: return .keyword(.throw)
-    case .throwsKeyword: return .keyword(.throws)
-    case .tryKeyword: return .keyword(.try)
-    }
-  }
-}
-
 enum IdentifierTokens: RawTokenKindSubset {
   case anyKeyword
   case capitalSelfKeyword
@@ -511,14 +471,12 @@ enum OperatorLike: RawTokenKindSubset {
 
 enum PoundDeclarationStart: RawTokenKindSubset {
   case poundIfKeyword
-  case poundWarningKeyword
-  case poundErrorKeyword
+  case pound
 
   init?(lexeme: Lexer.Lexeme) {
     switch lexeme.rawTokenKind {
     case .poundIfKeyword: self = .poundIfKeyword
-    case .poundWarningKeyword: self = .poundWarningKeyword
-    case .poundErrorKeyword: self = .poundErrorKeyword
+    case .pound: self = .pound
     default: return nil
     }
   }
@@ -526,8 +484,7 @@ enum PoundDeclarationStart: RawTokenKindSubset {
   var rawTokenKind: RawTokenKind {
     switch self {
     case .poundIfKeyword: return .poundIfKeyword
-    case .poundWarningKeyword: return .poundWarningKeyword
-    case .poundErrorKeyword: return .poundErrorKeyword
+    case .pound: return .pound
     }
   }
 }

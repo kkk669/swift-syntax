@@ -58,8 +58,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/TypealiasDeclSyntax>
 - <doc:SwiftSyntax/AssociatedtypeDeclSyntax>
 - <doc:SwiftSyntax/IfConfigDeclSyntax>
-- <doc:SwiftSyntax/PoundErrorDeclSyntax>
-- <doc:SwiftSyntax/PoundWarningDeclSyntax>
 - <doc:SwiftSyntax/PoundSourceLocationSyntax>
 - <doc:SwiftSyntax/ClassDeclSyntax>
 - <doc:SwiftSyntax/ActorDeclSyntax>
@@ -100,7 +98,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/BreakStmtSyntax>
 - <doc:SwiftSyntax/ThrowStmtSyntax>
 - <doc:SwiftSyntax/IfStmtSyntax>
-- <doc:SwiftSyntax/PoundAssertStmtSyntax>
 
 ### Expressions
 
@@ -271,6 +268,8 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/CodeBlockItemSyntax>
 - <doc:SwiftSyntax/CodeBlockItemListSyntax>
 - <doc:SwiftSyntax/CodeBlockSyntax>
+- <doc:SwiftSyntax/DeclEffectSpecifiersSyntax>
+- <doc:SwiftSyntax/TypeEffectSpecifiersSyntax>
 - <doc:SwiftSyntax/UnexpectedNodesSyntax>
 - <doc:SwiftSyntax/TupleExprElementListSyntax>
 - <doc:SwiftSyntax/ArrayElementListSyntax>
@@ -380,7 +379,6 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/AvailabilityConditionSyntax>
 - <doc:SwiftSyntax/MatchingPatternConditionSyntax>
 - <doc:SwiftSyntax/OptionalBindingConditionSyntax>
-- <doc:SwiftSyntax/HasSymbolConditionSyntax>
 - <doc:SwiftSyntax/ConditionElementListSyntax>
 - <doc:SwiftSyntax/SwitchCaseSyntax>
 - <doc:SwiftSyntax/SwitchDefaultLabelSyntax>
@@ -433,8 +431,10 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 - <doc:SwiftSyntax/IdentifiedDeclSyntax>
 - <doc:SwiftSyntax/WithCodeBlockSyntax>
 - <doc:SwiftSyntax/ParenthesizedSyntax>
+- <doc:SwiftSyntax/FreestandingMacroExpansionSyntax>
 - <doc:SwiftSyntax/WithTrailingCommaSyntax>
 - <doc:SwiftSyntax/WithStatementsSyntax>
+- <doc:SwiftSyntax/EffectSpecifiersSyntax>
 
 ### Syntax Position
 

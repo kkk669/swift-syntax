@@ -570,12 +570,17 @@ final class ExpressionTests: XCTestCase {
       ]
     )
 
-    // FIXME: We currently don't enforce that multiline string literal
-    // contents must start on a new line
     AssertParse(
       ##"""
-      """"""1️⃣
-      """##
+      """1️⃣"""
+      """##,
+      diagnostics: [
+        DiagnosticSpec(message: "multi-line string literal closing delimiter must begin on a new line")
+      ],
+      fixedSource: ##"""
+        """
+        """
+        """##
     )
 
     AssertParse(
@@ -632,8 +637,26 @@ final class ExpressionTests: XCTestCase {
   func testSingleQuoteStringLiteral() {
     AssertParse(
       #"""
-      'red'
-      """#
+      1️⃣'red'
+      """#,
+      diagnostics: [
+        DiagnosticSpec(message: #"Single-quoted string literal found, use '"'"#, fixIts: [#"replace ''' by '"'"#])
+      ],
+      fixedSource: """
+        "red"
+        """
+    )
+
+    AssertParse(
+      #"""
+       1️⃣' red ' + 1
+      """#,
+      diagnostics: [
+        DiagnosticSpec(message: #"Single-quoted string literal found, use '"'"#, fixIts: [#"replace ''' by '"'"#])
+      ],
+      fixedSource: """
+         " red " + 1
+        """
     )
   }
 
@@ -726,7 +749,7 @@ final class ExpressionTests: XCTestCase {
       "#keyPath((b:1️⃣)2️⃣",
       diagnostics: [
         DiagnosticSpec(locationMarker: "1️⃣", message: "expected value in tuple"),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected ')' to end pound literal expression"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected ')' to end macro expansion"),
       ]
     )
   }
@@ -735,7 +758,7 @@ final class ExpressionTests: XCTestCase {
     AssertParse(
       "[(Int) -> 1️⃣throws Int]()",
       diagnostics: [
-        DiagnosticSpec(message: "'throws' may only occur before '->'", fixIts: ["move 'throws' in front of '->'"])
+        DiagnosticSpec(message: "'throws' must preceed '->'", fixIts: ["move 'throws' in front of '->'"])
       ],
       fixedSource: "[(Int) throws -> Int]()"
     )
@@ -743,7 +766,7 @@ final class ExpressionTests: XCTestCase {
     AssertParse(
       "[(Int) -> 1️⃣async throws Int]()",
       diagnostics: [
-        DiagnosticSpec(message: "'async throws' may only occur before '->'", fixIts: ["move 'async throws' in front of '->'"])
+        DiagnosticSpec(message: "'async throws' must preceed '->'", fixIts: ["move 'async throws' in front of '->'"])
       ],
       fixedSource: "[(Int) async throws -> Int]()"
     )
@@ -779,7 +802,7 @@ final class ExpressionTests: XCTestCase {
         DiagnosticSpec(locationMarker: "1️⃣", message: "expected pattern in variable"),
         DiagnosticSpec(locationMarker: "2️⃣", message: "expected type in function type"),
         DiagnosticSpec(locationMarker: "2️⃣", message: "unexpected code '..' in function type"),
-        DiagnosticSpec(locationMarker: "3️⃣", message: "expected type in function type"),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected return type in function type"),
       ]
     )
   }
@@ -898,6 +921,178 @@ final class ExpressionTests: XCTestCase {
         DiagnosticSpec(locationMarker: "1️⃣", message: #"expected '"' to end string literal"#),
         DiagnosticSpec(locationMarker: "2️⃣", message: #"extraneous code ')"' at top level"#),
       ]
+    )
+  }
+
+  func testUnterminatedStringLiteral() {
+    AssertParse(
+      """
+      "This is unterminated1️⃣
+      x
+      """,
+      substructure: Syntax(
+        StringLiteralExprSyntax(
+          openQuote: .stringQuoteToken(),
+          segments: StringLiteralSegmentsSyntax([
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("This is unterminated")))
+          ]),
+          closeQuote: .stringQuoteToken(presence: .missing)
+        )
+      ),
+      diagnostics: [
+        DiagnosticSpec(message: #"expected '"' to end string literal"#)
+      ]
+    )
+  }
+
+  func testPostProcessMultilineStringLiteral() {
+    AssertParse(
+      #"""
+        """
+        line 1
+        line 2
+        """
+      """#,
+      substructure: Syntax(
+        StringLiteralExprSyntax(
+          openQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
+          segments: StringLiteralSegmentsSyntax([
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: .spaces(2)))),
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: .spaces(2), trailingTrivia: .newline))),
+          ]),
+          closeQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
+        )
+      ),
+      options: [.substructureCheckTrivia]
+    )
+
+    AssertParse(
+      #"""
+        """
+        line 1 \
+        line 2
+        """
+      """#,
+      substructure: Syntax(
+        StringLiteralExprSyntax(
+          openQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
+          segments: StringLiteralSegmentsSyntax([
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1 ", leadingTrivia: .spaces(2), trailingTrivia: [.backslashes(1), .newlines(1)]))),
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: .spaces(2), trailingTrivia: .newline))),
+          ]),
+          closeQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
+        )
+      ),
+      options: [.substructureCheckTrivia]
+    )
+
+    AssertParse(
+      #"""
+        """
+        line 1
+        line 2 1️⃣\
+        """
+      """#,
+      substructure: Syntax(
+        StringLiteralExprSyntax(
+          openQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
+          segments: StringLiteralSegmentsSyntax([
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: .spaces(2)))),
+            .stringSegment(
+              StringSegmentSyntax(
+                UnexpectedNodesSyntax([Syntax(TokenSyntax.stringSegment("  line 2 ", trailingTrivia: [.backslashes(1), .newlines(1)]))]),
+                content: .stringSegment("line 2 ", leadingTrivia: .spaces(2), trailingTrivia: .newline, presence: .missing)
+              )
+            ),
+          ]),
+          closeQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
+        )
+      ),
+      diagnostics: [
+        DiagnosticSpec(message: "escaped newline at the last line of a multi-line string literal is not allowed")
+      ],
+      options: [.substructureCheckTrivia]
+    )
+  }
+
+  func testMultiLineStringInInterpolationOfSingleLineStringLiteral() {
+    // It's odd that we accept this but it matches the C++ parser's behavior.
+    AssertParse(
+      #"""
+      "foo\(test("""
+      bar
+      """) )"
+      """#
+    )
+  }
+
+  func testEmptyLineInMultilineStringLiteral() {
+    AssertParse(
+      #"""
+        """
+        line 1
+
+        line 2
+        """
+      """#,
+      substructure: Syntax(
+        StringLiteralExprSyntax(
+          openDelimiter: nil,
+          openQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)], trailingTrivia: .newline),
+          segments: StringLiteralSegmentsSyntax([
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: [.spaces(2)]))),
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("\n"))),
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: [.spaces(2)], trailingTrivia: .newline))),
+          ]),
+          closeQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)]),
+          closeDelimiter: nil
+        )
+      ),
+      options: [.substructureCheckTrivia]
+    )
+
+    AssertParse(
+      #"""
+        """
+        line 1
+
+        """
+      """#,
+      substructure: Syntax(
+        StringLiteralExprSyntax(
+          openDelimiter: nil,
+          openQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)], trailingTrivia: .newline),
+          segments: StringLiteralSegmentsSyntax([
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: [.spaces(2)]))),
+            .stringSegment(StringSegmentSyntax(content: .stringSegment("", trailingTrivia: .newline))),
+          ]),
+          closeQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)]),
+          closeDelimiter: nil
+        )
+      ),
+      options: [.substructureCheckTrivia]
+    )
+  }
+
+  func testUnderIndentedWhitespaceonlyLineInMultilineStringLiteral() {
+    AssertParse(
+      #"""
+        """
+        line 1
+       1️⃣
+        line 2
+        """
+      """#,
+      diagnostics: [
+        DiagnosticSpec(message: "insufficient indentation of line in multi-line string literal")
+      ],
+      fixedSource: #"""
+          """
+          line 1
+        \#("  ")
+          line 2
+          """
+        """#
     )
   }
 }

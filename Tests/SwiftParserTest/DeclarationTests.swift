@@ -123,14 +123,14 @@ final class DeclarationTests: XCTestCase {
     AssertParse(
       "class T where t1️⃣",
       diagnostics: [
-        DiagnosticSpec(message: "expected '=' and right-hand type in same type requirement"),
+        DiagnosticSpec(message: "expected ':' or '==' to indicate a conformance or same-type requirement"),
         DiagnosticSpec(message: "expected member block in class"),
       ]
     )
     AssertParse(
       "class B<where g1️⃣",
       diagnostics: [
-        DiagnosticSpec(message: "expected '=' and right-hand type in same type requirement"),
+        DiagnosticSpec(message: "expected ':' or '==' to indicate a conformance or same-type requirement"),
         DiagnosticSpec(message: "expected '>' to end generic parameter clause"),
         DiagnosticSpec(message: "expected member block in class"),
       ]
@@ -670,7 +670,7 @@ final class DeclarationTests: XCTestCase {
     AssertParse(
       "func test() -> 1️⃣throws Int",
       diagnostics: [
-        DiagnosticSpec(message: "'throws' may only occur before '->'", fixIts: ["move 'throws' in front of '->'"])
+        DiagnosticSpec(message: "'throws' must preceed '->'", fixIts: ["move 'throws' in front of '->'"])
       ],
       fixedSource: "func test() throws -> Int"
     )
@@ -745,8 +745,8 @@ final class DeclarationTests: XCTestCase {
       diagnostics: [
         DiagnosticSpec(locationMarker: "1️⃣", message: "expected 'func' in function"),
         DiagnosticSpec(locationMarker: "2️⃣", message: "expected parameter clause in function signature"),
-        DiagnosticSpec(locationMarker: "3️⃣", message: "expected identifier in pound literal declaration"),
-        DiagnosticSpec(locationMarker: "4️⃣", message: "expected identifier in pound literal declaration"),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected identifier in macro expansion"),
+        DiagnosticSpec(locationMarker: "4️⃣", message: "expected identifier in macro expansion"),
         DiagnosticSpec(locationMarker: "5️⃣", message: #"unexpected code '25 "line-directive.swift"' in struct"#),
       ]
     )
@@ -759,8 +759,22 @@ final class DeclarationTests: XCTestCase {
         var prop : Int { get 1️⃣bogus rethrows set }
       }
       """,
+      substructure: Syntax(
+        AccessorBlockSyntax(
+          accessors: AccessorListSyntax([
+            AccessorDeclSyntax(
+              accessorKind: .keyword(.get),
+              effectSpecifiers: DeclEffectSpecifiersSyntax(
+                UnexpectedNodesSyntax([TokenSyntax.identifier("bogus")]),
+                throwsSpecifier: .keyword(.rethrows)
+              )
+            ),
+            AccessorDeclSyntax(accessorKind: .keyword(.set)),
+          ])
+        )
+      ),
       diagnostics: [
-        DiagnosticSpec(message: "unexpected code 'bogus rethrows set' in variable")
+        DiagnosticSpec(message: "unexpected code 'bogus' before effect specifiers")
       ]
     )
   }
@@ -1162,6 +1176,18 @@ final class DeclarationTests: XCTestCase {
       }
       """
     )
+    AssertParse(
+      """
+      #expand
+      """,
+      substructure: Syntax(
+        SourceFileSyntax(
+          CodeBlockItemListSyntax {
+            MacroExpansionDeclSyntax(macro: "expand")
+          }
+        )
+      )
+    )
   }
 
   func testVariableDeclWithGetSetButNoBrace() {
@@ -1355,6 +1381,17 @@ final class DeclarationTests: XCTestCase {
       substructure: Syntax(
         MemberDeclListItemSyntax(decl: EditorPlaceholderDeclSyntax(identifier: .identifier("<#code#>")))
       )
+    )
+  }
+
+  func testAttributeInPoundIf() {
+    AssertParse(
+      """
+      #if hasAttribute(foo)
+      @foo
+      #endif
+      struct MyStruct {}
+      """
     )
   }
 }

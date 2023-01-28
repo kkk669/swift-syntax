@@ -26,21 +26,21 @@ final class VariableTests: XCTestCase {
   }
 
   func testVariableDeclWithStringParsing() {
-    let testCases: [UInt: (VariableDeclSyntax, String)] = [
+    let testCases: [UInt: (DeclSyntax, String)] = [
       #line: (
-        VariableDeclSyntax("let content = try? String(contentsOf: url)"),
+        DeclSyntax("let content = try? String(contentsOf: url)"),
         "let content = try? String(contentsOf: url)"
       ),
       #line: (
-        VariableDeclSyntax("let content = try! String(contentsOf: url)"),
+        DeclSyntax("let content = try! String(contentsOf: url)"),
         "let content = try! String(contentsOf: url)"
       ),
       #line: (
-        VariableDeclSyntax("var newLayout: ContiguousArray<RawSyntax?>?"),
+        DeclSyntax("var newLayout: ContiguousArray<RawSyntax?>?"),
         "var newLayout: ContiguousArray<RawSyntax?>?"
       ),
       #line: (
-        VariableDeclSyntax("var foo: String { myOptional!.someProperty }"),
+        DeclSyntax("var foo: String { myOptional!.someProperty }"),
         """
         var foo: String {
             myOptional!.someProperty
@@ -48,7 +48,7 @@ final class VariableTests: XCTestCase {
         """
       ),
       #line: (
-        VariableDeclSyntax("var foo: String? { myOptional?.someProperty }"),
+        DeclSyntax("var foo: String? { myOptional?.someProperty }"),
         """
         var foo: String? {
             myOptional?.someProperty
@@ -56,13 +56,13 @@ final class VariableTests: XCTestCase {
         """
       ),
       #line: (
-        VariableDeclSyntax("let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)"),
+        DeclSyntax("let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)"),
         """
         let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)
         """
       ),
       #line: (
-        VariableDeclSyntax("var foo: String { bar(baz!) }"),
+        DeclSyntax("var foo: String { bar(baz!) }"),
         """
         var foo: String {
             bar(baz!)
@@ -70,7 +70,7 @@ final class VariableTests: XCTestCase {
         """
       ),
       #line: (
-        VariableDeclSyntax(#"var foo: String { bar ?? "" }"#),
+        DeclSyntax(#"var foo: String { bar ?? "" }"#),
         #"""
         var foo: String {
             bar ?? ""
@@ -78,13 +78,13 @@ final class VariableTests: XCTestCase {
         """#
       ),
       #line: (
-        VariableDeclSyntax("let bar = try! (foo())"),
+        DeclSyntax("let bar = try! (foo())"),
         """
         let bar = try! (foo())
         """
       ),
       #line: (
-        VariableDeclSyntax("let bar = try! !functionThatThrows()"),
+        DeclSyntax("let bar = try! !functionThatThrows()"),
         """
         let bar = try! !functionThatThrows()
         """
@@ -122,7 +122,7 @@ final class VariableTests: XCTestCase {
               for i in 1...3 {
                 ArrayElementSyntax(
                   expression: IntegerLiteralExprSyntax(i),
-                  trailingComma: .commaToken().withTrailingTrivia(.spaces(3))
+                  trailingComma: .commaToken().with(\.trailingTrivia, .spaces(3))
                 )
               }
             }
@@ -167,35 +167,50 @@ final class VariableTests: XCTestCase {
   }
 
   func testClosureTypeVariableDecl() {
-    let type = FunctionTypeSyntax(arguments: [TupleTypeElementSyntax(type: TypeSyntax("Int"))], returnType: TypeSyntax("Bool"))
+    let type = FunctionTypeSyntax(arguments: [TupleTypeElementSyntax(type: TypeSyntax("Int"))], output: ReturnClauseSyntax(returnType: TypeSyntax("Bool")))
     let buildable = VariableDeclSyntax(letOrVarKeyword: .keyword(.let)) {
       PatternBindingSyntax(pattern: PatternSyntax("c"), typeAnnotation: TypeAnnotationSyntax(type: type))
     }
     AssertBuildResult(buildable, "let c: (Int) -> Bool")
   }
 
-  func testComputedProperty() {
-    let buildable = VariableDeclSyntax(name: "test", type: TypeAnnotationSyntax(type: TypeSyntax("Int"))) {
-      SequenceExprSyntax {
-        IntegerLiteralExprSyntax(4)
-        BinaryOperatorExprSyntax(text: "+")
-        IntegerLiteralExprSyntax(5)
-      }
-    }
+  func testComputedProperty() throws {
+    let testCases: [UInt: (VariableDeclSyntax, String)] = [
+      #line: (
+        VariableDeclSyntax(name: "test", type: TypeAnnotationSyntax(type: TypeSyntax("Int"))) {
+          SequenceExprSyntax {
+            IntegerLiteralExprSyntax(4)
+            BinaryOperatorExprSyntax(text: "+")
+            IntegerLiteralExprSyntax(5)
+          }
+        },
+        """
+        var test: Int {
+            4 + 5
+        }
+        """
+      ),
+      #line: (
+        try VariableDeclSyntax("var foo: String") {
+          StmtSyntax(#"return "hello world""#)
+        },
+        """
+        var foo: String {
+            return "hello world"
+        }
+        """
+      ),
+    ]
 
-    AssertBuildResult(
-      buildable,
-      """
-      var test: Int {
-          4 + 5
-      }
-      """
-    )
+    for (line, testCase) in testCases {
+      let (builder, expected) = testCase
+      AssertBuildResult(builder, expected, line: line)
+    }
   }
 
   func testAccessorList() {
     let buildable = VariableDeclSyntax(name: "test", type: TypeAnnotationSyntax(type: TypeSyntax("Int"))) {
-      AccessorDeclSyntax(accessorKind: .keyword(.get), asyncKeyword: nil) {
+      AccessorDeclSyntax(accessorKind: .keyword(.get)) {
         SequenceExprSyntax {
           IntegerLiteralExprSyntax(4)
           BinaryOperatorExprSyntax(text: "+")
@@ -203,7 +218,7 @@ final class VariableTests: XCTestCase {
         }
       }
 
-      AccessorDeclSyntax(accessorKind: .keyword(.willSet), asyncKeyword: nil) {}
+      AccessorDeclSyntax(accessorKind: .keyword(.willSet)) {}
     }
 
     AssertBuildResult(

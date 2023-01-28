@@ -15,6 +15,12 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
+let lookupTable = ArrayExprSyntax(leftSquare: .leftSquareBracketToken(trailingTrivia: .newline)) {
+  for keyword in KEYWORDS {
+    ArrayElementSyntax(expression: ExprSyntax("\(literal: keyword.name)"), trailingComma: .commaToken(), trailingTrivia: .newline)
+  }
+}
+
 let keywordFile = SourceFileSyntax {
   ExtensionDeclSyntax(
     """
@@ -31,9 +37,9 @@ let keywordFile = SourceFileSyntax {
 
   EnumDeclSyntax("""
     @frozen  // FIXME: Not actually stable, works around a miscompile
-    public enum Keyword: StaticString
+    public enum Keyword: UInt8, Hashable
     """) {
-    for keyword in KEYWORDS {
+    for (index, keyword) in KEYWORDS.enumerated() {
       EnumCaseDeclSyntax("case \(raw: keyword.escapedName)")
     }
 
@@ -75,10 +81,20 @@ let keywordFile = SourceFileSyntax {
       }
     }
 
+    VariableDeclSyntax("""
+    /// This is really unfortunate. Really, we should have a `switch` in
+    /// `Keyword.defaultText` to return the keyword's kind but the constant lookup
+    /// table is significantly faster. Ideally, we could also get the compiler to
+    /// constant-evaluate `Keyword.spi.defaultText` to a `SyntaxText` but I don't
+    /// see how that's possible right now.
+    private static let keywordTextLookupTable: [SyntaxText] = \(lookupTable)
+    """)
+
     VariableDeclSyntax(
       """
-      var defaultText: SyntaxText {
-        return SyntaxText(self.rawValue)
+      @_spi(RawSyntax)
+      public var defaultText: SyntaxText {
+        return Keyword.keywordTextLookupTable[Int(self.rawValue)]
       }
       """
     )

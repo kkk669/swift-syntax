@@ -60,7 +60,10 @@ extension FixIt.Changes {
 
   /// If `transferTrivia` is `true`, the leading and trailing trivia of the
   /// removed node will be transferred to the trailing trivia of the previous token.
-  static func makeMissing<SyntaxType: SyntaxProtocol>(_ node: SyntaxType, transferTrivia: Bool = true) -> Self {
+  static func makeMissing<SyntaxType: SyntaxProtocol>(_ node: SyntaxType?, transferTrivia: Bool = true) -> Self {
+    guard let node = node else {
+      return FixIt.Changes(changes: [])
+    }
     var changes = [FixIt.Change.replace(oldNode: Syntax(node), newNode: MissingMaker().visit(Syntax(node)))]
     if transferTrivia {
       changes += FixIt.Changes.transferTriviaAtSides(from: [node]).changes
@@ -77,10 +80,10 @@ extension FixIt.Changes {
   ) -> Self {
     var presentNode = PresentMaker().visit(Syntax(node))
     if let leadingTrivia = leadingTrivia {
-      presentNode = presentNode.withLeadingTrivia(leadingTrivia)
+      presentNode = presentNode.with(\.leadingTrivia, leadingTrivia)
     }
     if let trailingTrivia = trailingTrivia {
-      presentNode = presentNode.withTrailingTrivia(trailingTrivia)
+      presentNode = presentNode.with(\.trailingTrivia, trailingTrivia)
     }
     if node.shouldBeInsertedAfterNextTokenTrivia,
       let nextToken = node.nextToken(viewMode: .sourceAccurate),
@@ -89,7 +92,7 @@ extension FixIt.Changes {
       return [
         .replace(
           oldNode: Syntax(node),
-          newNode: Syntax(presentNode).withLeadingTrivia(nextToken.leadingTrivia)
+          newNode: Syntax(presentNode).with(\.leadingTrivia, nextToken.leadingTrivia)
         ),
         .replaceLeadingTrivia(token: nextToken, newTrivia: []),
       ]
@@ -98,14 +101,15 @@ extension FixIt.Changes {
       !firstToken.tokenKind.isPunctuation,
       !previousToken.tokenKind.isPunctuation,
       firstToken.leadingTrivia.isEmpty,
-      (previousToken.presence == .missing ? BasicFormat().visit(previousToken).trailingTrivia : previousToken.trailingTrivia).isEmpty
+      (previousToken.presence == .missing ? BasicFormat().visit(previousToken).trailingTrivia : previousToken.trailingTrivia).isEmpty,
+      leadingTrivia == nil
     {
       /// If neither this nor the previous token are punctionation make sure they
       /// are separated by a space.
       return [
         .replace(
           oldNode: Syntax(node),
-          newNode: Syntax(presentNode).withLeadingTrivia(.space)
+          newNode: Syntax(presentNode).with(\.leadingTrivia, .space)
         )
       ]
     } else {
@@ -123,7 +127,7 @@ extension FixIt.Changes {
     if let previousToken = token.previousToken(viewMode: .sourceAccurate) {
       var presentToken = PresentMaker().visit(token)
       if !previousToken.trailingTrivia.isEmpty {
-        presentToken = presentToken.withTrailingTrivia(previousToken.trailingTrivia)
+        presentToken = presentToken.with(\.trailingTrivia, previousToken.trailingTrivia)
       }
       return [
         .replaceTrailingTrivia(token: previousToken, newTrivia: []),
@@ -170,6 +174,10 @@ extension Trivia {
         return Array(repeating: TriviaPiece.formfeeds(1), count: count)
       case .newlines(let count):
         return Array(repeating: TriviaPiece.newlines(1), count: count)
+      case .backslashes(let count):
+        return Array(repeating: TriviaPiece.backslashes(1), count: count)
+      case .pounds(let count):
+        return Array(repeating: TriviaPiece.pounds(1), count: count)
       case .carriageReturns(let count):
         return Array(repeating: TriviaPiece.carriageReturns(1), count: count)
       case .carriageReturnLineFeeds(let count):

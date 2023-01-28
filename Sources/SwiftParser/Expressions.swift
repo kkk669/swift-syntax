@@ -13,7 +13,7 @@
 @_spi(RawSyntax) import SwiftSyntax
 
 extension TokenConsumer {
-  func atStartOfExpression() -> Bool {
+  mutating func atStartOfExpression() -> Bool {
     switch self.at(anyIn: ExpressionStart.self) {
     case (.awaitTryMove, let handle)?:
       var backtrack = self.lookahead()
@@ -345,40 +345,14 @@ extension Parser {
         return nil
       }
     case (.arrow, _)?, (.throwsKeyword, _)?:
-      var asyncKeyword = self.consume(if: .keyword(.async))
-
-      var throwsKeyword = self.consume(if: .keyword(.throws))
+      var effectSpecifiers = self.parseTypeEffectSpecifiers()
 
       let (unexpectedBeforeArrow, arrow) = self.expect(.arrow)
 
-      // Recover if effect modifiers are specified after '->' by eating them into
-      // unexpectedAfterArrow and inserting the corresponding effects modifier as
-      // missing into the ArrowExprSyntax. This reflect the semantics the user
-      // originally intended.
-      var effectModifiersAfterArrow: [RawTokenSyntax] = []
-      if let asyncAfterArrow = self.consume(if: .keyword(.async)) {
-        effectModifiersAfterArrow.append(asyncAfterArrow)
-        if asyncKeyword == nil {
-          asyncKeyword = missingToken(.keyword(.async), text: "async")
-        }
-      }
-      if let throwsAfterArrow = self.consume(if: .keyword(.throws)) {
-        effectModifiersAfterArrow.append(throwsAfterArrow)
-        if throwsKeyword == nil {
-          throwsKeyword = missingToken(.keyword(.throws), text: nil)
-        }
-      }
-      let unexpectedAfterArrow =
-        effectModifiersAfterArrow.isEmpty
-        ? nil
-        : RawUnexpectedNodesSyntax(
-          elements: effectModifiersAfterArrow.map { RawSyntax($0) },
-          arena: self.arena
-        )
+      let unexpectedAfterArrow = self.parseMisplacedEffectSpecifiers(&effectSpecifiers)
 
       let op = RawArrowExprSyntax(
-        asyncKeyword: asyncKeyword,
-        throwsToken: throwsKeyword,
+        effectSpecifiers: effectSpecifiers,
         unexpectedBeforeArrow,
         arrowToken: arrow,
         unexpectedAfterArrow,
@@ -611,7 +585,7 @@ extension Parser {
 
     // Parse the generic arguments, if any.
     let generics: RawGenericArgumentClauseSyntax?
-    if self.lookahead().canParseAsGenericArgumentList() {
+    if self.withLookahead({ $0.canParseAsGenericArgumentList() }) {
       generics = self.parseGenericArguments()
     } else {
       generics = nil
@@ -732,7 +706,7 @@ extension Parser {
         // If we can parse trailing closures, do so.
         let trailingClosure: RawClosureExprSyntax?
         let additionalTrailingClosures: RawMultipleTrailingClosureElementListSyntax?
-        if case .trailingClosure = flavor, self.at(.leftBrace), self.lookahead().isValidTrailingClosure(flavor) {
+        if case .trailingClosure = flavor, self.at(.leftBrace), self.withLookahead({ $0.isValidTrailingClosure(flavor) }) {
           (trailingClosure, additionalTrailingClosures) = self.parseTrailingClosures(flavor)
         } else {
           trailingClosure = nil
@@ -768,7 +742,7 @@ extension Parser {
         // If we can parse trailing closures, do so.
         let trailingClosure: RawClosureExprSyntax?
         let additionalTrailingClosures: RawMultipleTrailingClosureElementListSyntax?
-        if case .trailingClosure = flavor, self.at(.leftBrace), self.lookahead().isValidTrailingClosure(flavor) {
+        if case .trailingClosure = flavor, self.at(.leftBrace), self.withLookahead({ $0.isValidTrailingClosure(flavor) }) {
           (trailingClosure, additionalTrailingClosures) = self.parseTrailingClosures(flavor)
         } else {
           trailingClosure = nil
@@ -791,7 +765,7 @@ extension Parser {
       }
 
       // Check for a trailing closure, if allowed.
-      if self.at(.leftBrace) && self.lookahead().isValidTrailingClosure(flavor) {
+      if self.at(.leftBrace) && self.withLookahead({ $0.isValidTrailingClosure(flavor) }) {
         // FIXME: if Result has a trailing closure, break out.
         // Add dummy blank argument list to the call expression syntax.
         let list = RawTupleExprElementListSyntax(elements: [], arena: self.arena)
@@ -1267,7 +1241,7 @@ extension Parser {
   @_spi(RawSyntax)
   public mutating func parseIdentifierExpression() -> RawExprSyntax {
     let (name, args) = self.parseDeclNameRef(.compoundNames)
-    guard self.lookahead().canParseAsGenericArgumentList() else {
+    guard self.withLookahead({ $0.canParseAsGenericArgumentList() }) else {
       if name.tokenText.isEditorPlaceholder && args == nil {
         return RawExprSyntax(
           RawEditorPlaceholderExprSyntax(
@@ -1319,7 +1293,7 @@ extension Parser {
 
     // Parse the optional generic argument list.
     let generics: RawGenericArgumentClauseSyntax?
-    if self.lookahead().canParseAsGenericArgumentList() {
+    if self.withLookahead({ $0.canParseAsGenericArgumentList() }) {
       generics = self.parseGenericArguments()
     } else {
       generics = nil
@@ -1342,7 +1316,7 @@ extension Parser {
     // Parse the optional trailing closures.
     let trailingClosure: RawClosureExprSyntax?
     let additionalTrailingClosures: RawMultipleTrailingClosureElementListSyntax?
-    if case .trailingClosure = flavor, self.at(.leftBrace), self.lookahead().isValidTrailingClosure(flavor) {
+    if case .trailingClosure = flavor, self.at(.leftBrace), self.withLookahead({ $0.isValidTrailingClosure(flavor) }) {
       (trailingClosure, additionalTrailingClosures) = self.parseTrailingClosures(flavor)
     } else {
       trailingClosure = nil
@@ -1735,7 +1709,7 @@ extension Parser {
       return nil
     }
 
-    guard self.lookahead().canParseClosureSignature() else {
+    guard self.withLookahead({ $0.canParseClosureSignature() }) else {
       return nil
     }
 
@@ -1810,8 +1784,7 @@ extension Parser {
     }
 
     var input: RawClosureSignatureSyntax.Input?
-    var asyncKeyword: RawTokenSyntax? = nil
-    var throwsTok: RawTokenSyntax? = nil
+    var effectSpecifiers: RawTypeEffectSpecifiersSyntax?
     var output: RawReturnClauseSyntax? = nil
     if !self.at(.keyword(.in)) {
       if self.at(.leftParen) {
@@ -1847,19 +1820,10 @@ extension Parser {
         input = .simpleInput(RawClosureParamListSyntax(elements: params, arena: self.arena))
       }
 
-      asyncKeyword = self.parseEffectsSpecifier()
-      throwsTok = self.parseEffectsSpecifier()
+      effectSpecifiers = self.parseTypeEffectSpecifiers()
 
-      // Parse the optional explicit return type.
-      if let arrow = self.consume(if: .arrow) {
-        // Parse the type.
-        let returnTy = self.parseType()
-
-        output = RawReturnClauseSyntax(
-          arrow: arrow,
-          returnType: returnTy,
-          arena: self.arena
-        )
+      if self.at(.arrow) {
+        output = self.parseFunctionReturnClause(effectSpecifiers: &effectSpecifiers, allowNamedOpaqueResultType: false)
       }
     }
 
@@ -1869,8 +1833,7 @@ extension Parser {
       attributes: attrs,
       capture: captures,
       input: input,
-      asyncKeyword: asyncKeyword,
-      throwsTok: throwsTok,
+      effectSpecifiers: effectSpecifiers,
       output: output,
       unexpectedBeforeInTok,
       inTok: inTok,
@@ -2014,7 +1977,7 @@ extension Parser {
     // Parse labeled trailing closures.
     var elements = [RawMultipleTrailingClosureElementSyntax]()
     var loopProgress = LoopProgressCondition()
-    while self.lookahead().isStartOfLabelledTrailingClosure() && loopProgress.evaluate(currentToken) {
+    while self.withLookahead({ $0.isStartOfLabelledTrailingClosure() }) && loopProgress.evaluate(currentToken) {
       let (unexpectedBeforeLabel, label) = self.parseArgumentLabel()
       let (unexpectedBeforeColon, colon) = self.expect(.colon)
       let closure = self.parseClosureExpression()
@@ -2036,7 +1999,7 @@ extension Parser {
 }
 
 extension Parser.Lookahead {
-  func isStartOfLabelledTrailingClosure() -> Bool {
+  mutating func isStartOfLabelledTrailingClosure() -> Bool {
     // Fast path: the next two tokens must be a label and a colon.
     // But 'default:' is ambiguous with switch cases and we disallow it
     // (unless escaped) even outside of switches.
@@ -2066,12 +2029,12 @@ extension Parser.Lookahead {
   /// where the parser requires an expr-basic (which does not allow them).  We
   /// handle this by doing some lookahead in common situations. And later, Sema
   /// will emit a diagnostic with a fixit to add wrapping parens.
-  func isValidTrailingClosure(_ flavor: Parser.ExprFlavor) -> Bool {
+  mutating func isValidTrailingClosure(_ flavor: Parser.ExprFlavor) -> Bool {
     assert(self.at(.leftBrace), "Couldn't be a trailing closure")
 
     // If this is the start of a get/set accessor, then it isn't a trailing
     // closure.
-    guard !self.lookahead().isStartOfGetSetAccessor() else {
+    guard !self.withLookahead({ $0.isStartOfGetSetAccessor() }) else {
       return false
     }
 
@@ -2142,14 +2105,14 @@ extension Parser.Lookahead {
   // Consume 'async', 'throws', and 'rethrows', but in any order.
   mutating func consumeEffectsSpecifiers() {
     var loopProgress = LoopProgressCondition()
-    while let (_, handle) = self.at(anyIn: EffectsSpecifier.self),
+    while let (_, handle) = self.at(anyIn: EffectSpecifier.self),
       loopProgress.evaluate(currentToken)
     {
       self.eat(handle)
     }
   }
 
-  func canParseClosureSignature() -> Bool {
+  mutating func canParseClosureSignature() -> Bool {
     // Consume attributes.
     var lookahead = self.lookahead()
     var attributesProgress = LoopProgressCondition()
@@ -2229,7 +2192,7 @@ extension Parser.Lookahead {
 extension Parser.Lookahead {
   // Helper function to see if we can parse member reference like suffixes
   // inside '#if'.
-  fileprivate func isAtStartOfPostfixExprSuffix() -> Bool {
+  fileprivate mutating func isAtStartOfPostfixExprSuffix() -> Bool {
     guard self.at(.period) else {
       return false
     }

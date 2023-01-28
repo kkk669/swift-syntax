@@ -109,14 +109,14 @@ class MacroApplication: SyntaxRewriter {
           return true
         }
 
-        return !(macro is PeerDeclarationMacro.Type || macro is MemberDeclarationMacro.Type || macro is AccessorDeclarationMacro.Type || macro is MemberAttributeMacro.Type)
+        return !(macro is PeerMacro.Type || macro is MemberMacro.Type || macro is AccessorMacro.Type || macro is MemberAttributeMacro.Type)
       }
 
       if newAttributes.isEmpty {
-        return Syntax(fromProtocol: visitedNode.withAttributes(nil))
+        return Syntax(fromProtocol: visitedNode.with(\.attributes, nil))
       }
 
-      return Syntax(fromProtocol: visitedNode.withAttributes(AttributeListSyntax(newAttributes)))
+      return Syntax(fromProtocol: visitedNode.with(\.attributes, AttributeListSyntax(newAttributes)))
     }
 
     return nil
@@ -127,22 +127,28 @@ class MacroApplication: SyntaxRewriter {
     for item in node {
       // Expand declaration macros that were parsed as macro expansion
       // expressions in this context.
-      if case let .expr(exprItem) = item.item,
-        let exprExpansion = exprItem.as(MacroExpansionExprSyntax.self),
-        let macro = macroSystem.macros[exprExpansion.macro.text],
-        let freestandingMacro = macro as? FreestandingDeclarationMacro.Type
+      if case let .decl(declItem) = item.item,
+        let declExpansion = declItem.as(MacroExpansionDeclSyntax.self),
+        let macro = macroSystem.macros[declExpansion.macro.text]
       {
         do {
-          let expandedDecls = try freestandingMacro.expansion(
-            of: exprExpansion.asMacroExpansionDecl(),
-            in: &context
-          )
-
-          newItems.append(
-            contentsOf: expandedDecls.map { decl in
-              CodeBlockItemSyntax(item: .decl(decl))
-            }
-          )
+          if let macro = macro as? DeclarationMacro.Type {
+            let expandedItemList = try macro.expansion(
+              of: declExpansion,
+              in: &context
+            )
+            newItems.append(
+              contentsOf: expandedItemList.map {
+                CodeBlockItemSyntax(item: .decl($0))
+              }
+            )
+          } else if let macro = macro as? ExpressionMacro.Type {
+            let expandedExpr = try macro.expansion(
+              of: declExpansion.asMacroExpansionExpr(),
+              in: &context
+            )
+            newItems.append(CodeBlockItemSyntax(item: .init(expandedExpr)))
+          }
         } catch {
           // Record the error
           context.diagnose(
@@ -158,7 +164,7 @@ class MacroApplication: SyntaxRewriter {
 
       // Recurse on the child node.
       let newItem = visit(item.item)
-      newItems.append(item.withItem(newItem))
+      newItems.append(item.with(\.item, newItem))
 
       // Expand any peer declarations triggered by macros used as attributes.
       if case let .decl(decl) = item.item {
@@ -180,17 +186,17 @@ class MacroApplication: SyntaxRewriter {
       // Expand declaration macros, which produce zero or more declarations.
       if let declExpansion = item.decl.as(MacroExpansionDeclSyntax.self),
         let macro = macroSystem.macros[declExpansion.macro.text],
-        let freestandingMacro = macro as? FreestandingDeclarationMacro.Type
+        let freestandingMacro = macro as? DeclarationMacro.Type
       {
         do {
-          let expandedDecls = try freestandingMacro.expansion(
+          let expandedList = try freestandingMacro.expansion(
             of: declExpansion,
             in: &context
           )
 
           newItems.append(
-            contentsOf: expandedDecls.map { decl in
-              MemberDeclListItemSyntax(decl: decl)
+            contentsOf: expandedList.map { decl in
+              return MemberDeclListItemSyntax(decl: decl)
             }
           )
         } catch {
@@ -220,7 +226,7 @@ class MacroApplication: SyntaxRewriter {
 
       // Recurse on the child node.
       let newDecl = visit(attributedMember.decl)
-      newItems.append(attributedMember.withDecl(newDecl))
+      newItems.append(attributedMember.with(\.decl, newDecl))
 
       // Expand any peer declarations triggered by macros used as attributes.
       let peers = expandPeers(of: item.decl)
@@ -251,7 +257,7 @@ class MacroApplication: SyntaxRewriter {
     // Recurse into member decls.
     let newMembers = visit(expandedDeclGroup.members)
 
-    return DeclSyntax(expandedDeclGroup.withMembers(newMembers))
+    return DeclSyntax(expandedDeclGroup.with(\.members, newMembers))
   }
 
   override func visit(_ node: ActorDeclSyntax) -> DeclSyntax {
@@ -293,7 +299,7 @@ class MacroApplication: SyntaxRewriter {
 
     var accessors: [AccessorDeclSyntax] = []
 
-    let accessorMacroAttributes = getMacroAttributes(attachedTo: DeclSyntax(node), ofType: AccessorDeclarationMacro.Type.self)
+    let accessorMacroAttributes = getMacroAttributes(attachedTo: DeclSyntax(node), ofType: AccessorMacro.Type.self)
     for (accessorAttr, accessorMacro) in accessorMacroAttributes {
       do {
         let newAccessors = try accessorMacro.expansion(
@@ -313,10 +319,12 @@ class MacroApplication: SyntaxRewriter {
     }
 
     return DeclSyntax(
-      visitedVarDecl.withBindings(
+      visitedVarDecl.with(
+        \.bindings,
         visitedVarDecl.bindings.replacing(
           childAt: 0,
-          with: binding.withAccessor(
+          with: binding.with(
+            \.accessor,
             .accessors(
               .init(
                 leftBrace: .leftBraceToken(leadingTrivia: .space),
@@ -362,7 +370,7 @@ extension MacroApplication {
   // set of peer declarations.
   private func expandPeers(of decl: DeclSyntax) -> [DeclSyntax] {
     var peers: [DeclSyntax] = []
-    let macroAttributes = getMacroAttributes(attachedTo: decl, ofType: PeerDeclarationMacro.Type.self)
+    let macroAttributes = getMacroAttributes(attachedTo: decl, ofType: PeerMacro.Type.self)
     for (attribute, peerMacro) in macroAttributes {
       do {
         let newPeers = try peerMacro.expansion(of: attribute, attachedTo: decl, in: &context)
@@ -387,7 +395,7 @@ extension MacroApplication {
     of decl: Decl
   ) -> Decl {
     var newMembers: [DeclSyntax] = []
-    let macroAttributes = getMacroAttributes(attachedTo: DeclSyntax(decl), ofType: MemberDeclarationMacro.Type.self)
+    let macroAttributes = getMacroAttributes(attachedTo: DeclSyntax(decl), ofType: MemberMacro.Type.self)
     for (attribute, memberMacro) in macroAttributes {
       do {
         try newMembers.append(
@@ -409,7 +417,8 @@ extension MacroApplication {
     }
 
     // FIXME: Is there a better way to add N members to a decl?
-    return decl.withMembers(
+    return decl.with(
+      \.members,
       newMembers.reduce(decl.members) { partialMembers, newMember in
         partialMembers.addMember(.init(decl: newMember))
       }
@@ -451,8 +460,8 @@ extension MacroApplication {
       $0.appending(AttributeListSyntax.Element($1))
     }
 
-    let newDecl = attributedDecl.withAttributes(newAttributes).as(DeclSyntax.self)!
-    return member.withDecl(newDecl)
+    let newDecl = attributedDecl.with(\.attributes, newAttributes).as(DeclSyntax.self)!
+    return member.with(\.decl, newDecl)
   }
 }
 

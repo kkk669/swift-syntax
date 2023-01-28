@@ -240,7 +240,7 @@ extension Parser {
   /// Checks if it can reach a token of the given `kind` by skipping unexpected
   /// tokens that have lower ``TokenPrecedence`` than expected token.
   @_spi(RawSyntax)
-  public func canRecoverTo(
+  public mutating func canRecoverTo(
     _ kind: RawTokenKind,
     recoveryPrecedence: TokenPrecedence? = nil
   ) -> RecoveryConsumptionHandle? {
@@ -257,13 +257,22 @@ extension Parser {
   /// Checks if it can reach a token whose kind is in `kinds` by skipping
   /// unexpected tokens that have lower ``TokenPrecedence`` than `precedence`.
   @_spi(RawSyntax)
-  public func canRecoverTo(
+  public mutating func canRecoverTo(
     any kinds: [RawTokenKind]
   ) -> RecoveryConsumptionHandle? {
-    if self.at(any: kinds) {
+    if let matchedKind = kinds.filter({ RawTokenKindMatch($0) ~= self.currentToken }).first {
+      let remapKind: RawTokenKind?
+      if matchedKind.base == .keyword {
+        remapKind = matchedKind
+      } else {
+        remapKind = nil
+      }
       return RecoveryConsumptionHandle(
         unexpectedTokens: 0,
-        tokenConsumptionHandle: TokenConsumptionHandle(tokenKind: self.currentToken.rawTokenKind)
+        tokenConsumptionHandle: TokenConsumptionHandle(
+          tokenKind: self.currentToken.rawTokenKind,
+          remappedKind: remapKind
+        )
       )
     }
     var lookahead = self.lookahead()
@@ -275,7 +284,7 @@ extension Parser {
   /// precedence of a token in that subset.
   /// If so, return the token that we can recover to and a handle that can be
   /// used to consume the unexpected tokens and the token we recovered to.
-  func canRecoverTo<Subset: RawTokenKindSubset>(
+  mutating func canRecoverTo<Subset: RawTokenKindSubset>(
     anyIn subset: Subset.Type,
     recoveryPrecedence: TokenPrecedence? = nil
   ) -> (Subset, RecoveryConsumptionHandle)? {
@@ -503,7 +512,7 @@ extension Parser {
 
     let endIndex = current.textRange.lowerBound.advanced(by: prefix.count)
     var lexerError = current.error
-    if let error = lexerError, error.byteOffset > prefix.count {
+    if let error = lexerError, error.byteOffset > prefix.count + current.leadingTriviaByteLength {
       // The lexer error isn't in the prefix. Drop it.
       lexerError = nil
     }

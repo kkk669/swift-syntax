@@ -143,7 +143,7 @@ private func AssertTokens(
       )
     case (let actualError?, let expectedError?):
       AssertStringsEqualWithDiff(
-        actualError.diagnostic(tokenText: actualLexeme.tokenText).message,
+        actualError.diagnostic(wholeTextBytes: Array(actualLexeme.wholeText)).message,
         expectedError,
         file: expectedLexeme.file,
         line: expectedLexeme.line
@@ -151,7 +151,7 @@ private func AssertTokens(
       if let location = markerLocations[expectedLexeme.errorLocationMarker] {
         XCTAssertEqual(
           Int(actualError.byteOffset),
-          location - lexemeStartOffset - actualLexeme.leadingTriviaByteLength,
+          location - lexemeStartOffset,
           "Expected location did not match",
           file: expectedLexeme.file,
           line: expectedLexeme.line
@@ -300,9 +300,9 @@ class FixItApplier: SyntaxRewriter {
     for change in changes {
       switch change {
       case .replaceLeadingTrivia(token: let changedNode, newTrivia: let newTrivia) where changedNode.id == node.id:
-        modifiedNode = node.withLeadingTrivia(newTrivia)
+        modifiedNode = node.with(\.leadingTrivia, newTrivia)
       case .replaceTrailingTrivia(token: let changedNode, newTrivia: let newTrivia) where changedNode.id == node.id:
-        modifiedNode = node.withTrailingTrivia(newTrivia)
+        modifiedNode = node.with(\.trailingTrivia, newTrivia)
       default:
         break
       }
@@ -440,16 +440,32 @@ func AssertDiagnostic<T: SyntaxProtocol>(
   }
 }
 
+public struct AssertParseOptions: OptionSet {
+  public var rawValue: UInt8
+
+  public init(rawValue: UInt8) {
+    self.rawValue = rawValue
+  }
+
+  /// Trivia mismatches in the substructure should cause failures
+  public static let substructureCheckTrivia = AssertParseOptions(rawValue: 1 << 0)
+
+  /// Replace all `\r` and `\r\n` in the fixed source by `\n`.
+  /// Useful to match source code that contains other line endings to expected
+  /// fixed source that has `\n` line endings.
+  public static let normalizeNewlinesInFixedSource = AssertParseOptions(rawValue: 1 << 1)
+}
+
 /// Same as `AssertParse` overload with a `(String) -> S` `parse`,
 /// parsing the resulting `String` as a `SourceFileSyntax`.
 func AssertParse(
   _ markedSource: String,
   substructure expectedSubstructure: Syntax? = nil,
   substructureAfterMarker: String = "START",
-  substructureCheckTrivia: Bool = false,
   diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
   applyFixIts: [String]? = nil,
   fixedSource expectedFixedSource: String? = nil,
+  options: AssertParseOptions = [],
   file: StaticString = #file,
   line: UInt = #line
 ) {
@@ -458,10 +474,10 @@ func AssertParse(
     { SourceFileSyntax.parse(from: &$0) },
     substructure: expectedSubstructure,
     substructureAfterMarker: substructureAfterMarker,
-    substructureCheckTrivia: substructureCheckTrivia,
     diagnostics: expectedDiagnostics,
     applyFixIts: applyFixIts,
     fixedSource: expectedFixedSource,
+    options: options,
     file: file,
     line: line
   )
@@ -475,10 +491,10 @@ func AssertParse<S: SyntaxProtocol>(
   _ parse: (inout Parser) -> S,
   substructure expectedSubstructure: Syntax? = nil,
   substructureAfterMarker: String = "START",
-  substructureCheckTrivia: Bool = false,
   diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
   applyFixIts: [String]? = nil,
   fixedSource expectedFixedSource: String? = nil,
+  options: AssertParseOptions = [],
   file: StaticString = #file,
   line: UInt = #line
 ) {
@@ -490,10 +506,10 @@ func AssertParse<S: SyntaxProtocol>(
     },
     substructure: expectedSubstructure,
     substructureAfterMarker: substructureAfterMarker,
-    substructureCheckTrivia: substructureCheckTrivia,
     diagnostics: expectedDiagnostics,
     applyFixIts: applyFixIts,
     fixedSource: expectedFixedSource,
+    options: options,
     file: file,
     line: line
   )
@@ -522,10 +538,10 @@ func AssertParse<S: SyntaxProtocol>(
   _ parse: (String) -> S,
   substructure expectedSubstructure: Syntax? = nil,
   substructureAfterMarker: String = "START",
-  substructureCheckTrivia: Bool = false,
   diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
   applyFixIts: [String]? = nil,
   fixedSource expectedFixedSource: String? = nil,
+  options: AssertParseOptions = [],
   file: StaticString = #file,
   line: UInt = #line
 ) {
@@ -553,7 +569,7 @@ func AssertParse<S: SyntaxProtocol>(
   if let expectedSubstructure = expectedSubstructure {
     let subtreeMatcher = SubtreeMatcher(Syntax(tree), markers: markerLocations)
     do {
-      try subtreeMatcher.assertSameStructure(afterMarker: substructureAfterMarker, Syntax(expectedSubstructure), includeTrivia: substructureCheckTrivia, file: file, line: line)
+      try subtreeMatcher.assertSameStructure(afterMarker: substructureAfterMarker, Syntax(expectedSubstructure), includeTrivia: options.contains(.substructureCheckTrivia), file: file, line: line)
     } catch {
       XCTFail("Matching for a subtree failed with error: \(error)", file: file, line: line)
     }
@@ -579,8 +595,15 @@ func AssertParse<S: SyntaxProtocol>(
   // Applying Fix-Its
   if let expectedFixedSource = expectedFixedSource {
     let fixedTree = FixItApplier.applyFixes(in: diags, withMessages: applyFixIts, to: tree)
+    var fixedTreeDescription = fixedTree.description
+    if options.contains(.normalizeNewlinesInFixedSource) {
+      fixedTreeDescription =
+        fixedTreeDescription
+        .replacingOccurrences(of: "\r\n", with: "\n")
+        .replacingOccurrences(of: "\r", with: "\n")
+    }
     AssertStringsEqualWithDiff(
-      fixedTree.description.trimmingTrailingWhitespace(),
+      fixedTreeDescription.trimmingTrailingWhitespace(),
       expectedFixedSource.trimmingTrailingWhitespace(),
       file: file,
       line: line

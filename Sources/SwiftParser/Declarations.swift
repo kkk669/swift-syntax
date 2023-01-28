@@ -29,12 +29,19 @@ extension DeclarationModifier {
 }
 
 extension TokenConsumer {
-  func atStartOfDeclaration(
+  mutating func atStartOfDeclaration(
     isAtTopLevel: Bool = false,
     allowInitDecl: Bool = true,
-    allowRecovery: Bool = false
+    allowRecovery: Bool = false,
+    preferPoundAsExpression: Bool = false
   ) -> Bool {
     if self.at(anyIn: PoundDeclarationStart.self) != nil {
+      // If we are in a context where we prefer # to be an expression,
+      // treat it as one if it's not at the start of the line.
+      if preferPoundAsExpression && self.at(.pound) && !self.currentToken.isAtStartOfLine {
+        return false
+      }
+
       return true
     }
 
@@ -165,6 +172,11 @@ extension Parser {
   public mutating func parseDeclaration(inMemberDeclList: Bool = false) -> RawDeclSyntax {
     switch self.at(anyIn: PoundDeclarationStart.self) {
     case (.poundIfKeyword, _)?:
+      if self.withLookahead({ $0.consumeIfConfigOfAttributes() }) {
+        // If we are at a `#if` of attributes, the `#if` directive should be
+        // parsed when we're parsing the attributes.
+        break
+      }
       let directive = self.parsePoundIfDirective { parser in
         let parsedDecl = parser.parseDeclaration()
         let semicolon = parser.consume(if: .semicolon)
@@ -190,16 +202,12 @@ extension Parser {
         return .decls(RawMemberDeclListSyntax(elements: elements, arena: parser.arena))
       }
       return RawDeclSyntax(directive)
-    case (.poundWarningKeyword, _)?, (.poundErrorKeyword, _)?:
-      return self.parsePoundDiagnosticDeclaration()
-    case nil:
-      break
-    }
-
-    if (self.at(.pound)) {
+    case (.pound, _)?:
       // FIXME: If we can have attributes for macro expansions, handle this
       // via DeclarationStart.
       return RawDeclSyntax(self.parseMacroExpansionDeclaration())
+    case nil:
+      break
     }
 
     let attrs = DeclAttributes(
@@ -1217,32 +1225,31 @@ extension Parser {
   }
 
   /// If a `throws` keyword appears right in front of the `arrow`, it is returned as `misplacedThrowsKeyword` so it can be synthesized in front of the arrow.
-  @_spi(RawSyntax)
-  public mutating func parseFunctionReturnClause() -> (returnClause: RawReturnClauseSyntax, misplacedThrowsKeyword: RawTokenSyntax?) {
+  mutating func parseFunctionReturnClause<S: RawEffectSpecifiersTrait>(effectSpecifiers: inout S?, allowNamedOpaqueResultType: Bool) -> RawReturnClauseSyntax {
     let (unexpectedBeforeArrow, arrow) = self.expect(.arrow)
-    var misplacedThrowsKeyword: RawTokenSyntax? = nil
-    let unexpectedBeforeReturnType: RawUnexpectedNodesSyntax?
-    if let throwsKeyword = self.consume(ifAny: [.keyword(.rethrows), .keyword(.throws)]) {
-      misplacedThrowsKeyword = throwsKeyword
-      unexpectedBeforeReturnType = RawUnexpectedNodesSyntax(elements: [RawSyntax(throwsKeyword)], arena: self.arena)
+    let unexpectedBeforeReturnType = self.parseMisplacedEffectSpecifiers(&effectSpecifiers)
+    let result: RawTypeSyntax
+    if allowNamedOpaqueResultType {
+      result = self.parseResultType()
     } else {
-      unexpectedBeforeReturnType = nil
+      result = self.parseType()
     }
-    let result = self.parseResultType()
+    let unexpectedAfterReturnType = self.parseMisplacedEffectSpecifiers(&effectSpecifiers)
     let returnClause = RawReturnClauseSyntax(
       unexpectedBeforeArrow,
       arrow: arrow,
       unexpectedBeforeReturnType,
       returnType: result,
+      unexpectedAfterReturnType,
       arena: self.arena
     )
-    return (returnClause, misplacedThrowsKeyword)
+    return returnClause
   }
 }
 
 extension Parser {
   /// Are we at a regular expression literal that could act as an operator?
-  private func atRegexLiteralThatCouldBeAnOperator() -> Bool {
+  private mutating func atRegexLiteralThatCouldBeAnOperator() -> Bool {
     guard self.at(.regexLiteral) else {
       return false
     }
@@ -1318,32 +1325,18 @@ extension Parser {
   public mutating func parseFunctionSignature() -> RawFunctionSignatureSyntax {
     let input = self.parseParameterClause(for: .functionParameters)
 
-    let async: RawTokenSyntax?
-    if let asyncTok = self.consume(if: .keyword(.async)) {
-      async = asyncTok
-    } else if let reasync = self.consume(if: .keyword(.reasync)) {
-      async = reasync
-    } else {
-      async = nil
-    }
-
-    var throwsKeyword = self.consume(ifAny: [.keyword(.throws), .keyword(.rethrows)])
+    var effectSpecifiers = self.parseDeclEffectSpecifiers()
 
     let output: RawReturnClauseSyntax?
     if self.at(.arrow) {
-      let result = self.parseFunctionReturnClause()
-      output = result.returnClause
-      if let misplacedThrowsKeyword = result.misplacedThrowsKeyword, throwsKeyword == nil {
-        throwsKeyword = RawTokenSyntax(missing: misplacedThrowsKeyword.tokenKind, arena: self.arena)
-      }
+      output = self.parseFunctionReturnClause(effectSpecifiers: &effectSpecifiers, allowNamedOpaqueResultType: true)
     } else {
       output = nil
     }
 
     return RawFunctionSignatureSyntax(
       input: input,
-      asyncOrReasyncKeyword: async,
-      throwsOrRethrowsKeyword: throwsKeyword,
+      effectSpecifiers: effectSpecifiers,
       output: output,
       arena: self.arena
     )
@@ -1384,7 +1377,8 @@ extension Parser {
 
     let indices = self.parseParameterClause(for: .indices)
 
-    let result = self.parseFunctionReturnClause().returnClause
+    var misplacedEffectSpecifiers: RawDeclEffectSpecifiersSyntax?
+    let result = self.parseFunctionReturnClause(effectSpecifiers: &misplacedEffectSpecifiers, allowNamedOpaqueResultType: true)
 
     // Parse a 'where' clause if present.
     let genericWhereClause: RawGenericWhereClauseSyntax?
@@ -1588,41 +1582,6 @@ extension Parser {
     )
   }
 
-  @_spi(RawSyntax)
-  public mutating func parseEffectsSpecifier() -> RawTokenSyntax? {
-    // 'async'
-    if let async = self.consume(if: .keyword(.async)) {
-      return async
-    }
-
-    // 'reasync'
-    if let reasync = self.consume(if: .keyword(.reasync)) {
-      return reasync
-    }
-
-    // 'throws'/'rethrows'
-    if let throwsRethrows = self.consume(ifAny: [.keyword(.throws), .keyword(.rethrows)]) {
-      return throwsRethrows
-    }
-
-    // diagnose 'throw'/'try'.
-    if let throwTry = self.consume(ifAny: [.keyword(.throw), .keyword(.try)], allowTokenAtStartOfLine: false) {
-      return throwTry
-    }
-
-    return nil
-  }
-
-  @_spi(RawSyntax)
-  public mutating func parseEffectsSpecifiers() -> [RawTokenSyntax] {
-    var specifiers = [RawTokenSyntax]()
-    var loopProgress = LoopProgressCondition()
-    while let specifier = self.parseEffectsSpecifier(), loopProgress.evaluate(currentToken) {
-      specifiers.append(specifier)
-    }
-    return specifiers
-  }
-
   /// Parse an accessor.
   mutating func parseAccessorDecl() -> RawAccessorDeclSyntax {
     let forcedHandle = TokenConsumptionHandle(tokenKind: .keyword(.get), missing: true)
@@ -1669,17 +1628,7 @@ extension Parser {
       parameter = nil
     }
 
-    // Next, parse effects specifiers. While it's only valid to have them
-    // on 'get' accessors, we also emit diagnostics if they show up on others.
-    let asyncKeyword: RawTokenSyntax?
-    let throwsKeyword: RawTokenSyntax?
-    if self.at(anyIn: EffectsSpecifier.self) != nil {
-      asyncKeyword = self.parseEffectsSpecifier()
-      throwsKeyword = self.parseEffectsSpecifier()
-    } else {
-      asyncKeyword = nil
-      throwsKeyword = nil
-    }
+    let effectSpecifiers = self.parseDeclEffectSpecifiers()
 
     let body = self.parseOptionalCodeBlock()
     return RawAccessorDeclSyntax(
@@ -1687,8 +1636,7 @@ extension Parser {
       modifier: introducer.modifier,
       accessorKind: introducer.token,
       parameter: parameter,
-      asyncKeyword: asyncKeyword,
-      throwsKeyword: throwsKeyword,
+      effectSpecifiers: effectSpecifiers,
       body: body,
       arena: self.arena
     )
@@ -2112,76 +2060,6 @@ extension Parser {
 }
 
 extension Parser {
-  enum PoundDiagnosticKind {
-    case error(poundError: RawTokenSyntax)
-    case warning(poundWarning: RawTokenSyntax)
-  }
-
-  @_spi(RawSyntax)
-  public mutating func parsePoundDiagnosticDeclaration() -> RawDeclSyntax {
-    enum ExpectedTokenKind: RawTokenKindSubset {
-      case poundErrorKeyword
-      case poundWarningKeyword
-
-      init?(lexeme: Lexer.Lexeme) {
-        switch lexeme.rawTokenKind {
-        case .poundErrorKeyword: self = .poundErrorKeyword
-        case .poundWarningKeyword: self = .poundWarningKeyword
-        default: return nil
-        }
-      }
-
-      var rawTokenKind: RawTokenKind {
-        switch self {
-        case .poundErrorKeyword: return .poundErrorKeyword
-        case .poundWarningKeyword: return .poundWarningKeyword
-        }
-      }
-    }
-
-    let directive: PoundDiagnosticKind
-
-    switch self.at(anyIn: ExpectedTokenKind.self) {
-    case (.poundErrorKeyword, let handle)?:
-      directive = .error(poundError: self.eat(handle))
-    case (.poundWarningKeyword, let handle)?:
-      directive = .warning(poundWarning: self.eat(handle))
-    case nil:
-      directive = .error(poundError: RawTokenSyntax(missing: .poundErrorKeyword, arena: self.arena))
-    }
-
-    let (unexpectedBeforeLeftParen, leftParen) = self.expect(.leftParen)
-    let stringLiteral = self.parseStringLiteral()
-    let (unexpectedBeforeRightParen, rightParen) = self.expect(.rightParen)
-
-    switch directive {
-    case .error(let tok):
-      return RawDeclSyntax(
-        RawPoundErrorDeclSyntax(
-          poundError: tok,
-          unexpectedBeforeLeftParen,
-          leftParen: leftParen,
-          message: stringLiteral,
-          unexpectedBeforeRightParen,
-          rightParen: rightParen,
-          arena: self.arena
-        )
-      )
-    case .warning(let tok):
-      return RawDeclSyntax(
-        RawPoundWarningDeclSyntax(
-          poundWarning: tok,
-          unexpectedBeforeLeftParen,
-          leftParen: leftParen,
-          message: stringLiteral,
-          unexpectedBeforeRightParen,
-          rightParen: rightParen,
-          arena: self.arena
-        )
-      )
-    }
-  }
-
   /// Parse a macro declaration.
   mutating func parseMacroDeclaration(
     attrs: DeclAttributes,
@@ -2258,7 +2136,7 @@ extension Parser {
 
     // Parse the optional generic argument list.
     let generics: RawGenericArgumentClauseSyntax?
-    if self.lookahead().canParseAsGenericArgumentList() {
+    if self.withLookahead({ $0.canParseAsGenericArgumentList() }) {
       generics = self.parseGenericArguments()
     } else {
       generics = nil
@@ -2282,7 +2160,7 @@ extension Parser {
     let trailingClosure: RawClosureExprSyntax?
     let additionalTrailingClosures: RawMultipleTrailingClosureElementListSyntax?
     if self.at(.leftBrace),
-      self.lookahead().isValidTrailingClosure(.trailingClosure)
+      self.withLookahead({ $0.isValidTrailingClosure(.trailingClosure) })
     {
       (trailingClosure, additionalTrailingClosures) =
         self.parseTrailingClosures(.trailingClosure)

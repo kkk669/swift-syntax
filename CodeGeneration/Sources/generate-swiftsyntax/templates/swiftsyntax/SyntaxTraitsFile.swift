@@ -18,15 +18,27 @@ import Utils
 let syntaxTraitsFile = SourceFileSyntax {
   for trait in TRAITS {
     ProtocolDeclSyntax("""
-      // MARK: - \(trait.traitName)Syntax
+      // MARK: - \(raw: trait.traitName)Syntax
       
-      public protocol \(trait.traitName)Syntax: SyntaxProtocol
+      public protocol \(raw: trait.traitName)Syntax: SyntaxProtocol
       """) {
       
       for child in trait.children {
-        VariableDeclSyntax("var \(raw: child.swiftName): \(raw: child.typeName)\(raw: child.isOptional ? "?" : "") { get }")
-        FunctionDeclSyntax("func with\(raw: child.name)(_ newChild: \(raw: child.typeName)\(raw: child.isOptional ? "?" : "")) -> Self")
+        VariableDeclSyntax("var \(raw: child.swiftName): \(raw: child.typeName)\(raw: child.isOptional ? "?" : "") { get set }")
       }
+    }
+
+    ExtensionDeclSyntax("public extension \(trait.traitName)Syntax") {
+      FunctionDeclSyntax("""
+      /// Without this function, the `with` function defined on `SyntaxProtocol`
+      /// does not work on existentials of this protocol type.
+      @_disfavoredOverload
+      func with<T>(_ keyPath: WritableKeyPath<\(raw: trait.traitName)Syntax, T>, _ newChild: T) -> \(raw: trait.traitName)Syntax {
+        var copy: \(raw: trait.traitName)Syntax = self
+        copy[keyPath: keyPath] = newChild
+        return copy
+      }
+      """)
     }
     
     ExtensionDeclSyntax("public extension SyntaxProtocol") {

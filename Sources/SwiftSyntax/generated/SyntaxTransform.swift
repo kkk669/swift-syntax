@@ -326,6 +326,11 @@ public protocol SyntaxTransformVisitor {
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: ConventionWitnessMethodAttributeArgumentsSyntax) -> ResultType
   
+  /// Visiting `DeclEffectSpecifiersSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: DeclEffectSpecifiersSyntax) -> ResultType
+  
   /// Visiting `DeclModifierDetailSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
@@ -610,11 +615,6 @@ public protocol SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: GuardStmtSyntax) -> ResultType
-  
-  /// Visiting `HasSymbolConditionSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: the sum of whatever the child visitors return.
-  func visit(_ node: HasSymbolConditionSyntax) -> ResultType
   
   /// Visiting `IdentifierExprSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
@@ -951,16 +951,6 @@ public protocol SyntaxTransformVisitor {
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: PostfixUnaryExprSyntax) -> ResultType
   
-  /// Visiting `PoundAssertStmtSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: the sum of whatever the child visitors return.
-  func visit(_ node: PoundAssertStmtSyntax) -> ResultType
-  
-  /// Visiting `PoundErrorDeclSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: the sum of whatever the child visitors return.
-  func visit(_ node: PoundErrorDeclSyntax) -> ResultType
-  
   /// Visiting `PoundSourceLocationArgsSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
@@ -970,11 +960,6 @@ public protocol SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: PoundSourceLocationSyntax) -> ResultType
-  
-  /// Visiting `PoundWarningDeclSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: the sum of whatever the child visitors return.
-  func visit(_ node: PoundWarningDeclSyntax) -> ResultType
   
   /// Visiting `PrecedenceGroupAssignmentSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
@@ -1220,6 +1205,11 @@ public protocol SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: TypeAnnotationSyntax) -> ResultType
+  
+  /// Visiting `TypeEffectSpecifiersSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: TypeEffectSpecifiersSyntax) -> ResultType
   
   /// Visiting `TypeExprSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
@@ -1759,6 +1749,13 @@ extension SyntaxTransformVisitor {
     visitAny(Syntax(node))
   }
   
+  /// Visiting `DeclEffectSpecifiersSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: DeclEffectSpecifiersSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
+  
   /// Visiting `DeclModifierDetailSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
@@ -2155,13 +2152,6 @@ extension SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
   public func visit(_ node: GuardStmtSyntax) -> ResultType {
-    visitAny(Syntax(node))
-  }
-  
-  /// Visiting `HasSymbolConditionSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: nil by default.
-  public func visit(_ node: HasSymbolConditionSyntax) -> ResultType {
     visitAny(Syntax(node))
   }
   
@@ -2634,20 +2624,6 @@ extension SyntaxTransformVisitor {
     visitAny(Syntax(node))
   }
   
-  /// Visiting `PoundAssertStmtSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: nil by default.
-  public func visit(_ node: PoundAssertStmtSyntax) -> ResultType {
-    visitAny(Syntax(node))
-  }
-  
-  /// Visiting `PoundErrorDeclSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: nil by default.
-  public func visit(_ node: PoundErrorDeclSyntax) -> ResultType {
-    visitAny(Syntax(node))
-  }
-  
   /// Visiting `PoundSourceLocationArgsSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
@@ -2659,13 +2635,6 @@ extension SyntaxTransformVisitor {
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
   public func visit(_ node: PoundSourceLocationSyntax) -> ResultType {
-    visitAny(Syntax(node))
-  }
-  
-  /// Visiting `PoundWarningDeclSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: nil by default.
-  public func visit(_ node: PoundWarningDeclSyntax) -> ResultType {
     visitAny(Syntax(node))
   }
   
@@ -3012,6 +2981,13 @@ extension SyntaxTransformVisitor {
     visitAny(Syntax(node))
   }
   
+  /// Visiting `TypeEffectSpecifiersSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: TypeEffectSpecifiersSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
+  
   /// Visiting `TypeExprSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
@@ -3285,6 +3261,8 @@ extension SyntaxTransformVisitor {
       return visit(derived)
     case .conventionWitnessMethodAttributeArguments(let derived): 
       return visit(derived)
+    case .declEffectSpecifiers(let derived): 
+      return visit(derived)
     case .declModifierDetail(let derived): 
       return visit(derived)
     case .declModifier(let derived): 
@@ -3398,8 +3376,6 @@ extension SyntaxTransformVisitor {
     case .genericWhereClause(let derived): 
       return visit(derived)
     case .guardStmt(let derived): 
-      return visit(derived)
-    case .hasSymbolCondition(let derived): 
       return visit(derived)
     case .identifierExpr(let derived): 
       return visit(derived)
@@ -3535,15 +3511,9 @@ extension SyntaxTransformVisitor {
       return visit(derived)
     case .postfixUnaryExpr(let derived): 
       return visit(derived)
-    case .poundAssertStmt(let derived): 
-      return visit(derived)
-    case .poundErrorDecl(let derived): 
-      return visit(derived)
     case .poundSourceLocationArgs(let derived): 
       return visit(derived)
     case .poundSourceLocation(let derived): 
-      return visit(derived)
-    case .poundWarningDecl(let derived): 
       return visit(derived)
     case .precedenceGroupAssignment(let derived): 
       return visit(derived)
@@ -3642,6 +3612,8 @@ extension SyntaxTransformVisitor {
     case .tupleType(let derived): 
       return visit(derived)
     case .typeAnnotation(let derived): 
+      return visit(derived)
+    case .typeEffectSpecifiers(let derived): 
       return visit(derived)
     case .typeExpr(let derived): 
       return visit(derived)

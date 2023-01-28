@@ -760,6 +760,18 @@ open class SyntaxVisitor {
   open func visitPost(_ node: ConventionWitnessMethodAttributeArgumentsSyntax) {
   }
   
+  /// Visiting `DeclEffectSpecifiersSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: how should we continue visiting.
+  open func visit(_ node: DeclEffectSpecifiersSyntax) -> SyntaxVisitorContinueKind {
+    return .visitChildren
+  }
+  
+  /// The function called after visiting `DeclEffectSpecifiersSyntax` and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: DeclEffectSpecifiersSyntax) {
+  }
+  
   /// Visiting `DeclModifierDetailSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
@@ -1442,18 +1454,6 @@ open class SyntaxVisitor {
   /// The function called after visiting `GuardStmtSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
   open func visitPost(_ node: GuardStmtSyntax) {
-  }
-  
-  /// Visiting `HasSymbolConditionSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: how should we continue visiting.
-  open func visit(_ node: HasSymbolConditionSyntax) -> SyntaxVisitorContinueKind {
-    return .visitChildren
-  }
-  
-  /// The function called after visiting `HasSymbolConditionSyntax` and its descendents.
-  ///   - node: the node we just finished visiting.
-  open func visitPost(_ node: HasSymbolConditionSyntax) {
   }
   
   /// Visiting `IdentifierExprSyntax` specifically.
@@ -2260,30 +2260,6 @@ open class SyntaxVisitor {
   open func visitPost(_ node: PostfixUnaryExprSyntax) {
   }
   
-  /// Visiting `PoundAssertStmtSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: how should we continue visiting.
-  open func visit(_ node: PoundAssertStmtSyntax) -> SyntaxVisitorContinueKind {
-    return .visitChildren
-  }
-  
-  /// The function called after visiting `PoundAssertStmtSyntax` and its descendents.
-  ///   - node: the node we just finished visiting.
-  open func visitPost(_ node: PoundAssertStmtSyntax) {
-  }
-  
-  /// Visiting `PoundErrorDeclSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: how should we continue visiting.
-  open func visit(_ node: PoundErrorDeclSyntax) -> SyntaxVisitorContinueKind {
-    return .visitChildren
-  }
-  
-  /// The function called after visiting `PoundErrorDeclSyntax` and its descendents.
-  ///   - node: the node we just finished visiting.
-  open func visitPost(_ node: PoundErrorDeclSyntax) {
-  }
-  
   /// Visiting `PoundSourceLocationArgsSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
@@ -2306,18 +2282,6 @@ open class SyntaxVisitor {
   /// The function called after visiting `PoundSourceLocationSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
   open func visitPost(_ node: PoundSourceLocationSyntax) {
-  }
-  
-  /// Visiting `PoundWarningDeclSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: how should we continue visiting.
-  open func visit(_ node: PoundWarningDeclSyntax) -> SyntaxVisitorContinueKind {
-    return .visitChildren
-  }
-  
-  /// The function called after visiting `PoundWarningDeclSyntax` and its descendents.
-  ///   - node: the node we just finished visiting.
-  open func visitPost(_ node: PoundWarningDeclSyntax) {
   }
   
   /// Visiting `PrecedenceGroupAssignmentSyntax` specifically.
@@ -2906,6 +2870,18 @@ open class SyntaxVisitor {
   /// The function called after visiting `TypeAnnotationSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
   open func visitPost(_ node: TypeAnnotationSyntax) {
+  }
+  
+  /// Visiting `TypeEffectSpecifiersSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: how should we continue visiting.
+  open func visit(_ node: TypeEffectSpecifiersSyntax) -> SyntaxVisitorContinueKind {
+    return .visitChildren
+  }
+  
+  /// The function called after visiting `TypeEffectSpecifiersSyntax` and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: TypeEffectSpecifiersSyntax) {
   }
   
   /// Visiting `TypeExprSyntax` specifically.
@@ -3844,6 +3820,17 @@ open class SyntaxVisitor {
   }
   
   /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplDeclEffectSpecifiersSyntax(_ data: SyntaxData) {
+    let node = DeclEffectSpecifiersSyntax(data)
+    let needsChildren = (visit(node) == .visitChildren)
+    // Avoid calling into visitChildren if possible.
+    if needsChildren && !node.raw.layoutView!.children.isEmpty {
+      visitChildren(node)
+    }
+    visitPost(node)
+  }
+  
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplDeclModifierDetailSyntax(_ data: SyntaxData) {
     let node = DeclModifierDetailSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
@@ -4462,17 +4449,6 @@ open class SyntaxVisitor {
   /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplGuardStmtSyntax(_ data: SyntaxData) {
     let node = GuardStmtSyntax(data)
-    let needsChildren = (visit(node) == .visitChildren)
-    // Avoid calling into visitChildren if possible.
-    if needsChildren && !node.raw.layoutView!.children.isEmpty {
-      visitChildren(node)
-    }
-    visitPost(node)
-  }
-  
-  /// Implementation detail of doVisit(_:_:). Do not call directly.
-  private func visitImplHasSymbolConditionSyntax(_ data: SyntaxData) {
-    let node = HasSymbolConditionSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
     // Avoid calling into visitChildren if possible.
     if needsChildren && !node.raw.layoutView!.children.isEmpty {
@@ -5219,28 +5195,6 @@ open class SyntaxVisitor {
   }
   
   /// Implementation detail of doVisit(_:_:). Do not call directly.
-  private func visitImplPoundAssertStmtSyntax(_ data: SyntaxData) {
-    let node = PoundAssertStmtSyntax(data)
-    let needsChildren = (visit(node) == .visitChildren)
-    // Avoid calling into visitChildren if possible.
-    if needsChildren && !node.raw.layoutView!.children.isEmpty {
-      visitChildren(node)
-    }
-    visitPost(node)
-  }
-  
-  /// Implementation detail of doVisit(_:_:). Do not call directly.
-  private func visitImplPoundErrorDeclSyntax(_ data: SyntaxData) {
-    let node = PoundErrorDeclSyntax(data)
-    let needsChildren = (visit(node) == .visitChildren)
-    // Avoid calling into visitChildren if possible.
-    if needsChildren && !node.raw.layoutView!.children.isEmpty {
-      visitChildren(node)
-    }
-    visitPost(node)
-  }
-  
-  /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplPoundSourceLocationArgsSyntax(_ data: SyntaxData) {
     let node = PoundSourceLocationArgsSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
@@ -5254,17 +5208,6 @@ open class SyntaxVisitor {
   /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplPoundSourceLocationSyntax(_ data: SyntaxData) {
     let node = PoundSourceLocationSyntax(data)
-    let needsChildren = (visit(node) == .visitChildren)
-    // Avoid calling into visitChildren if possible.
-    if needsChildren && !node.raw.layoutView!.children.isEmpty {
-      visitChildren(node)
-    }
-    visitPost(node)
-  }
-  
-  /// Implementation detail of doVisit(_:_:). Do not call directly.
-  private func visitImplPoundWarningDeclSyntax(_ data: SyntaxData) {
-    let node = PoundWarningDeclSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
     // Avoid calling into visitChildren if possible.
     if needsChildren && !node.raw.layoutView!.children.isEmpty {
@@ -5813,6 +5756,17 @@ open class SyntaxVisitor {
   }
   
   /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplTypeEffectSpecifiersSyntax(_ data: SyntaxData) {
+    let node = TypeEffectSpecifiersSyntax(data)
+    let needsChildren = (visit(node) == .visitChildren)
+    // Avoid calling into visitChildren if possible.
+    if needsChildren && !node.raw.layoutView!.children.isEmpty {
+      visitChildren(node)
+    }
+    visitPost(node)
+  }
+  
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplTypeExprSyntax(_ data: SyntaxData) {
     let node = TypeExprSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
@@ -6172,6 +6126,8 @@ open class SyntaxVisitor {
       visitImplConventionAttributeArgumentsSyntax(data)
     case .conventionWitnessMethodAttributeArguments: 
       visitImplConventionWitnessMethodAttributeArgumentsSyntax(data)
+    case .declEffectSpecifiers: 
+      visitImplDeclEffectSpecifiersSyntax(data)
     case .declModifierDetail: 
       visitImplDeclModifierDetailSyntax(data)
     case .declModifier: 
@@ -6286,8 +6242,6 @@ open class SyntaxVisitor {
       visitImplGenericWhereClauseSyntax(data)
     case .guardStmt: 
       visitImplGuardStmtSyntax(data)
-    case .hasSymbolCondition: 
-      visitImplHasSymbolConditionSyntax(data)
     case .identifierExpr: 
       visitImplIdentifierExprSyntax(data)
     case .identifierPattern: 
@@ -6422,16 +6376,10 @@ open class SyntaxVisitor {
       visitImplPostfixIfConfigExprSyntax(data)
     case .postfixUnaryExpr: 
       visitImplPostfixUnaryExprSyntax(data)
-    case .poundAssertStmt: 
-      visitImplPoundAssertStmtSyntax(data)
-    case .poundErrorDecl: 
-      visitImplPoundErrorDeclSyntax(data)
     case .poundSourceLocationArgs: 
       visitImplPoundSourceLocationArgsSyntax(data)
     case .poundSourceLocation: 
       visitImplPoundSourceLocationSyntax(data)
-    case .poundWarningDecl: 
-      visitImplPoundWarningDeclSyntax(data)
     case .precedenceGroupAssignment: 
       visitImplPrecedenceGroupAssignmentSyntax(data)
     case .precedenceGroupAssociativity: 
@@ -6530,6 +6478,8 @@ open class SyntaxVisitor {
       visitImplTupleTypeSyntax(data)
     case .typeAnnotation: 
       visitImplTypeAnnotationSyntax(data)
+    case .typeEffectSpecifiers: 
+      visitImplTypeEffectSpecifiersSyntax(data)
     case .typeExpr: 
       visitImplTypeExprSyntax(data)
     case .typeInheritanceClause: 

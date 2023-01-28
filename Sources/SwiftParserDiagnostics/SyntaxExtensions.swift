@@ -71,7 +71,7 @@ extension SyntaxProtocol {
   /// diagnostic message), return that.
   /// Otherwise, return a generic message that describes the tokens in this node.
   var shortSingleLineContentDescription: String {
-    let contentWithoutTrivia = self.withoutLeadingTrivia().withoutTrailingTrivia().description
+    let contentWithoutTrivia = self.trimmedDescription
     if self.children(viewMode: .sourceAccurate).allSatisfy({ $0.as(TokenSyntax.self)?.tokenKind == .rightBrace }) {
       if self.children(viewMode: .sourceAccurate).count == 1 {
         return "brace"
@@ -131,6 +131,15 @@ extension TokenKind {
       return true
     default:
       return false
+    }
+  }
+}
+
+public extension TriviaPiece {
+  var isBackslash: Bool {
+    switch self {
+    case .backslashes: return true
+    default: return false
     }
   }
 }

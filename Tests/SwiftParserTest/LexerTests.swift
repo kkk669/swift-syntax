@@ -14,6 +14,45 @@ import XCTest
 @_spi(RawSyntax) import SwiftSyntax
 @_spi(RawSyntax) import SwiftParser
 
+fileprivate func lex(_ sourceBytes: [UInt8]) -> [Lexer.Lexeme] {
+  return sourceBytes.withUnsafeBufferPointer { (buf) -> [Lexer.Lexeme] in
+    var lexemes = [Lexer.Lexeme]()
+    for token in Lexer.tokenize(buf, from: 0) {
+      lexemes.append(token)
+
+      if token.rawTokenKind == .eof {
+        break
+      }
+    }
+    return lexemes
+  }
+}
+
+/// `LexemeSpec` heavily relies on string literals to represent the expected
+/// values for trivia and text. While this is good for most cases, string
+/// literals can't contain invalid UTF-8. Thus, we need a different assert
+/// function working on byte arrays to test source code containing invalid UTF-8.
+fileprivate func AssertRawBytesLexeme(
+  _ lexeme: Lexer.Lexeme,
+  kind: RawTokenKind,
+  leadingTrivia: [UInt8] = [],
+  text: [UInt8],
+  trailingTrivia: [UInt8] = [],
+  file: StaticString = #file,
+  line: UInt = #line
+) {
+  XCTAssertEqual(lexeme.rawTokenKind, kind, file: file, line: line)
+  leadingTrivia.withUnsafeBufferPointer { leadingTrivia in
+    XCTAssertEqual(lexeme.leadingTriviaText, SyntaxText(buffer: leadingTrivia), file: file, line: line)
+  }
+  text.withUnsafeBufferPointer { text in
+    XCTAssertEqual(lexeme.tokenText, SyntaxText(buffer: text), file: file, line: line)
+  }
+  trailingTrivia.withUnsafeBufferPointer { trailingTrivia in
+    XCTAssertEqual(lexeme.trailingTriviaText, SyntaxText(buffer: trailingTrivia), file: file, line: line)
+  }
+}
+
 public class LexerTests: XCTestCase {
   func testIdentifiers() {
     AssertLexemes(
@@ -718,6 +757,15 @@ public class LexerTests: XCTestCase {
     )
   }
 
+  func testInvalidCharacterSpanningMultipleBytes() {
+    AssertLexemes(
+      "121️⃣😡",
+      lexemes: [
+        LexemeSpec(.integerLiteral, text: "12😡", error: "'😡' is not a valid digit in integer literal")
+      ]
+    )
+  }
+
   func testBadNumericLiteralDigits() {
     AssertLexemes(
       "01️⃣a1234567",
@@ -756,76 +804,79 @@ public class LexerTests: XCTestCase {
 
   func testBOMAtStartOfFile() throws {
     let sourceBytes: [UInt8] = [0xef, 0xbb, 0xbf]
-    let lexemes = sourceBytes.withUnsafeBufferPointer { buf in
-      var lexemes = [Lexer.Lexeme]()
-      for token in Lexer.tokenize(buf, from: 0) {
-        lexemes.append(token)
+    let lexemes = lex(sourceBytes)
 
-        if token.rawTokenKind == .eof {
-          break
-        }
-      }
-      return lexemes
+    guard lexemes.count == 1 else {
+      return XCTFail("Expected 1 lexeme, got \(lexemes.count)")
     }
 
-    XCTAssertEqual(lexemes.count, 1)
-    let lexeme = try XCTUnwrap(lexemes.first)
-    XCTAssertEqual(lexeme.rawTokenKind, .eof)
-
-    let bomBytes: [UInt8] = [0xef, 0xbb, 0xbf]
-    bomBytes.withUnsafeBufferPointer { bomBytes in
-      XCTAssertEqual(lexeme.leadingTriviaText, SyntaxText(buffer: bomBytes))
-    }
+    AssertRawBytesLexeme(
+      lexemes[0],
+      kind: .eof,
+      leadingTrivia: sourceBytes,
+      text: []
+    )
   }
 
   func testBOMInTheMiddleOfIdentifier() throws {
     let sourceBytes: [UInt8] = [UInt8(ascii: "a"), 0xef, 0xbb, 0xbf, UInt8(ascii: "b")]
-    let lexemes = sourceBytes.withUnsafeBufferPointer { buf in
-      var lexemes = [Lexer.Lexeme]()
-      for token in Lexer.tokenize(buf, from: 0) {
-        lexemes.append(token)
+    let lexemes = lex(sourceBytes)
 
-        if token.rawTokenKind == .eof {
-          break
-        }
-      }
-      return lexemes
+    guard lexemes.count == 2 else {
+      return XCTFail("Expected 2 lexemes, got \(lexemes.count)")
     }
 
-    XCTAssertEqual(lexemes.count, 2)
-    let lexeme = try XCTUnwrap(lexemes.first)
-    XCTAssertEqual(lexeme.rawTokenKind, .identifier)
-
-    sourceBytes.withUnsafeBufferPointer { sourceBytes in
-      XCTAssertEqual(lexeme.tokenText, SyntaxText(buffer: sourceBytes))
-    }
+    AssertRawBytesLexeme(
+      lexemes[0],
+      kind: .identifier,
+      text: sourceBytes
+    )
   }
 
   func testBOMAsLeadingTriviaInSourceFile() throws {
     let sourceBytes: [UInt8] = [UInt8(ascii: "1"), UInt8(ascii: " "), UInt8(ascii: "+"), UInt8(ascii: " "), 0xef, 0xbb, 0xbf, UInt8(ascii: "2")]
-    let lexemes = sourceBytes.withUnsafeBufferPointer { buf in
-      var lexemes = [Lexer.Lexeme]()
-      for token in Lexer.tokenize(buf, from: 0) {
-        lexemes.append(token)
-
-        if token.rawTokenKind == .eof {
-          break
-        }
-      }
-      return lexemes
-    }
+    let lexemes = lex(sourceBytes)
 
     guard lexemes.count == 4 else {
-      return XCTFail("Expected 4 lexemes")
+      return XCTFail("Expected 4 lexemes, got \(lexemes.count)")
     }
-    let lexeme = lexemes[1]
-    XCTAssertEqual(lexeme.rawTokenKind, .binaryOperator)
 
-    let expectedTrailingTrivia: [UInt8] = [UInt8(ascii: " "), 0xef, 0xbb, 0xbf]
-    expectedTrailingTrivia.withUnsafeBufferPointer { expectedTrailingTrivia in
-      XCTAssertEqual(lexeme.trailingTriviaText, SyntaxText(buffer: expectedTrailingTrivia))
-      XCTAssertEqual(lexeme.tokenText, "+")
+    AssertRawBytesLexeme(
+      lexemes[1],
+      kind: .binaryOperator,
+      text: [UInt8(ascii: "+")],
+      trailingTrivia: [UInt8(ascii: " "), 0xef, 0xbb, 0xbf]
+    )
+  }
+
+  func testInvalidUtf8() {
+    let sourceBytes: [UInt8] = [0xef, 0xfb, 0xbd, 0x0a]
+
+    let lexemes = lex(sourceBytes)
+    guard lexemes.count == 1 else {
+      return XCTFail("Expected 1 lexeme, got \(lexemes.count)")
     }
+    AssertRawBytesLexeme(
+      lexemes[0],
+      kind: .eof,
+      leadingTrivia: sourceBytes,
+      text: []
+    )
+  }
+
+  func testInvalidUtf8_2() {
+    let sourceBytes: [UInt8] = [0xfd]
+
+    let lexemes = lex(sourceBytes)
+    guard lexemes.count == 1 else {
+      return XCTFail("Expected 1 lexeme, got \(lexemes.count)")
+    }
+    AssertRawBytesLexeme(
+      lexemes[0],
+      kind: .eof,
+      leadingTrivia: sourceBytes,
+      text: []
+    )
   }
 
   func testInterpolatedString() {
@@ -914,6 +965,40 @@ public class LexerTests: XCTestCase {
         LexemeSpec(.identifier, leading: "\n", text: "foo", flags: .isAtStartOfLine),
         LexemeSpec(.rightParen, text: ")"),
         LexemeSpec(.stringQuote, text: #"""#),
+      ]
+    )
+  }
+
+  func testMultilineStringLiteral() {
+    AssertLexemes(
+      #"""
+        """
+        line 1
+        line 2
+        """
+      """#,
+      lexemes: [
+        LexemeSpec(.multilineStringQuote, leading: "  ", text: #"""""#, trailing: "\n"),
+        LexemeSpec(.stringSegment, text: "  line 1\n"),
+        LexemeSpec(.stringSegment, text: "  line 2\n"),
+        LexemeSpec(.stringSegment, text: "  "),
+        LexemeSpec(.multilineStringQuote, text: #"""""#),
+      ]
+    )
+
+    AssertLexemes(
+      #"""
+        """
+        line 1 \
+        line 2
+        """
+      """#,
+      lexemes: [
+        LexemeSpec(.multilineStringQuote, leading: "  ", text: #"""""#, trailing: "\n"),
+        LexemeSpec(.stringSegment, text: "  line 1 ", trailing: "\\\n"),
+        LexemeSpec(.stringSegment, text: "  line 2\n"),
+        LexemeSpec(.stringSegment, text: "  "),
+        LexemeSpec(.multilineStringQuote, text: #"""""#),
       ]
     )
   }

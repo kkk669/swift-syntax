@@ -152,26 +152,9 @@ public let DECL_NODES: [Node] = [
        children: [
          Child(name: "Input",
                kind: "ParameterClause"),
-         Child(name: "AsyncOrReasyncKeyword",
-               kind: "KeywordToken",
-               isOptional: true,
-               tokenChoices: [
-                 "Keyword"
-               ],
-               textChoices: [
-                 "async",
-                 "reasync"
-               ]),
-         Child(name: "ThrowsOrRethrowsKeyword",
-               kind: "KeywordToken",
-               isOptional: true,
-               tokenChoices: [
-                 "Keyword"
-               ],
-               textChoices: [
-                 "throws",
-                 "rethrows"
-               ]),
+         Child(name: "EffectSpecifiers",
+               kind: "DeclEffectSpecifiers",
+               isOptional: true),
          Child(name: "Output",
                kind: "ReturnClause",
                isOptional: true)
@@ -228,58 +211,6 @@ public let DECL_NODES: [Node] = [
                  "PoundEndif"
                ],
                classification: "BuildConfigId")
-       ]),
-
-  Node(name: "PoundErrorDecl",
-       nameForDiagnostics: "'#error' directive",
-       kind: "Decl",
-       traits: [
-         "Parenthesized"
-       ],
-       children: [
-         Child(name: "PoundError",
-               kind: "PoundErrorToken",
-               tokenChoices: [
-                 "PoundError"
-               ]),
-         Child(name: "LeftParen",
-               kind: "LeftParenToken",
-               tokenChoices: [
-                 "LeftParen"
-               ]),
-         Child(name: "Message",
-               kind: "StringLiteralExpr"),
-         Child(name: "RightParen",
-               kind: "RightParenToken",
-               tokenChoices: [
-                 "RightParen"
-               ])
-       ]),
-
-  Node(name: "PoundWarningDecl",
-       nameForDiagnostics: "'#warning' directive",
-       kind: "Decl",
-       traits: [
-         "Parenthesized"
-       ],
-       children: [
-         Child(name: "PoundWarning",
-               kind: "PoundWarningToken",
-               tokenChoices: [
-                 "PoundWarning"
-               ]),
-         Child(name: "LeftParen",
-               kind: "LeftParenToken",
-               tokenChoices: [
-                 "LeftParen"
-               ]),
-         Child(name: "Message",
-               kind: "StringLiteralExpr"),
-         Child(name: "RightParen",
-               kind: "RightParenToken",
-               tokenChoices: [
-                 "RightParen"
-               ])
        ]),
 
   Node(name: "PoundSourceLocation",
@@ -1090,25 +1021,9 @@ public let DECL_NODES: [Node] = [
          Child(name: "Parameter",
                kind: "AccessorParameter",
                isOptional: true),
-         Child(name: "AsyncKeyword",
-               kind: "KeywordToken",
-               isOptional: true,
-               tokenChoices: [
-                 "Keyword"
-               ],
-               textChoices: [
-                 "async"
-               ]),
-         Child(name: "ThrowsKeyword",
-               kind: "KeywordToken",
-               isOptional: true,
-               tokenChoices: [
-                 "Keyword"
-               ],
-               textChoices: [
-                 "throws",
-                 "rethrows"
-               ]),
+         Child(name: "EffectSpecifiers",
+               kind: "DeclEffectSpecifiers",
+               isOptional: true),
          Child(name: "Body",
                kind: "CodeBlock",
                isOptional: true)
@@ -1633,8 +1548,11 @@ public let DECL_NODES: [Node] = [
        ]),
 
   Node(name: "MacroExpansionDecl",
-       nameForDiagnostics: "pound literal declaration",
+       nameForDiagnostics: "macro expansion",
        kind: "Decl",
+       traits: [
+         "FreestandingMacroExpansion"
+       ],
        children: [
          Child(name: "PoundToken",
                kind: "PoundToken",

@@ -158,65 +158,30 @@ public struct CodeBlockItemSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeItem: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeItem(value)
+      self = CodeBlockItemSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeItem` replaced.
-  /// - param newChild: The new `unexpectedBeforeItem` to replace the node's
-  ///                   current `unexpectedBeforeItem`, if present.
-  public func withUnexpectedBeforeItem(_ newChild: UnexpectedNodesSyntax?) -> CodeBlockItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return CodeBlockItemSyntax(newData)
   }
 
   /// The underlying node inside the code block.
   public var item: Item {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return Item(childData!)
+      return Item(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withItem(value)
+      self = CodeBlockItemSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `item` replaced.
-  /// - param newChild: The new `item` to replace the node's
-  ///                   current `item`, if present.
-  public func withItem(_ newChild: Item) -> CodeBlockItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return CodeBlockItemSyntax(newData)
   }
 
   public var unexpectedBetweenItemAndSemicolon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenItemAndSemicolon(value)
+      self = CodeBlockItemSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenItemAndSemicolon` replaced.
-  /// - param newChild: The new `unexpectedBetweenItemAndSemicolon` to replace the node's
-  ///                   current `unexpectedBetweenItemAndSemicolon`, if present.
-  public func withUnexpectedBetweenItemAndSemicolon(_ newChild: UnexpectedNodesSyntax?) -> CodeBlockItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return CodeBlockItemSyntax(newData)
   }
 
   /// 
@@ -224,44 +189,20 @@ public struct CodeBlockItemSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var semicolon: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withSemicolon(value)
+      self = CodeBlockItemSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `semicolon` replaced.
-  /// - param newChild: The new `semicolon` to replace the node's
-  ///                   current `semicolon`, if present.
-  public func withSemicolon(_ newChild: TokenSyntax?) -> CodeBlockItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return CodeBlockItemSyntax(newData)
   }
 
   public var unexpectedAfterSemicolon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterSemicolon(value)
+      self = CodeBlockItemSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterSemicolon` replaced.
-  /// - param newChild: The new `unexpectedAfterSemicolon` to replace the node's
-  ///                   current `unexpectedAfterSemicolon`, if present.
-  public func withUnexpectedAfterSemicolon(_ newChild: UnexpectedNodesSyntax?) -> CodeBlockItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return CodeBlockItemSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -355,73 +296,37 @@ public struct CodeBlockSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftBrace(value)
+      self = CodeBlockSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftBrace` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftBrace` to replace the node's
-  ///                   current `unexpectedBeforeLeftBrace`, if present.
-  public func withUnexpectedBeforeLeftBrace(_ newChild: UnexpectedNodesSyntax?) -> CodeBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return CodeBlockSyntax(newData)
   }
 
   public var leftBrace: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftBrace(value)
+      self = CodeBlockSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftBrace` replaced.
-  /// - param newChild: The new `leftBrace` to replace the node's
-  ///                   current `leftBrace`, if present.
-  public func withLeftBrace(_ newChild: TokenSyntax) -> CodeBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return CodeBlockSyntax(newData)
   }
 
   public var unexpectedBetweenLeftBraceAndStatements: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftBraceAndStatements(value)
+      self = CodeBlockSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftBraceAndStatements` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftBraceAndStatements` to replace the node's
-  ///                   current `unexpectedBetweenLeftBraceAndStatements`, if present.
-  public func withUnexpectedBetweenLeftBraceAndStatements(_ newChild: UnexpectedNodesSyntax?) -> CodeBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return CodeBlockSyntax(newData)
   }
 
   public var statements: CodeBlockItemListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return CodeBlockItemListSyntax(childData!)
+      return CodeBlockItemListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withStatements(value)
+      self = CodeBlockSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -444,76 +349,31 @@ public struct CodeBlockSyntax: SyntaxProtocol, SyntaxHashable {
     return CodeBlockSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `statements` replaced.
-  /// - param newChild: The new `statements` to replace the node's
-  ///                   current `statements`, if present.
-  public func withStatements(_ newChild: CodeBlockItemListSyntax) -> CodeBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return CodeBlockSyntax(newData)
-  }
-
   public var unexpectedBetweenStatementsAndRightBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenStatementsAndRightBrace(value)
+      self = CodeBlockSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenStatementsAndRightBrace` replaced.
-  /// - param newChild: The new `unexpectedBetweenStatementsAndRightBrace` to replace the node's
-  ///                   current `unexpectedBetweenStatementsAndRightBrace`, if present.
-  public func withUnexpectedBetweenStatementsAndRightBrace(_ newChild: UnexpectedNodesSyntax?) -> CodeBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return CodeBlockSyntax(newData)
   }
 
   public var rightBrace: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightBrace(value)
+      self = CodeBlockSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightBrace` replaced.
-  /// - param newChild: The new `rightBrace` to replace the node's
-  ///                   current `rightBrace`, if present.
-  public func withRightBrace(_ newChild: TokenSyntax) -> CodeBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return CodeBlockSyntax(newData)
   }
 
   public var unexpectedAfterRightBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightBrace(value)
+      self = CodeBlockSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightBrace` replaced.
-  /// - param newChild: The new `unexpectedAfterRightBrace` to replace the node's
-  ///                   current `unexpectedAfterRightBrace`, if present.
-  public func withUnexpectedAfterRightBrace(_ newChild: UnexpectedNodesSyntax?) -> CodeBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return CodeBlockSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -560,6 +420,266 @@ extension CodeBlockSyntax: CustomReflectable {
       "unexpectedBetweenStatementsAndRightBrace": unexpectedBetweenStatementsAndRightBrace.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "rightBrace": Syntax(rightBrace).asProtocol(SyntaxProtocol.self),
       "unexpectedAfterRightBrace": unexpectedAfterRightBrace.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+    ])
+  }
+}
+
+// MARK: - DeclEffectSpecifiersSyntax
+
+public struct DeclEffectSpecifiersSyntax: SyntaxProtocol, SyntaxHashable {
+  public let _syntaxNode: Syntax
+
+  public init?<S: SyntaxProtocol>(_ node: S) {
+    guard node.raw.kind == .declEffectSpecifiers else { return nil }
+    self._syntaxNode = node._syntaxNode
+  }
+
+  /// Creates a `DeclEffectSpecifiersSyntax` node from the given `SyntaxData`. This assumes
+  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
+  /// is undefined.
+  internal init(_ data: SyntaxData) {
+    assert(data.raw.kind == .declEffectSpecifiers)
+    self._syntaxNode = Syntax(data)
+  }
+
+  public init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeAsyncSpecifier: UnexpectedNodesSyntax? = nil,
+    asyncSpecifier: TokenSyntax? = nil,
+    _ unexpectedBetweenAsyncSpecifierAndThrowsSpecifier: UnexpectedNodesSyntax? = nil,
+    throwsSpecifier: TokenSyntax? = nil,
+    _ unexpectedAfterThrowsSpecifier: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeAsyncSpecifier, asyncSpecifier, unexpectedBetweenAsyncSpecifierAndThrowsSpecifier, throwsSpecifier, unexpectedAfterThrowsSpecifier))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeAsyncSpecifier?.raw,
+        asyncSpecifier?.raw,
+        unexpectedBetweenAsyncSpecifierAndThrowsSpecifier?.raw,
+        throwsSpecifier?.raw,
+        unexpectedAfterThrowsSpecifier?.raw,
+      ]
+      let raw = RawSyntax.makeLayout(
+        kind: SyntaxKind.declEffectSpecifiers, from: layout, arena: arena,
+        leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
+      return SyntaxData.forRoot(raw)
+    }
+    self.init(data)
+  }
+
+  public var unexpectedBeforeAsyncSpecifier: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = DeclEffectSpecifiersSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public var asyncSpecifier: TokenSyntax? {
+    get {
+      return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
+    }
+    set(value) {
+      self = DeclEffectSpecifiersSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public var unexpectedBetweenAsyncSpecifierAndThrowsSpecifier: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = DeclEffectSpecifiersSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public var throwsSpecifier: TokenSyntax? {
+    get {
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
+    }
+    set(value) {
+      self = DeclEffectSpecifiersSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public var unexpectedAfterThrowsSpecifier: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = DeclEffectSpecifiersSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public static var structure: SyntaxNodeStructure {
+    return .layout([
+      \Self.unexpectedBeforeAsyncSpecifier,
+      \Self.asyncSpecifier,
+      \Self.unexpectedBetweenAsyncSpecifierAndThrowsSpecifier,
+      \Self.throwsSpecifier,
+      \Self.unexpectedAfterThrowsSpecifier,
+    ])
+  }
+
+  public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
+    switch index.data?.indexInParent {
+    case 0:
+      return nil
+    case 1:
+      return nil
+    case 2:
+      return nil
+    case 3:
+      return nil
+    case 4:
+      return nil
+    default:
+      fatalError("Invalid index")
+    }
+  }
+}
+
+extension DeclEffectSpecifiersSyntax: CustomReflectable {
+  public var customMirror: Mirror {
+    return Mirror(self, children: [
+      "unexpectedBeforeAsyncSpecifier": unexpectedBeforeAsyncSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "asyncSpecifier": asyncSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedBetweenAsyncSpecifierAndThrowsSpecifier": unexpectedBetweenAsyncSpecifierAndThrowsSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "throwsSpecifier": throwsSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedAfterThrowsSpecifier": unexpectedAfterThrowsSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+    ])
+  }
+}
+
+// MARK: - TypeEffectSpecifiersSyntax
+
+public struct TypeEffectSpecifiersSyntax: SyntaxProtocol, SyntaxHashable {
+  public let _syntaxNode: Syntax
+
+  public init?<S: SyntaxProtocol>(_ node: S) {
+    guard node.raw.kind == .typeEffectSpecifiers else { return nil }
+    self._syntaxNode = node._syntaxNode
+  }
+
+  /// Creates a `TypeEffectSpecifiersSyntax` node from the given `SyntaxData`. This assumes
+  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
+  /// is undefined.
+  internal init(_ data: SyntaxData) {
+    assert(data.raw.kind == .typeEffectSpecifiers)
+    self._syntaxNode = Syntax(data)
+  }
+
+  public init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeAsyncSpecifier: UnexpectedNodesSyntax? = nil,
+    asyncSpecifier: TokenSyntax? = nil,
+    _ unexpectedBetweenAsyncSpecifierAndThrowsSpecifier: UnexpectedNodesSyntax? = nil,
+    throwsSpecifier: TokenSyntax? = nil,
+    _ unexpectedAfterThrowsSpecifier: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    // Extend the lifetime of all parameters so their arenas don't get destroyed 
+    // before they can be added as children of the new arena.
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeAsyncSpecifier, asyncSpecifier, unexpectedBetweenAsyncSpecifierAndThrowsSpecifier, throwsSpecifier, unexpectedAfterThrowsSpecifier))) { (arena, _) in
+      let layout: [RawSyntax?] = [
+        unexpectedBeforeAsyncSpecifier?.raw,
+        asyncSpecifier?.raw,
+        unexpectedBetweenAsyncSpecifierAndThrowsSpecifier?.raw,
+        throwsSpecifier?.raw,
+        unexpectedAfterThrowsSpecifier?.raw,
+      ]
+      let raw = RawSyntax.makeLayout(
+        kind: SyntaxKind.typeEffectSpecifiers, from: layout, arena: arena,
+        leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
+      return SyntaxData.forRoot(raw)
+    }
+    self.init(data)
+  }
+
+  public var unexpectedBeforeAsyncSpecifier: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = TypeEffectSpecifiersSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public var asyncSpecifier: TokenSyntax? {
+    get {
+      return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
+    }
+    set(value) {
+      self = TypeEffectSpecifiersSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public var unexpectedBetweenAsyncSpecifierAndThrowsSpecifier: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = TypeEffectSpecifiersSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public var throwsSpecifier: TokenSyntax? {
+    get {
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
+    }
+    set(value) {
+      self = TypeEffectSpecifiersSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public var unexpectedAfterThrowsSpecifier: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = TypeEffectSpecifiersSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+
+  public static var structure: SyntaxNodeStructure {
+    return .layout([
+      \Self.unexpectedBeforeAsyncSpecifier,
+      \Self.asyncSpecifier,
+      \Self.unexpectedBetweenAsyncSpecifierAndThrowsSpecifier,
+      \Self.throwsSpecifier,
+      \Self.unexpectedAfterThrowsSpecifier,
+    ])
+  }
+
+  public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
+    switch index.data?.indexInParent {
+    case 0:
+      return nil
+    case 1:
+      return nil
+    case 2:
+      return nil
+    case 3:
+      return nil
+    case 4:
+      return nil
+    default:
+      fatalError("Invalid index")
+    }
+  }
+}
+
+extension TypeEffectSpecifiersSyntax: CustomReflectable {
+  public var customMirror: Mirror {
+    return Mirror(self, children: [
+      "unexpectedBeforeAsyncSpecifier": unexpectedBeforeAsyncSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "asyncSpecifier": asyncSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedBetweenAsyncSpecifierAndThrowsSpecifier": unexpectedBetweenAsyncSpecifierAndThrowsSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "throwsSpecifier": throwsSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedAfterThrowsSpecifier": unexpectedAfterThrowsSpecifier.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
     ])
   }
 }
@@ -611,105 +731,47 @@ public struct DeclNameArgumentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeName(value)
+      self = DeclNameArgumentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeName` replaced.
-  /// - param newChild: The new `unexpectedBeforeName` to replace the node's
-  ///                   current `unexpectedBeforeName`, if present.
-  public func withUnexpectedBeforeName(_ newChild: UnexpectedNodesSyntax?) -> DeclNameArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DeclNameArgumentSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = DeclNameArgumentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> DeclNameArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DeclNameArgumentSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndColon(value)
+      self = DeclNameArgumentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndColon` to replace the node's
-  ///                   current `unexpectedBetweenNameAndColon`, if present.
-  public func withUnexpectedBetweenNameAndColon(_ newChild: UnexpectedNodesSyntax?) -> DeclNameArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DeclNameArgumentSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = DeclNameArgumentSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> DeclNameArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DeclNameArgumentSyntax(newData)
   }
 
   public var unexpectedAfterColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterColon(value)
+      self = DeclNameArgumentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterColon` replaced.
-  /// - param newChild: The new `unexpectedAfterColon` to replace the node's
-  ///                   current `unexpectedAfterColon`, if present.
-  public func withUnexpectedAfterColon(_ newChild: UnexpectedNodesSyntax?) -> DeclNameArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DeclNameArgumentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -803,73 +865,37 @@ public struct DeclNameArgumentsSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftParen(value)
+      self = DeclNameArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftParen` to replace the node's
-  ///                   current `unexpectedBeforeLeftParen`, if present.
-  public func withUnexpectedBeforeLeftParen(_ newChild: UnexpectedNodesSyntax?) -> DeclNameArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DeclNameArgumentsSyntax(newData)
   }
 
   public var leftParen: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = DeclNameArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> DeclNameArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DeclNameArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndArguments(value)
+      self = DeclNameArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndArguments` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndArguments` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndArguments`, if present.
-  public func withUnexpectedBetweenLeftParenAndArguments(_ newChild: UnexpectedNodesSyntax?) -> DeclNameArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DeclNameArgumentsSyntax(newData)
   }
 
   public var arguments: DeclNameArgumentListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return DeclNameArgumentListSyntax(childData!)
+      return DeclNameArgumentListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withArguments(value)
+      self = DeclNameArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -892,76 +918,31 @@ public struct DeclNameArgumentsSyntax: SyntaxProtocol, SyntaxHashable {
     return DeclNameArgumentsSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `arguments` replaced.
-  /// - param newChild: The new `arguments` to replace the node's
-  ///                   current `arguments`, if present.
-  public func withArguments(_ newChild: DeclNameArgumentListSyntax) -> DeclNameArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DeclNameArgumentsSyntax(newData)
-  }
-
   public var unexpectedBetweenArgumentsAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenArgumentsAndRightParen(value)
+      self = DeclNameArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenArgumentsAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenArgumentsAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenArgumentsAndRightParen`, if present.
-  public func withUnexpectedBetweenArgumentsAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> DeclNameArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DeclNameArgumentsSyntax(newData)
   }
 
   public var rightParen: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightParen(value)
+      self = DeclNameArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> DeclNameArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DeclNameArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = DeclNameArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> DeclNameArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DeclNameArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -1067,190 +1048,83 @@ public struct TupleExprElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLabel(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeLabel` to replace the node's
-  ///                   current `unexpectedBeforeLabel`, if present.
-  public func withUnexpectedBeforeLabel(_ newChild: UnexpectedNodesSyntax?) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public var label: TokenSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withLabel(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `label` replaced.
-  /// - param newChild: The new `label` to replace the node's
-  ///                   current `label`, if present.
-  public func withLabel(_ newChild: TokenSyntax?) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public var unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelAndColon(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenLabelAndColon`, if present.
-  public func withUnexpectedBetweenLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public var colon: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withColon(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax?) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndExpression: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndExpression(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndExpression` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndExpression` to replace the node's
-  ///                   current `unexpectedBetweenColonAndExpression`, if present.
-  public func withUnexpectedBetweenColonAndExpression(_ newChild: UnexpectedNodesSyntax?) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public var expression: ExprSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return ExprSyntax(childData!)
+      return ExprSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withExpression(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `expression` replaced.
-  /// - param newChild: The new `expression` to replace the node's
-  ///                   current `expression`, if present.
-  public func withExpression(_ newChild: ExprSyntax) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public var unexpectedBetweenExpressionAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenExpressionAndTrailingComma(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenExpressionAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenExpressionAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenExpressionAndTrailingComma`, if present.
-  public func withUnexpectedBetweenExpressionAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = TupleExprElementSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> TupleExprElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return TupleExprElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -1356,106 +1230,47 @@ public struct ArrayElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeExpression: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeExpression(value)
+      self = ArrayElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeExpression` replaced.
-  /// - param newChild: The new `unexpectedBeforeExpression` to replace the node's
-  ///                   current `unexpectedBeforeExpression`, if present.
-  public func withUnexpectedBeforeExpression(_ newChild: UnexpectedNodesSyntax?) -> ArrayElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ArrayElementSyntax(newData)
   }
 
   public var expression: ExprSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return ExprSyntax(childData!)
+      return ExprSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withExpression(value)
+      self = ArrayElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `expression` replaced.
-  /// - param newChild: The new `expression` to replace the node's
-  ///                   current `expression`, if present.
-  public func withExpression(_ newChild: ExprSyntax) -> ArrayElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ArrayElementSyntax(newData)
   }
 
   public var unexpectedBetweenExpressionAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenExpressionAndTrailingComma(value)
+      self = ArrayElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenExpressionAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenExpressionAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenExpressionAndTrailingComma`, if present.
-  public func withUnexpectedBetweenExpressionAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> ArrayElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ArrayElementSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = ArrayElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> ArrayElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ArrayElementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = ArrayElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> ArrayElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ArrayElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -1553,188 +1368,83 @@ public struct DictionaryElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeKeyExpression: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeKeyExpression(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeKeyExpression` replaced.
-  /// - param newChild: The new `unexpectedBeforeKeyExpression` to replace the node's
-  ///                   current `unexpectedBeforeKeyExpression`, if present.
-  public func withUnexpectedBeforeKeyExpression(_ newChild: UnexpectedNodesSyntax?) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public var keyExpression: ExprSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return ExprSyntax(childData!)
+      return ExprSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withKeyExpression(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `keyExpression` replaced.
-  /// - param newChild: The new `keyExpression` to replace the node's
-  ///                   current `keyExpression`, if present.
-  public func withKeyExpression(_ newChild: ExprSyntax) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public var unexpectedBetweenKeyExpressionAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenKeyExpressionAndColon(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenKeyExpressionAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenKeyExpressionAndColon` to replace the node's
-  ///                   current `unexpectedBetweenKeyExpressionAndColon`, if present.
-  public func withUnexpectedBetweenKeyExpressionAndColon(_ newChild: UnexpectedNodesSyntax?) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndValueExpression: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndValueExpression(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndValueExpression` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndValueExpression` to replace the node's
-  ///                   current `unexpectedBetweenColonAndValueExpression`, if present.
-  public func withUnexpectedBetweenColonAndValueExpression(_ newChild: UnexpectedNodesSyntax?) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public var valueExpression: ExprSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return ExprSyntax(childData!)
+      return ExprSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withValueExpression(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `valueExpression` replaced.
-  /// - param newChild: The new `valueExpression` to replace the node's
-  ///                   current `valueExpression`, if present.
-  public func withValueExpression(_ newChild: ExprSyntax) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public var unexpectedBetweenValueExpressionAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenValueExpressionAndTrailingComma(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenValueExpressionAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenValueExpressionAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenValueExpressionAndTrailingComma`, if present.
-  public func withUnexpectedBetweenValueExpressionAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = DictionaryElementSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> DictionaryElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return DictionaryElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -1848,190 +1558,83 @@ public struct ClosureCaptureItemSpecifierSyntax: SyntaxProtocol, SyntaxHashable 
 
   public var unexpectedBeforeSpecifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeSpecifier(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeSpecifier` replaced.
-  /// - param newChild: The new `unexpectedBeforeSpecifier` to replace the node's
-  ///                   current `unexpectedBeforeSpecifier`, if present.
-  public func withUnexpectedBeforeSpecifier(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public var specifier: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withSpecifier(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `specifier` replaced.
-  /// - param newChild: The new `specifier` to replace the node's
-  ///                   current `specifier`, if present.
-  public func withSpecifier(_ newChild: TokenSyntax) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public var unexpectedBetweenSpecifierAndLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenSpecifierAndLeftParen(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenSpecifierAndLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenSpecifierAndLeftParen` to replace the node's
-  ///                   current `unexpectedBetweenSpecifierAndLeftParen`, if present.
-  public func withUnexpectedBetweenSpecifierAndLeftParen(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public var leftParen: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax?) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndDetail: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndDetail(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndDetail` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndDetail` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndDetail`, if present.
-  public func withUnexpectedBetweenLeftParenAndDetail(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public var detail: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withDetail(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `detail` replaced.
-  /// - param newChild: The new `detail` to replace the node's
-  ///                   current `detail`, if present.
-  public func withDetail(_ newChild: TokenSyntax?) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public var unexpectedBetweenDetailAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDetailAndRightParen(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDetailAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenDetailAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenDetailAndRightParen`, if present.
-  public func withUnexpectedBetweenDetailAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public var rightParen: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withRightParen(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax?) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = ClosureCaptureItemSpecifierSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSpecifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return ClosureCaptureItemSpecifierSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -2149,232 +1752,101 @@ public struct ClosureCaptureItemSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeSpecifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeSpecifier(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeSpecifier` replaced.
-  /// - param newChild: The new `unexpectedBeforeSpecifier` to replace the node's
-  ///                   current `unexpectedBeforeSpecifier`, if present.
-  public func withUnexpectedBeforeSpecifier(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var specifier: ClosureCaptureItemSpecifierSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return ClosureCaptureItemSpecifierSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(ClosureCaptureItemSpecifierSyntax.init)
     }
     set(value) {
-      self = withSpecifier(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `specifier` replaced.
-  /// - param newChild: The new `specifier` to replace the node's
-  ///                   current `specifier`, if present.
-  public func withSpecifier(_ newChild: ClosureCaptureItemSpecifierSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var unexpectedBetweenSpecifierAndName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenSpecifierAndName(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenSpecifierAndName` replaced.
-  /// - param newChild: The new `unexpectedBetweenSpecifierAndName` to replace the node's
-  ///                   current `unexpectedBetweenSpecifierAndName`, if present.
-  public func withUnexpectedBetweenSpecifierAndName(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var name: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withName(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndAssignToken: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndAssignToken(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndAssignToken` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndAssignToken` to replace the node's
-  ///                   current `unexpectedBetweenNameAndAssignToken`, if present.
-  public func withUnexpectedBetweenNameAndAssignToken(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var assignToken: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withAssignToken(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `assignToken` replaced.
-  /// - param newChild: The new `assignToken` to replace the node's
-  ///                   current `assignToken`, if present.
-  public func withAssignToken(_ newChild: TokenSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var unexpectedBetweenAssignTokenAndExpression: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAssignTokenAndExpression(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAssignTokenAndExpression` replaced.
-  /// - param newChild: The new `unexpectedBetweenAssignTokenAndExpression` to replace the node's
-  ///                   current `unexpectedBetweenAssignTokenAndExpression`, if present.
-  public func withUnexpectedBetweenAssignTokenAndExpression(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var expression: ExprSyntax {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return ExprSyntax(childData!)
+      return ExprSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = withExpression(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `expression` replaced.
-  /// - param newChild: The new `expression` to replace the node's
-  ///                   current `expression`, if present.
-  public func withExpression(_ newChild: ExprSyntax) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var unexpectedBetweenExpressionAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenExpressionAndTrailingComma(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenExpressionAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenExpressionAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenExpressionAndTrailingComma`, if present.
-  public func withUnexpectedBetweenExpressionAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = ClosureCaptureItemSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return ClosureCaptureItemSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -2492,74 +1964,37 @@ public struct ClosureCaptureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftSquare: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftSquare(value)
+      self = ClosureCaptureSignatureSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftSquare` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftSquare` to replace the node's
-  ///                   current `unexpectedBeforeLeftSquare`, if present.
-  public func withUnexpectedBeforeLeftSquare(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ClosureCaptureSignatureSyntax(newData)
   }
 
   public var leftSquare: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftSquare(value)
+      self = ClosureCaptureSignatureSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftSquare` replaced.
-  /// - param newChild: The new `leftSquare` to replace the node's
-  ///                   current `leftSquare`, if present.
-  public func withLeftSquare(_ newChild: TokenSyntax) -> ClosureCaptureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ClosureCaptureSignatureSyntax(newData)
   }
 
   public var unexpectedBetweenLeftSquareAndItems: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftSquareAndItems(value)
+      self = ClosureCaptureSignatureSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftSquareAndItems` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftSquareAndItems` to replace the node's
-  ///                   current `unexpectedBetweenLeftSquareAndItems`, if present.
-  public func withUnexpectedBetweenLeftSquareAndItems(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ClosureCaptureSignatureSyntax(newData)
   }
 
   public var items: ClosureCaptureItemListSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return ClosureCaptureItemListSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(ClosureCaptureItemListSyntax.init)
     }
     set(value) {
-      self = withItems(value)
+      self = ClosureCaptureSignatureSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
@@ -2582,76 +2017,31 @@ public struct ClosureCaptureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     return ClosureCaptureSignatureSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `items` replaced.
-  /// - param newChild: The new `items` to replace the node's
-  ///                   current `items`, if present.
-  public func withItems(_ newChild: ClosureCaptureItemListSyntax?) -> ClosureCaptureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ClosureCaptureSignatureSyntax(newData)
-  }
-
   public var unexpectedBetweenItemsAndRightSquare: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenItemsAndRightSquare(value)
+      self = ClosureCaptureSignatureSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenItemsAndRightSquare` replaced.
-  /// - param newChild: The new `unexpectedBetweenItemsAndRightSquare` to replace the node's
-  ///                   current `unexpectedBetweenItemsAndRightSquare`, if present.
-  public func withUnexpectedBetweenItemsAndRightSquare(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ClosureCaptureSignatureSyntax(newData)
   }
 
   public var rightSquare: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightSquare(value)
+      self = ClosureCaptureSignatureSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightSquare` replaced.
-  /// - param newChild: The new `rightSquare` to replace the node's
-  ///                   current `rightSquare`, if present.
-  public func withRightSquare(_ newChild: TokenSyntax) -> ClosureCaptureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ClosureCaptureSignatureSyntax(newData)
   }
 
   public var unexpectedAfterRightSquare: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightSquare(value)
+      self = ClosureCaptureSignatureSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightSquare` replaced.
-  /// - param newChild: The new `unexpectedAfterRightSquare` to replace the node's
-  ///                   current `unexpectedAfterRightSquare`, if present.
-  public func withUnexpectedAfterRightSquare(_ newChild: UnexpectedNodesSyntax?) -> ClosureCaptureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ClosureCaptureSignatureSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -2749,106 +2139,47 @@ public struct ClosureParamSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeName(value)
+      self = ClosureParamSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeName` replaced.
-  /// - param newChild: The new `unexpectedBeforeName` to replace the node's
-  ///                   current `unexpectedBeforeName`, if present.
-  public func withUnexpectedBeforeName(_ newChild: UnexpectedNodesSyntax?) -> ClosureParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ClosureParamSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = ClosureParamSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> ClosureParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ClosureParamSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndTrailingComma(value)
+      self = ClosureParamSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenNameAndTrailingComma`, if present.
-  public func withUnexpectedBetweenNameAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> ClosureParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ClosureParamSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = ClosureParamSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> ClosureParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ClosureParamSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = ClosureParamSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> ClosureParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ClosureParamSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -2953,11 +2284,9 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     capture: ClosureCaptureSignatureSyntax? = nil,
     _ unexpectedBetweenCaptureAndInput: UnexpectedNodesSyntax? = nil,
     input: Input? = nil,
-    _ unexpectedBetweenInputAndAsyncKeyword: UnexpectedNodesSyntax? = nil,
-    asyncKeyword: TokenSyntax? = nil,
-    _ unexpectedBetweenAsyncKeywordAndThrowsTok: UnexpectedNodesSyntax? = nil,
-    throwsTok: TokenSyntax? = nil,
-    _ unexpectedBetweenThrowsTokAndOutput: UnexpectedNodesSyntax? = nil,
+    _ unexpectedBetweenInputAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
+    effectSpecifiers: TypeEffectSpecifiersSyntax? = nil,
+    _ unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? = nil,
     output: ReturnClauseSyntax? = nil,
     _ unexpectedBetweenOutputAndInTok: UnexpectedNodesSyntax? = nil,
     inTok: TokenSyntax = .keyword(.in),
@@ -2966,7 +2295,7 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
   ) {
     // Extend the lifetime of all parameters so their arenas don't get destroyed 
     // before they can be added as children of the new arena.
-    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeAttributes, attributes, unexpectedBetweenAttributesAndCapture, capture, unexpectedBetweenCaptureAndInput, input, unexpectedBetweenInputAndAsyncKeyword, asyncKeyword, unexpectedBetweenAsyncKeywordAndThrowsTok, throwsTok, unexpectedBetweenThrowsTokAndOutput, output, unexpectedBetweenOutputAndInTok, inTok, unexpectedAfterInTok))) { (arena, _) in
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeAttributes, attributes, unexpectedBetweenAttributesAndCapture, capture, unexpectedBetweenCaptureAndInput, input, unexpectedBetweenInputAndEffectSpecifiers, effectSpecifiers, unexpectedBetweenEffectSpecifiersAndOutput, output, unexpectedBetweenOutputAndInTok, inTok, unexpectedAfterInTok))) { (arena, _) in
       let layout: [RawSyntax?] = [
         unexpectedBeforeAttributes?.raw,
         attributes?.raw,
@@ -2974,11 +2303,9 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
         capture?.raw,
         unexpectedBetweenCaptureAndInput?.raw,
         input?.raw,
-        unexpectedBetweenInputAndAsyncKeyword?.raw,
-        asyncKeyword?.raw,
-        unexpectedBetweenAsyncKeywordAndThrowsTok?.raw,
-        throwsTok?.raw,
-        unexpectedBetweenThrowsTokAndOutput?.raw,
+        unexpectedBetweenInputAndEffectSpecifiers?.raw,
+        effectSpecifiers?.raw,
+        unexpectedBetweenEffectSpecifiersAndOutput?.raw,
         output?.raw,
         unexpectedBetweenOutputAndInTok?.raw,
         inTok.raw,
@@ -2994,33 +2321,19 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeAttributes: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeAttributes(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeAttributes` replaced.
-  /// - param newChild: The new `unexpectedBeforeAttributes` to replace the node's
-  ///                   current `unexpectedBeforeAttributes`, if present.
-  public func withUnexpectedBeforeAttributes(_ newChild: UnexpectedNodesSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public var attributes: AttributeListSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return AttributeListSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = withAttributes(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
@@ -3043,286 +2356,103 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     return ClosureSignatureSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `attributes` replaced.
-  /// - param newChild: The new `attributes` to replace the node's
-  ///                   current `attributes`, if present.
-  public func withAttributes(_ newChild: AttributeListSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
-  }
-
   public var unexpectedBetweenAttributesAndCapture: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAttributesAndCapture(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAttributesAndCapture` replaced.
-  /// - param newChild: The new `unexpectedBetweenAttributesAndCapture` to replace the node's
-  ///                   current `unexpectedBetweenAttributesAndCapture`, if present.
-  public func withUnexpectedBetweenAttributesAndCapture(_ newChild: UnexpectedNodesSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public var capture: ClosureCaptureSignatureSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return ClosureCaptureSignatureSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(ClosureCaptureSignatureSyntax.init)
     }
     set(value) {
-      self = withCapture(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `capture` replaced.
-  /// - param newChild: The new `capture` to replace the node's
-  ///                   current `capture`, if present.
-  public func withCapture(_ newChild: ClosureCaptureSignatureSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public var unexpectedBetweenCaptureAndInput: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCaptureAndInput(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCaptureAndInput` replaced.
-  /// - param newChild: The new `unexpectedBetweenCaptureAndInput` to replace the node's
-  ///                   current `unexpectedBetweenCaptureAndInput`, if present.
-  public func withUnexpectedBetweenCaptureAndInput(_ newChild: UnexpectedNodesSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public var input: Input? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return Input(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(Input.init)
     }
     set(value) {
-      self = withInput(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
-  /// Returns a copy of the receiver with its `input` replaced.
-  /// - param newChild: The new `input` to replace the node's
-  ///                   current `input`, if present.
-  public func withInput(_ newChild: Input?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
-  }
-
-  public var unexpectedBetweenInputAndAsyncKeyword: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenInputAndEffectSpecifiers: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenInputAndAsyncKeyword(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
-  /// Returns a copy of the receiver with its `unexpectedBetweenInputAndAsyncKeyword` replaced.
-  /// - param newChild: The new `unexpectedBetweenInputAndAsyncKeyword` to replace the node's
-  ///                   current `unexpectedBetweenInputAndAsyncKeyword`, if present.
-  public func withUnexpectedBetweenInputAndAsyncKeyword(_ newChild: UnexpectedNodesSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
-  }
-
-  public var asyncKeyword: TokenSyntax? {
+  public var effectSpecifiers: TypeEffectSpecifiersSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TypeEffectSpecifiersSyntax.init)
     }
     set(value) {
-      self = withAsyncKeyword(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
-  /// Returns a copy of the receiver with its `asyncKeyword` replaced.
-  /// - param newChild: The new `asyncKeyword` to replace the node's
-  ///                   current `asyncKeyword`, if present.
-  public func withAsyncKeyword(_ newChild: TokenSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
-  }
-
-  public var unexpectedBetweenAsyncKeywordAndThrowsTok: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAsyncKeywordAndThrowsTok(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAsyncKeywordAndThrowsTok` replaced.
-  /// - param newChild: The new `unexpectedBetweenAsyncKeywordAndThrowsTok` to replace the node's
-  ///                   current `unexpectedBetweenAsyncKeywordAndThrowsTok`, if present.
-  public func withUnexpectedBetweenAsyncKeywordAndThrowsTok(_ newChild: UnexpectedNodesSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
-  }
-
-  public var throwsTok: TokenSyntax? {
-    get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
-    }
-    set(value) {
-      self = withThrowsTok(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `throwsTok` replaced.
-  /// - param newChild: The new `throwsTok` to replace the node's
-  ///                   current `throwsTok`, if present.
-  public func withThrowsTok(_ newChild: TokenSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
-  }
-
-  public var unexpectedBetweenThrowsTokAndOutput: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedBetweenThrowsTokAndOutput(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenThrowsTokAndOutput` replaced.
-  /// - param newChild: The new `unexpectedBetweenThrowsTokAndOutput` to replace the node's
-  ///                   current `unexpectedBetweenThrowsTokAndOutput`, if present.
-  public func withUnexpectedBetweenThrowsTokAndOutput(_ newChild: UnexpectedNodesSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public var output: ReturnClauseSyntax? {
     get {
-      let childData = data.child(at: 11, parent: Syntax(self))
-      if childData == nil { return nil }
-      return ReturnClauseSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(ReturnClauseSyntax.init)
     }
     set(value) {
-      self = withOutput(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `output` replaced.
-  /// - param newChild: The new `output` to replace the node's
-  ///                   current `output`, if present.
-  public func withOutput(_ newChild: ReturnClauseSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 11, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public var unexpectedBetweenOutputAndInTok: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 12, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenOutputAndInTok(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenOutputAndInTok` replaced.
-  /// - param newChild: The new `unexpectedBetweenOutputAndInTok` to replace the node's
-  ///                   current `unexpectedBetweenOutputAndInTok`, if present.
-  public func withUnexpectedBetweenOutputAndInTok(_ newChild: UnexpectedNodesSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 12, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public var inTok: TokenSyntax {
     get {
-      let childData = data.child(at: 13, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
     set(value) {
-      self = withInTok(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 11, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `inTok` replaced.
-  /// - param newChild: The new `inTok` to replace the node's
-  ///                   current `inTok`, if present.
-  public func withInTok(_ newChild: TokenSyntax) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 13, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public var unexpectedAfterInTok: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 14, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterInTok(value)
+      self = ClosureSignatureSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterInTok` replaced.
-  /// - param newChild: The new `unexpectedAfterInTok` to replace the node's
-  ///                   current `unexpectedAfterInTok`, if present.
-  public func withUnexpectedAfterInTok(_ newChild: UnexpectedNodesSyntax?) -> ClosureSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 14, with: raw, arena: arena)
-    return ClosureSignatureSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -3333,11 +2463,9 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
       \Self.capture,
       \Self.unexpectedBetweenCaptureAndInput,
       \Self.input,
-      \Self.unexpectedBetweenInputAndAsyncKeyword,
-      \Self.asyncKeyword,
-      \Self.unexpectedBetweenAsyncKeywordAndThrowsTok,
-      \Self.throwsTok,
-      \Self.unexpectedBetweenThrowsTokAndOutput,
+      \Self.unexpectedBetweenInputAndEffectSpecifiers,
+      \Self.effectSpecifiers,
+      \Self.unexpectedBetweenEffectSpecifiersAndOutput,
       \Self.output,
       \Self.unexpectedBetweenOutputAndInTok,
       \Self.inTok,
@@ -3373,10 +2501,6 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
       return nil
     case 12:
       return nil
-    case 13:
-      return nil
-    case 14:
-      return nil
     default:
       fatalError("Invalid index")
     }
@@ -3392,11 +2516,9 @@ extension ClosureSignatureSyntax: CustomReflectable {
       "capture": capture.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "unexpectedBetweenCaptureAndInput": unexpectedBetweenCaptureAndInput.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "input": input.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "unexpectedBetweenInputAndAsyncKeyword": unexpectedBetweenInputAndAsyncKeyword.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "asyncKeyword": asyncKeyword.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "unexpectedBetweenAsyncKeywordAndThrowsTok": unexpectedBetweenAsyncKeywordAndThrowsTok.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "throwsTok": throwsTok.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "unexpectedBetweenThrowsTokAndOutput": unexpectedBetweenThrowsTokAndOutput.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedBetweenInputAndEffectSpecifiers": unexpectedBetweenInputAndEffectSpecifiers.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "effectSpecifiers": effectSpecifiers.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedBetweenEffectSpecifiersAndOutput": unexpectedBetweenEffectSpecifiersAndOutput.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "output": output.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "unexpectedBetweenOutputAndInTok": unexpectedBetweenOutputAndInTok.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "inTok": Syntax(inTok).asProtocol(SyntaxProtocol.self),
@@ -3456,146 +2578,65 @@ public struct MultipleTrailingClosureElementSyntax: SyntaxProtocol, SyntaxHashab
 
   public var unexpectedBeforeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLabel(value)
+      self = MultipleTrailingClosureElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeLabel` to replace the node's
-  ///                   current `unexpectedBeforeLabel`, if present.
-  public func withUnexpectedBeforeLabel(_ newChild: UnexpectedNodesSyntax?) -> MultipleTrailingClosureElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return MultipleTrailingClosureElementSyntax(newData)
   }
 
   public var label: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLabel(value)
+      self = MultipleTrailingClosureElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `label` replaced.
-  /// - param newChild: The new `label` to replace the node's
-  ///                   current `label`, if present.
-  public func withLabel(_ newChild: TokenSyntax) -> MultipleTrailingClosureElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return MultipleTrailingClosureElementSyntax(newData)
   }
 
   public var unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelAndColon(value)
+      self = MultipleTrailingClosureElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenLabelAndColon`, if present.
-  public func withUnexpectedBetweenLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> MultipleTrailingClosureElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return MultipleTrailingClosureElementSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = MultipleTrailingClosureElementSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> MultipleTrailingClosureElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return MultipleTrailingClosureElementSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndClosure: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndClosure(value)
+      self = MultipleTrailingClosureElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndClosure` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndClosure` to replace the node's
-  ///                   current `unexpectedBetweenColonAndClosure`, if present.
-  public func withUnexpectedBetweenColonAndClosure(_ newChild: UnexpectedNodesSyntax?) -> MultipleTrailingClosureElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return MultipleTrailingClosureElementSyntax(newData)
   }
 
   public var closure: ClosureExprSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return ClosureExprSyntax(childData!)
+      return ClosureExprSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withClosure(value)
+      self = MultipleTrailingClosureElementSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `closure` replaced.
-  /// - param newChild: The new `closure` to replace the node's
-  ///                   current `closure`, if present.
-  public func withClosure(_ newChild: ClosureExprSyntax) -> MultipleTrailingClosureElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return MultipleTrailingClosureElementSyntax(newData)
   }
 
   public var unexpectedAfterClosure: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterClosure(value)
+      self = MultipleTrailingClosureElementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterClosure` replaced.
-  /// - param newChild: The new `unexpectedAfterClosure` to replace the node's
-  ///                   current `unexpectedAfterClosure`, if present.
-  public func withUnexpectedAfterClosure(_ newChild: UnexpectedNodesSyntax?) -> MultipleTrailingClosureElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return MultipleTrailingClosureElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -3689,64 +2730,29 @@ public struct StringSegmentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeContent: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeContent(value)
+      self = StringSegmentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeContent` replaced.
-  /// - param newChild: The new `unexpectedBeforeContent` to replace the node's
-  ///                   current `unexpectedBeforeContent`, if present.
-  public func withUnexpectedBeforeContent(_ newChild: UnexpectedNodesSyntax?) -> StringSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return StringSegmentSyntax(newData)
   }
 
   public var content: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withContent(value)
+      self = StringSegmentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `content` replaced.
-  /// - param newChild: The new `content` to replace the node's
-  ///                   current `content`, if present.
-  public func withContent(_ newChild: TokenSyntax) -> StringSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return StringSegmentSyntax(newData)
   }
 
   public var unexpectedAfterContent: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterContent(value)
+      self = StringSegmentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterContent` replaced.
-  /// - param newChild: The new `unexpectedAfterContent` to replace the node's
-  ///                   current `unexpectedAfterContent`, if present.
-  public func withUnexpectedAfterContent(_ newChild: UnexpectedNodesSyntax?) -> StringSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return StringSegmentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -3840,156 +2846,73 @@ public struct ExpressionSegmentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeBackslash: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeBackslash(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeBackslash` replaced.
-  /// - param newChild: The new `unexpectedBeforeBackslash` to replace the node's
-  ///                   current `unexpectedBeforeBackslash`, if present.
-  public func withUnexpectedBeforeBackslash(_ newChild: UnexpectedNodesSyntax?) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var backslash: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withBackslash(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `backslash` replaced.
-  /// - param newChild: The new `backslash` to replace the node's
-  ///                   current `backslash`, if present.
-  public func withBackslash(_ newChild: TokenSyntax) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var unexpectedBetweenBackslashAndDelimiter: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenBackslashAndDelimiter(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenBackslashAndDelimiter` replaced.
-  /// - param newChild: The new `unexpectedBetweenBackslashAndDelimiter` to replace the node's
-  ///                   current `unexpectedBetweenBackslashAndDelimiter`, if present.
-  public func withUnexpectedBetweenBackslashAndDelimiter(_ newChild: UnexpectedNodesSyntax?) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var delimiter: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withDelimiter(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `delimiter` replaced.
-  /// - param newChild: The new `delimiter` to replace the node's
-  ///                   current `delimiter`, if present.
-  public func withDelimiter(_ newChild: TokenSyntax?) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var unexpectedBetweenDelimiterAndLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDelimiterAndLeftParen(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDelimiterAndLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenDelimiterAndLeftParen` to replace the node's
-  ///                   current `unexpectedBetweenDelimiterAndLeftParen`, if present.
-  public func withUnexpectedBetweenDelimiterAndLeftParen(_ newChild: UnexpectedNodesSyntax?) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var leftParen: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndExpressions: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndExpressions(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndExpressions` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndExpressions` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndExpressions`, if present.
-  public func withUnexpectedBetweenLeftParenAndExpressions(_ newChild: UnexpectedNodesSyntax?) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var expressions: TupleExprElementListSyntax {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return TupleExprElementListSyntax(childData!)
+      return TupleExprElementListSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = withExpressions(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -4012,76 +2935,31 @@ public struct ExpressionSegmentSyntax: SyntaxProtocol, SyntaxHashable {
     return ExpressionSegmentSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `expressions` replaced.
-  /// - param newChild: The new `expressions` to replace the node's
-  ///                   current `expressions`, if present.
-  public func withExpressions(_ newChild: TupleExprElementListSyntax) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
-  }
-
   public var unexpectedBetweenExpressionsAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenExpressionsAndRightParen(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenExpressionsAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenExpressionsAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenExpressionsAndRightParen`, if present.
-  public func withUnexpectedBetweenExpressionsAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var rightParen: TokenSyntax {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightParen(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = ExpressionSegmentSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> ExpressionSegmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return ExpressionSegmentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -4241,106 +3119,47 @@ public struct KeyPathComponentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforePeriod: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforePeriod(value)
+      self = KeyPathComponentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforePeriod` replaced.
-  /// - param newChild: The new `unexpectedBeforePeriod` to replace the node's
-  ///                   current `unexpectedBeforePeriod`, if present.
-  public func withUnexpectedBeforePeriod(_ newChild: UnexpectedNodesSyntax?) -> KeyPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return KeyPathComponentSyntax(newData)
   }
 
   public var period: TokenSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withPeriod(value)
+      self = KeyPathComponentSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `period` replaced.
-  /// - param newChild: The new `period` to replace the node's
-  ///                   current `period`, if present.
-  public func withPeriod(_ newChild: TokenSyntax?) -> KeyPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return KeyPathComponentSyntax(newData)
   }
 
   public var unexpectedBetweenPeriodAndComponent: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPeriodAndComponent(value)
+      self = KeyPathComponentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPeriodAndComponent` replaced.
-  /// - param newChild: The new `unexpectedBetweenPeriodAndComponent` to replace the node's
-  ///                   current `unexpectedBetweenPeriodAndComponent`, if present.
-  public func withUnexpectedBetweenPeriodAndComponent(_ newChild: UnexpectedNodesSyntax?) -> KeyPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return KeyPathComponentSyntax(newData)
   }
 
   public var component: Component {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return Component(childData!)
+      return Component(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withComponent(value)
+      self = KeyPathComponentSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `component` replaced.
-  /// - param newChild: The new `component` to replace the node's
-  ///                   current `component`, if present.
-  public func withComponent(_ newChild: Component) -> KeyPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return KeyPathComponentSyntax(newData)
   }
 
   public var unexpectedAfterComponent: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterComponent(value)
+      self = KeyPathComponentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterComponent` replaced.
-  /// - param newChild: The new `unexpectedAfterComponent` to replace the node's
-  ///                   current `unexpectedAfterComponent`, if present.
-  public func withUnexpectedAfterComponent(_ newChild: UnexpectedNodesSyntax?) -> KeyPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return KeyPathComponentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -4434,148 +3253,65 @@ public struct KeyPathPropertyComponentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeIdentifier(value)
+      self = KeyPathPropertyComponentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedBeforeIdentifier` to replace the node's
-  ///                   current `unexpectedBeforeIdentifier`, if present.
-  public func withUnexpectedBeforeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> KeyPathPropertyComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return KeyPathPropertyComponentSyntax(newData)
   }
 
   public var identifier: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withIdentifier(value)
+      self = KeyPathPropertyComponentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `identifier` replaced.
-  /// - param newChild: The new `identifier` to replace the node's
-  ///                   current `identifier`, if present.
-  public func withIdentifier(_ newChild: TokenSyntax) -> KeyPathPropertyComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return KeyPathPropertyComponentSyntax(newData)
   }
 
   public var unexpectedBetweenIdentifierAndDeclNameArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenIdentifierAndDeclNameArguments(value)
+      self = KeyPathPropertyComponentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenIdentifierAndDeclNameArguments` replaced.
-  /// - param newChild: The new `unexpectedBetweenIdentifierAndDeclNameArguments` to replace the node's
-  ///                   current `unexpectedBetweenIdentifierAndDeclNameArguments`, if present.
-  public func withUnexpectedBetweenIdentifierAndDeclNameArguments(_ newChild: UnexpectedNodesSyntax?) -> KeyPathPropertyComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return KeyPathPropertyComponentSyntax(newData)
   }
 
   public var declNameArguments: DeclNameArgumentsSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return DeclNameArgumentsSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(DeclNameArgumentsSyntax.init)
     }
     set(value) {
-      self = withDeclNameArguments(value)
+      self = KeyPathPropertyComponentSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `declNameArguments` replaced.
-  /// - param newChild: The new `declNameArguments` to replace the node's
-  ///                   current `declNameArguments`, if present.
-  public func withDeclNameArguments(_ newChild: DeclNameArgumentsSyntax?) -> KeyPathPropertyComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return KeyPathPropertyComponentSyntax(newData)
   }
 
   public var unexpectedBetweenDeclNameArgumentsAndGenericArgumentClause: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDeclNameArgumentsAndGenericArgumentClause(value)
+      self = KeyPathPropertyComponentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDeclNameArgumentsAndGenericArgumentClause` replaced.
-  /// - param newChild: The new `unexpectedBetweenDeclNameArgumentsAndGenericArgumentClause` to replace the node's
-  ///                   current `unexpectedBetweenDeclNameArgumentsAndGenericArgumentClause`, if present.
-  public func withUnexpectedBetweenDeclNameArgumentsAndGenericArgumentClause(_ newChild: UnexpectedNodesSyntax?) -> KeyPathPropertyComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return KeyPathPropertyComponentSyntax(newData)
   }
 
   public var genericArgumentClause: GenericArgumentClauseSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return GenericArgumentClauseSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(GenericArgumentClauseSyntax.init)
     }
     set(value) {
-      self = withGenericArgumentClause(value)
+      self = KeyPathPropertyComponentSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `genericArgumentClause` replaced.
-  /// - param newChild: The new `genericArgumentClause` to replace the node's
-  ///                   current `genericArgumentClause`, if present.
-  public func withGenericArgumentClause(_ newChild: GenericArgumentClauseSyntax?) -> KeyPathPropertyComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return KeyPathPropertyComponentSyntax(newData)
   }
 
   public var unexpectedAfterGenericArgumentClause: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterGenericArgumentClause(value)
+      self = KeyPathPropertyComponentSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterGenericArgumentClause` replaced.
-  /// - param newChild: The new `unexpectedAfterGenericArgumentClause` to replace the node's
-  ///                   current `unexpectedAfterGenericArgumentClause`, if present.
-  public func withUnexpectedAfterGenericArgumentClause(_ newChild: UnexpectedNodesSyntax?) -> KeyPathPropertyComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return KeyPathPropertyComponentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -4677,73 +3413,37 @@ public struct KeyPathSubscriptComponentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftBracket(value)
+      self = KeyPathSubscriptComponentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftBracket` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftBracket` to replace the node's
-  ///                   current `unexpectedBeforeLeftBracket`, if present.
-  public func withUnexpectedBeforeLeftBracket(_ newChild: UnexpectedNodesSyntax?) -> KeyPathSubscriptComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return KeyPathSubscriptComponentSyntax(newData)
   }
 
   public var leftBracket: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftBracket(value)
+      self = KeyPathSubscriptComponentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftBracket` replaced.
-  /// - param newChild: The new `leftBracket` to replace the node's
-  ///                   current `leftBracket`, if present.
-  public func withLeftBracket(_ newChild: TokenSyntax) -> KeyPathSubscriptComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return KeyPathSubscriptComponentSyntax(newData)
   }
 
   public var unexpectedBetweenLeftBracketAndArgumentList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftBracketAndArgumentList(value)
+      self = KeyPathSubscriptComponentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftBracketAndArgumentList` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftBracketAndArgumentList` to replace the node's
-  ///                   current `unexpectedBetweenLeftBracketAndArgumentList`, if present.
-  public func withUnexpectedBetweenLeftBracketAndArgumentList(_ newChild: UnexpectedNodesSyntax?) -> KeyPathSubscriptComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return KeyPathSubscriptComponentSyntax(newData)
   }
 
   public var argumentList: TupleExprElementListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TupleExprElementListSyntax(childData!)
+      return TupleExprElementListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withArgumentList(value)
+      self = KeyPathSubscriptComponentSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -4766,76 +3466,31 @@ public struct KeyPathSubscriptComponentSyntax: SyntaxProtocol, SyntaxHashable {
     return KeyPathSubscriptComponentSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `argumentList` replaced.
-  /// - param newChild: The new `argumentList` to replace the node's
-  ///                   current `argumentList`, if present.
-  public func withArgumentList(_ newChild: TupleExprElementListSyntax) -> KeyPathSubscriptComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return KeyPathSubscriptComponentSyntax(newData)
-  }
-
   public var unexpectedBetweenArgumentListAndRightBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenArgumentListAndRightBracket(value)
+      self = KeyPathSubscriptComponentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenArgumentListAndRightBracket` replaced.
-  /// - param newChild: The new `unexpectedBetweenArgumentListAndRightBracket` to replace the node's
-  ///                   current `unexpectedBetweenArgumentListAndRightBracket`, if present.
-  public func withUnexpectedBetweenArgumentListAndRightBracket(_ newChild: UnexpectedNodesSyntax?) -> KeyPathSubscriptComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return KeyPathSubscriptComponentSyntax(newData)
   }
 
   public var rightBracket: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightBracket(value)
+      self = KeyPathSubscriptComponentSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightBracket` replaced.
-  /// - param newChild: The new `rightBracket` to replace the node's
-  ///                   current `rightBracket`, if present.
-  public func withRightBracket(_ newChild: TokenSyntax) -> KeyPathSubscriptComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return KeyPathSubscriptComponentSyntax(newData)
   }
 
   public var unexpectedAfterRightBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightBracket(value)
+      self = KeyPathSubscriptComponentSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightBracket` replaced.
-  /// - param newChild: The new `unexpectedAfterRightBracket` to replace the node's
-  ///                   current `unexpectedAfterRightBracket`, if present.
-  public func withUnexpectedAfterRightBracket(_ newChild: UnexpectedNodesSyntax?) -> KeyPathSubscriptComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return KeyPathSubscriptComponentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -4929,64 +3584,29 @@ public struct KeyPathOptionalComponentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeQuestionOrExclamationMark: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeQuestionOrExclamationMark(value)
+      self = KeyPathOptionalComponentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeQuestionOrExclamationMark` replaced.
-  /// - param newChild: The new `unexpectedBeforeQuestionOrExclamationMark` to replace the node's
-  ///                   current `unexpectedBeforeQuestionOrExclamationMark`, if present.
-  public func withUnexpectedBeforeQuestionOrExclamationMark(_ newChild: UnexpectedNodesSyntax?) -> KeyPathOptionalComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return KeyPathOptionalComponentSyntax(newData)
   }
 
   public var questionOrExclamationMark: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withQuestionOrExclamationMark(value)
+      self = KeyPathOptionalComponentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `questionOrExclamationMark` replaced.
-  /// - param newChild: The new `questionOrExclamationMark` to replace the node's
-  ///                   current `questionOrExclamationMark`, if present.
-  public func withQuestionOrExclamationMark(_ newChild: TokenSyntax) -> KeyPathOptionalComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return KeyPathOptionalComponentSyntax(newData)
   }
 
   public var unexpectedAfterQuestionOrExclamationMark: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterQuestionOrExclamationMark(value)
+      self = KeyPathOptionalComponentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterQuestionOrExclamationMark` replaced.
-  /// - param newChild: The new `unexpectedAfterQuestionOrExclamationMark` to replace the node's
-  ///                   current `unexpectedAfterQuestionOrExclamationMark`, if present.
-  public func withUnexpectedAfterQuestionOrExclamationMark(_ newChild: UnexpectedNodesSyntax?) -> KeyPathOptionalComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return KeyPathOptionalComponentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -5068,106 +3688,47 @@ public struct YieldExprListElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeExpression: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeExpression(value)
+      self = YieldExprListElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeExpression` replaced.
-  /// - param newChild: The new `unexpectedBeforeExpression` to replace the node's
-  ///                   current `unexpectedBeforeExpression`, if present.
-  public func withUnexpectedBeforeExpression(_ newChild: UnexpectedNodesSyntax?) -> YieldExprListElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return YieldExprListElementSyntax(newData)
   }
 
   public var expression: ExprSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return ExprSyntax(childData!)
+      return ExprSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withExpression(value)
+      self = YieldExprListElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `expression` replaced.
-  /// - param newChild: The new `expression` to replace the node's
-  ///                   current `expression`, if present.
-  public func withExpression(_ newChild: ExprSyntax) -> YieldExprListElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return YieldExprListElementSyntax(newData)
   }
 
   public var unexpectedBetweenExpressionAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenExpressionAndComma(value)
+      self = YieldExprListElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenExpressionAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenExpressionAndComma` to replace the node's
-  ///                   current `unexpectedBetweenExpressionAndComma`, if present.
-  public func withUnexpectedBetweenExpressionAndComma(_ newChild: UnexpectedNodesSyntax?) -> YieldExprListElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return YieldExprListElementSyntax(newData)
   }
 
   public var comma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withComma(value)
+      self = YieldExprListElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax?) -> YieldExprListElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return YieldExprListElementSyntax(newData)
   }
 
   public var unexpectedAfterComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterComma(value)
+      self = YieldExprListElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterComma` replaced.
-  /// - param newChild: The new `unexpectedAfterComma` to replace the node's
-  ///                   current `unexpectedAfterComma`, if present.
-  public func withUnexpectedAfterComma(_ newChild: UnexpectedNodesSyntax?) -> YieldExprListElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return YieldExprListElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -5257,105 +3818,47 @@ public struct TypeInitializerClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeEqual: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeEqual(value)
+      self = TypeInitializerClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeEqual` replaced.
-  /// - param newChild: The new `unexpectedBeforeEqual` to replace the node's
-  ///                   current `unexpectedBeforeEqual`, if present.
-  public func withUnexpectedBeforeEqual(_ newChild: UnexpectedNodesSyntax?) -> TypeInitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return TypeInitializerClauseSyntax(newData)
   }
 
   public var equal: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withEqual(value)
+      self = TypeInitializerClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `equal` replaced.
-  /// - param newChild: The new `equal` to replace the node's
-  ///                   current `equal`, if present.
-  public func withEqual(_ newChild: TokenSyntax) -> TypeInitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return TypeInitializerClauseSyntax(newData)
   }
 
   public var unexpectedBetweenEqualAndValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenEqualAndValue(value)
+      self = TypeInitializerClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenEqualAndValue` replaced.
-  /// - param newChild: The new `unexpectedBetweenEqualAndValue` to replace the node's
-  ///                   current `unexpectedBetweenEqualAndValue`, if present.
-  public func withUnexpectedBetweenEqualAndValue(_ newChild: UnexpectedNodesSyntax?) -> TypeInitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return TypeInitializerClauseSyntax(newData)
   }
 
   public var value: TypeSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withValue(value)
+      self = TypeInitializerClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `value` replaced.
-  /// - param newChild: The new `value` to replace the node's
-  ///                   current `value`, if present.
-  public func withValue(_ newChild: TypeSyntax) -> TypeInitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return TypeInitializerClauseSyntax(newData)
   }
 
   public var unexpectedAfterValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterValue(value)
+      self = TypeInitializerClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterValue` replaced.
-  /// - param newChild: The new `unexpectedAfterValue` to replace the node's
-  ///                   current `unexpectedAfterValue`, if present.
-  public func withUnexpectedAfterValue(_ newChild: UnexpectedNodesSyntax?) -> TypeInitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return TypeInitializerClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -5449,73 +3952,37 @@ public struct ParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftParen(value)
+      self = ParameterClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftParen` to replace the node's
-  ///                   current `unexpectedBeforeLeftParen`, if present.
-  public func withUnexpectedBeforeLeftParen(_ newChild: UnexpectedNodesSyntax?) -> ParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ParameterClauseSyntax(newData)
   }
 
   public var leftParen: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = ParameterClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> ParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ParameterClauseSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndParameterList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndParameterList(value)
+      self = ParameterClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndParameterList` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndParameterList` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndParameterList`, if present.
-  public func withUnexpectedBetweenLeftParenAndParameterList(_ newChild: UnexpectedNodesSyntax?) -> ParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ParameterClauseSyntax(newData)
   }
 
   public var parameterList: FunctionParameterListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return FunctionParameterListSyntax(childData!)
+      return FunctionParameterListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withParameterList(value)
+      self = ParameterClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -5538,76 +4005,31 @@ public struct ParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
     return ParameterClauseSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `parameterList` replaced.
-  /// - param newChild: The new `parameterList` to replace the node's
-  ///                   current `parameterList`, if present.
-  public func withParameterList(_ newChild: FunctionParameterListSyntax) -> ParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ParameterClauseSyntax(newData)
-  }
-
   public var unexpectedBetweenParameterListAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenParameterListAndRightParen(value)
+      self = ParameterClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenParameterListAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenParameterListAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenParameterListAndRightParen`, if present.
-  public func withUnexpectedBetweenParameterListAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> ParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ParameterClauseSyntax(newData)
   }
 
   public var rightParen: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightParen(value)
+      self = ParameterClauseSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> ParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ParameterClauseSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = ParameterClauseSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> ParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ParameterClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -5705,105 +4127,47 @@ public struct ReturnClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeArrow: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeArrow(value)
+      self = ReturnClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeArrow` replaced.
-  /// - param newChild: The new `unexpectedBeforeArrow` to replace the node's
-  ///                   current `unexpectedBeforeArrow`, if present.
-  public func withUnexpectedBeforeArrow(_ newChild: UnexpectedNodesSyntax?) -> ReturnClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ReturnClauseSyntax(newData)
   }
 
   public var arrow: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withArrow(value)
+      self = ReturnClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `arrow` replaced.
-  /// - param newChild: The new `arrow` to replace the node's
-  ///                   current `arrow`, if present.
-  public func withArrow(_ newChild: TokenSyntax) -> ReturnClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ReturnClauseSyntax(newData)
   }
 
   public var unexpectedBetweenArrowAndReturnType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenArrowAndReturnType(value)
+      self = ReturnClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenArrowAndReturnType` replaced.
-  /// - param newChild: The new `unexpectedBetweenArrowAndReturnType` to replace the node's
-  ///                   current `unexpectedBetweenArrowAndReturnType`, if present.
-  public func withUnexpectedBetweenArrowAndReturnType(_ newChild: UnexpectedNodesSyntax?) -> ReturnClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ReturnClauseSyntax(newData)
   }
 
   public var returnType: TypeSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withReturnType(value)
+      self = ReturnClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `returnType` replaced.
-  /// - param newChild: The new `returnType` to replace the node's
-  ///                   current `returnType`, if present.
-  public func withReturnType(_ newChild: TypeSyntax) -> ReturnClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ReturnClauseSyntax(newData)
   }
 
   public var unexpectedAfterReturnType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterReturnType(value)
+      self = ReturnClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterReturnType` replaced.
-  /// - param newChild: The new `unexpectedAfterReturnType` to replace the node's
-  ///                   current `unexpectedAfterReturnType`, if present.
-  public func withUnexpectedAfterReturnType(_ newChild: UnexpectedNodesSyntax?) -> ReturnClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ReturnClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -5868,26 +4232,22 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     leadingTrivia: Trivia? = nil,
     _ unexpectedBeforeInput: UnexpectedNodesSyntax? = nil,
     input: ParameterClauseSyntax,
-    _ unexpectedBetweenInputAndAsyncOrReasyncKeyword: UnexpectedNodesSyntax? = nil,
-    asyncOrReasyncKeyword: TokenSyntax? = nil,
-    _ unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword: UnexpectedNodesSyntax? = nil,
-    throwsOrRethrowsKeyword: TokenSyntax? = nil,
-    _ unexpectedBetweenThrowsOrRethrowsKeywordAndOutput: UnexpectedNodesSyntax? = nil,
+    _ unexpectedBetweenInputAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
+    effectSpecifiers: DeclEffectSpecifiersSyntax? = nil,
+    _ unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? = nil,
     output: ReturnClauseSyntax? = nil,
     _ unexpectedAfterOutput: UnexpectedNodesSyntax? = nil,
     trailingTrivia: Trivia? = nil
   ) {
     // Extend the lifetime of all parameters so their arenas don't get destroyed 
     // before they can be added as children of the new arena.
-    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeInput, input, unexpectedBetweenInputAndAsyncOrReasyncKeyword, asyncOrReasyncKeyword, unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword, throwsOrRethrowsKeyword, unexpectedBetweenThrowsOrRethrowsKeywordAndOutput, output, unexpectedAfterOutput))) { (arena, _) in
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeInput, input, unexpectedBetweenInputAndEffectSpecifiers, effectSpecifiers, unexpectedBetweenEffectSpecifiersAndOutput, output, unexpectedAfterOutput))) { (arena, _) in
       let layout: [RawSyntax?] = [
         unexpectedBeforeInput?.raw,
         input.raw,
-        unexpectedBetweenInputAndAsyncOrReasyncKeyword?.raw,
-        asyncOrReasyncKeyword?.raw,
-        unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword?.raw,
-        throwsOrRethrowsKeyword?.raw,
-        unexpectedBetweenThrowsOrRethrowsKeywordAndOutput?.raw,
+        unexpectedBetweenInputAndEffectSpecifiers?.raw,
+        effectSpecifiers?.raw,
+        unexpectedBetweenEffectSpecifiersAndOutput?.raw,
         output?.raw,
         unexpectedAfterOutput?.raw,
       ]
@@ -5901,201 +4261,74 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeInput: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeInput(value)
+      self = FunctionSignatureSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeInput` replaced.
-  /// - param newChild: The new `unexpectedBeforeInput` to replace the node's
-  ///                   current `unexpectedBeforeInput`, if present.
-  public func withUnexpectedBeforeInput(_ newChild: UnexpectedNodesSyntax?) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
   }
 
   public var input: ParameterClauseSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return ParameterClauseSyntax(childData!)
+      return ParameterClauseSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withInput(value)
+      self = FunctionSignatureSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
   }
 
-  /// Returns a copy of the receiver with its `input` replaced.
-  /// - param newChild: The new `input` to replace the node's
-  ///                   current `input`, if present.
-  public func withInput(_ newChild: ParameterClauseSyntax) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
-  }
-
-  public var unexpectedBetweenInputAndAsyncOrReasyncKeyword: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenInputAndEffectSpecifiers: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenInputAndAsyncOrReasyncKeyword(value)
+      self = FunctionSignatureSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
-  /// Returns a copy of the receiver with its `unexpectedBetweenInputAndAsyncOrReasyncKeyword` replaced.
-  /// - param newChild: The new `unexpectedBetweenInputAndAsyncOrReasyncKeyword` to replace the node's
-  ///                   current `unexpectedBetweenInputAndAsyncOrReasyncKeyword`, if present.
-  public func withUnexpectedBetweenInputAndAsyncOrReasyncKeyword(_ newChild: UnexpectedNodesSyntax?) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
-  }
-
-  public var asyncOrReasyncKeyword: TokenSyntax? {
+  public var effectSpecifiers: DeclEffectSpecifiersSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(DeclEffectSpecifiersSyntax.init)
     }
     set(value) {
-      self = withAsyncOrReasyncKeyword(value)
+      self = FunctionSignatureSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
-  /// Returns a copy of the receiver with its `asyncOrReasyncKeyword` replaced.
-  /// - param newChild: The new `asyncOrReasyncKeyword` to replace the node's
-  ///                   current `asyncOrReasyncKeyword`, if present.
-  public func withAsyncOrReasyncKeyword(_ newChild: TokenSyntax?) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
-  }
-
-  public var unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword(value)
+      self = FunctionSignatureSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword` replaced.
-  /// - param newChild: The new `unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword` to replace the node's
-  ///                   current `unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword`, if present.
-  public func withUnexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword(_ newChild: UnexpectedNodesSyntax?) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
-  }
-
-  public var throwsOrRethrowsKeyword: TokenSyntax? {
-    get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
-    }
-    set(value) {
-      self = withThrowsOrRethrowsKeyword(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `throwsOrRethrowsKeyword` replaced.
-  /// - param newChild: The new `throwsOrRethrowsKeyword` to replace the node's
-  ///                   current `throwsOrRethrowsKeyword`, if present.
-  public func withThrowsOrRethrowsKeyword(_ newChild: TokenSyntax?) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
-  }
-
-  public var unexpectedBetweenThrowsOrRethrowsKeywordAndOutput: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedBetweenThrowsOrRethrowsKeywordAndOutput(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenThrowsOrRethrowsKeywordAndOutput` replaced.
-  /// - param newChild: The new `unexpectedBetweenThrowsOrRethrowsKeywordAndOutput` to replace the node's
-  ///                   current `unexpectedBetweenThrowsOrRethrowsKeywordAndOutput`, if present.
-  public func withUnexpectedBetweenThrowsOrRethrowsKeywordAndOutput(_ newChild: UnexpectedNodesSyntax?) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
   }
 
   public var output: ReturnClauseSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return ReturnClauseSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(ReturnClauseSyntax.init)
     }
     set(value) {
-      self = withOutput(value)
+      self = FunctionSignatureSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `output` replaced.
-  /// - param newChild: The new `output` to replace the node's
-  ///                   current `output`, if present.
-  public func withOutput(_ newChild: ReturnClauseSyntax?) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
   }
 
   public var unexpectedAfterOutput: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterOutput(value)
+      self = FunctionSignatureSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterOutput` replaced.
-  /// - param newChild: The new `unexpectedAfterOutput` to replace the node's
-  ///                   current `unexpectedAfterOutput`, if present.
-  public func withUnexpectedAfterOutput(_ newChild: UnexpectedNodesSyntax?) -> FunctionSignatureSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return FunctionSignatureSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
     return .layout([
       \Self.unexpectedBeforeInput,
       \Self.input,
-      \Self.unexpectedBetweenInputAndAsyncOrReasyncKeyword,
-      \Self.asyncOrReasyncKeyword,
-      \Self.unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword,
-      \Self.throwsOrRethrowsKeyword,
-      \Self.unexpectedBetweenThrowsOrRethrowsKeywordAndOutput,
+      \Self.unexpectedBetweenInputAndEffectSpecifiers,
+      \Self.effectSpecifiers,
+      \Self.unexpectedBetweenEffectSpecifiersAndOutput,
       \Self.output,
       \Self.unexpectedAfterOutput,
     ])
@@ -6117,10 +4350,6 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
       return nil
     case 6:
       return nil
-    case 7:
-      return nil
-    case 8:
-      return nil
     default:
       fatalError("Invalid index")
     }
@@ -6132,11 +4361,9 @@ extension FunctionSignatureSyntax: CustomReflectable {
     return Mirror(self, children: [
       "unexpectedBeforeInput": unexpectedBeforeInput.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "input": Syntax(input).asProtocol(SyntaxProtocol.self),
-      "unexpectedBetweenInputAndAsyncOrReasyncKeyword": unexpectedBetweenInputAndAsyncOrReasyncKeyword.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "asyncOrReasyncKeyword": asyncOrReasyncKeyword.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword": unexpectedBetweenAsyncOrReasyncKeywordAndThrowsOrRethrowsKeyword.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "throwsOrRethrowsKeyword": throwsOrRethrowsKeyword.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "unexpectedBetweenThrowsOrRethrowsKeywordAndOutput": unexpectedBetweenThrowsOrRethrowsKeywordAndOutput.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedBetweenInputAndEffectSpecifiers": unexpectedBetweenInputAndEffectSpecifiers.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "effectSpecifiers": effectSpecifiers.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
+      "unexpectedBetweenEffectSpecifiersAndOutput": unexpectedBetweenEffectSpecifiersAndOutput.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "output": output.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "unexpectedAfterOutput": unexpectedAfterOutput.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
     ])
@@ -6294,148 +4521,65 @@ public struct IfConfigClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforePoundKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforePoundKeyword(value)
+      self = IfConfigClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforePoundKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforePoundKeyword` to replace the node's
-  ///                   current `unexpectedBeforePoundKeyword`, if present.
-  public func withUnexpectedBeforePoundKeyword(_ newChild: UnexpectedNodesSyntax?) -> IfConfigClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return IfConfigClauseSyntax(newData)
   }
 
   public var poundKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPoundKeyword(value)
+      self = IfConfigClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `poundKeyword` replaced.
-  /// - param newChild: The new `poundKeyword` to replace the node's
-  ///                   current `poundKeyword`, if present.
-  public func withPoundKeyword(_ newChild: TokenSyntax) -> IfConfigClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return IfConfigClauseSyntax(newData)
   }
 
   public var unexpectedBetweenPoundKeywordAndCondition: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPoundKeywordAndCondition(value)
+      self = IfConfigClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPoundKeywordAndCondition` replaced.
-  /// - param newChild: The new `unexpectedBetweenPoundKeywordAndCondition` to replace the node's
-  ///                   current `unexpectedBetweenPoundKeywordAndCondition`, if present.
-  public func withUnexpectedBetweenPoundKeywordAndCondition(_ newChild: UnexpectedNodesSyntax?) -> IfConfigClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return IfConfigClauseSyntax(newData)
   }
 
   public var condition: ExprSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return ExprSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(ExprSyntax.init)
     }
     set(value) {
-      self = withCondition(value)
+      self = IfConfigClauseSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `condition` replaced.
-  /// - param newChild: The new `condition` to replace the node's
-  ///                   current `condition`, if present.
-  public func withCondition(_ newChild: ExprSyntax?) -> IfConfigClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return IfConfigClauseSyntax(newData)
   }
 
   public var unexpectedBetweenConditionAndElements: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenConditionAndElements(value)
+      self = IfConfigClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenConditionAndElements` replaced.
-  /// - param newChild: The new `unexpectedBetweenConditionAndElements` to replace the node's
-  ///                   current `unexpectedBetweenConditionAndElements`, if present.
-  public func withUnexpectedBetweenConditionAndElements(_ newChild: UnexpectedNodesSyntax?) -> IfConfigClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return IfConfigClauseSyntax(newData)
   }
 
   public var elements: Elements? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return Elements(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(Elements.init)
     }
     set(value) {
-      self = withElements(value)
+      self = IfConfigClauseSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `elements` replaced.
-  /// - param newChild: The new `elements` to replace the node's
-  ///                   current `elements`, if present.
-  public func withElements(_ newChild: Elements?) -> IfConfigClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return IfConfigClauseSyntax(newData)
   }
 
   public var unexpectedAfterElements: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterElements(value)
+      self = IfConfigClauseSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterElements` replaced.
-  /// - param newChild: The new `unexpectedAfterElements` to replace the node's
-  ///                   current `unexpectedAfterElements`, if present.
-  public func withUnexpectedAfterElements(_ newChild: UnexpectedNodesSyntax?) -> IfConfigClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return IfConfigClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -6553,310 +4697,137 @@ public struct PoundSourceLocationArgsSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeFileArgLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeFileArgLabel(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeFileArgLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeFileArgLabel` to replace the node's
-  ///                   current `unexpectedBeforeFileArgLabel`, if present.
-  public func withUnexpectedBeforeFileArgLabel(_ newChild: UnexpectedNodesSyntax?) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var fileArgLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withFileArgLabel(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `fileArgLabel` replaced.
-  /// - param newChild: The new `fileArgLabel` to replace the node's
-  ///                   current `fileArgLabel`, if present.
-  public func withFileArgLabel(_ newChild: TokenSyntax) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var unexpectedBetweenFileArgLabelAndFileArgColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenFileArgLabelAndFileArgColon(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenFileArgLabelAndFileArgColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenFileArgLabelAndFileArgColon` to replace the node's
-  ///                   current `unexpectedBetweenFileArgLabelAndFileArgColon`, if present.
-  public func withUnexpectedBetweenFileArgLabelAndFileArgColon(_ newChild: UnexpectedNodesSyntax?) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var fileArgColon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withFileArgColon(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `fileArgColon` replaced.
-  /// - param newChild: The new `fileArgColon` to replace the node's
-  ///                   current `fileArgColon`, if present.
-  public func withFileArgColon(_ newChild: TokenSyntax) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var unexpectedBetweenFileArgColonAndFileName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenFileArgColonAndFileName(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenFileArgColonAndFileName` replaced.
-  /// - param newChild: The new `unexpectedBetweenFileArgColonAndFileName` to replace the node's
-  ///                   current `unexpectedBetweenFileArgColonAndFileName`, if present.
-  public func withUnexpectedBetweenFileArgColonAndFileName(_ newChild: UnexpectedNodesSyntax?) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var fileName: StringLiteralExprSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return StringLiteralExprSyntax(childData!)
+      return StringLiteralExprSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withFileName(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `fileName` replaced.
-  /// - param newChild: The new `fileName` to replace the node's
-  ///                   current `fileName`, if present.
-  public func withFileName(_ newChild: StringLiteralExprSyntax) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var unexpectedBetweenFileNameAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenFileNameAndComma(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenFileNameAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenFileNameAndComma` to replace the node's
-  ///                   current `unexpectedBetweenFileNameAndComma`, if present.
-  public func withUnexpectedBetweenFileNameAndComma(_ newChild: UnexpectedNodesSyntax?) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var comma: TokenSyntax {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = withComma(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var unexpectedBetweenCommaAndLineArgLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCommaAndLineArgLabel(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCommaAndLineArgLabel` replaced.
-  /// - param newChild: The new `unexpectedBetweenCommaAndLineArgLabel` to replace the node's
-  ///                   current `unexpectedBetweenCommaAndLineArgLabel`, if present.
-  public func withUnexpectedBetweenCommaAndLineArgLabel(_ newChild: UnexpectedNodesSyntax?) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var lineArgLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLineArgLabel(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `lineArgLabel` replaced.
-  /// - param newChild: The new `lineArgLabel` to replace the node's
-  ///                   current `lineArgLabel`, if present.
-  public func withLineArgLabel(_ newChild: TokenSyntax) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var unexpectedBetweenLineArgLabelAndLineArgColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLineArgLabelAndLineArgColon(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLineArgLabelAndLineArgColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLineArgLabelAndLineArgColon` to replace the node's
-  ///                   current `unexpectedBetweenLineArgLabelAndLineArgColon`, if present.
-  public func withUnexpectedBetweenLineArgLabelAndLineArgColon(_ newChild: UnexpectedNodesSyntax?) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var lineArgColon: TokenSyntax {
     get {
-      let childData = data.child(at: 11, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLineArgColon(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 11, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `lineArgColon` replaced.
-  /// - param newChild: The new `lineArgColon` to replace the node's
-  ///                   current `lineArgColon`, if present.
-  public func withLineArgColon(_ newChild: TokenSyntax) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 11, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var unexpectedBetweenLineArgColonAndLineNumber: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 12, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLineArgColonAndLineNumber(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLineArgColonAndLineNumber` replaced.
-  /// - param newChild: The new `unexpectedBetweenLineArgColonAndLineNumber` to replace the node's
-  ///                   current `unexpectedBetweenLineArgColonAndLineNumber`, if present.
-  public func withUnexpectedBetweenLineArgColonAndLineNumber(_ newChild: UnexpectedNodesSyntax?) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 12, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var lineNumber: TokenSyntax {
     get {
-      let childData = data.child(at: 13, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 13, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLineNumber(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 13, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `lineNumber` replaced.
-  /// - param newChild: The new `lineNumber` to replace the node's
-  ///                   current `lineNumber`, if present.
-  public func withLineNumber(_ newChild: TokenSyntax) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 13, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public var unexpectedAfterLineNumber: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 14, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterLineNumber(value)
+      self = PoundSourceLocationArgsSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterLineNumber` replaced.
-  /// - param newChild: The new `unexpectedAfterLineNumber` to replace the node's
-  ///                   current `unexpectedAfterLineNumber`, if present.
-  public func withUnexpectedAfterLineNumber(_ newChild: UnexpectedNodesSyntax?) -> PoundSourceLocationArgsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 14, with: raw, arena: arena)
-    return PoundSourceLocationArgsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -6990,146 +4961,65 @@ public struct DeclModifierDetailSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftParen(value)
+      self = DeclModifierDetailSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftParen` to replace the node's
-  ///                   current `unexpectedBeforeLeftParen`, if present.
-  public func withUnexpectedBeforeLeftParen(_ newChild: UnexpectedNodesSyntax?) -> DeclModifierDetailSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DeclModifierDetailSyntax(newData)
   }
 
   public var leftParen: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = DeclModifierDetailSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> DeclModifierDetailSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DeclModifierDetailSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndDetail: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndDetail(value)
+      self = DeclModifierDetailSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndDetail` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndDetail` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndDetail`, if present.
-  public func withUnexpectedBetweenLeftParenAndDetail(_ newChild: UnexpectedNodesSyntax?) -> DeclModifierDetailSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DeclModifierDetailSyntax(newData)
   }
 
   public var detail: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDetail(value)
+      self = DeclModifierDetailSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `detail` replaced.
-  /// - param newChild: The new `detail` to replace the node's
-  ///                   current `detail`, if present.
-  public func withDetail(_ newChild: TokenSyntax) -> DeclModifierDetailSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DeclModifierDetailSyntax(newData)
   }
 
   public var unexpectedBetweenDetailAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDetailAndRightParen(value)
+      self = DeclModifierDetailSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDetailAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenDetailAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenDetailAndRightParen`, if present.
-  public func withUnexpectedBetweenDetailAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> DeclModifierDetailSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DeclModifierDetailSyntax(newData)
   }
 
   public var rightParen: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightParen(value)
+      self = DeclModifierDetailSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> DeclModifierDetailSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DeclModifierDetailSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = DeclModifierDetailSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> DeclModifierDetailSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DeclModifierDetailSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -7227,106 +5117,47 @@ public struct DeclModifierSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeName(value)
+      self = DeclModifierSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeName` replaced.
-  /// - param newChild: The new `unexpectedBeforeName` to replace the node's
-  ///                   current `unexpectedBeforeName`, if present.
-  public func withUnexpectedBeforeName(_ newChild: UnexpectedNodesSyntax?) -> DeclModifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DeclModifierSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = DeclModifierSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> DeclModifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DeclModifierSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndDetail: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndDetail(value)
+      self = DeclModifierSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndDetail` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndDetail` to replace the node's
-  ///                   current `unexpectedBetweenNameAndDetail`, if present.
-  public func withUnexpectedBetweenNameAndDetail(_ newChild: UnexpectedNodesSyntax?) -> DeclModifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DeclModifierSyntax(newData)
   }
 
   public var detail: DeclModifierDetailSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return DeclModifierDetailSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(DeclModifierDetailSyntax.init)
     }
     set(value) {
-      self = withDetail(value)
+      self = DeclModifierSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `detail` replaced.
-  /// - param newChild: The new `detail` to replace the node's
-  ///                   current `detail`, if present.
-  public func withDetail(_ newChild: DeclModifierDetailSyntax?) -> DeclModifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DeclModifierSyntax(newData)
   }
 
   public var unexpectedAfterDetail: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterDetail(value)
+      self = DeclModifierSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterDetail` replaced.
-  /// - param newChild: The new `unexpectedAfterDetail` to replace the node's
-  ///                   current `unexpectedAfterDetail`, if present.
-  public func withUnexpectedAfterDetail(_ newChild: UnexpectedNodesSyntax?) -> DeclModifierSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DeclModifierSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -7416,106 +5247,47 @@ public struct InheritedTypeSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeTypeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeTypeName(value)
+      self = InheritedTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeTypeName` replaced.
-  /// - param newChild: The new `unexpectedBeforeTypeName` to replace the node's
-  ///                   current `unexpectedBeforeTypeName`, if present.
-  public func withUnexpectedBeforeTypeName(_ newChild: UnexpectedNodesSyntax?) -> InheritedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return InheritedTypeSyntax(newData)
   }
 
   public var typeName: TypeSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withTypeName(value)
+      self = InheritedTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `typeName` replaced.
-  /// - param newChild: The new `typeName` to replace the node's
-  ///                   current `typeName`, if present.
-  public func withTypeName(_ newChild: TypeSyntax) -> InheritedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return InheritedTypeSyntax(newData)
   }
 
   public var unexpectedBetweenTypeNameAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeNameAndTrailingComma(value)
+      self = InheritedTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeNameAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeNameAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenTypeNameAndTrailingComma`, if present.
-  public func withUnexpectedBetweenTypeNameAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> InheritedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return InheritedTypeSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = InheritedTypeSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> InheritedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return InheritedTypeSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = InheritedTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> InheritedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return InheritedTypeSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -7605,73 +5377,37 @@ public struct TypeInheritanceClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeColon(value)
+      self = TypeInheritanceClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeColon` replaced.
-  /// - param newChild: The new `unexpectedBeforeColon` to replace the node's
-  ///                   current `unexpectedBeforeColon`, if present.
-  public func withUnexpectedBeforeColon(_ newChild: UnexpectedNodesSyntax?) -> TypeInheritanceClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return TypeInheritanceClauseSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = TypeInheritanceClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> TypeInheritanceClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return TypeInheritanceClauseSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndInheritedTypeCollection: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndInheritedTypeCollection(value)
+      self = TypeInheritanceClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndInheritedTypeCollection` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndInheritedTypeCollection` to replace the node's
-  ///                   current `unexpectedBetweenColonAndInheritedTypeCollection`, if present.
-  public func withUnexpectedBetweenColonAndInheritedTypeCollection(_ newChild: UnexpectedNodesSyntax?) -> TypeInheritanceClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return TypeInheritanceClauseSyntax(newData)
   }
 
   public var inheritedTypeCollection: InheritedTypeListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return InheritedTypeListSyntax(childData!)
+      return InheritedTypeListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withInheritedTypeCollection(value)
+      self = TypeInheritanceClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -7694,35 +5430,13 @@ public struct TypeInheritanceClauseSyntax: SyntaxProtocol, SyntaxHashable {
     return TypeInheritanceClauseSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `inheritedTypeCollection` replaced.
-  /// - param newChild: The new `inheritedTypeCollection` to replace the node's
-  ///                   current `inheritedTypeCollection`, if present.
-  public func withInheritedTypeCollection(_ newChild: InheritedTypeListSyntax) -> TypeInheritanceClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return TypeInheritanceClauseSyntax(newData)
-  }
-
   public var unexpectedAfterInheritedTypeCollection: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterInheritedTypeCollection(value)
+      self = TypeInheritanceClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterInheritedTypeCollection` replaced.
-  /// - param newChild: The new `unexpectedAfterInheritedTypeCollection` to replace the node's
-  ///                   current `unexpectedAfterInheritedTypeCollection`, if present.
-  public func withUnexpectedAfterInheritedTypeCollection(_ newChild: UnexpectedNodesSyntax?) -> TypeInheritanceClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return TypeInheritanceClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -7816,73 +5530,37 @@ public struct MemberDeclBlockSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftBrace(value)
+      self = MemberDeclBlockSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftBrace` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftBrace` to replace the node's
-  ///                   current `unexpectedBeforeLeftBrace`, if present.
-  public func withUnexpectedBeforeLeftBrace(_ newChild: UnexpectedNodesSyntax?) -> MemberDeclBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return MemberDeclBlockSyntax(newData)
   }
 
   public var leftBrace: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftBrace(value)
+      self = MemberDeclBlockSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftBrace` replaced.
-  /// - param newChild: The new `leftBrace` to replace the node's
-  ///                   current `leftBrace`, if present.
-  public func withLeftBrace(_ newChild: TokenSyntax) -> MemberDeclBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return MemberDeclBlockSyntax(newData)
   }
 
   public var unexpectedBetweenLeftBraceAndMembers: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftBraceAndMembers(value)
+      self = MemberDeclBlockSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftBraceAndMembers` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftBraceAndMembers` to replace the node's
-  ///                   current `unexpectedBetweenLeftBraceAndMembers`, if present.
-  public func withUnexpectedBetweenLeftBraceAndMembers(_ newChild: UnexpectedNodesSyntax?) -> MemberDeclBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return MemberDeclBlockSyntax(newData)
   }
 
   public var members: MemberDeclListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return MemberDeclListSyntax(childData!)
+      return MemberDeclListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withMembers(value)
+      self = MemberDeclBlockSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -7905,76 +5583,31 @@ public struct MemberDeclBlockSyntax: SyntaxProtocol, SyntaxHashable {
     return MemberDeclBlockSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `members` replaced.
-  /// - param newChild: The new `members` to replace the node's
-  ///                   current `members`, if present.
-  public func withMembers(_ newChild: MemberDeclListSyntax) -> MemberDeclBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return MemberDeclBlockSyntax(newData)
-  }
-
   public var unexpectedBetweenMembersAndRightBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenMembersAndRightBrace(value)
+      self = MemberDeclBlockSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenMembersAndRightBrace` replaced.
-  /// - param newChild: The new `unexpectedBetweenMembersAndRightBrace` to replace the node's
-  ///                   current `unexpectedBetweenMembersAndRightBrace`, if present.
-  public func withUnexpectedBetweenMembersAndRightBrace(_ newChild: UnexpectedNodesSyntax?) -> MemberDeclBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return MemberDeclBlockSyntax(newData)
   }
 
   public var rightBrace: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightBrace(value)
+      self = MemberDeclBlockSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightBrace` replaced.
-  /// - param newChild: The new `rightBrace` to replace the node's
-  ///                   current `rightBrace`, if present.
-  public func withRightBrace(_ newChild: TokenSyntax) -> MemberDeclBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return MemberDeclBlockSyntax(newData)
   }
 
   public var unexpectedAfterRightBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightBrace(value)
+      self = MemberDeclBlockSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightBrace` replaced.
-  /// - param newChild: The new `unexpectedAfterRightBrace` to replace the node's
-  ///                   current `unexpectedAfterRightBrace`, if present.
-  public func withUnexpectedAfterRightBrace(_ newChild: UnexpectedNodesSyntax?) -> MemberDeclBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return MemberDeclBlockSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -8076,108 +5709,49 @@ public struct MemberDeclListItemSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeDecl: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeDecl(value)
+      self = MemberDeclListItemSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeDecl` replaced.
-  /// - param newChild: The new `unexpectedBeforeDecl` to replace the node's
-  ///                   current `unexpectedBeforeDecl`, if present.
-  public func withUnexpectedBeforeDecl(_ newChild: UnexpectedNodesSyntax?) -> MemberDeclListItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return MemberDeclListItemSyntax(newData)
   }
 
   /// The declaration of the type member.
   public var decl: DeclSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return DeclSyntax(childData!)
+      return DeclSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDecl(value)
+      self = MemberDeclListItemSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `decl` replaced.
-  /// - param newChild: The new `decl` to replace the node's
-  ///                   current `decl`, if present.
-  public func withDecl(_ newChild: DeclSyntax) -> MemberDeclListItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return MemberDeclListItemSyntax(newData)
   }
 
   public var unexpectedBetweenDeclAndSemicolon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDeclAndSemicolon(value)
+      self = MemberDeclListItemSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDeclAndSemicolon` replaced.
-  /// - param newChild: The new `unexpectedBetweenDeclAndSemicolon` to replace the node's
-  ///                   current `unexpectedBetweenDeclAndSemicolon`, if present.
-  public func withUnexpectedBetweenDeclAndSemicolon(_ newChild: UnexpectedNodesSyntax?) -> MemberDeclListItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return MemberDeclListItemSyntax(newData)
   }
 
   /// An optional trailing semicolon.
   public var semicolon: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withSemicolon(value)
+      self = MemberDeclListItemSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `semicolon` replaced.
-  /// - param newChild: The new `semicolon` to replace the node's
-  ///                   current `semicolon`, if present.
-  public func withSemicolon(_ newChild: TokenSyntax?) -> MemberDeclListItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return MemberDeclListItemSyntax(newData)
   }
 
   public var unexpectedAfterSemicolon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterSemicolon(value)
+      self = MemberDeclListItemSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterSemicolon` replaced.
-  /// - param newChild: The new `unexpectedAfterSemicolon` to replace the node's
-  ///                   current `unexpectedAfterSemicolon`, if present.
-  public func withUnexpectedAfterSemicolon(_ newChild: UnexpectedNodesSyntax?) -> MemberDeclListItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return MemberDeclListItemSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -8267,32 +5841,19 @@ public struct SourceFileSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeStatements: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeStatements(value)
+      self = SourceFileSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeStatements` replaced.
-  /// - param newChild: The new `unexpectedBeforeStatements` to replace the node's
-  ///                   current `unexpectedBeforeStatements`, if present.
-  public func withUnexpectedBeforeStatements(_ newChild: UnexpectedNodesSyntax?) -> SourceFileSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return SourceFileSyntax(newData)
   }
 
   public var statements: CodeBlockItemListSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return CodeBlockItemListSyntax(childData!)
+      return CodeBlockItemListSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withStatements(value)
+      self = SourceFileSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -8315,76 +5876,31 @@ public struct SourceFileSyntax: SyntaxProtocol, SyntaxHashable {
     return SourceFileSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `statements` replaced.
-  /// - param newChild: The new `statements` to replace the node's
-  ///                   current `statements`, if present.
-  public func withStatements(_ newChild: CodeBlockItemListSyntax) -> SourceFileSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return SourceFileSyntax(newData)
-  }
-
   public var unexpectedBetweenStatementsAndEOFToken: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenStatementsAndEOFToken(value)
+      self = SourceFileSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenStatementsAndEOFToken` replaced.
-  /// - param newChild: The new `unexpectedBetweenStatementsAndEOFToken` to replace the node's
-  ///                   current `unexpectedBetweenStatementsAndEOFToken`, if present.
-  public func withUnexpectedBetweenStatementsAndEOFToken(_ newChild: UnexpectedNodesSyntax?) -> SourceFileSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return SourceFileSyntax(newData)
   }
 
   public var eofToken: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withEOFToken(value)
+      self = SourceFileSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `eofToken` replaced.
-  /// - param newChild: The new `eofToken` to replace the node's
-  ///                   current `eofToken`, if present.
-  public func withEOFToken(_ newChild: TokenSyntax) -> SourceFileSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return SourceFileSyntax(newData)
   }
 
   public var unexpectedAfterEOFToken: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterEOFToken(value)
+      self = SourceFileSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterEOFToken` replaced.
-  /// - param newChild: The new `unexpectedAfterEOFToken` to replace the node's
-  ///                   current `unexpectedAfterEOFToken`, if present.
-  public func withUnexpectedAfterEOFToken(_ newChild: UnexpectedNodesSyntax?) -> SourceFileSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return SourceFileSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -8474,105 +5990,47 @@ public struct InitializerClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeEqual: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeEqual(value)
+      self = InitializerClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeEqual` replaced.
-  /// - param newChild: The new `unexpectedBeforeEqual` to replace the node's
-  ///                   current `unexpectedBeforeEqual`, if present.
-  public func withUnexpectedBeforeEqual(_ newChild: UnexpectedNodesSyntax?) -> InitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return InitializerClauseSyntax(newData)
   }
 
   public var equal: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withEqual(value)
+      self = InitializerClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `equal` replaced.
-  /// - param newChild: The new `equal` to replace the node's
-  ///                   current `equal`, if present.
-  public func withEqual(_ newChild: TokenSyntax) -> InitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return InitializerClauseSyntax(newData)
   }
 
   public var unexpectedBetweenEqualAndValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenEqualAndValue(value)
+      self = InitializerClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenEqualAndValue` replaced.
-  /// - param newChild: The new `unexpectedBetweenEqualAndValue` to replace the node's
-  ///                   current `unexpectedBetweenEqualAndValue`, if present.
-  public func withUnexpectedBetweenEqualAndValue(_ newChild: UnexpectedNodesSyntax?) -> InitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return InitializerClauseSyntax(newData)
   }
 
   public var value: ExprSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return ExprSyntax(childData!)
+      return ExprSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withValue(value)
+      self = InitializerClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `value` replaced.
-  /// - param newChild: The new `value` to replace the node's
-  ///                   current `value`, if present.
-  public func withValue(_ newChild: ExprSyntax) -> InitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return InitializerClauseSyntax(newData)
   }
 
   public var unexpectedAfterValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterValue(value)
+      self = InitializerClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterValue` replaced.
-  /// - param newChild: The new `unexpectedAfterValue` to replace the node's
-  ///                   current `unexpectedAfterValue`, if present.
-  public func withUnexpectedAfterValue(_ newChild: UnexpectedNodesSyntax?) -> InitializerClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return InitializerClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -8748,33 +6206,19 @@ public struct FunctionParameterSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeAttributes: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeAttributes(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeAttributes` replaced.
-  /// - param newChild: The new `unexpectedBeforeAttributes` to replace the node's
-  ///                   current `unexpectedBeforeAttributes`, if present.
-  public func withUnexpectedBeforeAttributes(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var attributes: AttributeListSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return AttributeListSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = withAttributes(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
@@ -8797,45 +6241,21 @@ public struct FunctionParameterSyntax: SyntaxProtocol, SyntaxHashable {
     return FunctionParameterSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `attributes` replaced.
-  /// - param newChild: The new `attributes` to replace the node's
-  ///                   current `attributes`, if present.
-  public func withAttributes(_ newChild: AttributeListSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
-  }
-
   public var unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAttributesAndModifiers(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAttributesAndModifiers` replaced.
-  /// - param newChild: The new `unexpectedBetweenAttributesAndModifiers` to replace the node's
-  ///                   current `unexpectedBetweenAttributesAndModifiers`, if present.
-  public func withUnexpectedBetweenAttributesAndModifiers(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var modifiers: ModifierListSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return ModifierListSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = withModifiers(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
@@ -8858,329 +6278,139 @@ public struct FunctionParameterSyntax: SyntaxProtocol, SyntaxHashable {
     return FunctionParameterSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `modifiers` replaced.
-  /// - param newChild: The new `modifiers` to replace the node's
-  ///                   current `modifiers`, if present.
-  public func withModifiers(_ newChild: ModifierListSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
-  }
-
   public var unexpectedBetweenModifiersAndFirstName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenModifiersAndFirstName(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenModifiersAndFirstName` replaced.
-  /// - param newChild: The new `unexpectedBetweenModifiersAndFirstName` to replace the node's
-  ///                   current `unexpectedBetweenModifiersAndFirstName`, if present.
-  public func withUnexpectedBetweenModifiersAndFirstName(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var firstName: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withFirstName(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `firstName` replaced.
-  /// - param newChild: The new `firstName` to replace the node's
-  ///                   current `firstName`, if present.
-  public func withFirstName(_ newChild: TokenSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var unexpectedBetweenFirstNameAndSecondName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenFirstNameAndSecondName(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenFirstNameAndSecondName` replaced.
-  /// - param newChild: The new `unexpectedBetweenFirstNameAndSecondName` to replace the node's
-  ///                   current `unexpectedBetweenFirstNameAndSecondName`, if present.
-  public func withUnexpectedBetweenFirstNameAndSecondName(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var secondName: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withSecondName(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `secondName` replaced.
-  /// - param newChild: The new `secondName` to replace the node's
-  ///                   current `secondName`, if present.
-  public func withSecondName(_ newChild: TokenSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var unexpectedBetweenSecondNameAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenSecondNameAndColon(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenSecondNameAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenSecondNameAndColon` to replace the node's
-  ///                   current `unexpectedBetweenSecondNameAndColon`, if present.
-  public func withUnexpectedBetweenSecondNameAndColon(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var colon: TokenSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withColon(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndType(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndType` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndType` to replace the node's
-  ///                   current `unexpectedBetweenColonAndType`, if present.
-  public func withUnexpectedBetweenColonAndType(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var type: TypeSyntax? {
     get {
-      let childData = data.child(at: 11, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TypeSyntax(childData!)
+      return data.child(at: 11, parent: Syntax(self)).map(TypeSyntax.init)
     }
     set(value) {
-      self = withType(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `type` replaced.
-  /// - param newChild: The new `type` to replace the node's
-  ///                   current `type`, if present.
-  public func withType(_ newChild: TypeSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 11, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var unexpectedBetweenTypeAndEllipsis: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 12, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeAndEllipsis(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeAndEllipsis` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeAndEllipsis` to replace the node's
-  ///                   current `unexpectedBetweenTypeAndEllipsis`, if present.
-  public func withUnexpectedBetweenTypeAndEllipsis(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 12, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var ellipsis: TokenSyntax? {
     get {
-      let childData = data.child(at: 13, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 13, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withEllipsis(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `ellipsis` replaced.
-  /// - param newChild: The new `ellipsis` to replace the node's
-  ///                   current `ellipsis`, if present.
-  public func withEllipsis(_ newChild: TokenSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 13, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var unexpectedBetweenEllipsisAndDefaultArgument: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 14, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenEllipsisAndDefaultArgument(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenEllipsisAndDefaultArgument` replaced.
-  /// - param newChild: The new `unexpectedBetweenEllipsisAndDefaultArgument` to replace the node's
-  ///                   current `unexpectedBetweenEllipsisAndDefaultArgument`, if present.
-  public func withUnexpectedBetweenEllipsisAndDefaultArgument(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 14, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var defaultArgument: InitializerClauseSyntax? {
     get {
-      let childData = data.child(at: 15, parent: Syntax(self))
-      if childData == nil { return nil }
-      return InitializerClauseSyntax(childData!)
+      return data.child(at: 15, parent: Syntax(self)).map(InitializerClauseSyntax.init)
     }
     set(value) {
-      self = withDefaultArgument(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 15, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `defaultArgument` replaced.
-  /// - param newChild: The new `defaultArgument` to replace the node's
-  ///                   current `defaultArgument`, if present.
-  public func withDefaultArgument(_ newChild: InitializerClauseSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 15, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var unexpectedBetweenDefaultArgumentAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 16, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDefaultArgumentAndTrailingComma(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDefaultArgumentAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenDefaultArgumentAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenDefaultArgumentAndTrailingComma`, if present.
-  public func withUnexpectedBetweenDefaultArgumentAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 16, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 17, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 17, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 17, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 17, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 18, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 18, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = FunctionParameterSyntax(data.replacingChild(at: 18, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> FunctionParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 18, with: raw, arena: arena)
-    return FunctionParameterSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -9326,106 +6556,47 @@ public struct AccessPathComponentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeName(value)
+      self = AccessPathComponentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeName` replaced.
-  /// - param newChild: The new `unexpectedBeforeName` to replace the node's
-  ///                   current `unexpectedBeforeName`, if present.
-  public func withUnexpectedBeforeName(_ newChild: UnexpectedNodesSyntax?) -> AccessPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AccessPathComponentSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = AccessPathComponentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> AccessPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AccessPathComponentSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndTrailingDot: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndTrailingDot(value)
+      self = AccessPathComponentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndTrailingDot` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndTrailingDot` to replace the node's
-  ///                   current `unexpectedBetweenNameAndTrailingDot`, if present.
-  public func withUnexpectedBetweenNameAndTrailingDot(_ newChild: UnexpectedNodesSyntax?) -> AccessPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AccessPathComponentSyntax(newData)
   }
 
   public var trailingDot: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingDot(value)
+      self = AccessPathComponentSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingDot` replaced.
-  /// - param newChild: The new `trailingDot` to replace the node's
-  ///                   current `trailingDot`, if present.
-  public func withTrailingDot(_ newChild: TokenSyntax?) -> AccessPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AccessPathComponentSyntax(newData)
   }
 
   public var unexpectedAfterTrailingDot: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingDot(value)
+      self = AccessPathComponentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingDot` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingDot` to replace the node's
-  ///                   current `unexpectedAfterTrailingDot`, if present.
-  public func withUnexpectedAfterTrailingDot(_ newChild: UnexpectedNodesSyntax?) -> AccessPathComponentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AccessPathComponentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -9519,146 +6690,65 @@ public struct AccessorParameterSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftParen(value)
+      self = AccessorParameterSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftParen` to replace the node's
-  ///                   current `unexpectedBeforeLeftParen`, if present.
-  public func withUnexpectedBeforeLeftParen(_ newChild: UnexpectedNodesSyntax?) -> AccessorParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AccessorParameterSyntax(newData)
   }
 
   public var leftParen: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = AccessorParameterSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> AccessorParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AccessorParameterSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndName(value)
+      self = AccessorParameterSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndName` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndName` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndName`, if present.
-  public func withUnexpectedBetweenLeftParenAndName(_ newChild: UnexpectedNodesSyntax?) -> AccessorParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AccessorParameterSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = AccessorParameterSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> AccessorParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AccessorParameterSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndRightParen(value)
+      self = AccessorParameterSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenNameAndRightParen`, if present.
-  public func withUnexpectedBetweenNameAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> AccessorParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AccessorParameterSyntax(newData)
   }
 
   public var rightParen: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightParen(value)
+      self = AccessorParameterSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> AccessorParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return AccessorParameterSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = AccessorParameterSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> AccessorParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return AccessorParameterSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -9760,73 +6850,37 @@ public struct AccessorBlockSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftBrace(value)
+      self = AccessorBlockSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftBrace` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftBrace` to replace the node's
-  ///                   current `unexpectedBeforeLeftBrace`, if present.
-  public func withUnexpectedBeforeLeftBrace(_ newChild: UnexpectedNodesSyntax?) -> AccessorBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AccessorBlockSyntax(newData)
   }
 
   public var leftBrace: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftBrace(value)
+      self = AccessorBlockSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftBrace` replaced.
-  /// - param newChild: The new `leftBrace` to replace the node's
-  ///                   current `leftBrace`, if present.
-  public func withLeftBrace(_ newChild: TokenSyntax) -> AccessorBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AccessorBlockSyntax(newData)
   }
 
   public var unexpectedBetweenLeftBraceAndAccessors: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftBraceAndAccessors(value)
+      self = AccessorBlockSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftBraceAndAccessors` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftBraceAndAccessors` to replace the node's
-  ///                   current `unexpectedBetweenLeftBraceAndAccessors`, if present.
-  public func withUnexpectedBetweenLeftBraceAndAccessors(_ newChild: UnexpectedNodesSyntax?) -> AccessorBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AccessorBlockSyntax(newData)
   }
 
   public var accessors: AccessorListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return AccessorListSyntax(childData!)
+      return AccessorListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAccessors(value)
+      self = AccessorBlockSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -9849,76 +6903,31 @@ public struct AccessorBlockSyntax: SyntaxProtocol, SyntaxHashable {
     return AccessorBlockSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `accessors` replaced.
-  /// - param newChild: The new `accessors` to replace the node's
-  ///                   current `accessors`, if present.
-  public func withAccessors(_ newChild: AccessorListSyntax) -> AccessorBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AccessorBlockSyntax(newData)
-  }
-
   public var unexpectedBetweenAccessorsAndRightBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAccessorsAndRightBrace(value)
+      self = AccessorBlockSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAccessorsAndRightBrace` replaced.
-  /// - param newChild: The new `unexpectedBetweenAccessorsAndRightBrace` to replace the node's
-  ///                   current `unexpectedBetweenAccessorsAndRightBrace`, if present.
-  public func withUnexpectedBetweenAccessorsAndRightBrace(_ newChild: UnexpectedNodesSyntax?) -> AccessorBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AccessorBlockSyntax(newData)
   }
 
   public var rightBrace: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightBrace(value)
+      self = AccessorBlockSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightBrace` replaced.
-  /// - param newChild: The new `rightBrace` to replace the node's
-  ///                   current `rightBrace`, if present.
-  public func withRightBrace(_ newChild: TokenSyntax) -> AccessorBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return AccessorBlockSyntax(newData)
   }
 
   public var unexpectedAfterRightBrace: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightBrace(value)
+      self = AccessorBlockSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightBrace` replaced.
-  /// - param newChild: The new `unexpectedAfterRightBrace` to replace the node's
-  ///                   current `unexpectedAfterRightBrace`, if present.
-  public func withUnexpectedAfterRightBrace(_ newChild: UnexpectedNodesSyntax?) -> AccessorBlockSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return AccessorBlockSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -10064,232 +7073,101 @@ public struct PatternBindingSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforePattern: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforePattern(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforePattern` replaced.
-  /// - param newChild: The new `unexpectedBeforePattern` to replace the node's
-  ///                   current `unexpectedBeforePattern`, if present.
-  public func withUnexpectedBeforePattern(_ newChild: UnexpectedNodesSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var pattern: PatternSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return PatternSyntax(childData!)
+      return PatternSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPattern(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `pattern` replaced.
-  /// - param newChild: The new `pattern` to replace the node's
-  ///                   current `pattern`, if present.
-  public func withPattern(_ newChild: PatternSyntax) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var unexpectedBetweenPatternAndTypeAnnotation: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPatternAndTypeAnnotation(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPatternAndTypeAnnotation` replaced.
-  /// - param newChild: The new `unexpectedBetweenPatternAndTypeAnnotation` to replace the node's
-  ///                   current `unexpectedBetweenPatternAndTypeAnnotation`, if present.
-  public func withUnexpectedBetweenPatternAndTypeAnnotation(_ newChild: UnexpectedNodesSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var typeAnnotation: TypeAnnotationSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TypeAnnotationSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TypeAnnotationSyntax.init)
     }
     set(value) {
-      self = withTypeAnnotation(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `typeAnnotation` replaced.
-  /// - param newChild: The new `typeAnnotation` to replace the node's
-  ///                   current `typeAnnotation`, if present.
-  public func withTypeAnnotation(_ newChild: TypeAnnotationSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var unexpectedBetweenTypeAnnotationAndInitializer: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeAnnotationAndInitializer(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeAnnotationAndInitializer` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeAnnotationAndInitializer` to replace the node's
-  ///                   current `unexpectedBetweenTypeAnnotationAndInitializer`, if present.
-  public func withUnexpectedBetweenTypeAnnotationAndInitializer(_ newChild: UnexpectedNodesSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var initializer: InitializerClauseSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return InitializerClauseSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(InitializerClauseSyntax.init)
     }
     set(value) {
-      self = withInitializer(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `initializer` replaced.
-  /// - param newChild: The new `initializer` to replace the node's
-  ///                   current `initializer`, if present.
-  public func withInitializer(_ newChild: InitializerClauseSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var unexpectedBetweenInitializerAndAccessor: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenInitializerAndAccessor(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenInitializerAndAccessor` replaced.
-  /// - param newChild: The new `unexpectedBetweenInitializerAndAccessor` to replace the node's
-  ///                   current `unexpectedBetweenInitializerAndAccessor`, if present.
-  public func withUnexpectedBetweenInitializerAndAccessor(_ newChild: UnexpectedNodesSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var accessor: Accessor? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return Accessor(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(Accessor.init)
     }
     set(value) {
-      self = withAccessor(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `accessor` replaced.
-  /// - param newChild: The new `accessor` to replace the node's
-  ///                   current `accessor`, if present.
-  public func withAccessor(_ newChild: Accessor?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var unexpectedBetweenAccessorAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAccessorAndTrailingComma(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAccessorAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenAccessorAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenAccessorAndTrailingComma`, if present.
-  public func withUnexpectedBetweenAccessorAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = PatternBindingSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> PatternBindingSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return PatternBindingSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -10415,108 +7293,49 @@ public struct EnumCaseElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeIdentifier(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedBeforeIdentifier` to replace the node's
-  ///                   current `unexpectedBeforeIdentifier`, if present.
-  public func withUnexpectedBeforeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   /// The name of this case.
   public var identifier: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withIdentifier(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `identifier` replaced.
-  /// - param newChild: The new `identifier` to replace the node's
-  ///                   current `identifier`, if present.
-  public func withIdentifier(_ newChild: TokenSyntax) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   public var unexpectedBetweenIdentifierAndAssociatedValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenIdentifierAndAssociatedValue(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenIdentifierAndAssociatedValue` replaced.
-  /// - param newChild: The new `unexpectedBetweenIdentifierAndAssociatedValue` to replace the node's
-  ///                   current `unexpectedBetweenIdentifierAndAssociatedValue`, if present.
-  public func withUnexpectedBetweenIdentifierAndAssociatedValue(_ newChild: UnexpectedNodesSyntax?) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   /// The set of associated values of the case.
   public var associatedValue: ParameterClauseSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return ParameterClauseSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(ParameterClauseSyntax.init)
     }
     set(value) {
-      self = withAssociatedValue(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `associatedValue` replaced.
-  /// - param newChild: The new `associatedValue` to replace the node's
-  ///                   current `associatedValue`, if present.
-  public func withAssociatedValue(_ newChild: ParameterClauseSyntax?) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   public var unexpectedBetweenAssociatedValueAndRawValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAssociatedValueAndRawValue(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAssociatedValueAndRawValue` replaced.
-  /// - param newChild: The new `unexpectedBetweenAssociatedValueAndRawValue` to replace the node's
-  ///                   current `unexpectedBetweenAssociatedValueAndRawValue`, if present.
-  public func withUnexpectedBetweenAssociatedValueAndRawValue(_ newChild: UnexpectedNodesSyntax?) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   /// 
@@ -10524,44 +7343,20 @@ public struct EnumCaseElementSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var rawValue: InitializerClauseSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return InitializerClauseSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(InitializerClauseSyntax.init)
     }
     set(value) {
-      self = withRawValue(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rawValue` replaced.
-  /// - param newChild: The new `rawValue` to replace the node's
-  ///                   current `rawValue`, if present.
-  public func withRawValue(_ newChild: InitializerClauseSyntax?) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   public var unexpectedBetweenRawValueAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenRawValueAndTrailingComma(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenRawValueAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenRawValueAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenRawValueAndTrailingComma`, if present.
-  public func withUnexpectedBetweenRawValueAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   /// 
@@ -10570,44 +7365,20 @@ public struct EnumCaseElementSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = EnumCaseElementSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> EnumCaseElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return EnumCaseElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -10713,105 +7484,47 @@ public struct DesignatedTypeElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeadingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeadingComma(value)
+      self = DesignatedTypeElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeadingComma` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeadingComma` to replace the node's
-  ///                   current `unexpectedBeforeLeadingComma`, if present.
-  public func withUnexpectedBeforeLeadingComma(_ newChild: UnexpectedNodesSyntax?) -> DesignatedTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DesignatedTypeElementSyntax(newData)
   }
 
   public var leadingComma: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeadingComma(value)
+      self = DesignatedTypeElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leadingComma` replaced.
-  /// - param newChild: The new `leadingComma` to replace the node's
-  ///                   current `leadingComma`, if present.
-  public func withLeadingComma(_ newChild: TokenSyntax) -> DesignatedTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DesignatedTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenLeadingCommaAndName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeadingCommaAndName(value)
+      self = DesignatedTypeElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeadingCommaAndName` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeadingCommaAndName` to replace the node's
-  ///                   current `unexpectedBetweenLeadingCommaAndName`, if present.
-  public func withUnexpectedBetweenLeadingCommaAndName(_ newChild: UnexpectedNodesSyntax?) -> DesignatedTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DesignatedTypeElementSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = DesignatedTypeElementSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> DesignatedTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DesignatedTypeElementSyntax(newData)
   }
 
   public var unexpectedAfterName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterName(value)
+      self = DesignatedTypeElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterName` replaced.
-  /// - param newChild: The new `unexpectedAfterName` to replace the node's
-  ///                   current `unexpectedAfterName`, if present.
-  public func withUnexpectedAfterName(_ newChild: UnexpectedNodesSyntax?) -> DesignatedTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DesignatedTypeElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -10908,64 +7621,29 @@ public struct OperatorPrecedenceAndTypesSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeColon(value)
+      self = OperatorPrecedenceAndTypesSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeColon` replaced.
-  /// - param newChild: The new `unexpectedBeforeColon` to replace the node's
-  ///                   current `unexpectedBeforeColon`, if present.
-  public func withUnexpectedBeforeColon(_ newChild: UnexpectedNodesSyntax?) -> OperatorPrecedenceAndTypesSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return OperatorPrecedenceAndTypesSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = OperatorPrecedenceAndTypesSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> OperatorPrecedenceAndTypesSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return OperatorPrecedenceAndTypesSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndPrecedenceGroup: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndPrecedenceGroup(value)
+      self = OperatorPrecedenceAndTypesSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndPrecedenceGroup` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndPrecedenceGroup` to replace the node's
-  ///                   current `unexpectedBetweenColonAndPrecedenceGroup`, if present.
-  public func withUnexpectedBetweenColonAndPrecedenceGroup(_ newChild: UnexpectedNodesSyntax?) -> OperatorPrecedenceAndTypesSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return OperatorPrecedenceAndTypesSyntax(newData)
   }
 
   /// 
@@ -10973,43 +7651,20 @@ public struct OperatorPrecedenceAndTypesSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var precedenceGroup: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPrecedenceGroup(value)
+      self = OperatorPrecedenceAndTypesSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `precedenceGroup` replaced.
-  /// - param newChild: The new `precedenceGroup` to replace the node's
-  ///                   current `precedenceGroup`, if present.
-  public func withPrecedenceGroup(_ newChild: TokenSyntax) -> OperatorPrecedenceAndTypesSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return OperatorPrecedenceAndTypesSyntax(newData)
   }
 
   public var unexpectedBetweenPrecedenceGroupAndDesignatedTypes: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPrecedenceGroupAndDesignatedTypes(value)
+      self = OperatorPrecedenceAndTypesSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPrecedenceGroupAndDesignatedTypes` replaced.
-  /// - param newChild: The new `unexpectedBetweenPrecedenceGroupAndDesignatedTypes` to replace the node's
-  ///                   current `unexpectedBetweenPrecedenceGroupAndDesignatedTypes`, if present.
-  public func withUnexpectedBetweenPrecedenceGroupAndDesignatedTypes(_ newChild: UnexpectedNodesSyntax?) -> OperatorPrecedenceAndTypesSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return OperatorPrecedenceAndTypesSyntax(newData)
   }
 
   /// 
@@ -11017,11 +7672,10 @@ public struct OperatorPrecedenceAndTypesSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var designatedTypes: DesignatedTypeListSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return DesignatedTypeListSyntax(childData!)
+      return DesignatedTypeListSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDesignatedTypes(value)
+      self = OperatorPrecedenceAndTypesSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -11044,35 +7698,13 @@ public struct OperatorPrecedenceAndTypesSyntax: SyntaxProtocol, SyntaxHashable {
     return OperatorPrecedenceAndTypesSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `designatedTypes` replaced.
-  /// - param newChild: The new `designatedTypes` to replace the node's
-  ///                   current `designatedTypes`, if present.
-  public func withDesignatedTypes(_ newChild: DesignatedTypeListSyntax) -> OperatorPrecedenceAndTypesSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return OperatorPrecedenceAndTypesSyntax(newData)
-  }
-
   public var unexpectedAfterDesignatedTypes: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterDesignatedTypes(value)
+      self = OperatorPrecedenceAndTypesSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterDesignatedTypes` replaced.
-  /// - param newChild: The new `unexpectedAfterDesignatedTypes` to replace the node's
-  ///                   current `unexpectedAfterDesignatedTypes`, if present.
-  public func withUnexpectedAfterDesignatedTypes(_ newChild: UnexpectedNodesSyntax?) -> OperatorPrecedenceAndTypesSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return OperatorPrecedenceAndTypesSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -11178,23 +7810,11 @@ public struct PrecedenceGroupRelationSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeHigherThanOrLowerThan: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeHigherThanOrLowerThan(value)
+      self = PrecedenceGroupRelationSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeHigherThanOrLowerThan` replaced.
-  /// - param newChild: The new `unexpectedBeforeHigherThanOrLowerThan` to replace the node's
-  ///                   current `unexpectedBeforeHigherThanOrLowerThan`, if present.
-  public func withUnexpectedBeforeHigherThanOrLowerThan(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupRelationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return PrecedenceGroupRelationSyntax(newData)
   }
 
   /// 
@@ -11202,84 +7822,38 @@ public struct PrecedenceGroupRelationSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var higherThanOrLowerThan: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withHigherThanOrLowerThan(value)
+      self = PrecedenceGroupRelationSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `higherThanOrLowerThan` replaced.
-  /// - param newChild: The new `higherThanOrLowerThan` to replace the node's
-  ///                   current `higherThanOrLowerThan`, if present.
-  public func withHigherThanOrLowerThan(_ newChild: TokenSyntax) -> PrecedenceGroupRelationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return PrecedenceGroupRelationSyntax(newData)
   }
 
   public var unexpectedBetweenHigherThanOrLowerThanAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenHigherThanOrLowerThanAndColon(value)
+      self = PrecedenceGroupRelationSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenHigherThanOrLowerThanAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenHigherThanOrLowerThanAndColon` to replace the node's
-  ///                   current `unexpectedBetweenHigherThanOrLowerThanAndColon`, if present.
-  public func withUnexpectedBetweenHigherThanOrLowerThanAndColon(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupRelationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return PrecedenceGroupRelationSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = PrecedenceGroupRelationSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> PrecedenceGroupRelationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return PrecedenceGroupRelationSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndOtherNames: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndOtherNames(value)
+      self = PrecedenceGroupRelationSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndOtherNames` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndOtherNames` to replace the node's
-  ///                   current `unexpectedBetweenColonAndOtherNames`, if present.
-  public func withUnexpectedBetweenColonAndOtherNames(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupRelationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return PrecedenceGroupRelationSyntax(newData)
   }
 
   /// 
@@ -11288,11 +7862,10 @@ public struct PrecedenceGroupRelationSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var otherNames: PrecedenceGroupNameListSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return PrecedenceGroupNameListSyntax(childData!)
+      return PrecedenceGroupNameListSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withOtherNames(value)
+      self = PrecedenceGroupRelationSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -11315,35 +7888,13 @@ public struct PrecedenceGroupRelationSyntax: SyntaxProtocol, SyntaxHashable {
     return PrecedenceGroupRelationSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `otherNames` replaced.
-  /// - param newChild: The new `otherNames` to replace the node's
-  ///                   current `otherNames`, if present.
-  public func withOtherNames(_ newChild: PrecedenceGroupNameListSyntax) -> PrecedenceGroupRelationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return PrecedenceGroupRelationSyntax(newData)
-  }
-
   public var unexpectedAfterOtherNames: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterOtherNames(value)
+      self = PrecedenceGroupRelationSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterOtherNames` replaced.
-  /// - param newChild: The new `unexpectedAfterOtherNames` to replace the node's
-  ///                   current `unexpectedAfterOtherNames`, if present.
-  public func withUnexpectedAfterOtherNames(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupRelationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return PrecedenceGroupRelationSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -11441,106 +7992,47 @@ public struct PrecedenceGroupNameElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeName(value)
+      self = PrecedenceGroupNameElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeName` replaced.
-  /// - param newChild: The new `unexpectedBeforeName` to replace the node's
-  ///                   current `unexpectedBeforeName`, if present.
-  public func withUnexpectedBeforeName(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupNameElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return PrecedenceGroupNameElementSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = PrecedenceGroupNameElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> PrecedenceGroupNameElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return PrecedenceGroupNameElementSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndTrailingComma(value)
+      self = PrecedenceGroupNameElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenNameAndTrailingComma`, if present.
-  public func withUnexpectedBetweenNameAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupNameElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return PrecedenceGroupNameElementSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = PrecedenceGroupNameElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> PrecedenceGroupNameElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return PrecedenceGroupNameElementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = PrecedenceGroupNameElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupNameElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return PrecedenceGroupNameElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -11638,105 +8130,47 @@ public struct PrecedenceGroupAssignmentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeAssignmentKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeAssignmentKeyword(value)
+      self = PrecedenceGroupAssignmentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeAssignmentKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeAssignmentKeyword` to replace the node's
-  ///                   current `unexpectedBeforeAssignmentKeyword`, if present.
-  public func withUnexpectedBeforeAssignmentKeyword(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupAssignmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return PrecedenceGroupAssignmentSyntax(newData)
   }
 
   public var assignmentKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAssignmentKeyword(value)
+      self = PrecedenceGroupAssignmentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `assignmentKeyword` replaced.
-  /// - param newChild: The new `assignmentKeyword` to replace the node's
-  ///                   current `assignmentKeyword`, if present.
-  public func withAssignmentKeyword(_ newChild: TokenSyntax) -> PrecedenceGroupAssignmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return PrecedenceGroupAssignmentSyntax(newData)
   }
 
   public var unexpectedBetweenAssignmentKeywordAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAssignmentKeywordAndColon(value)
+      self = PrecedenceGroupAssignmentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAssignmentKeywordAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenAssignmentKeywordAndColon` to replace the node's
-  ///                   current `unexpectedBetweenAssignmentKeywordAndColon`, if present.
-  public func withUnexpectedBetweenAssignmentKeywordAndColon(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupAssignmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return PrecedenceGroupAssignmentSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = PrecedenceGroupAssignmentSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> PrecedenceGroupAssignmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return PrecedenceGroupAssignmentSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndFlag: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndFlag(value)
+      self = PrecedenceGroupAssignmentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndFlag` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndFlag` to replace the node's
-  ///                   current `unexpectedBetweenColonAndFlag`, if present.
-  public func withUnexpectedBetweenColonAndFlag(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupAssignmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return PrecedenceGroupAssignmentSyntax(newData)
   }
 
   /// 
@@ -11748,43 +8182,20 @@ public struct PrecedenceGroupAssignmentSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var flag: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withFlag(value)
+      self = PrecedenceGroupAssignmentSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `flag` replaced.
-  /// - param newChild: The new `flag` to replace the node's
-  ///                   current `flag`, if present.
-  public func withFlag(_ newChild: TokenSyntax) -> PrecedenceGroupAssignmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return PrecedenceGroupAssignmentSyntax(newData)
   }
 
   public var unexpectedAfterFlag: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterFlag(value)
+      self = PrecedenceGroupAssignmentSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterFlag` replaced.
-  /// - param newChild: The new `unexpectedAfterFlag` to replace the node's
-  ///                   current `unexpectedAfterFlag`, if present.
-  public func withUnexpectedAfterFlag(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupAssignmentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return PrecedenceGroupAssignmentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -11890,105 +8301,47 @@ public struct PrecedenceGroupAssociativitySyntax: SyntaxProtocol, SyntaxHashable
 
   public var unexpectedBeforeAssociativityKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeAssociativityKeyword(value)
+      self = PrecedenceGroupAssociativitySyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeAssociativityKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeAssociativityKeyword` to replace the node's
-  ///                   current `unexpectedBeforeAssociativityKeyword`, if present.
-  public func withUnexpectedBeforeAssociativityKeyword(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupAssociativitySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return PrecedenceGroupAssociativitySyntax(newData)
   }
 
   public var associativityKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAssociativityKeyword(value)
+      self = PrecedenceGroupAssociativitySyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `associativityKeyword` replaced.
-  /// - param newChild: The new `associativityKeyword` to replace the node's
-  ///                   current `associativityKeyword`, if present.
-  public func withAssociativityKeyword(_ newChild: TokenSyntax) -> PrecedenceGroupAssociativitySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return PrecedenceGroupAssociativitySyntax(newData)
   }
 
   public var unexpectedBetweenAssociativityKeywordAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAssociativityKeywordAndColon(value)
+      self = PrecedenceGroupAssociativitySyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAssociativityKeywordAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenAssociativityKeywordAndColon` to replace the node's
-  ///                   current `unexpectedBetweenAssociativityKeywordAndColon`, if present.
-  public func withUnexpectedBetweenAssociativityKeywordAndColon(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupAssociativitySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return PrecedenceGroupAssociativitySyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = PrecedenceGroupAssociativitySyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> PrecedenceGroupAssociativitySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return PrecedenceGroupAssociativitySyntax(newData)
   }
 
   public var unexpectedBetweenColonAndValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndValue(value)
+      self = PrecedenceGroupAssociativitySyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndValue` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndValue` to replace the node's
-  ///                   current `unexpectedBetweenColonAndValue`, if present.
-  public func withUnexpectedBetweenColonAndValue(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupAssociativitySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return PrecedenceGroupAssociativitySyntax(newData)
   }
 
   /// 
@@ -11999,43 +8352,20 @@ public struct PrecedenceGroupAssociativitySyntax: SyntaxProtocol, SyntaxHashable
   /// 
   public var value: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withValue(value)
+      self = PrecedenceGroupAssociativitySyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `value` replaced.
-  /// - param newChild: The new `value` to replace the node's
-  ///                   current `value`, if present.
-  public func withValue(_ newChild: TokenSyntax) -> PrecedenceGroupAssociativitySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return PrecedenceGroupAssociativitySyntax(newData)
   }
 
   public var unexpectedAfterValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterValue(value)
+      self = PrecedenceGroupAssociativitySyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterValue` replaced.
-  /// - param newChild: The new `unexpectedAfterValue` to replace the node's
-  ///                   current `unexpectedAfterValue`, if present.
-  public func withUnexpectedAfterValue(_ newChild: UnexpectedNodesSyntax?) -> PrecedenceGroupAssociativitySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return PrecedenceGroupAssociativitySyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -12364,107 +8694,49 @@ public struct AttributeSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeAtSignToken: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeAtSignToken(value)
+      self = AttributeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeAtSignToken` replaced.
-  /// - param newChild: The new `unexpectedBeforeAtSignToken` to replace the node's
-  ///                   current `unexpectedBeforeAtSignToken`, if present.
-  public func withUnexpectedBeforeAtSignToken(_ newChild: UnexpectedNodesSyntax?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   /// The `@` sign.
   public var atSignToken: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAtSignToken(value)
+      self = AttributeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `atSignToken` replaced.
-  /// - param newChild: The new `atSignToken` to replace the node's
-  ///                   current `atSignToken`, if present.
-  public func withAtSignToken(_ newChild: TokenSyntax) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   public var unexpectedBetweenAtSignTokenAndAttributeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAtSignTokenAndAttributeName(value)
+      self = AttributeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAtSignTokenAndAttributeName` replaced.
-  /// - param newChild: The new `unexpectedBetweenAtSignTokenAndAttributeName` to replace the node's
-  ///                   current `unexpectedBetweenAtSignTokenAndAttributeName`, if present.
-  public func withUnexpectedBetweenAtSignTokenAndAttributeName(_ newChild: UnexpectedNodesSyntax?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   /// The name of the attribute.
   public var attributeName: TypeSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAttributeName(value)
+      self = AttributeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `attributeName` replaced.
-  /// - param newChild: The new `attributeName` to replace the node's
-  ///                   current `attributeName`, if present.
-  public func withAttributeName(_ newChild: TypeSyntax) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   public var unexpectedBetweenAttributeNameAndLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAttributeNameAndLeftParen(value)
+      self = AttributeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAttributeNameAndLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenAttributeNameAndLeftParen` to replace the node's
-  ///                   current `unexpectedBetweenAttributeNameAndLeftParen`, if present.
-  public func withUnexpectedBetweenAttributeNameAndLeftParen(_ newChild: UnexpectedNodesSyntax?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   /// 
@@ -12472,44 +8744,20 @@ public struct AttributeSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var leftParen: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = AttributeSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndArgument: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndArgument(value)
+      self = AttributeSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndArgument` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndArgument` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndArgument`, if present.
-  public func withUnexpectedBetweenLeftParenAndArgument(_ newChild: UnexpectedNodesSyntax?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   /// 
@@ -12519,44 +8767,20 @@ public struct AttributeSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var argument: Argument? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return Argument(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(Argument.init)
     }
     set(value) {
-      self = withArgument(value)
+      self = AttributeSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `argument` replaced.
-  /// - param newChild: The new `argument` to replace the node's
-  ///                   current `argument`, if present.
-  public func withArgument(_ newChild: Argument?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   public var unexpectedBetweenArgumentAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenArgumentAndRightParen(value)
+      self = AttributeSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenArgumentAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenArgumentAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenArgumentAndRightParen`, if present.
-  public func withUnexpectedBetweenArgumentAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   /// 
@@ -12564,44 +8788,20 @@ public struct AttributeSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var rightParen: TokenSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withRightParen(value)
+      self = AttributeSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = AttributeSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> AttributeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return AttributeSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -12726,116 +8926,57 @@ public struct AvailabilityEntrySyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLabel(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeLabel` to replace the node's
-  ///                   current `unexpectedBeforeLabel`, if present.
-  public func withUnexpectedBeforeLabel(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
   }
 
   /// The label of the argument
   public var label: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLabel(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `label` replaced.
-  /// - param newChild: The new `label` to replace the node's
-  ///                   current `label`, if present.
-  public func withLabel(_ newChild: TokenSyntax) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
   }
 
   public var unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelAndColon(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenLabelAndColon`, if present.
-  public func withUnexpectedBetweenLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
   }
 
   /// The colon separating the label and the value
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
   }
 
   public var unexpectedBetweenColonAndAvailabilityList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndAvailabilityList(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndAvailabilityList` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndAvailabilityList` to replace the node's
-  ///                   current `unexpectedBetweenColonAndAvailabilityList`, if present.
-  public func withUnexpectedBetweenColonAndAvailabilityList(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
   }
 
   public var availabilityList: AvailabilitySpecListSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return AvailabilitySpecListSyntax(childData!)
+      return AvailabilitySpecListSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAvailabilityList(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -12858,76 +8999,31 @@ public struct AvailabilityEntrySyntax: SyntaxProtocol, SyntaxHashable {
     return AvailabilityEntrySyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `availabilityList` replaced.
-  /// - param newChild: The new `availabilityList` to replace the node's
-  ///                   current `availabilityList`, if present.
-  public func withAvailabilityList(_ newChild: AvailabilitySpecListSyntax) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
-  }
-
   public var unexpectedBetweenAvailabilityListAndSemicolon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAvailabilityListAndSemicolon(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAvailabilityListAndSemicolon` replaced.
-  /// - param newChild: The new `unexpectedBetweenAvailabilityListAndSemicolon` to replace the node's
-  ///                   current `unexpectedBetweenAvailabilityListAndSemicolon`, if present.
-  public func withUnexpectedBetweenAvailabilityListAndSemicolon(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
   }
 
   public var semicolon: TokenSyntax {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = withSemicolon(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `semicolon` replaced.
-  /// - param newChild: The new `semicolon` to replace the node's
-  ///                   current `semicolon`, if present.
-  public func withSemicolon(_ newChild: TokenSyntax) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
   }
 
   public var unexpectedAfterSemicolon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterSemicolon(value)
+      self = AvailabilityEntrySyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterSemicolon` replaced.
-  /// - param newChild: The new `unexpectedAfterSemicolon` to replace the node's
-  ///                   current `unexpectedAfterSemicolon`, if present.
-  public func withUnexpectedAfterSemicolon(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return AvailabilityEntrySyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -13045,149 +9141,68 @@ public struct LabeledSpecializeEntrySyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLabel(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeLabel` to replace the node's
-  ///                   current `unexpectedBeforeLabel`, if present.
-  public func withUnexpectedBeforeLabel(_ newChild: UnexpectedNodesSyntax?) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   /// The label of the argument
   public var label: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLabel(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `label` replaced.
-  /// - param newChild: The new `label` to replace the node's
-  ///                   current `label`, if present.
-  public func withLabel(_ newChild: TokenSyntax) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   public var unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelAndColon(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenLabelAndColon`, if present.
-  public func withUnexpectedBetweenLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   /// The colon separating the label and the value
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   public var unexpectedBetweenColonAndValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndValue(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndValue` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndValue` to replace the node's
-  ///                   current `unexpectedBetweenColonAndValue`, if present.
-  public func withUnexpectedBetweenColonAndValue(_ newChild: UnexpectedNodesSyntax?) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   /// The value for this argument
   public var value: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withValue(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `value` replaced.
-  /// - param newChild: The new `value` to replace the node's
-  ///                   current `value`, if present.
-  public func withValue(_ newChild: TokenSyntax) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   public var unexpectedBetweenValueAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenValueAndTrailingComma(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenValueAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenValueAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenValueAndTrailingComma`, if present.
-  public func withUnexpectedBetweenValueAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   /// 
@@ -13195,44 +9210,20 @@ public struct LabeledSpecializeEntrySyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = LabeledSpecializeEntrySyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> LabeledSpecializeEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return LabeledSpecializeEntrySyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -13351,149 +9342,68 @@ public struct TargetFunctionEntrySyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLabel(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeLabel` to replace the node's
-  ///                   current `unexpectedBeforeLabel`, if present.
-  public func withUnexpectedBeforeLabel(_ newChild: UnexpectedNodesSyntax?) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   /// The label of the argument
   public var label: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLabel(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `label` replaced.
-  /// - param newChild: The new `label` to replace the node's
-  ///                   current `label`, if present.
-  public func withLabel(_ newChild: TokenSyntax) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   public var unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelAndColon(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenLabelAndColon`, if present.
-  public func withUnexpectedBetweenLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   /// The colon separating the label and the value
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   public var unexpectedBetweenColonAndDeclname: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndDeclname(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndDeclname` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndDeclname` to replace the node's
-  ///                   current `unexpectedBetweenColonAndDeclname`, if present.
-  public func withUnexpectedBetweenColonAndDeclname(_ newChild: UnexpectedNodesSyntax?) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   /// The value for this argument
   public var declname: DeclNameSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return DeclNameSyntax(childData!)
+      return DeclNameSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDeclname(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `declname` replaced.
-  /// - param newChild: The new `declname` to replace the node's
-  ///                   current `declname`, if present.
-  public func withDeclname(_ newChild: DeclNameSyntax) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   public var unexpectedBetweenDeclnameAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDeclnameAndTrailingComma(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDeclnameAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenDeclnameAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenDeclnameAndTrailingComma`, if present.
-  public func withUnexpectedBetweenDeclnameAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   /// 
@@ -13501,44 +9411,20 @@ public struct TargetFunctionEntrySyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = TargetFunctionEntrySyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> TargetFunctionEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return TargetFunctionEntrySyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -13644,23 +9530,11 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeDeclBaseName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeDeclBaseName(value)
+      self = DeclNameSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeDeclBaseName` replaced.
-  /// - param newChild: The new `unexpectedBeforeDeclBaseName` to replace the node's
-  ///                   current `unexpectedBeforeDeclBaseName`, if present.
-  public func withUnexpectedBeforeDeclBaseName(_ newChild: UnexpectedNodesSyntax?) -> DeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DeclNameSyntax(newData)
   }
 
   /// 
@@ -13668,43 +9542,20 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var declBaseName: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDeclBaseName(value)
+      self = DeclNameSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `declBaseName` replaced.
-  /// - param newChild: The new `declBaseName` to replace the node's
-  ///                   current `declBaseName`, if present.
-  public func withDeclBaseName(_ newChild: TokenSyntax) -> DeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DeclNameSyntax(newData)
   }
 
   public var unexpectedBetweenDeclBaseNameAndDeclNameArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDeclBaseNameAndDeclNameArguments(value)
+      self = DeclNameSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDeclBaseNameAndDeclNameArguments` replaced.
-  /// - param newChild: The new `unexpectedBetweenDeclBaseNameAndDeclNameArguments` to replace the node's
-  ///                   current `unexpectedBetweenDeclBaseNameAndDeclNameArguments`, if present.
-  public func withUnexpectedBetweenDeclBaseNameAndDeclNameArguments(_ newChild: UnexpectedNodesSyntax?) -> DeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DeclNameSyntax(newData)
   }
 
   /// 
@@ -13713,44 +9564,20 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var declNameArguments: DeclNameArgumentsSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return DeclNameArgumentsSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(DeclNameArgumentsSyntax.init)
     }
     set(value) {
-      self = withDeclNameArguments(value)
+      self = DeclNameSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `declNameArguments` replaced.
-  /// - param newChild: The new `declNameArguments` to replace the node's
-  ///                   current `declNameArguments`, if present.
-  public func withDeclNameArguments(_ newChild: DeclNameArgumentsSyntax?) -> DeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DeclNameSyntax(newData)
   }
 
   public var unexpectedAfterDeclNameArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterDeclNameArguments(value)
+      self = DeclNameSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterDeclNameArguments` replaced.
-  /// - param newChild: The new `unexpectedAfterDeclNameArguments` to replace the node's
-  ///                   current `unexpectedAfterDeclNameArguments`, if present.
-  public func withUnexpectedAfterDeclNameArguments(_ newChild: UnexpectedNodesSyntax?) -> DeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DeclNameSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -13852,23 +9679,11 @@ public struct ImplementsAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable
 
   public var unexpectedBeforeType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeType(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeType` replaced.
-  /// - param newChild: The new `unexpectedBeforeType` to replace the node's
-  ///                   current `unexpectedBeforeType`, if present.
-  public func withUnexpectedBeforeType(_ newChild: UnexpectedNodesSyntax?) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   /// 
@@ -13877,43 +9692,20 @@ public struct ImplementsAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable
   /// 
   public var type: TypeSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withType(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `type` replaced.
-  /// - param newChild: The new `type` to replace the node's
-  ///                   current `type`, if present.
-  public func withType(_ newChild: TypeSyntax) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenTypeAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeAndComma(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeAndComma` to replace the node's
-  ///                   current `unexpectedBetweenTypeAndComma`, if present.
-  public func withUnexpectedBetweenTypeAndComma(_ newChild: UnexpectedNodesSyntax?) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   /// 
@@ -13921,43 +9713,20 @@ public struct ImplementsAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable
   /// 
   public var comma: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withComma(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenCommaAndDeclBaseName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCommaAndDeclBaseName(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCommaAndDeclBaseName` replaced.
-  /// - param newChild: The new `unexpectedBetweenCommaAndDeclBaseName` to replace the node's
-  ///                   current `unexpectedBetweenCommaAndDeclBaseName`, if present.
-  public func withUnexpectedBetweenCommaAndDeclBaseName(_ newChild: UnexpectedNodesSyntax?) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   /// 
@@ -13965,43 +9734,20 @@ public struct ImplementsAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable
   /// 
   public var declBaseName: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDeclBaseName(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `declBaseName` replaced.
-  /// - param newChild: The new `declBaseName` to replace the node's
-  ///                   current `declBaseName`, if present.
-  public func withDeclBaseName(_ newChild: TokenSyntax) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenDeclBaseNameAndDeclNameArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDeclBaseNameAndDeclNameArguments(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDeclBaseNameAndDeclNameArguments` replaced.
-  /// - param newChild: The new `unexpectedBetweenDeclBaseNameAndDeclNameArguments` to replace the node's
-  ///                   current `unexpectedBetweenDeclBaseNameAndDeclNameArguments`, if present.
-  public func withUnexpectedBetweenDeclBaseNameAndDeclNameArguments(_ newChild: UnexpectedNodesSyntax?) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   /// 
@@ -14010,44 +9756,20 @@ public struct ImplementsAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable
   /// 
   public var declNameArguments: DeclNameArgumentsSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return DeclNameArgumentsSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(DeclNameArgumentsSyntax.init)
     }
     set(value) {
-      self = withDeclNameArguments(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `declNameArguments` replaced.
-  /// - param newChild: The new `declNameArguments` to replace the node's
-  ///                   current `declNameArguments`, if present.
-  public func withDeclNameArguments(_ newChild: DeclNameArgumentsSyntax?) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterDeclNameArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterDeclNameArguments(value)
+      self = ImplementsAttributeArgumentsSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterDeclNameArguments` replaced.
-  /// - param newChild: The new `unexpectedAfterDeclNameArguments` to replace the node's
-  ///                   current `unexpectedAfterDeclNameArguments`, if present.
-  public func withUnexpectedAfterDeclNameArguments(_ newChild: UnexpectedNodesSyntax?) -> ImplementsAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return ImplementsAttributeArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -14158,107 +9880,47 @@ public struct ObjCSelectorPieceSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeName(value)
+      self = ObjCSelectorPieceSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeName` replaced.
-  /// - param newChild: The new `unexpectedBeforeName` to replace the node's
-  ///                   current `unexpectedBeforeName`, if present.
-  public func withUnexpectedBeforeName(_ newChild: UnexpectedNodesSyntax?) -> ObjCSelectorPieceSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ObjCSelectorPieceSyntax(newData)
   }
 
   public var name: TokenSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withName(value)
+      self = ObjCSelectorPieceSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax?) -> ObjCSelectorPieceSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ObjCSelectorPieceSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndColon(value)
+      self = ObjCSelectorPieceSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndColon` to replace the node's
-  ///                   current `unexpectedBetweenNameAndColon`, if present.
-  public func withUnexpectedBetweenNameAndColon(_ newChild: UnexpectedNodesSyntax?) -> ObjCSelectorPieceSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ObjCSelectorPieceSyntax(newData)
   }
 
   public var colon: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withColon(value)
+      self = ObjCSelectorPieceSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax?) -> ObjCSelectorPieceSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ObjCSelectorPieceSyntax(newData)
   }
 
   public var unexpectedAfterColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterColon(value)
+      self = ObjCSelectorPieceSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterColon` replaced.
-  /// - param newChild: The new `unexpectedAfterColon` to replace the node's
-  ///                   current `unexpectedAfterColon`, if present.
-  public func withUnexpectedAfterColon(_ newChild: UnexpectedNodesSyntax?) -> ObjCSelectorPieceSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ObjCSelectorPieceSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -14365,65 +10027,29 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
 
   public var unexpectedBeforeDiffKind: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeDiffKind(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeDiffKind` replaced.
-  /// - param newChild: The new `unexpectedBeforeDiffKind` to replace the node's
-  ///                   current `unexpectedBeforeDiffKind`, if present.
-  public func withUnexpectedBeforeDiffKind(_ newChild: UnexpectedNodesSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public var diffKind: TokenSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withDiffKind(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `diffKind` replaced.
-  /// - param newChild: The new `diffKind` to replace the node's
-  ///                   current `diffKind`, if present.
-  public func withDiffKind(_ newChild: TokenSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenDiffKindAndDiffKindComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDiffKindAndDiffKindComma(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDiffKindAndDiffKindComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenDiffKindAndDiffKindComma` to replace the node's
-  ///                   current `unexpectedBetweenDiffKindAndDiffKindComma`, if present.
-  public func withUnexpectedBetweenDiffKindAndDiffKindComma(_ newChild: UnexpectedNodesSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   /// 
@@ -14431,86 +10057,38 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
   /// 
   public var diffKindComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withDiffKindComma(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `diffKindComma` replaced.
-  /// - param newChild: The new `diffKindComma` to replace the node's
-  ///                   current `diffKindComma`, if present.
-  public func withDiffKindComma(_ newChild: TokenSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenDiffKindCommaAndDiffParams: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDiffKindCommaAndDiffParams(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDiffKindCommaAndDiffParams` replaced.
-  /// - param newChild: The new `unexpectedBetweenDiffKindCommaAndDiffParams` to replace the node's
-  ///                   current `unexpectedBetweenDiffKindCommaAndDiffParams`, if present.
-  public func withUnexpectedBetweenDiffKindCommaAndDiffParams(_ newChild: UnexpectedNodesSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public var diffParams: DifferentiabilityParamsClauseSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return DifferentiabilityParamsClauseSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(DifferentiabilityParamsClauseSyntax.init)
     }
     set(value) {
-      self = withDiffParams(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `diffParams` replaced.
-  /// - param newChild: The new `diffParams` to replace the node's
-  ///                   current `diffParams`, if present.
-  public func withDiffParams(_ newChild: DifferentiabilityParamsClauseSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenDiffParamsAndDiffParamsComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDiffParamsAndDiffParamsComma(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDiffParamsAndDiffParamsComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenDiffParamsAndDiffParamsComma` to replace the node's
-  ///                   current `unexpectedBetweenDiffParamsAndDiffParamsComma`, if present.
-  public func withUnexpectedBetweenDiffParamsAndDiffParamsComma(_ newChild: UnexpectedNodesSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   /// 
@@ -14519,86 +10097,38 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
   /// 
   public var diffParamsComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withDiffParamsComma(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `diffParamsComma` replaced.
-  /// - param newChild: The new `diffParamsComma` to replace the node's
-  ///                   current `diffParamsComma`, if present.
-  public func withDiffParamsComma(_ newChild: TokenSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenDiffParamsCommaAndWhereClause: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDiffParamsCommaAndWhereClause(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDiffParamsCommaAndWhereClause` replaced.
-  /// - param newChild: The new `unexpectedBetweenDiffParamsCommaAndWhereClause` to replace the node's
-  ///                   current `unexpectedBetweenDiffParamsCommaAndWhereClause`, if present.
-  public func withUnexpectedBetweenDiffParamsCommaAndWhereClause(_ newChild: UnexpectedNodesSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public var whereClause: GenericWhereClauseSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return GenericWhereClauseSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = withWhereClause(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `whereClause` replaced.
-  /// - param newChild: The new `whereClause` to replace the node's
-  ///                   current `whereClause`, if present.
-  public func withWhereClause(_ newChild: GenericWhereClauseSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterWhereClause: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterWhereClause(value)
+      self = DifferentiableAttributeArgumentsSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterWhereClause` replaced.
-  /// - param newChild: The new `unexpectedAfterWhereClause` to replace the node's
-  ///                   current `unexpectedAfterWhereClause`, if present.
-  public func withUnexpectedAfterWhereClause(_ newChild: UnexpectedNodesSyntax?) -> DifferentiableAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return DifferentiableAttributeArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -14753,65 +10283,30 @@ public struct DifferentiabilityParamsClauseSyntax: SyntaxProtocol, SyntaxHashabl
 
   public var unexpectedBeforeWrtLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeWrtLabel(value)
+      self = DifferentiabilityParamsClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeWrtLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeWrtLabel` to replace the node's
-  ///                   current `unexpectedBeforeWrtLabel`, if present.
-  public func withUnexpectedBeforeWrtLabel(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamsClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DifferentiabilityParamsClauseSyntax(newData)
   }
 
   /// The "wrt" label.
   public var wrtLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withWrtLabel(value)
+      self = DifferentiabilityParamsClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `wrtLabel` replaced.
-  /// - param newChild: The new `wrtLabel` to replace the node's
-  ///                   current `wrtLabel`, if present.
-  public func withWrtLabel(_ newChild: TokenSyntax) -> DifferentiabilityParamsClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DifferentiabilityParamsClauseSyntax(newData)
   }
 
   public var unexpectedBetweenWrtLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenWrtLabelAndColon(value)
+      self = DifferentiabilityParamsClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenWrtLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenWrtLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenWrtLabelAndColon`, if present.
-  public func withUnexpectedBetweenWrtLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamsClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DifferentiabilityParamsClauseSyntax(newData)
   }
 
   /// 
@@ -14819,84 +10314,38 @@ public struct DifferentiabilityParamsClauseSyntax: SyntaxProtocol, SyntaxHashabl
   /// 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = DifferentiabilityParamsClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> DifferentiabilityParamsClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DifferentiabilityParamsClauseSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndParameters: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndParameters(value)
+      self = DifferentiabilityParamsClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndParameters` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndParameters` to replace the node's
-  ///                   current `unexpectedBetweenColonAndParameters`, if present.
-  public func withUnexpectedBetweenColonAndParameters(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamsClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DifferentiabilityParamsClauseSyntax(newData)
   }
 
   public var parameters: Parameters {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return Parameters(childData!)
+      return Parameters(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withParameters(value)
+      self = DifferentiabilityParamsClauseSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `parameters` replaced.
-  /// - param newChild: The new `parameters` to replace the node's
-  ///                   current `parameters`, if present.
-  public func withParameters(_ newChild: Parameters) -> DifferentiabilityParamsClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DifferentiabilityParamsClauseSyntax(newData)
   }
 
   public var unexpectedAfterParameters: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterParameters(value)
+      self = DifferentiabilityParamsClauseSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterParameters` replaced.
-  /// - param newChild: The new `unexpectedAfterParameters` to replace the node's
-  ///                   current `unexpectedAfterParameters`, if present.
-  public func withUnexpectedAfterParameters(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamsClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DifferentiabilityParamsClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -14999,74 +10448,38 @@ public struct DifferentiabilityParamsSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftParen(value)
+      self = DifferentiabilityParamsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftParen` to replace the node's
-  ///                   current `unexpectedBeforeLeftParen`, if present.
-  public func withUnexpectedBeforeLeftParen(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DifferentiabilityParamsSyntax(newData)
   }
 
   public var leftParen: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = DifferentiabilityParamsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> DifferentiabilityParamsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DifferentiabilityParamsSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndDiffParams: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndDiffParams(value)
+      self = DifferentiabilityParamsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndDiffParams` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndDiffParams` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndDiffParams`, if present.
-  public func withUnexpectedBetweenLeftParenAndDiffParams(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DifferentiabilityParamsSyntax(newData)
   }
 
   /// The parameters for differentiation.
   public var diffParams: DifferentiabilityParamListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return DifferentiabilityParamListSyntax(childData!)
+      return DifferentiabilityParamListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDiffParams(value)
+      self = DifferentiabilityParamsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -15089,76 +10502,31 @@ public struct DifferentiabilityParamsSyntax: SyntaxProtocol, SyntaxHashable {
     return DifferentiabilityParamsSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `diffParams` replaced.
-  /// - param newChild: The new `diffParams` to replace the node's
-  ///                   current `diffParams`, if present.
-  public func withDiffParams(_ newChild: DifferentiabilityParamListSyntax) -> DifferentiabilityParamsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DifferentiabilityParamsSyntax(newData)
-  }
-
   public var unexpectedBetweenDiffParamsAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDiffParamsAndRightParen(value)
+      self = DifferentiabilityParamsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDiffParamsAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenDiffParamsAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenDiffParamsAndRightParen`, if present.
-  public func withUnexpectedBetweenDiffParamsAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DifferentiabilityParamsSyntax(newData)
   }
 
   public var rightParen: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightParen(value)
+      self = DifferentiabilityParamsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> DifferentiabilityParamsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DifferentiabilityParamsSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = DifferentiabilityParamsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DifferentiabilityParamsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -15260,106 +10628,47 @@ public struct DifferentiabilityParamSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeParameter: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeParameter(value)
+      self = DifferentiabilityParamSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeParameter` replaced.
-  /// - param newChild: The new `unexpectedBeforeParameter` to replace the node's
-  ///                   current `unexpectedBeforeParameter`, if present.
-  public func withUnexpectedBeforeParameter(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DifferentiabilityParamSyntax(newData)
   }
 
   public var parameter: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withParameter(value)
+      self = DifferentiabilityParamSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `parameter` replaced.
-  /// - param newChild: The new `parameter` to replace the node's
-  ///                   current `parameter`, if present.
-  public func withParameter(_ newChild: TokenSyntax) -> DifferentiabilityParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DifferentiabilityParamSyntax(newData)
   }
 
   public var unexpectedBetweenParameterAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenParameterAndTrailingComma(value)
+      self = DifferentiabilityParamSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenParameterAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenParameterAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenParameterAndTrailingComma`, if present.
-  public func withUnexpectedBetweenParameterAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DifferentiabilityParamSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = DifferentiabilityParamSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> DifferentiabilityParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DifferentiabilityParamSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = DifferentiabilityParamSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> DifferentiabilityParamSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DifferentiabilityParamSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -15474,65 +10783,30 @@ public struct DerivativeRegistrationAttributeArgumentsSyntax: SyntaxProtocol, Sy
 
   public var unexpectedBeforeOfLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeOfLabel(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeOfLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeOfLabel` to replace the node's
-  ///                   current `unexpectedBeforeOfLabel`, if present.
-  public func withUnexpectedBeforeOfLabel(_ newChild: UnexpectedNodesSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   /// The "of" label.
   public var ofLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withOfLabel(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `ofLabel` replaced.
-  /// - param newChild: The new `ofLabel` to replace the node's
-  ///                   current `ofLabel`, if present.
-  public func withOfLabel(_ newChild: TokenSyntax) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenOfLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenOfLabelAndColon(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenOfLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenOfLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenOfLabelAndColon`, if present.
-  public func withUnexpectedBetweenOfLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   /// 
@@ -15541,85 +10815,39 @@ public struct DerivativeRegistrationAttributeArgumentsSyntax: SyntaxProtocol, Sy
   /// 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndOriginalDeclName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndOriginalDeclName(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndOriginalDeclName` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndOriginalDeclName` to replace the node's
-  ///                   current `unexpectedBetweenColonAndOriginalDeclName`, if present.
-  public func withUnexpectedBetweenColonAndOriginalDeclName(_ newChild: UnexpectedNodesSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   /// The referenced original declaration name.
   public var originalDeclName: QualifiedDeclNameSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return QualifiedDeclNameSyntax(childData!)
+      return QualifiedDeclNameSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withOriginalDeclName(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `originalDeclName` replaced.
-  /// - param newChild: The new `originalDeclName` to replace the node's
-  ///                   current `originalDeclName`, if present.
-  public func withOriginalDeclName(_ newChild: QualifiedDeclNameSyntax) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenOriginalDeclNameAndPeriod: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenOriginalDeclNameAndPeriod(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenOriginalDeclNameAndPeriod` replaced.
-  /// - param newChild: The new `unexpectedBetweenOriginalDeclNameAndPeriod` to replace the node's
-  ///                   current `unexpectedBetweenOriginalDeclNameAndPeriod`, if present.
-  public func withUnexpectedBetweenOriginalDeclNameAndPeriod(_ newChild: UnexpectedNodesSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   /// 
@@ -15628,171 +10856,75 @@ public struct DerivativeRegistrationAttributeArgumentsSyntax: SyntaxProtocol, Sy
   /// 
   public var period: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withPeriod(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `period` replaced.
-  /// - param newChild: The new `period` to replace the node's
-  ///                   current `period`, if present.
-  public func withPeriod(_ newChild: TokenSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenPeriodAndAccessorKind: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPeriodAndAccessorKind(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPeriodAndAccessorKind` replaced.
-  /// - param newChild: The new `unexpectedBetweenPeriodAndAccessorKind` to replace the node's
-  ///                   current `unexpectedBetweenPeriodAndAccessorKind`, if present.
-  public func withUnexpectedBetweenPeriodAndAccessorKind(_ newChild: UnexpectedNodesSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   /// The accessor name.
   public var accessorKind: TokenSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withAccessorKind(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `accessorKind` replaced.
-  /// - param newChild: The new `accessorKind` to replace the node's
-  ///                   current `accessorKind`, if present.
-  public func withAccessorKind(_ newChild: TokenSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenAccessorKindAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAccessorKindAndComma(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAccessorKindAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenAccessorKindAndComma` to replace the node's
-  ///                   current `unexpectedBetweenAccessorKindAndComma`, if present.
-  public func withUnexpectedBetweenAccessorKindAndComma(_ newChild: UnexpectedNodesSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var comma: TokenSyntax? {
     get {
-      let childData = data.child(at: 11, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 11, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withComma(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 11, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenCommaAndDiffParams: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 12, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCommaAndDiffParams(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCommaAndDiffParams` replaced.
-  /// - param newChild: The new `unexpectedBetweenCommaAndDiffParams` to replace the node's
-  ///                   current `unexpectedBetweenCommaAndDiffParams`, if present.
-  public func withUnexpectedBetweenCommaAndDiffParams(_ newChild: UnexpectedNodesSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 12, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var diffParams: DifferentiabilityParamsClauseSyntax? {
     get {
-      let childData = data.child(at: 13, parent: Syntax(self))
-      if childData == nil { return nil }
-      return DifferentiabilityParamsClauseSyntax(childData!)
+      return data.child(at: 13, parent: Syntax(self)).map(DifferentiabilityParamsClauseSyntax.init)
     }
     set(value) {
-      self = withDiffParams(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `diffParams` replaced.
-  /// - param newChild: The new `diffParams` to replace the node's
-  ///                   current `diffParams`, if present.
-  public func withDiffParams(_ newChild: DifferentiabilityParamsClauseSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 13, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterDiffParams: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 14, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterDiffParams(value)
+      self = DerivativeRegistrationAttributeArgumentsSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterDiffParams` replaced.
-  /// - param newChild: The new `unexpectedAfterDiffParams` to replace the node's
-  ///                   current `unexpectedAfterDiffParams`, if present.
-  public func withUnexpectedAfterDiffParams(_ newChild: UnexpectedNodesSyntax?) -> DerivativeRegistrationAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 14, with: raw, arena: arena)
-    return DerivativeRegistrationAttributeArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -15972,23 +11104,11 @@ public struct QualifiedDeclNameSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeBaseType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeBaseType(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeBaseType` replaced.
-  /// - param newChild: The new `unexpectedBeforeBaseType` to replace the node's
-  ///                   current `unexpectedBeforeBaseType`, if present.
-  public func withUnexpectedBeforeBaseType(_ newChild: UnexpectedNodesSyntax?) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   /// 
@@ -15996,86 +11116,38 @@ public struct QualifiedDeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var baseType: TypeSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TypeSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(TypeSyntax.init)
     }
     set(value) {
-      self = withBaseType(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `baseType` replaced.
-  /// - param newChild: The new `baseType` to replace the node's
-  ///                   current `baseType`, if present.
-  public func withBaseType(_ newChild: TypeSyntax?) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   public var unexpectedBetweenBaseTypeAndDot: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenBaseTypeAndDot(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenBaseTypeAndDot` replaced.
-  /// - param newChild: The new `unexpectedBetweenBaseTypeAndDot` to replace the node's
-  ///                   current `unexpectedBetweenBaseTypeAndDot`, if present.
-  public func withUnexpectedBetweenBaseTypeAndDot(_ newChild: UnexpectedNodesSyntax?) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   public var dot: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withDot(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `dot` replaced.
-  /// - param newChild: The new `dot` to replace the node's
-  ///                   current `dot`, if present.
-  public func withDot(_ newChild: TokenSyntax?) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   public var unexpectedBetweenDotAndName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDotAndName(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDotAndName` replaced.
-  /// - param newChild: The new `unexpectedBetweenDotAndName` to replace the node's
-  ///                   current `unexpectedBetweenDotAndName`, if present.
-  public func withUnexpectedBetweenDotAndName(_ newChild: UnexpectedNodesSyntax?) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   /// 
@@ -16083,43 +11155,20 @@ public struct QualifiedDeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndArguments(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndArguments` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndArguments` to replace the node's
-  ///                   current `unexpectedBetweenNameAndArguments`, if present.
-  public func withUnexpectedBetweenNameAndArguments(_ newChild: UnexpectedNodesSyntax?) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   /// 
@@ -16128,44 +11177,20 @@ public struct QualifiedDeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var arguments: DeclNameArgumentsSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return DeclNameArgumentsSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(DeclNameArgumentsSyntax.init)
     }
     set(value) {
-      self = withArguments(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `arguments` replaced.
-  /// - param newChild: The new `arguments` to replace the node's
-  ///                   current `arguments`, if present.
-  public func withArguments(_ newChild: DeclNameArgumentsSyntax?) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   public var unexpectedAfterArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterArguments(value)
+      self = QualifiedDeclNameSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterArguments` replaced.
-  /// - param newChild: The new `unexpectedAfterArguments` to replace the node's
-  ///                   current `unexpectedAfterArguments`, if present.
-  public func withUnexpectedAfterArguments(_ newChild: UnexpectedNodesSyntax?) -> QualifiedDeclNameSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return QualifiedDeclNameSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -16278,65 +11303,30 @@ public struct BackDeployAttributeSpecListSyntax: SyntaxProtocol, SyntaxHashable 
 
   public var unexpectedBeforeBeforeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeBeforeLabel(value)
+      self = BackDeployAttributeSpecListSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeBeforeLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeBeforeLabel` to replace the node's
-  ///                   current `unexpectedBeforeBeforeLabel`, if present.
-  public func withUnexpectedBeforeBeforeLabel(_ newChild: UnexpectedNodesSyntax?) -> BackDeployAttributeSpecListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return BackDeployAttributeSpecListSyntax(newData)
   }
 
   /// The "before" label.
   public var beforeLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withBeforeLabel(value)
+      self = BackDeployAttributeSpecListSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `beforeLabel` replaced.
-  /// - param newChild: The new `beforeLabel` to replace the node's
-  ///                   current `beforeLabel`, if present.
-  public func withBeforeLabel(_ newChild: TokenSyntax) -> BackDeployAttributeSpecListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return BackDeployAttributeSpecListSyntax(newData)
   }
 
   public var unexpectedBetweenBeforeLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenBeforeLabelAndColon(value)
+      self = BackDeployAttributeSpecListSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenBeforeLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenBeforeLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenBeforeLabelAndColon`, if present.
-  public func withUnexpectedBetweenBeforeLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> BackDeployAttributeSpecListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return BackDeployAttributeSpecListSyntax(newData)
   }
 
   /// 
@@ -16344,43 +11334,20 @@ public struct BackDeployAttributeSpecListSyntax: SyntaxProtocol, SyntaxHashable 
   /// 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = BackDeployAttributeSpecListSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> BackDeployAttributeSpecListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return BackDeployAttributeSpecListSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndVersionList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndVersionList(value)
+      self = BackDeployAttributeSpecListSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndVersionList` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndVersionList` to replace the node's
-  ///                   current `unexpectedBetweenColonAndVersionList`, if present.
-  public func withUnexpectedBetweenColonAndVersionList(_ newChild: UnexpectedNodesSyntax?) -> BackDeployAttributeSpecListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return BackDeployAttributeSpecListSyntax(newData)
   }
 
   /// 
@@ -16389,11 +11356,10 @@ public struct BackDeployAttributeSpecListSyntax: SyntaxProtocol, SyntaxHashable 
   /// 
   public var versionList: AvailabilityVersionRestrictionListSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return AvailabilityVersionRestrictionListSyntax(childData!)
+      return AvailabilityVersionRestrictionListSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withVersionList(value)
+      self = BackDeployAttributeSpecListSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -16416,35 +11382,13 @@ public struct BackDeployAttributeSpecListSyntax: SyntaxProtocol, SyntaxHashable 
     return BackDeployAttributeSpecListSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `versionList` replaced.
-  /// - param newChild: The new `versionList` to replace the node's
-  ///                   current `versionList`, if present.
-  public func withVersionList(_ newChild: AvailabilityVersionRestrictionListSyntax) -> BackDeployAttributeSpecListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return BackDeployAttributeSpecListSyntax(newData)
-  }
-
   public var unexpectedAfterVersionList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterVersionList(value)
+      self = BackDeployAttributeSpecListSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterVersionList` replaced.
-  /// - param newChild: The new `unexpectedAfterVersionList` to replace the node's
-  ///                   current `unexpectedAfterVersionList`, if present.
-  public func withUnexpectedAfterVersionList(_ newChild: UnexpectedNodesSyntax?) -> BackDeployAttributeSpecListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return BackDeployAttributeSpecListSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -16545,64 +11489,29 @@ public struct AvailabilityVersionRestrictionListEntrySyntax: SyntaxProtocol, Syn
 
   public var unexpectedBeforeAvailabilityVersionRestriction: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeAvailabilityVersionRestriction(value)
+      self = AvailabilityVersionRestrictionListEntrySyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeAvailabilityVersionRestriction` replaced.
-  /// - param newChild: The new `unexpectedBeforeAvailabilityVersionRestriction` to replace the node's
-  ///                   current `unexpectedBeforeAvailabilityVersionRestriction`, if present.
-  public func withUnexpectedBeforeAvailabilityVersionRestriction(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityVersionRestrictionListEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionListEntrySyntax(newData)
   }
 
   public var availabilityVersionRestriction: AvailabilityVersionRestrictionSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return AvailabilityVersionRestrictionSyntax(childData!)
+      return AvailabilityVersionRestrictionSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAvailabilityVersionRestriction(value)
+      self = AvailabilityVersionRestrictionListEntrySyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `availabilityVersionRestriction` replaced.
-  /// - param newChild: The new `availabilityVersionRestriction` to replace the node's
-  ///                   current `availabilityVersionRestriction`, if present.
-  public func withAvailabilityVersionRestriction(_ newChild: AvailabilityVersionRestrictionSyntax) -> AvailabilityVersionRestrictionListEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionListEntrySyntax(newData)
   }
 
   public var unexpectedBetweenAvailabilityVersionRestrictionAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAvailabilityVersionRestrictionAndTrailingComma(value)
+      self = AvailabilityVersionRestrictionListEntrySyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAvailabilityVersionRestrictionAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenAvailabilityVersionRestrictionAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenAvailabilityVersionRestrictionAndTrailingComma`, if present.
-  public func withUnexpectedBetweenAvailabilityVersionRestrictionAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityVersionRestrictionListEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionListEntrySyntax(newData)
   }
 
   /// 
@@ -16611,44 +11520,20 @@ public struct AvailabilityVersionRestrictionListEntrySyntax: SyntaxProtocol, Syn
   /// 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = AvailabilityVersionRestrictionListEntrySyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> AvailabilityVersionRestrictionListEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionListEntrySyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = AvailabilityVersionRestrictionListEntrySyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityVersionRestrictionListEntrySyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionListEntrySyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -16745,148 +11630,67 @@ public struct OpaqueReturnTypeOfAttributeArgumentsSyntax: SyntaxProtocol, Syntax
 
   public var unexpectedBeforeMangledName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeMangledName(value)
+      self = OpaqueReturnTypeOfAttributeArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeMangledName` replaced.
-  /// - param newChild: The new `unexpectedBeforeMangledName` to replace the node's
-  ///                   current `unexpectedBeforeMangledName`, if present.
-  public func withUnexpectedBeforeMangledName(_ newChild: UnexpectedNodesSyntax?) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return OpaqueReturnTypeOfAttributeArgumentsSyntax(newData)
   }
 
   /// The mangled name of a declaration.
   public var mangledName: StringLiteralExprSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return StringLiteralExprSyntax(childData!)
+      return StringLiteralExprSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withMangledName(value)
+      self = OpaqueReturnTypeOfAttributeArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `mangledName` replaced.
-  /// - param newChild: The new `mangledName` to replace the node's
-  ///                   current `mangledName`, if present.
-  public func withMangledName(_ newChild: StringLiteralExprSyntax) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return OpaqueReturnTypeOfAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenMangledNameAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenMangledNameAndComma(value)
+      self = OpaqueReturnTypeOfAttributeArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenMangledNameAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenMangledNameAndComma` to replace the node's
-  ///                   current `unexpectedBetweenMangledNameAndComma`, if present.
-  public func withUnexpectedBetweenMangledNameAndComma(_ newChild: UnexpectedNodesSyntax?) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return OpaqueReturnTypeOfAttributeArgumentsSyntax(newData)
   }
 
   public var comma: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withComma(value)
+      self = OpaqueReturnTypeOfAttributeArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return OpaqueReturnTypeOfAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenCommaAndOrdinal: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCommaAndOrdinal(value)
+      self = OpaqueReturnTypeOfAttributeArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCommaAndOrdinal` replaced.
-  /// - param newChild: The new `unexpectedBetweenCommaAndOrdinal` to replace the node's
-  ///                   current `unexpectedBetweenCommaAndOrdinal`, if present.
-  public func withUnexpectedBetweenCommaAndOrdinal(_ newChild: UnexpectedNodesSyntax?) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return OpaqueReturnTypeOfAttributeArgumentsSyntax(newData)
   }
 
   /// The ordinal corresponding to the 'some' keyword that introduced this opaque type.
   public var ordinal: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withOrdinal(value)
+      self = OpaqueReturnTypeOfAttributeArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `ordinal` replaced.
-  /// - param newChild: The new `ordinal` to replace the node's
-  ///                   current `ordinal`, if present.
-  public func withOrdinal(_ newChild: TokenSyntax) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return OpaqueReturnTypeOfAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterOrdinal: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterOrdinal(value)
+      self = OpaqueReturnTypeOfAttributeArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterOrdinal` replaced.
-  /// - param newChild: The new `unexpectedAfterOrdinal` to replace the node's
-  ///                   current `unexpectedAfterOrdinal`, if present.
-  public func withUnexpectedAfterOrdinal(_ newChild: UnexpectedNodesSyntax?) -> OpaqueReturnTypeOfAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return OpaqueReturnTypeOfAttributeArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -16999,233 +11803,102 @@ public struct ConventionAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable
 
   public var unexpectedBeforeConventionLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeConventionLabel(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeConventionLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeConventionLabel` to replace the node's
-  ///                   current `unexpectedBeforeConventionLabel`, if present.
-  public func withUnexpectedBeforeConventionLabel(_ newChild: UnexpectedNodesSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   /// The convention label.
   public var conventionLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withConventionLabel(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `conventionLabel` replaced.
-  /// - param newChild: The new `conventionLabel` to replace the node's
-  ///                   current `conventionLabel`, if present.
-  public func withConventionLabel(_ newChild: TokenSyntax) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenConventionLabelAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenConventionLabelAndComma(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenConventionLabelAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenConventionLabelAndComma` to replace the node's
-  ///                   current `unexpectedBetweenConventionLabelAndComma`, if present.
-  public func withUnexpectedBetweenConventionLabelAndComma(_ newChild: UnexpectedNodesSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var comma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withComma(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenCommaAndCTypeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCommaAndCTypeLabel(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCommaAndCTypeLabel` replaced.
-  /// - param newChild: The new `unexpectedBetweenCommaAndCTypeLabel` to replace the node's
-  ///                   current `unexpectedBetweenCommaAndCTypeLabel`, if present.
-  public func withUnexpectedBetweenCommaAndCTypeLabel(_ newChild: UnexpectedNodesSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var cTypeLabel: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withCTypeLabel(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `cTypeLabel` replaced.
-  /// - param newChild: The new `cTypeLabel` to replace the node's
-  ///                   current `cTypeLabel`, if present.
-  public func withCTypeLabel(_ newChild: TokenSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenCTypeLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCTypeLabelAndColon(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCTypeLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenCTypeLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenCTypeLabelAndColon`, if present.
-  public func withUnexpectedBetweenCTypeLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var colon: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withColon(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndCTypeString: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndCTypeString(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndCTypeString` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndCTypeString` to replace the node's
-  ///                   current `unexpectedBetweenColonAndCTypeString`, if present.
-  public func withUnexpectedBetweenColonAndCTypeString(_ newChild: UnexpectedNodesSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var cTypeString: StringLiteralExprSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return StringLiteralExprSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(StringLiteralExprSyntax.init)
     }
     set(value) {
-      self = withCTypeString(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `cTypeString` replaced.
-  /// - param newChild: The new `cTypeString` to replace the node's
-  ///                   current `cTypeString`, if present.
-  public func withCTypeString(_ newChild: StringLiteralExprSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterCTypeString: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterCTypeString(value)
+      self = ConventionAttributeArgumentsSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterCTypeString` replaced.
-  /// - param newChild: The new `unexpectedAfterCTypeString` to replace the node's
-  ///                   current `unexpectedAfterCTypeString`, if present.
-  public func withUnexpectedAfterCTypeString(_ newChild: UnexpectedNodesSyntax?) -> ConventionAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return ConventionAttributeArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -17346,146 +12019,65 @@ public struct ConventionWitnessMethodAttributeArgumentsSyntax: SyntaxProtocol, S
 
   public var unexpectedBeforeWitnessMethodLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeWitnessMethodLabel(value)
+      self = ConventionWitnessMethodAttributeArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeWitnessMethodLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeWitnessMethodLabel` to replace the node's
-  ///                   current `unexpectedBeforeWitnessMethodLabel`, if present.
-  public func withUnexpectedBeforeWitnessMethodLabel(_ newChild: UnexpectedNodesSyntax?) -> ConventionWitnessMethodAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ConventionWitnessMethodAttributeArgumentsSyntax(newData)
   }
 
   public var witnessMethodLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withWitnessMethodLabel(value)
+      self = ConventionWitnessMethodAttributeArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `witnessMethodLabel` replaced.
-  /// - param newChild: The new `witnessMethodLabel` to replace the node's
-  ///                   current `witnessMethodLabel`, if present.
-  public func withWitnessMethodLabel(_ newChild: TokenSyntax) -> ConventionWitnessMethodAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ConventionWitnessMethodAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenWitnessMethodLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenWitnessMethodLabelAndColon(value)
+      self = ConventionWitnessMethodAttributeArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenWitnessMethodLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenWitnessMethodLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenWitnessMethodLabelAndColon`, if present.
-  public func withUnexpectedBetweenWitnessMethodLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> ConventionWitnessMethodAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ConventionWitnessMethodAttributeArgumentsSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = ConventionWitnessMethodAttributeArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> ConventionWitnessMethodAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ConventionWitnessMethodAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndProtocolName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndProtocolName(value)
+      self = ConventionWitnessMethodAttributeArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndProtocolName` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndProtocolName` to replace the node's
-  ///                   current `unexpectedBetweenColonAndProtocolName`, if present.
-  public func withUnexpectedBetweenColonAndProtocolName(_ newChild: UnexpectedNodesSyntax?) -> ConventionWitnessMethodAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ConventionWitnessMethodAttributeArgumentsSyntax(newData)
   }
 
   public var protocolName: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withProtocolName(value)
+      self = ConventionWitnessMethodAttributeArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `protocolName` replaced.
-  /// - param newChild: The new `protocolName` to replace the node's
-  ///                   current `protocolName`, if present.
-  public func withProtocolName(_ newChild: TokenSyntax) -> ConventionWitnessMethodAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ConventionWitnessMethodAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterProtocolName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterProtocolName(value)
+      self = ConventionWitnessMethodAttributeArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterProtocolName` replaced.
-  /// - param newChild: The new `unexpectedAfterProtocolName` to replace the node's
-  ///                   current `unexpectedAfterProtocolName`, if present.
-  public func withUnexpectedAfterProtocolName(_ newChild: UnexpectedNodesSyntax?) -> ConventionWitnessMethodAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ConventionWitnessMethodAttributeArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -17590,148 +12182,65 @@ public struct ExposeAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLanguage: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLanguage(value)
+      self = ExposeAttributeArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLanguage` replaced.
-  /// - param newChild: The new `unexpectedBeforeLanguage` to replace the node's
-  ///                   current `unexpectedBeforeLanguage`, if present.
-  public func withUnexpectedBeforeLanguage(_ newChild: UnexpectedNodesSyntax?) -> ExposeAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ExposeAttributeArgumentsSyntax(newData)
   }
 
   public var language: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLanguage(value)
+      self = ExposeAttributeArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `language` replaced.
-  /// - param newChild: The new `language` to replace the node's
-  ///                   current `language`, if present.
-  public func withLanguage(_ newChild: TokenSyntax) -> ExposeAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ExposeAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenLanguageAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLanguageAndComma(value)
+      self = ExposeAttributeArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLanguageAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenLanguageAndComma` to replace the node's
-  ///                   current `unexpectedBetweenLanguageAndComma`, if present.
-  public func withUnexpectedBetweenLanguageAndComma(_ newChild: UnexpectedNodesSyntax?) -> ExposeAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ExposeAttributeArgumentsSyntax(newData)
   }
 
   public var comma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withComma(value)
+      self = ExposeAttributeArgumentsSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax?) -> ExposeAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ExposeAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenCommaAndCxxName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCommaAndCxxName(value)
+      self = ExposeAttributeArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCommaAndCxxName` replaced.
-  /// - param newChild: The new `unexpectedBetweenCommaAndCxxName` to replace the node's
-  ///                   current `unexpectedBetweenCommaAndCxxName`, if present.
-  public func withUnexpectedBetweenCommaAndCxxName(_ newChild: UnexpectedNodesSyntax?) -> ExposeAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ExposeAttributeArgumentsSyntax(newData)
   }
 
   public var cxxName: StringLiteralExprSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return StringLiteralExprSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(StringLiteralExprSyntax.init)
     }
     set(value) {
-      self = withCxxName(value)
+      self = ExposeAttributeArgumentsSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `cxxName` replaced.
-  /// - param newChild: The new `cxxName` to replace the node's
-  ///                   current `cxxName`, if present.
-  public func withCxxName(_ newChild: StringLiteralExprSyntax?) -> ExposeAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ExposeAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterCxxName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterCxxName(value)
+      self = ExposeAttributeArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterCxxName` replaced.
-  /// - param newChild: The new `unexpectedAfterCxxName` to replace the node's
-  ///                   current `unexpectedAfterCxxName`, if present.
-  public func withUnexpectedAfterCxxName(_ newChild: UnexpectedNodesSyntax?) -> ExposeAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ExposeAttributeArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -17844,196 +12353,91 @@ public struct OriginallyDefinedInArgumentsSyntax: SyntaxProtocol, SyntaxHashable
 
   public var unexpectedBeforeModuleLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeModuleLabel(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeModuleLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeModuleLabel` to replace the node's
-  ///                   current `unexpectedBeforeModuleLabel`, if present.
-  public func withUnexpectedBeforeModuleLabel(_ newChild: UnexpectedNodesSyntax?) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var moduleLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withModuleLabel(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `moduleLabel` replaced.
-  /// - param newChild: The new `moduleLabel` to replace the node's
-  ///                   current `moduleLabel`, if present.
-  public func withModuleLabel(_ newChild: TokenSyntax) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenModuleLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenModuleLabelAndColon(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenModuleLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenModuleLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenModuleLabelAndColon`, if present.
-  public func withUnexpectedBetweenModuleLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndModuleName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndModuleName(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndModuleName` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndModuleName` to replace the node's
-  ///                   current `unexpectedBetweenColonAndModuleName`, if present.
-  public func withUnexpectedBetweenColonAndModuleName(_ newChild: UnexpectedNodesSyntax?) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var moduleName: StringLiteralExprSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return StringLiteralExprSyntax(childData!)
+      return StringLiteralExprSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withModuleName(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `moduleName` replaced.
-  /// - param newChild: The new `moduleName` to replace the node's
-  ///                   current `moduleName`, if present.
-  public func withModuleName(_ newChild: StringLiteralExprSyntax) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenModuleNameAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenModuleNameAndComma(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenModuleNameAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenModuleNameAndComma` to replace the node's
-  ///                   current `unexpectedBetweenModuleNameAndComma`, if present.
-  public func withUnexpectedBetweenModuleNameAndComma(_ newChild: UnexpectedNodesSyntax?) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var comma: TokenSyntax {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = withComma(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenCommaAndPlatforms: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCommaAndPlatforms(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCommaAndPlatforms` replaced.
-  /// - param newChild: The new `unexpectedBetweenCommaAndPlatforms` to replace the node's
-  ///                   current `unexpectedBetweenCommaAndPlatforms`, if present.
-  public func withUnexpectedBetweenCommaAndPlatforms(_ newChild: UnexpectedNodesSyntax?) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public var platforms: AvailabilityVersionRestrictionListSyntax {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      return AvailabilityVersionRestrictionListSyntax(childData!)
+      return AvailabilityVersionRestrictionListSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPlatforms(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -18056,35 +12460,13 @@ public struct OriginallyDefinedInArgumentsSyntax: SyntaxProtocol, SyntaxHashable
     return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `platforms` replaced.
-  /// - param newChild: The new `platforms` to replace the node's
-  ///                   current `platforms`, if present.
-  public func withPlatforms(_ newChild: AvailabilityVersionRestrictionListSyntax) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
-  }
-
   public var unexpectedAfterPlatforms: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterPlatforms(value)
+      self = OriginallyDefinedInArgumentsSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterPlatforms` replaced.
-  /// - param newChild: The new `unexpectedAfterPlatforms` to replace the node's
-  ///                   current `unexpectedAfterPlatforms`, if present.
-  public func withUnexpectedAfterPlatforms(_ newChild: UnexpectedNodesSyntax?) -> OriginallyDefinedInArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return OriginallyDefinedInArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -18205,146 +12587,65 @@ public struct UnderscorePrivateAttributeArgumentsSyntax: SyntaxProtocol, SyntaxH
 
   public var unexpectedBeforeSourceFileLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeSourceFileLabel(value)
+      self = UnderscorePrivateAttributeArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeSourceFileLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeSourceFileLabel` to replace the node's
-  ///                   current `unexpectedBeforeSourceFileLabel`, if present.
-  public func withUnexpectedBeforeSourceFileLabel(_ newChild: UnexpectedNodesSyntax?) -> UnderscorePrivateAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return UnderscorePrivateAttributeArgumentsSyntax(newData)
   }
 
   public var sourceFileLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withSourceFileLabel(value)
+      self = UnderscorePrivateAttributeArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `sourceFileLabel` replaced.
-  /// - param newChild: The new `sourceFileLabel` to replace the node's
-  ///                   current `sourceFileLabel`, if present.
-  public func withSourceFileLabel(_ newChild: TokenSyntax) -> UnderscorePrivateAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return UnderscorePrivateAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenSourceFileLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenSourceFileLabelAndColon(value)
+      self = UnderscorePrivateAttributeArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenSourceFileLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenSourceFileLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenSourceFileLabelAndColon`, if present.
-  public func withUnexpectedBetweenSourceFileLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> UnderscorePrivateAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return UnderscorePrivateAttributeArgumentsSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = UnderscorePrivateAttributeArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> UnderscorePrivateAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return UnderscorePrivateAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndFilename: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndFilename(value)
+      self = UnderscorePrivateAttributeArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndFilename` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndFilename` to replace the node's
-  ///                   current `unexpectedBetweenColonAndFilename`, if present.
-  public func withUnexpectedBetweenColonAndFilename(_ newChild: UnexpectedNodesSyntax?) -> UnderscorePrivateAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return UnderscorePrivateAttributeArgumentsSyntax(newData)
   }
 
   public var filename: StringLiteralExprSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return StringLiteralExprSyntax(childData!)
+      return StringLiteralExprSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withFilename(value)
+      self = UnderscorePrivateAttributeArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `filename` replaced.
-  /// - param newChild: The new `filename` to replace the node's
-  ///                   current `filename`, if present.
-  public func withFilename(_ newChild: StringLiteralExprSyntax) -> UnderscorePrivateAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return UnderscorePrivateAttributeArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterFilename: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterFilename(value)
+      self = UnderscorePrivateAttributeArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterFilename` replaced.
-  /// - param newChild: The new `unexpectedAfterFilename` to replace the node's
-  ///                   current `unexpectedAfterFilename`, if present.
-  public func withUnexpectedAfterFilename(_ newChild: UnexpectedNodesSyntax?) -> UnderscorePrivateAttributeArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return UnderscorePrivateAttributeArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -18449,146 +12750,65 @@ public struct DynamicReplacementArgumentsSyntax: SyntaxProtocol, SyntaxHashable 
 
   public var unexpectedBeforeForLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeForLabel(value)
+      self = DynamicReplacementArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeForLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeForLabel` to replace the node's
-  ///                   current `unexpectedBeforeForLabel`, if present.
-  public func withUnexpectedBeforeForLabel(_ newChild: UnexpectedNodesSyntax?) -> DynamicReplacementArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DynamicReplacementArgumentsSyntax(newData)
   }
 
   public var forLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withForLabel(value)
+      self = DynamicReplacementArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `forLabel` replaced.
-  /// - param newChild: The new `forLabel` to replace the node's
-  ///                   current `forLabel`, if present.
-  public func withForLabel(_ newChild: TokenSyntax) -> DynamicReplacementArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DynamicReplacementArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenForLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenForLabelAndColon(value)
+      self = DynamicReplacementArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenForLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenForLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenForLabelAndColon`, if present.
-  public func withUnexpectedBetweenForLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> DynamicReplacementArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DynamicReplacementArgumentsSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = DynamicReplacementArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> DynamicReplacementArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DynamicReplacementArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndDeclname: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndDeclname(value)
+      self = DynamicReplacementArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndDeclname` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndDeclname` to replace the node's
-  ///                   current `unexpectedBetweenColonAndDeclname`, if present.
-  public func withUnexpectedBetweenColonAndDeclname(_ newChild: UnexpectedNodesSyntax?) -> DynamicReplacementArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DynamicReplacementArgumentsSyntax(newData)
   }
 
   public var declname: DeclNameSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return DeclNameSyntax(childData!)
+      return DeclNameSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDeclname(value)
+      self = DynamicReplacementArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `declname` replaced.
-  /// - param newChild: The new `declname` to replace the node's
-  ///                   current `declname`, if present.
-  public func withDeclname(_ newChild: DeclNameSyntax) -> DynamicReplacementArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DynamicReplacementArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterDeclname: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterDeclname(value)
+      self = DynamicReplacementArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterDeclname` replaced.
-  /// - param newChild: The new `unexpectedAfterDeclname` to replace the node's
-  ///                   current `unexpectedAfterDeclname`, if present.
-  public func withUnexpectedAfterDeclname(_ newChild: UnexpectedNodesSyntax?) -> DynamicReplacementArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DynamicReplacementArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -18693,146 +12913,65 @@ public struct UnavailableFromAsyncArgumentsSyntax: SyntaxProtocol, SyntaxHashabl
 
   public var unexpectedBeforeMessageLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeMessageLabel(value)
+      self = UnavailableFromAsyncArgumentsSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeMessageLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeMessageLabel` to replace the node's
-  ///                   current `unexpectedBeforeMessageLabel`, if present.
-  public func withUnexpectedBeforeMessageLabel(_ newChild: UnexpectedNodesSyntax?) -> UnavailableFromAsyncArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return UnavailableFromAsyncArgumentsSyntax(newData)
   }
 
   public var messageLabel: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withMessageLabel(value)
+      self = UnavailableFromAsyncArgumentsSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `messageLabel` replaced.
-  /// - param newChild: The new `messageLabel` to replace the node's
-  ///                   current `messageLabel`, if present.
-  public func withMessageLabel(_ newChild: TokenSyntax) -> UnavailableFromAsyncArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return UnavailableFromAsyncArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenMessageLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenMessageLabelAndColon(value)
+      self = UnavailableFromAsyncArgumentsSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenMessageLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenMessageLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenMessageLabelAndColon`, if present.
-  public func withUnexpectedBetweenMessageLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> UnavailableFromAsyncArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return UnavailableFromAsyncArgumentsSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = UnavailableFromAsyncArgumentsSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> UnavailableFromAsyncArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return UnavailableFromAsyncArgumentsSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndMessage: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndMessage(value)
+      self = UnavailableFromAsyncArgumentsSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndMessage` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndMessage` to replace the node's
-  ///                   current `unexpectedBetweenColonAndMessage`, if present.
-  public func withUnexpectedBetweenColonAndMessage(_ newChild: UnexpectedNodesSyntax?) -> UnavailableFromAsyncArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return UnavailableFromAsyncArgumentsSyntax(newData)
   }
 
   public var message: StringLiteralExprSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return StringLiteralExprSyntax(childData!)
+      return StringLiteralExprSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withMessage(value)
+      self = UnavailableFromAsyncArgumentsSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `message` replaced.
-  /// - param newChild: The new `message` to replace the node's
-  ///                   current `message`, if present.
-  public func withMessage(_ newChild: StringLiteralExprSyntax) -> UnavailableFromAsyncArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return UnavailableFromAsyncArgumentsSyntax(newData)
   }
 
   public var unexpectedAfterMessage: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterMessage(value)
+      self = UnavailableFromAsyncArgumentsSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterMessage` replaced.
-  /// - param newChild: The new `unexpectedAfterMessage` to replace the node's
-  ///                   current `unexpectedAfterMessage`, if present.
-  public func withUnexpectedAfterMessage(_ newChild: UnexpectedNodesSyntax?) -> UnavailableFromAsyncArgumentsSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return UnavailableFromAsyncArgumentsSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -18974,146 +13113,65 @@ public struct DocumentationAttributeArgumentSyntax: SyntaxProtocol, SyntaxHashab
 
   public var unexpectedBeforeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLabel(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeLabel` to replace the node's
-  ///                   current `unexpectedBeforeLabel`, if present.
-  public func withUnexpectedBeforeLabel(_ newChild: UnexpectedNodesSyntax?) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   public var label: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLabel(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `label` replaced.
-  /// - param newChild: The new `label` to replace the node's
-  ///                   current `label`, if present.
-  public func withLabel(_ newChild: TokenSyntax) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   public var unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelAndColon(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenLabelAndColon`, if present.
-  public func withUnexpectedBetweenLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndValue(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndValue` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndValue` to replace the node's
-  ///                   current `unexpectedBetweenColonAndValue`, if present.
-  public func withUnexpectedBetweenColonAndValue(_ newChild: UnexpectedNodesSyntax?) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   public var value: Value {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return Value(childData!)
+      return Value(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withValue(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `value` replaced.
-  /// - param newChild: The new `value` to replace the node's
-  ///                   current `value`, if present.
-  public func withValue(_ newChild: Value) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   public var unexpectedBetweenValueAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenValueAndTrailingComma(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenValueAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenValueAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenValueAndTrailingComma`, if present.
-  public func withUnexpectedBetweenValueAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   /// 
@@ -19121,44 +13179,20 @@ public struct DocumentationAttributeArgumentSyntax: SyntaxProtocol, SyntaxHashab
   /// 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = DocumentationAttributeArgumentSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> DocumentationAttributeArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return DocumentationAttributeArgumentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -19264,105 +13298,47 @@ public struct WhereClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeWhereKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeWhereKeyword(value)
+      self = WhereClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeWhereKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeWhereKeyword` to replace the node's
-  ///                   current `unexpectedBeforeWhereKeyword`, if present.
-  public func withUnexpectedBeforeWhereKeyword(_ newChild: UnexpectedNodesSyntax?) -> WhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return WhereClauseSyntax(newData)
   }
 
   public var whereKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withWhereKeyword(value)
+      self = WhereClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `whereKeyword` replaced.
-  /// - param newChild: The new `whereKeyword` to replace the node's
-  ///                   current `whereKeyword`, if present.
-  public func withWhereKeyword(_ newChild: TokenSyntax) -> WhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return WhereClauseSyntax(newData)
   }
 
   public var unexpectedBetweenWhereKeywordAndGuardResult: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenWhereKeywordAndGuardResult(value)
+      self = WhereClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenWhereKeywordAndGuardResult` replaced.
-  /// - param newChild: The new `unexpectedBetweenWhereKeywordAndGuardResult` to replace the node's
-  ///                   current `unexpectedBetweenWhereKeywordAndGuardResult`, if present.
-  public func withUnexpectedBetweenWhereKeywordAndGuardResult(_ newChild: UnexpectedNodesSyntax?) -> WhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return WhereClauseSyntax(newData)
   }
 
   public var guardResult: ExprSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return ExprSyntax(childData!)
+      return ExprSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withGuardResult(value)
+      self = WhereClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `guardResult` replaced.
-  /// - param newChild: The new `guardResult` to replace the node's
-  ///                   current `guardResult`, if present.
-  public func withGuardResult(_ newChild: ExprSyntax) -> WhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return WhereClauseSyntax(newData)
   }
 
   public var unexpectedAfterGuardResult: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterGuardResult(value)
+      self = WhereClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterGuardResult` replaced.
-  /// - param newChild: The new `unexpectedAfterGuardResult` to replace the node's
-  ///                   current `unexpectedAfterGuardResult`, if present.
-  public func withUnexpectedAfterGuardResult(_ newChild: UnexpectedNodesSyntax?) -> WhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return WhereClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -19456,73 +13432,37 @@ public struct YieldListSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftParen(value)
+      self = YieldListSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftParen` to replace the node's
-  ///                   current `unexpectedBeforeLeftParen`, if present.
-  public func withUnexpectedBeforeLeftParen(_ newChild: UnexpectedNodesSyntax?) -> YieldListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return YieldListSyntax(newData)
   }
 
   public var leftParen: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = YieldListSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> YieldListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return YieldListSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndElementList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndElementList(value)
+      self = YieldListSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndElementList` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndElementList` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndElementList`, if present.
-  public func withUnexpectedBetweenLeftParenAndElementList(_ newChild: UnexpectedNodesSyntax?) -> YieldListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return YieldListSyntax(newData)
   }
 
   public var elementList: YieldExprListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return YieldExprListSyntax(childData!)
+      return YieldExprListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withElementList(value)
+      self = YieldListSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -19545,76 +13485,31 @@ public struct YieldListSyntax: SyntaxProtocol, SyntaxHashable {
     return YieldListSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `elementList` replaced.
-  /// - param newChild: The new `elementList` to replace the node's
-  ///                   current `elementList`, if present.
-  public func withElementList(_ newChild: YieldExprListSyntax) -> YieldListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return YieldListSyntax(newData)
-  }
-
   public var unexpectedBetweenElementListAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenElementListAndRightParen(value)
+      self = YieldListSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenElementListAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenElementListAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenElementListAndRightParen`, if present.
-  public func withUnexpectedBetweenElementListAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> YieldListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return YieldListSyntax(newData)
   }
 
   public var rightParen: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightParen(value)
+      self = YieldListSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> YieldListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return YieldListSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = YieldListSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> YieldListSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return YieldListSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -19673,14 +13568,12 @@ public struct ConditionElementSyntax: SyntaxProtocol, SyntaxHashable {
     case `availability`(AvailabilityConditionSyntax)
     case `matchingPattern`(MatchingPatternConditionSyntax)
     case `optionalBinding`(OptionalBindingConditionSyntax)
-    case `hasSymbol`(HasSymbolConditionSyntax)
     public var _syntaxNode: Syntax {
       switch self {
       case .expression(let node): return node._syntaxNode
       case .availability(let node): return node._syntaxNode
       case .matchingPattern(let node): return node._syntaxNode
       case .optionalBinding(let node): return node._syntaxNode
-      case .hasSymbol(let node): return node._syntaxNode
       }
     }
     init(_ data: SyntaxData) { self.init(Syntax(data))! }
@@ -19695,9 +13588,6 @@ public struct ConditionElementSyntax: SyntaxProtocol, SyntaxHashable {
     }
     public init(_ node: OptionalBindingConditionSyntax) {
       self = .optionalBinding(node)
-    }
-    public init(_ node: HasSymbolConditionSyntax) {
-      self = .hasSymbol(node)
     }
     public init?<S: SyntaxProtocol>(_ node: S) {
       if let node = node.as(ExprSyntax.self) {
@@ -19716,10 +13606,6 @@ public struct ConditionElementSyntax: SyntaxProtocol, SyntaxHashable {
         self = .optionalBinding(node)
         return
       }
-      if let node = node.as(HasSymbolConditionSyntax.self) {
-        self = .hasSymbol(node)
-        return
-      }
       return nil
     }
 
@@ -19729,7 +13615,6 @@ public struct ConditionElementSyntax: SyntaxProtocol, SyntaxHashable {
         .node(AvailabilityConditionSyntax.self),
         .node(MatchingPatternConditionSyntax.self),
         .node(OptionalBindingConditionSyntax.self),
-        .node(HasSymbolConditionSyntax.self),
       ])
     }
   }
@@ -19778,106 +13663,47 @@ public struct ConditionElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeCondition: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeCondition(value)
+      self = ConditionElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeCondition` replaced.
-  /// - param newChild: The new `unexpectedBeforeCondition` to replace the node's
-  ///                   current `unexpectedBeforeCondition`, if present.
-  public func withUnexpectedBeforeCondition(_ newChild: UnexpectedNodesSyntax?) -> ConditionElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ConditionElementSyntax(newData)
   }
 
   public var condition: Condition {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return Condition(childData!)
+      return Condition(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withCondition(value)
+      self = ConditionElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `condition` replaced.
-  /// - param newChild: The new `condition` to replace the node's
-  ///                   current `condition`, if present.
-  public func withCondition(_ newChild: Condition) -> ConditionElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ConditionElementSyntax(newData)
   }
 
   public var unexpectedBetweenConditionAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenConditionAndTrailingComma(value)
+      self = ConditionElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenConditionAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenConditionAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenConditionAndTrailingComma`, if present.
-  public func withUnexpectedBetweenConditionAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> ConditionElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ConditionElementSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = ConditionElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> ConditionElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ConditionElementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = ConditionElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> ConditionElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ConditionElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -19975,114 +13801,55 @@ public struct AvailabilityConditionSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeAvailabilityKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeAvailabilityKeyword(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeAvailabilityKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeAvailabilityKeyword` to replace the node's
-  ///                   current `unexpectedBeforeAvailabilityKeyword`, if present.
-  public func withUnexpectedBeforeAvailabilityKeyword(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
   }
 
   public var availabilityKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAvailabilityKeyword(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `availabilityKeyword` replaced.
-  /// - param newChild: The new `availabilityKeyword` to replace the node's
-  ///                   current `availabilityKeyword`, if present.
-  public func withAvailabilityKeyword(_ newChild: TokenSyntax) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
   }
 
   public var unexpectedBetweenAvailabilityKeywordAndLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAvailabilityKeywordAndLeftParen(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAvailabilityKeywordAndLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenAvailabilityKeywordAndLeftParen` to replace the node's
-  ///                   current `unexpectedBetweenAvailabilityKeywordAndLeftParen`, if present.
-  public func withUnexpectedBetweenAvailabilityKeywordAndLeftParen(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
   }
 
   public var leftParen: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndAvailabilitySpec: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndAvailabilitySpec(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndAvailabilitySpec` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndAvailabilitySpec` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndAvailabilitySpec`, if present.
-  public func withUnexpectedBetweenLeftParenAndAvailabilitySpec(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
   }
 
   public var availabilitySpec: AvailabilitySpecListSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return AvailabilitySpecListSyntax(childData!)
+      return AvailabilitySpecListSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withAvailabilitySpec(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -20105,76 +13872,31 @@ public struct AvailabilityConditionSyntax: SyntaxProtocol, SyntaxHashable {
     return AvailabilityConditionSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `availabilitySpec` replaced.
-  /// - param newChild: The new `availabilitySpec` to replace the node's
-  ///                   current `availabilitySpec`, if present.
-  public func withAvailabilitySpec(_ newChild: AvailabilitySpecListSyntax) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
-  }
-
   public var unexpectedBetweenAvailabilitySpecAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAvailabilitySpecAndRightParen(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAvailabilitySpecAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenAvailabilitySpecAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenAvailabilitySpecAndRightParen`, if present.
-  public func withUnexpectedBetweenAvailabilitySpecAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
   }
 
   public var rightParen: TokenSyntax {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightParen(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = AvailabilityConditionSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return AvailabilityConditionSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -20288,188 +14010,83 @@ public struct MatchingPatternConditionSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeCaseKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeCaseKeyword(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeCaseKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeCaseKeyword` to replace the node's
-  ///                   current `unexpectedBeforeCaseKeyword`, if present.
-  public func withUnexpectedBeforeCaseKeyword(_ newChild: UnexpectedNodesSyntax?) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public var caseKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withCaseKeyword(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `caseKeyword` replaced.
-  /// - param newChild: The new `caseKeyword` to replace the node's
-  ///                   current `caseKeyword`, if present.
-  public func withCaseKeyword(_ newChild: TokenSyntax) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public var unexpectedBetweenCaseKeywordAndPattern: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCaseKeywordAndPattern(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCaseKeywordAndPattern` replaced.
-  /// - param newChild: The new `unexpectedBetweenCaseKeywordAndPattern` to replace the node's
-  ///                   current `unexpectedBetweenCaseKeywordAndPattern`, if present.
-  public func withUnexpectedBetweenCaseKeywordAndPattern(_ newChild: UnexpectedNodesSyntax?) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public var pattern: PatternSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return PatternSyntax(childData!)
+      return PatternSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPattern(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `pattern` replaced.
-  /// - param newChild: The new `pattern` to replace the node's
-  ///                   current `pattern`, if present.
-  public func withPattern(_ newChild: PatternSyntax) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public var unexpectedBetweenPatternAndTypeAnnotation: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPatternAndTypeAnnotation(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPatternAndTypeAnnotation` replaced.
-  /// - param newChild: The new `unexpectedBetweenPatternAndTypeAnnotation` to replace the node's
-  ///                   current `unexpectedBetweenPatternAndTypeAnnotation`, if present.
-  public func withUnexpectedBetweenPatternAndTypeAnnotation(_ newChild: UnexpectedNodesSyntax?) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public var typeAnnotation: TypeAnnotationSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TypeAnnotationSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TypeAnnotationSyntax.init)
     }
     set(value) {
-      self = withTypeAnnotation(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `typeAnnotation` replaced.
-  /// - param newChild: The new `typeAnnotation` to replace the node's
-  ///                   current `typeAnnotation`, if present.
-  public func withTypeAnnotation(_ newChild: TypeAnnotationSyntax?) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public var unexpectedBetweenTypeAnnotationAndInitializer: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeAnnotationAndInitializer(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeAnnotationAndInitializer` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeAnnotationAndInitializer` to replace the node's
-  ///                   current `unexpectedBetweenTypeAnnotationAndInitializer`, if present.
-  public func withUnexpectedBetweenTypeAnnotationAndInitializer(_ newChild: UnexpectedNodesSyntax?) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public var initializer: InitializerClauseSyntax {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return InitializerClauseSyntax(childData!)
+      return InitializerClauseSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = withInitializer(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `initializer` replaced.
-  /// - param newChild: The new `initializer` to replace the node's
-  ///                   current `initializer`, if present.
-  public func withInitializer(_ newChild: InitializerClauseSyntax) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public var unexpectedAfterInitializer: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterInitializer(value)
+      self = MatchingPatternConditionSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterInitializer` replaced.
-  /// - param newChild: The new `unexpectedAfterInitializer` to replace the node's
-  ///                   current `unexpectedAfterInitializer`, if present.
-  public func withUnexpectedAfterInitializer(_ newChild: UnexpectedNodesSyntax?) -> MatchingPatternConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return MatchingPatternConditionSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -20583,189 +14200,83 @@ public struct OptionalBindingConditionSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLetOrVarKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLetOrVarKeyword(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLetOrVarKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeLetOrVarKeyword` to replace the node's
-  ///                   current `unexpectedBeforeLetOrVarKeyword`, if present.
-  public func withUnexpectedBeforeLetOrVarKeyword(_ newChild: UnexpectedNodesSyntax?) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public var letOrVarKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLetOrVarKeyword(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `letOrVarKeyword` replaced.
-  /// - param newChild: The new `letOrVarKeyword` to replace the node's
-  ///                   current `letOrVarKeyword`, if present.
-  public func withLetOrVarKeyword(_ newChild: TokenSyntax) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public var unexpectedBetweenLetOrVarKeywordAndPattern: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLetOrVarKeywordAndPattern(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLetOrVarKeywordAndPattern` replaced.
-  /// - param newChild: The new `unexpectedBetweenLetOrVarKeywordAndPattern` to replace the node's
-  ///                   current `unexpectedBetweenLetOrVarKeywordAndPattern`, if present.
-  public func withUnexpectedBetweenLetOrVarKeywordAndPattern(_ newChild: UnexpectedNodesSyntax?) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public var pattern: PatternSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return PatternSyntax(childData!)
+      return PatternSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPattern(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `pattern` replaced.
-  /// - param newChild: The new `pattern` to replace the node's
-  ///                   current `pattern`, if present.
-  public func withPattern(_ newChild: PatternSyntax) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public var unexpectedBetweenPatternAndTypeAnnotation: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPatternAndTypeAnnotation(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPatternAndTypeAnnotation` replaced.
-  /// - param newChild: The new `unexpectedBetweenPatternAndTypeAnnotation` to replace the node's
-  ///                   current `unexpectedBetweenPatternAndTypeAnnotation`, if present.
-  public func withUnexpectedBetweenPatternAndTypeAnnotation(_ newChild: UnexpectedNodesSyntax?) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public var typeAnnotation: TypeAnnotationSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TypeAnnotationSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TypeAnnotationSyntax.init)
     }
     set(value) {
-      self = withTypeAnnotation(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `typeAnnotation` replaced.
-  /// - param newChild: The new `typeAnnotation` to replace the node's
-  ///                   current `typeAnnotation`, if present.
-  public func withTypeAnnotation(_ newChild: TypeAnnotationSyntax?) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public var unexpectedBetweenTypeAnnotationAndInitializer: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeAnnotationAndInitializer(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeAnnotationAndInitializer` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeAnnotationAndInitializer` to replace the node's
-  ///                   current `unexpectedBetweenTypeAnnotationAndInitializer`, if present.
-  public func withUnexpectedBetweenTypeAnnotationAndInitializer(_ newChild: UnexpectedNodesSyntax?) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public var initializer: InitializerClauseSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return InitializerClauseSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(InitializerClauseSyntax.init)
     }
     set(value) {
-      self = withInitializer(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `initializer` replaced.
-  /// - param newChild: The new `initializer` to replace the node's
-  ///                   current `initializer`, if present.
-  public func withInitializer(_ newChild: InitializerClauseSyntax?) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public var unexpectedAfterInitializer: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterInitializer(value)
+      self = OptionalBindingConditionSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterInitializer` replaced.
-  /// - param newChild: The new `unexpectedAfterInitializer` to replace the node's
-  ///                   current `unexpectedAfterInitializer`, if present.
-  public func withUnexpectedAfterInitializer(_ newChild: UnexpectedNodesSyntax?) -> OptionalBindingConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return OptionalBindingConditionSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -20820,300 +14331,6 @@ extension OptionalBindingConditionSyntax: CustomReflectable {
       "unexpectedBetweenTypeAnnotationAndInitializer": unexpectedBetweenTypeAnnotationAndInitializer.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "initializer": initializer.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
       "unexpectedAfterInitializer": unexpectedAfterInitializer.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-    ])
-  }
-}
-
-// MARK: - HasSymbolConditionSyntax
-
-public struct HasSymbolConditionSyntax: SyntaxProtocol, SyntaxHashable {
-  public let _syntaxNode: Syntax
-
-  public init?<S: SyntaxProtocol>(_ node: S) {
-    guard node.raw.kind == .hasSymbolCondition else { return nil }
-    self._syntaxNode = node._syntaxNode
-  }
-
-  /// Creates a `HasSymbolConditionSyntax` node from the given `SyntaxData`. This assumes
-  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
-  /// is undefined.
-  internal init(_ data: SyntaxData) {
-    assert(data.raw.kind == .hasSymbolCondition)
-    self._syntaxNode = Syntax(data)
-  }
-
-  public init<E: ExprSyntaxProtocol>(
-    leadingTrivia: Trivia? = nil,
-    _ unexpectedBeforeHasSymbolKeyword: UnexpectedNodesSyntax? = nil,
-    hasSymbolKeyword: TokenSyntax,
-    _ unexpectedBetweenHasSymbolKeywordAndLeftParen: UnexpectedNodesSyntax? = nil,
-    leftParen: TokenSyntax = .leftParenToken(),
-    _ unexpectedBetweenLeftParenAndExpression: UnexpectedNodesSyntax? = nil,
-    expression: E,
-    _ unexpectedBetweenExpressionAndRightParen: UnexpectedNodesSyntax? = nil,
-    rightParen: TokenSyntax = .rightParenToken(),
-    _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
-    trailingTrivia: Trivia? = nil
-  ) {
-    // Extend the lifetime of all parameters so their arenas don't get destroyed 
-    // before they can be added as children of the new arena.
-    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeHasSymbolKeyword, hasSymbolKeyword, unexpectedBetweenHasSymbolKeywordAndLeftParen, leftParen, unexpectedBetweenLeftParenAndExpression, expression, unexpectedBetweenExpressionAndRightParen, rightParen, unexpectedAfterRightParen))) { (arena, _) in
-      let layout: [RawSyntax?] = [
-        unexpectedBeforeHasSymbolKeyword?.raw,
-        hasSymbolKeyword.raw,
-        unexpectedBetweenHasSymbolKeywordAndLeftParen?.raw,
-        leftParen.raw,
-        unexpectedBetweenLeftParenAndExpression?.raw,
-        expression.raw,
-        unexpectedBetweenExpressionAndRightParen?.raw,
-        rightParen.raw,
-        unexpectedAfterRightParen?.raw,
-      ]
-      let raw = RawSyntax.makeLayout(
-        kind: SyntaxKind.hasSymbolCondition, from: layout, arena: arena,
-        leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia)
-      return SyntaxData.forRoot(raw)
-    }
-    self.init(data)
-  }
-
-  public var unexpectedBeforeHasSymbolKeyword: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedBeforeHasSymbolKeyword(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeHasSymbolKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeHasSymbolKeyword` to replace the node's
-  ///                   current `unexpectedBeforeHasSymbolKeyword`, if present.
-  public func withUnexpectedBeforeHasSymbolKeyword(_ newChild: UnexpectedNodesSyntax?) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public var hasSymbolKeyword: TokenSyntax {
-    get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
-    }
-    set(value) {
-      self = withHasSymbolKeyword(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `hasSymbolKeyword` replaced.
-  /// - param newChild: The new `hasSymbolKeyword` to replace the node's
-  ///                   current `hasSymbolKeyword`, if present.
-  public func withHasSymbolKeyword(_ newChild: TokenSyntax) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public var unexpectedBetweenHasSymbolKeywordAndLeftParen: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedBetweenHasSymbolKeywordAndLeftParen(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenHasSymbolKeywordAndLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenHasSymbolKeywordAndLeftParen` to replace the node's
-  ///                   current `unexpectedBetweenHasSymbolKeywordAndLeftParen`, if present.
-  public func withUnexpectedBetweenHasSymbolKeywordAndLeftParen(_ newChild: UnexpectedNodesSyntax?) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public var leftParen: TokenSyntax {
-    get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
-    }
-    set(value) {
-      self = withLeftParen(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public var unexpectedBetweenLeftParenAndExpression: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedBetweenLeftParenAndExpression(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndExpression` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndExpression` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndExpression`, if present.
-  public func withUnexpectedBetweenLeftParenAndExpression(_ newChild: UnexpectedNodesSyntax?) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public var expression: ExprSyntax {
-    get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return ExprSyntax(childData!)
-    }
-    set(value) {
-      self = withExpression(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `expression` replaced.
-  /// - param newChild: The new `expression` to replace the node's
-  ///                   current `expression`, if present.
-  public func withExpression(_ newChild: ExprSyntax) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public var unexpectedBetweenExpressionAndRightParen: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedBetweenExpressionAndRightParen(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenExpressionAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenExpressionAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenExpressionAndRightParen`, if present.
-  public func withUnexpectedBetweenExpressionAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public var rightParen: TokenSyntax {
-    get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return TokenSyntax(childData!)
-    }
-    set(value) {
-      self = withRightParen(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
-    get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
-    }
-    set(value) {
-      self = withUnexpectedAfterRightParen(value)
-    }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> HasSymbolConditionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return HasSymbolConditionSyntax(newData)
-  }
-
-  public static var structure: SyntaxNodeStructure {
-    return .layout([
-      \Self.unexpectedBeforeHasSymbolKeyword,
-      \Self.hasSymbolKeyword,
-      \Self.unexpectedBetweenHasSymbolKeywordAndLeftParen,
-      \Self.leftParen,
-      \Self.unexpectedBetweenLeftParenAndExpression,
-      \Self.expression,
-      \Self.unexpectedBetweenExpressionAndRightParen,
-      \Self.rightParen,
-      \Self.unexpectedAfterRightParen,
-    ])
-  }
-
-  public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
-    switch index.data?.indexInParent {
-    case 0:
-      return nil
-    case 1:
-      return nil
-    case 2:
-      return nil
-    case 3:
-      return nil
-    case 4:
-      return nil
-    case 5:
-      return nil
-    case 6:
-      return nil
-    case 7:
-      return nil
-    case 8:
-      return nil
-    default:
-      fatalError("Invalid index")
-    }
-  }
-}
-
-extension HasSymbolConditionSyntax: CustomReflectable {
-  public var customMirror: Mirror {
-    return Mirror(self, children: [
-      "unexpectedBeforeHasSymbolKeyword": unexpectedBeforeHasSymbolKeyword.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "hasSymbolKeyword": Syntax(hasSymbolKeyword).asProtocol(SyntaxProtocol.self),
-      "unexpectedBetweenHasSymbolKeywordAndLeftParen": unexpectedBetweenHasSymbolKeywordAndLeftParen.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "leftParen": Syntax(leftParen).asProtocol(SyntaxProtocol.self),
-      "unexpectedBetweenLeftParenAndExpression": unexpectedBetweenLeftParenAndExpression.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "expression": Syntax(expression).asProtocol(SyntaxProtocol.self),
-      "unexpectedBetweenExpressionAndRightParen": unexpectedBetweenExpressionAndRightParen.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
-      "rightParen": Syntax(rightParen).asProtocol(SyntaxProtocol.self),
-      "unexpectedAfterRightParen": unexpectedAfterRightParen.map(Syntax.init)?.asProtocol(SyntaxProtocol.self) as Any,
     ])
   }
 }
@@ -21205,115 +14422,55 @@ public struct SwitchCaseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeUnknownAttr: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeUnknownAttr(value)
+      self = SwitchCaseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeUnknownAttr` replaced.
-  /// - param newChild: The new `unexpectedBeforeUnknownAttr` to replace the node's
-  ///                   current `unexpectedBeforeUnknownAttr`, if present.
-  public func withUnexpectedBeforeUnknownAttr(_ newChild: UnexpectedNodesSyntax?) -> SwitchCaseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return SwitchCaseSyntax(newData)
   }
 
   public var unknownAttr: AttributeSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return AttributeSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(AttributeSyntax.init)
     }
     set(value) {
-      self = withUnknownAttr(value)
+      self = SwitchCaseSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unknownAttr` replaced.
-  /// - param newChild: The new `unknownAttr` to replace the node's
-  ///                   current `unknownAttr`, if present.
-  public func withUnknownAttr(_ newChild: AttributeSyntax?) -> SwitchCaseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return SwitchCaseSyntax(newData)
   }
 
   public var unexpectedBetweenUnknownAttrAndLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenUnknownAttrAndLabel(value)
+      self = SwitchCaseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenUnknownAttrAndLabel` replaced.
-  /// - param newChild: The new `unexpectedBetweenUnknownAttrAndLabel` to replace the node's
-  ///                   current `unexpectedBetweenUnknownAttrAndLabel`, if present.
-  public func withUnexpectedBetweenUnknownAttrAndLabel(_ newChild: UnexpectedNodesSyntax?) -> SwitchCaseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return SwitchCaseSyntax(newData)
   }
 
   public var label: Label {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return Label(childData!)
+      return Label(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLabel(value)
+      self = SwitchCaseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `label` replaced.
-  /// - param newChild: The new `label` to replace the node's
-  ///                   current `label`, if present.
-  public func withLabel(_ newChild: Label) -> SwitchCaseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return SwitchCaseSyntax(newData)
   }
 
   public var unexpectedBetweenLabelAndStatements: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelAndStatements(value)
+      self = SwitchCaseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelAndStatements` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelAndStatements` to replace the node's
-  ///                   current `unexpectedBetweenLabelAndStatements`, if present.
-  public func withUnexpectedBetweenLabelAndStatements(_ newChild: UnexpectedNodesSyntax?) -> SwitchCaseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return SwitchCaseSyntax(newData)
   }
 
   public var statements: CodeBlockItemListSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return CodeBlockItemListSyntax(childData!)
+      return CodeBlockItemListSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withStatements(value)
+      self = SwitchCaseSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -21336,35 +14493,13 @@ public struct SwitchCaseSyntax: SyntaxProtocol, SyntaxHashable {
     return SwitchCaseSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `statements` replaced.
-  /// - param newChild: The new `statements` to replace the node's
-  ///                   current `statements`, if present.
-  public func withStatements(_ newChild: CodeBlockItemListSyntax) -> SwitchCaseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return SwitchCaseSyntax(newData)
-  }
-
   public var unexpectedAfterStatements: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterStatements(value)
+      self = SwitchCaseSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterStatements` replaced.
-  /// - param newChild: The new `unexpectedAfterStatements` to replace the node's
-  ///                   current `unexpectedAfterStatements`, if present.
-  public func withUnexpectedAfterStatements(_ newChild: UnexpectedNodesSyntax?) -> SwitchCaseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return SwitchCaseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -21462,105 +14597,47 @@ public struct SwitchDefaultLabelSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeDefaultKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeDefaultKeyword(value)
+      self = SwitchDefaultLabelSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeDefaultKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeDefaultKeyword` to replace the node's
-  ///                   current `unexpectedBeforeDefaultKeyword`, if present.
-  public func withUnexpectedBeforeDefaultKeyword(_ newChild: UnexpectedNodesSyntax?) -> SwitchDefaultLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return SwitchDefaultLabelSyntax(newData)
   }
 
   public var defaultKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withDefaultKeyword(value)
+      self = SwitchDefaultLabelSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `defaultKeyword` replaced.
-  /// - param newChild: The new `defaultKeyword` to replace the node's
-  ///                   current `defaultKeyword`, if present.
-  public func withDefaultKeyword(_ newChild: TokenSyntax) -> SwitchDefaultLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return SwitchDefaultLabelSyntax(newData)
   }
 
   public var unexpectedBetweenDefaultKeywordAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenDefaultKeywordAndColon(value)
+      self = SwitchDefaultLabelSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenDefaultKeywordAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenDefaultKeywordAndColon` to replace the node's
-  ///                   current `unexpectedBetweenDefaultKeywordAndColon`, if present.
-  public func withUnexpectedBetweenDefaultKeywordAndColon(_ newChild: UnexpectedNodesSyntax?) -> SwitchDefaultLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return SwitchDefaultLabelSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = SwitchDefaultLabelSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> SwitchDefaultLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return SwitchDefaultLabelSyntax(newData)
   }
 
   public var unexpectedAfterColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterColon(value)
+      self = SwitchDefaultLabelSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterColon` replaced.
-  /// - param newChild: The new `unexpectedAfterColon` to replace the node's
-  ///                   current `unexpectedAfterColon`, if present.
-  public func withUnexpectedAfterColon(_ newChild: UnexpectedNodesSyntax?) -> SwitchDefaultLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return SwitchDefaultLabelSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -21654,148 +14731,65 @@ public struct CaseItemSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforePattern: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforePattern(value)
+      self = CaseItemSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforePattern` replaced.
-  /// - param newChild: The new `unexpectedBeforePattern` to replace the node's
-  ///                   current `unexpectedBeforePattern`, if present.
-  public func withUnexpectedBeforePattern(_ newChild: UnexpectedNodesSyntax?) -> CaseItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return CaseItemSyntax(newData)
   }
 
   public var pattern: PatternSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return PatternSyntax(childData!)
+      return PatternSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPattern(value)
+      self = CaseItemSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `pattern` replaced.
-  /// - param newChild: The new `pattern` to replace the node's
-  ///                   current `pattern`, if present.
-  public func withPattern(_ newChild: PatternSyntax) -> CaseItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return CaseItemSyntax(newData)
   }
 
   public var unexpectedBetweenPatternAndWhereClause: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPatternAndWhereClause(value)
+      self = CaseItemSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPatternAndWhereClause` replaced.
-  /// - param newChild: The new `unexpectedBetweenPatternAndWhereClause` to replace the node's
-  ///                   current `unexpectedBetweenPatternAndWhereClause`, if present.
-  public func withUnexpectedBetweenPatternAndWhereClause(_ newChild: UnexpectedNodesSyntax?) -> CaseItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return CaseItemSyntax(newData)
   }
 
   public var whereClause: WhereClauseSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return WhereClauseSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(WhereClauseSyntax.init)
     }
     set(value) {
-      self = withWhereClause(value)
+      self = CaseItemSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `whereClause` replaced.
-  /// - param newChild: The new `whereClause` to replace the node's
-  ///                   current `whereClause`, if present.
-  public func withWhereClause(_ newChild: WhereClauseSyntax?) -> CaseItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return CaseItemSyntax(newData)
   }
 
   public var unexpectedBetweenWhereClauseAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenWhereClauseAndTrailingComma(value)
+      self = CaseItemSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenWhereClauseAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenWhereClauseAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenWhereClauseAndTrailingComma`, if present.
-  public func withUnexpectedBetweenWhereClauseAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> CaseItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return CaseItemSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = CaseItemSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> CaseItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return CaseItemSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = CaseItemSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> CaseItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return CaseItemSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -21931,149 +14925,65 @@ public struct CatchItemSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforePattern: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforePattern(value)
+      self = CatchItemSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforePattern` replaced.
-  /// - param newChild: The new `unexpectedBeforePattern` to replace the node's
-  ///                   current `unexpectedBeforePattern`, if present.
-  public func withUnexpectedBeforePattern(_ newChild: UnexpectedNodesSyntax?) -> CatchItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return CatchItemSyntax(newData)
   }
 
   public var pattern: PatternSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return PatternSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(PatternSyntax.init)
     }
     set(value) {
-      self = withPattern(value)
+      self = CatchItemSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `pattern` replaced.
-  /// - param newChild: The new `pattern` to replace the node's
-  ///                   current `pattern`, if present.
-  public func withPattern(_ newChild: PatternSyntax?) -> CatchItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return CatchItemSyntax(newData)
   }
 
   public var unexpectedBetweenPatternAndWhereClause: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPatternAndWhereClause(value)
+      self = CatchItemSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPatternAndWhereClause` replaced.
-  /// - param newChild: The new `unexpectedBetweenPatternAndWhereClause` to replace the node's
-  ///                   current `unexpectedBetweenPatternAndWhereClause`, if present.
-  public func withUnexpectedBetweenPatternAndWhereClause(_ newChild: UnexpectedNodesSyntax?) -> CatchItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return CatchItemSyntax(newData)
   }
 
   public var whereClause: WhereClauseSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return WhereClauseSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(WhereClauseSyntax.init)
     }
     set(value) {
-      self = withWhereClause(value)
+      self = CatchItemSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `whereClause` replaced.
-  /// - param newChild: The new `whereClause` to replace the node's
-  ///                   current `whereClause`, if present.
-  public func withWhereClause(_ newChild: WhereClauseSyntax?) -> CatchItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return CatchItemSyntax(newData)
   }
 
   public var unexpectedBetweenWhereClauseAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenWhereClauseAndTrailingComma(value)
+      self = CatchItemSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenWhereClauseAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenWhereClauseAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenWhereClauseAndTrailingComma`, if present.
-  public func withUnexpectedBetweenWhereClauseAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> CatchItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return CatchItemSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = CatchItemSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> CatchItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return CatchItemSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = CatchItemSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> CatchItemSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return CatchItemSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -22175,73 +15085,37 @@ public struct SwitchCaseLabelSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeCaseKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeCaseKeyword(value)
+      self = SwitchCaseLabelSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeCaseKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeCaseKeyword` to replace the node's
-  ///                   current `unexpectedBeforeCaseKeyword`, if present.
-  public func withUnexpectedBeforeCaseKeyword(_ newChild: UnexpectedNodesSyntax?) -> SwitchCaseLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return SwitchCaseLabelSyntax(newData)
   }
 
   public var caseKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withCaseKeyword(value)
+      self = SwitchCaseLabelSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `caseKeyword` replaced.
-  /// - param newChild: The new `caseKeyword` to replace the node's
-  ///                   current `caseKeyword`, if present.
-  public func withCaseKeyword(_ newChild: TokenSyntax) -> SwitchCaseLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return SwitchCaseLabelSyntax(newData)
   }
 
   public var unexpectedBetweenCaseKeywordAndCaseItems: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCaseKeywordAndCaseItems(value)
+      self = SwitchCaseLabelSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCaseKeywordAndCaseItems` replaced.
-  /// - param newChild: The new `unexpectedBetweenCaseKeywordAndCaseItems` to replace the node's
-  ///                   current `unexpectedBetweenCaseKeywordAndCaseItems`, if present.
-  public func withUnexpectedBetweenCaseKeywordAndCaseItems(_ newChild: UnexpectedNodesSyntax?) -> SwitchCaseLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return SwitchCaseLabelSyntax(newData)
   }
 
   public var caseItems: CaseItemListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return CaseItemListSyntax(childData!)
+      return CaseItemListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withCaseItems(value)
+      self = SwitchCaseLabelSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -22264,76 +15138,31 @@ public struct SwitchCaseLabelSyntax: SyntaxProtocol, SyntaxHashable {
     return SwitchCaseLabelSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `caseItems` replaced.
-  /// - param newChild: The new `caseItems` to replace the node's
-  ///                   current `caseItems`, if present.
-  public func withCaseItems(_ newChild: CaseItemListSyntax) -> SwitchCaseLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return SwitchCaseLabelSyntax(newData)
-  }
-
   public var unexpectedBetweenCaseItemsAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCaseItemsAndColon(value)
+      self = SwitchCaseLabelSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCaseItemsAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenCaseItemsAndColon` to replace the node's
-  ///                   current `unexpectedBetweenCaseItemsAndColon`, if present.
-  public func withUnexpectedBetweenCaseItemsAndColon(_ newChild: UnexpectedNodesSyntax?) -> SwitchCaseLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return SwitchCaseLabelSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = SwitchCaseLabelSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> SwitchCaseLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return SwitchCaseLabelSyntax(newData)
   }
 
   public var unexpectedAfterColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterColon(value)
+      self = SwitchCaseLabelSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterColon` replaced.
-  /// - param newChild: The new `unexpectedAfterColon` to replace the node's
-  ///                   current `unexpectedAfterColon`, if present.
-  public func withUnexpectedAfterColon(_ newChild: UnexpectedNodesSyntax?) -> SwitchCaseLabelSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return SwitchCaseLabelSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -22435,74 +15264,37 @@ public struct CatchClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeCatchKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeCatchKeyword(value)
+      self = CatchClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeCatchKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeCatchKeyword` to replace the node's
-  ///                   current `unexpectedBeforeCatchKeyword`, if present.
-  public func withUnexpectedBeforeCatchKeyword(_ newChild: UnexpectedNodesSyntax?) -> CatchClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return CatchClauseSyntax(newData)
   }
 
   public var catchKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withCatchKeyword(value)
+      self = CatchClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `catchKeyword` replaced.
-  /// - param newChild: The new `catchKeyword` to replace the node's
-  ///                   current `catchKeyword`, if present.
-  public func withCatchKeyword(_ newChild: TokenSyntax) -> CatchClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return CatchClauseSyntax(newData)
   }
 
   public var unexpectedBetweenCatchKeywordAndCatchItems: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCatchKeywordAndCatchItems(value)
+      self = CatchClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCatchKeywordAndCatchItems` replaced.
-  /// - param newChild: The new `unexpectedBetweenCatchKeywordAndCatchItems` to replace the node's
-  ///                   current `unexpectedBetweenCatchKeywordAndCatchItems`, if present.
-  public func withUnexpectedBetweenCatchKeywordAndCatchItems(_ newChild: UnexpectedNodesSyntax?) -> CatchClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return CatchClauseSyntax(newData)
   }
 
   public var catchItems: CatchItemListSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return CatchItemListSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(CatchItemListSyntax.init)
     }
     set(value) {
-      self = withCatchItems(value)
+      self = CatchClauseSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
@@ -22525,76 +15317,31 @@ public struct CatchClauseSyntax: SyntaxProtocol, SyntaxHashable {
     return CatchClauseSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `catchItems` replaced.
-  /// - param newChild: The new `catchItems` to replace the node's
-  ///                   current `catchItems`, if present.
-  public func withCatchItems(_ newChild: CatchItemListSyntax?) -> CatchClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return CatchClauseSyntax(newData)
-  }
-
   public var unexpectedBetweenCatchItemsAndBody: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCatchItemsAndBody(value)
+      self = CatchClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCatchItemsAndBody` replaced.
-  /// - param newChild: The new `unexpectedBetweenCatchItemsAndBody` to replace the node's
-  ///                   current `unexpectedBetweenCatchItemsAndBody`, if present.
-  public func withUnexpectedBetweenCatchItemsAndBody(_ newChild: UnexpectedNodesSyntax?) -> CatchClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return CatchClauseSyntax(newData)
   }
 
   public var body: CodeBlockSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return CodeBlockSyntax(childData!)
+      return CodeBlockSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withBody(value)
+      self = CatchClauseSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `body` replaced.
-  /// - param newChild: The new `body` to replace the node's
-  ///                   current `body`, if present.
-  public func withBody(_ newChild: CodeBlockSyntax) -> CatchClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return CatchClauseSyntax(newData)
   }
 
   public var unexpectedAfterBody: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterBody(value)
+      self = CatchClauseSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterBody` replaced.
-  /// - param newChild: The new `unexpectedAfterBody` to replace the node's
-  ///                   current `unexpectedAfterBody`, if present.
-  public func withUnexpectedAfterBody(_ newChild: UnexpectedNodesSyntax?) -> CatchClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return CatchClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -22692,73 +15439,37 @@ public struct GenericWhereClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeWhereKeyword: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeWhereKeyword(value)
+      self = GenericWhereClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeWhereKeyword` replaced.
-  /// - param newChild: The new `unexpectedBeforeWhereKeyword` to replace the node's
-  ///                   current `unexpectedBeforeWhereKeyword`, if present.
-  public func withUnexpectedBeforeWhereKeyword(_ newChild: UnexpectedNodesSyntax?) -> GenericWhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return GenericWhereClauseSyntax(newData)
   }
 
   public var whereKeyword: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withWhereKeyword(value)
+      self = GenericWhereClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `whereKeyword` replaced.
-  /// - param newChild: The new `whereKeyword` to replace the node's
-  ///                   current `whereKeyword`, if present.
-  public func withWhereKeyword(_ newChild: TokenSyntax) -> GenericWhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return GenericWhereClauseSyntax(newData)
   }
 
   public var unexpectedBetweenWhereKeywordAndRequirementList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenWhereKeywordAndRequirementList(value)
+      self = GenericWhereClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenWhereKeywordAndRequirementList` replaced.
-  /// - param newChild: The new `unexpectedBetweenWhereKeywordAndRequirementList` to replace the node's
-  ///                   current `unexpectedBetweenWhereKeywordAndRequirementList`, if present.
-  public func withUnexpectedBetweenWhereKeywordAndRequirementList(_ newChild: UnexpectedNodesSyntax?) -> GenericWhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return GenericWhereClauseSyntax(newData)
   }
 
   public var requirementList: GenericRequirementListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return GenericRequirementListSyntax(childData!)
+      return GenericRequirementListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRequirementList(value)
+      self = GenericWhereClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -22781,35 +15492,13 @@ public struct GenericWhereClauseSyntax: SyntaxProtocol, SyntaxHashable {
     return GenericWhereClauseSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `requirementList` replaced.
-  /// - param newChild: The new `requirementList` to replace the node's
-  ///                   current `requirementList`, if present.
-  public func withRequirementList(_ newChild: GenericRequirementListSyntax) -> GenericWhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return GenericWhereClauseSyntax(newData)
-  }
-
   public var unexpectedAfterRequirementList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRequirementList(value)
+      self = GenericWhereClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRequirementList` replaced.
-  /// - param newChild: The new `unexpectedAfterRequirementList` to replace the node's
-  ///                   current `unexpectedAfterRequirementList`, if present.
-  public func withUnexpectedAfterRequirementList(_ newChild: UnexpectedNodesSyntax?) -> GenericWhereClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return GenericWhereClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -22945,106 +15634,47 @@ public struct GenericRequirementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeBody: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeBody(value)
+      self = GenericRequirementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeBody` replaced.
-  /// - param newChild: The new `unexpectedBeforeBody` to replace the node's
-  ///                   current `unexpectedBeforeBody`, if present.
-  public func withUnexpectedBeforeBody(_ newChild: UnexpectedNodesSyntax?) -> GenericRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return GenericRequirementSyntax(newData)
   }
 
   public var body: Body {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return Body(childData!)
+      return Body(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withBody(value)
+      self = GenericRequirementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `body` replaced.
-  /// - param newChild: The new `body` to replace the node's
-  ///                   current `body`, if present.
-  public func withBody(_ newChild: Body) -> GenericRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return GenericRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenBodyAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenBodyAndTrailingComma(value)
+      self = GenericRequirementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenBodyAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenBodyAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenBodyAndTrailingComma`, if present.
-  public func withUnexpectedBetweenBodyAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> GenericRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return GenericRequirementSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = GenericRequirementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> GenericRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return GenericRequirementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = GenericRequirementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> GenericRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return GenericRequirementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -23138,146 +15768,65 @@ public struct SameTypeRequirementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftTypeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftTypeIdentifier(value)
+      self = SameTypeRequirementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftTypeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftTypeIdentifier` to replace the node's
-  ///                   current `unexpectedBeforeLeftTypeIdentifier`, if present.
-  public func withUnexpectedBeforeLeftTypeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> SameTypeRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return SameTypeRequirementSyntax(newData)
   }
 
   public var leftTypeIdentifier: TypeSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftTypeIdentifier(value)
+      self = SameTypeRequirementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftTypeIdentifier` replaced.
-  /// - param newChild: The new `leftTypeIdentifier` to replace the node's
-  ///                   current `leftTypeIdentifier`, if present.
-  public func withLeftTypeIdentifier(_ newChild: TypeSyntax) -> SameTypeRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return SameTypeRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenLeftTypeIdentifierAndEqualityToken: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftTypeIdentifierAndEqualityToken(value)
+      self = SameTypeRequirementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftTypeIdentifierAndEqualityToken` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftTypeIdentifierAndEqualityToken` to replace the node's
-  ///                   current `unexpectedBetweenLeftTypeIdentifierAndEqualityToken`, if present.
-  public func withUnexpectedBetweenLeftTypeIdentifierAndEqualityToken(_ newChild: UnexpectedNodesSyntax?) -> SameTypeRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return SameTypeRequirementSyntax(newData)
   }
 
   public var equalityToken: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withEqualityToken(value)
+      self = SameTypeRequirementSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `equalityToken` replaced.
-  /// - param newChild: The new `equalityToken` to replace the node's
-  ///                   current `equalityToken`, if present.
-  public func withEqualityToken(_ newChild: TokenSyntax) -> SameTypeRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return SameTypeRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenEqualityTokenAndRightTypeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenEqualityTokenAndRightTypeIdentifier(value)
+      self = SameTypeRequirementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenEqualityTokenAndRightTypeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedBetweenEqualityTokenAndRightTypeIdentifier` to replace the node's
-  ///                   current `unexpectedBetweenEqualityTokenAndRightTypeIdentifier`, if present.
-  public func withUnexpectedBetweenEqualityTokenAndRightTypeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> SameTypeRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return SameTypeRequirementSyntax(newData)
   }
 
   public var rightTypeIdentifier: TypeSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightTypeIdentifier(value)
+      self = SameTypeRequirementSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightTypeIdentifier` replaced.
-  /// - param newChild: The new `rightTypeIdentifier` to replace the node's
-  ///                   current `rightTypeIdentifier`, if present.
-  public func withRightTypeIdentifier(_ newChild: TypeSyntax) -> SameTypeRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return SameTypeRequirementSyntax(newData)
   }
 
   public var unexpectedAfterRightTypeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightTypeIdentifier(value)
+      self = SameTypeRequirementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightTypeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedAfterRightTypeIdentifier` to replace the node's
-  ///                   current `unexpectedAfterRightTypeIdentifier`, if present.
-  public func withUnexpectedAfterRightTypeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> SameTypeRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return SameTypeRequirementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -23399,356 +15948,155 @@ public struct LayoutRequirementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeTypeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeTypeIdentifier(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeTypeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedBeforeTypeIdentifier` to replace the node's
-  ///                   current `unexpectedBeforeTypeIdentifier`, if present.
-  public func withUnexpectedBeforeTypeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var typeIdentifier: TypeSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withTypeIdentifier(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `typeIdentifier` replaced.
-  /// - param newChild: The new `typeIdentifier` to replace the node's
-  ///                   current `typeIdentifier`, if present.
-  public func withTypeIdentifier(_ newChild: TypeSyntax) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenTypeIdentifierAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeIdentifierAndColon(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeIdentifierAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeIdentifierAndColon` to replace the node's
-  ///                   current `unexpectedBetweenTypeIdentifierAndColon`, if present.
-  public func withUnexpectedBetweenTypeIdentifierAndColon(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndLayoutConstraint: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndLayoutConstraint(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndLayoutConstraint` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndLayoutConstraint` to replace the node's
-  ///                   current `unexpectedBetweenColonAndLayoutConstraint`, if present.
-  public func withUnexpectedBetweenColonAndLayoutConstraint(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var layoutConstraint: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLayoutConstraint(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `layoutConstraint` replaced.
-  /// - param newChild: The new `layoutConstraint` to replace the node's
-  ///                   current `layoutConstraint`, if present.
-  public func withLayoutConstraint(_ newChild: TokenSyntax) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenLayoutConstraintAndLeftParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLayoutConstraintAndLeftParen(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLayoutConstraintAndLeftParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenLayoutConstraintAndLeftParen` to replace the node's
-  ///                   current `unexpectedBetweenLayoutConstraintAndLeftParen`, if present.
-  public func withUnexpectedBetweenLayoutConstraintAndLeftParen(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var leftParen: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withLeftParen(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftParen` replaced.
-  /// - param newChild: The new `leftParen` to replace the node's
-  ///                   current `leftParen`, if present.
-  public func withLeftParen(_ newChild: TokenSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenLeftParenAndSize: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftParenAndSize(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftParenAndSize` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftParenAndSize` to replace the node's
-  ///                   current `unexpectedBetweenLeftParenAndSize`, if present.
-  public func withUnexpectedBetweenLeftParenAndSize(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var size: TokenSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withSize(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `size` replaced.
-  /// - param newChild: The new `size` to replace the node's
-  ///                   current `size`, if present.
-  public func withSize(_ newChild: TokenSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenSizeAndComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenSizeAndComma(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenSizeAndComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenSizeAndComma` to replace the node's
-  ///                   current `unexpectedBetweenSizeAndComma`, if present.
-  public func withUnexpectedBetweenSizeAndComma(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var comma: TokenSyntax? {
     get {
-      let childData = data.child(at: 11, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 11, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withComma(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `comma` replaced.
-  /// - param newChild: The new `comma` to replace the node's
-  ///                   current `comma`, if present.
-  public func withComma(_ newChild: TokenSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 11, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenCommaAndAlignment: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 12, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenCommaAndAlignment(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenCommaAndAlignment` replaced.
-  /// - param newChild: The new `unexpectedBetweenCommaAndAlignment` to replace the node's
-  ///                   current `unexpectedBetweenCommaAndAlignment`, if present.
-  public func withUnexpectedBetweenCommaAndAlignment(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 12, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var alignment: TokenSyntax? {
     get {
-      let childData = data.child(at: 13, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 13, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withAlignment(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `alignment` replaced.
-  /// - param newChild: The new `alignment` to replace the node's
-  ///                   current `alignment`, if present.
-  public func withAlignment(_ newChild: TokenSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 13, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenAlignmentAndRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 14, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAlignmentAndRightParen(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAlignmentAndRightParen` replaced.
-  /// - param newChild: The new `unexpectedBetweenAlignmentAndRightParen` to replace the node's
-  ///                   current `unexpectedBetweenAlignmentAndRightParen`, if present.
-  public func withUnexpectedBetweenAlignmentAndRightParen(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 14, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var rightParen: TokenSyntax? {
     get {
-      let childData = data.child(at: 15, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 15, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withRightParen(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 15, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightParen` replaced.
-  /// - param newChild: The new `rightParen` to replace the node's
-  ///                   current `rightParen`, if present.
-  public func withRightParen(_ newChild: TokenSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 15, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public var unexpectedAfterRightParen: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 16, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightParen(value)
+      self = LayoutRequirementSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightParen` replaced.
-  /// - param newChild: The new `unexpectedAfterRightParen` to replace the node's
-  ///                   current `unexpectedAfterRightParen`, if present.
-  public func withUnexpectedAfterRightParen(_ newChild: UnexpectedNodesSyntax?) -> LayoutRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 16, with: raw, arena: arena)
-    return LayoutRequirementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -23948,33 +16296,19 @@ public struct GenericParameterSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeAttributes: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeAttributes(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeAttributes` replaced.
-  /// - param newChild: The new `unexpectedBeforeAttributes` to replace the node's
-  ///                   current `unexpectedBeforeAttributes`, if present.
-  public func withUnexpectedBeforeAttributes(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var attributes: AttributeListSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return AttributeListSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = withAttributes(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
   }
 
@@ -23997,244 +16331,103 @@ public struct GenericParameterSyntax: SyntaxProtocol, SyntaxHashable {
     return GenericParameterSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `attributes` replaced.
-  /// - param newChild: The new `attributes` to replace the node's
-  ///                   current `attributes`, if present.
-  public func withAttributes(_ newChild: AttributeListSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
-  }
-
   public var unexpectedBetweenAttributesAndName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenAttributesAndName(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenAttributesAndName` replaced.
-  /// - param newChild: The new `unexpectedBetweenAttributesAndName` to replace the node's
-  ///                   current `unexpectedBetweenAttributesAndName`, if present.
-  public func withUnexpectedBetweenAttributesAndName(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndEllipsis: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndEllipsis(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndEllipsis` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndEllipsis` to replace the node's
-  ///                   current `unexpectedBetweenNameAndEllipsis`, if present.
-  public func withUnexpectedBetweenNameAndEllipsis(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var ellipsis: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withEllipsis(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `ellipsis` replaced.
-  /// - param newChild: The new `ellipsis` to replace the node's
-  ///                   current `ellipsis`, if present.
-  public func withEllipsis(_ newChild: TokenSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var unexpectedBetweenEllipsisAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenEllipsisAndColon(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenEllipsisAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenEllipsisAndColon` to replace the node's
-  ///                   current `unexpectedBetweenEllipsisAndColon`, if present.
-  public func withUnexpectedBetweenEllipsisAndColon(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var colon: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withColon(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndInheritedType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndInheritedType(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndInheritedType` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndInheritedType` to replace the node's
-  ///                   current `unexpectedBetweenColonAndInheritedType`, if present.
-  public func withUnexpectedBetweenColonAndInheritedType(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var inheritedType: TypeSyntax? {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TypeSyntax(childData!)
+      return data.child(at: 9, parent: Syntax(self)).map(TypeSyntax.init)
     }
     set(value) {
-      self = withInheritedType(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `inheritedType` replaced.
-  /// - param newChild: The new `inheritedType` to replace the node's
-  ///                   current `inheritedType`, if present.
-  public func withInheritedType(_ newChild: TypeSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var unexpectedBetweenInheritedTypeAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenInheritedTypeAndTrailingComma(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenInheritedTypeAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenInheritedTypeAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenInheritedTypeAndTrailingComma`, if present.
-  public func withUnexpectedBetweenInheritedTypeAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 11, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 11, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 11, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 12, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = GenericParameterSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 12, with: raw, arena: arena)
-    return GenericParameterSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -24356,106 +16549,47 @@ public struct PrimaryAssociatedTypeSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeName(value)
+      self = PrimaryAssociatedTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeName` replaced.
-  /// - param newChild: The new `unexpectedBeforeName` to replace the node's
-  ///                   current `unexpectedBeforeName`, if present.
-  public func withUnexpectedBeforeName(_ newChild: UnexpectedNodesSyntax?) -> PrimaryAssociatedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return PrimaryAssociatedTypeSyntax(newData)
   }
 
   public var name: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withName(value)
+      self = PrimaryAssociatedTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax) -> PrimaryAssociatedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return PrimaryAssociatedTypeSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndTrailingComma(value)
+      self = PrimaryAssociatedTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenNameAndTrailingComma`, if present.
-  public func withUnexpectedBetweenNameAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> PrimaryAssociatedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return PrimaryAssociatedTypeSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = PrimaryAssociatedTypeSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> PrimaryAssociatedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return PrimaryAssociatedTypeSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = PrimaryAssociatedTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> PrimaryAssociatedTypeSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return PrimaryAssociatedTypeSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -24553,73 +16687,37 @@ public struct GenericParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftAngleBracket(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftAngleBracket` to replace the node's
-  ///                   current `unexpectedBeforeLeftAngleBracket`, if present.
-  public func withUnexpectedBeforeLeftAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
   }
 
   public var leftAngleBracket: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftAngleBracket(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftAngleBracket` replaced.
-  /// - param newChild: The new `leftAngleBracket` to replace the node's
-  ///                   current `leftAngleBracket`, if present.
-  public func withLeftAngleBracket(_ newChild: TokenSyntax) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
   }
 
   public var unexpectedBetweenLeftAngleBracketAndGenericParameterList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftAngleBracketAndGenericParameterList(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftAngleBracketAndGenericParameterList` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftAngleBracketAndGenericParameterList` to replace the node's
-  ///                   current `unexpectedBetweenLeftAngleBracketAndGenericParameterList`, if present.
-  public func withUnexpectedBetweenLeftAngleBracketAndGenericParameterList(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
   }
 
   public var genericParameterList: GenericParameterListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return GenericParameterListSyntax(childData!)
+      return GenericParameterListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withGenericParameterList(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -24642,118 +16740,49 @@ public struct GenericParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
     return GenericParameterClauseSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `genericParameterList` replaced.
-  /// - param newChild: The new `genericParameterList` to replace the node's
-  ///                   current `genericParameterList`, if present.
-  public func withGenericParameterList(_ newChild: GenericParameterListSyntax) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
-  }
-
   public var unexpectedBetweenGenericParameterListAndGenericWhereClause: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenGenericParameterListAndGenericWhereClause(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenGenericParameterListAndGenericWhereClause` replaced.
-  /// - param newChild: The new `unexpectedBetweenGenericParameterListAndGenericWhereClause` to replace the node's
-  ///                   current `unexpectedBetweenGenericParameterListAndGenericWhereClause`, if present.
-  public func withUnexpectedBetweenGenericParameterListAndGenericWhereClause(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
   }
 
   public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return GenericWhereClauseSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = withGenericWhereClause(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `genericWhereClause` replaced.
-  /// - param newChild: The new `genericWhereClause` to replace the node's
-  ///                   current `genericWhereClause`, if present.
-  public func withGenericWhereClause(_ newChild: GenericWhereClauseSyntax?) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
   }
 
   public var unexpectedBetweenGenericWhereClauseAndRightAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenGenericWhereClauseAndRightAngleBracket(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenGenericWhereClauseAndRightAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedBetweenGenericWhereClauseAndRightAngleBracket` to replace the node's
-  ///                   current `unexpectedBetweenGenericWhereClauseAndRightAngleBracket`, if present.
-  public func withUnexpectedBetweenGenericWhereClauseAndRightAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
   }
 
   public var rightAngleBracket: TokenSyntax {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightAngleBracket(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightAngleBracket` replaced.
-  /// - param newChild: The new `rightAngleBracket` to replace the node's
-  ///                   current `rightAngleBracket`, if present.
-  public func withRightAngleBracket(_ newChild: TokenSyntax) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
   }
 
   public var unexpectedAfterRightAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightAngleBracket(value)
+      self = GenericParameterClauseSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedAfterRightAngleBracket` to replace the node's
-  ///                   current `unexpectedAfterRightAngleBracket`, if present.
-  public func withUnexpectedAfterRightAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> GenericParameterClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return GenericParameterClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -24863,146 +16892,65 @@ public struct ConformanceRequirementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftTypeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftTypeIdentifier(value)
+      self = ConformanceRequirementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftTypeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftTypeIdentifier` to replace the node's
-  ///                   current `unexpectedBeforeLeftTypeIdentifier`, if present.
-  public func withUnexpectedBeforeLeftTypeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> ConformanceRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return ConformanceRequirementSyntax(newData)
   }
 
   public var leftTypeIdentifier: TypeSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftTypeIdentifier(value)
+      self = ConformanceRequirementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftTypeIdentifier` replaced.
-  /// - param newChild: The new `leftTypeIdentifier` to replace the node's
-  ///                   current `leftTypeIdentifier`, if present.
-  public func withLeftTypeIdentifier(_ newChild: TypeSyntax) -> ConformanceRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return ConformanceRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenLeftTypeIdentifierAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftTypeIdentifierAndColon(value)
+      self = ConformanceRequirementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftTypeIdentifierAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftTypeIdentifierAndColon` to replace the node's
-  ///                   current `unexpectedBetweenLeftTypeIdentifierAndColon`, if present.
-  public func withUnexpectedBetweenLeftTypeIdentifierAndColon(_ newChild: UnexpectedNodesSyntax?) -> ConformanceRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return ConformanceRequirementSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = ConformanceRequirementSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> ConformanceRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return ConformanceRequirementSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndRightTypeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndRightTypeIdentifier(value)
+      self = ConformanceRequirementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndRightTypeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndRightTypeIdentifier` to replace the node's
-  ///                   current `unexpectedBetweenColonAndRightTypeIdentifier`, if present.
-  public func withUnexpectedBetweenColonAndRightTypeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> ConformanceRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return ConformanceRequirementSyntax(newData)
   }
 
   public var rightTypeIdentifier: TypeSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightTypeIdentifier(value)
+      self = ConformanceRequirementSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightTypeIdentifier` replaced.
-  /// - param newChild: The new `rightTypeIdentifier` to replace the node's
-  ///                   current `rightTypeIdentifier`, if present.
-  public func withRightTypeIdentifier(_ newChild: TypeSyntax) -> ConformanceRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return ConformanceRequirementSyntax(newData)
   }
 
   public var unexpectedAfterRightTypeIdentifier: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightTypeIdentifier(value)
+      self = ConformanceRequirementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightTypeIdentifier` replaced.
-  /// - param newChild: The new `unexpectedAfterRightTypeIdentifier` to replace the node's
-  ///                   current `unexpectedAfterRightTypeIdentifier`, if present.
-  public func withUnexpectedAfterRightTypeIdentifier(_ newChild: UnexpectedNodesSyntax?) -> ConformanceRequirementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return ConformanceRequirementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -25104,73 +17052,37 @@ public struct PrimaryAssociatedTypeClauseSyntax: SyntaxProtocol, SyntaxHashable 
 
   public var unexpectedBeforeLeftAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftAngleBracket(value)
+      self = PrimaryAssociatedTypeClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftAngleBracket` to replace the node's
-  ///                   current `unexpectedBeforeLeftAngleBracket`, if present.
-  public func withUnexpectedBeforeLeftAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> PrimaryAssociatedTypeClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return PrimaryAssociatedTypeClauseSyntax(newData)
   }
 
   public var leftAngleBracket: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftAngleBracket(value)
+      self = PrimaryAssociatedTypeClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftAngleBracket` replaced.
-  /// - param newChild: The new `leftAngleBracket` to replace the node's
-  ///                   current `leftAngleBracket`, if present.
-  public func withLeftAngleBracket(_ newChild: TokenSyntax) -> PrimaryAssociatedTypeClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return PrimaryAssociatedTypeClauseSyntax(newData)
   }
 
   public var unexpectedBetweenLeftAngleBracketAndPrimaryAssociatedTypeList: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftAngleBracketAndPrimaryAssociatedTypeList(value)
+      self = PrimaryAssociatedTypeClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftAngleBracketAndPrimaryAssociatedTypeList` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftAngleBracketAndPrimaryAssociatedTypeList` to replace the node's
-  ///                   current `unexpectedBetweenLeftAngleBracketAndPrimaryAssociatedTypeList`, if present.
-  public func withUnexpectedBetweenLeftAngleBracketAndPrimaryAssociatedTypeList(_ newChild: UnexpectedNodesSyntax?) -> PrimaryAssociatedTypeClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return PrimaryAssociatedTypeClauseSyntax(newData)
   }
 
   public var primaryAssociatedTypeList: PrimaryAssociatedTypeListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return PrimaryAssociatedTypeListSyntax(childData!)
+      return PrimaryAssociatedTypeListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPrimaryAssociatedTypeList(value)
+      self = PrimaryAssociatedTypeClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -25193,76 +17105,31 @@ public struct PrimaryAssociatedTypeClauseSyntax: SyntaxProtocol, SyntaxHashable 
     return PrimaryAssociatedTypeClauseSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `primaryAssociatedTypeList` replaced.
-  /// - param newChild: The new `primaryAssociatedTypeList` to replace the node's
-  ///                   current `primaryAssociatedTypeList`, if present.
-  public func withPrimaryAssociatedTypeList(_ newChild: PrimaryAssociatedTypeListSyntax) -> PrimaryAssociatedTypeClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return PrimaryAssociatedTypeClauseSyntax(newData)
-  }
-
   public var unexpectedBetweenPrimaryAssociatedTypeListAndRightAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPrimaryAssociatedTypeListAndRightAngleBracket(value)
+      self = PrimaryAssociatedTypeClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPrimaryAssociatedTypeListAndRightAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedBetweenPrimaryAssociatedTypeListAndRightAngleBracket` to replace the node's
-  ///                   current `unexpectedBetweenPrimaryAssociatedTypeListAndRightAngleBracket`, if present.
-  public func withUnexpectedBetweenPrimaryAssociatedTypeListAndRightAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> PrimaryAssociatedTypeClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return PrimaryAssociatedTypeClauseSyntax(newData)
   }
 
   public var rightAngleBracket: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightAngleBracket(value)
+      self = PrimaryAssociatedTypeClauseSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightAngleBracket` replaced.
-  /// - param newChild: The new `rightAngleBracket` to replace the node's
-  ///                   current `rightAngleBracket`, if present.
-  public func withRightAngleBracket(_ newChild: TokenSyntax) -> PrimaryAssociatedTypeClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return PrimaryAssociatedTypeClauseSyntax(newData)
   }
 
   public var unexpectedAfterRightAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightAngleBracket(value)
+      self = PrimaryAssociatedTypeClauseSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedAfterRightAngleBracket` to replace the node's
-  ///                   current `unexpectedAfterRightAngleBracket`, if present.
-  public func withUnexpectedAfterRightAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> PrimaryAssociatedTypeClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return PrimaryAssociatedTypeClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -25360,106 +17227,47 @@ public struct CompositionTypeElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeType(value)
+      self = CompositionTypeElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeType` replaced.
-  /// - param newChild: The new `unexpectedBeforeType` to replace the node's
-  ///                   current `unexpectedBeforeType`, if present.
-  public func withUnexpectedBeforeType(_ newChild: UnexpectedNodesSyntax?) -> CompositionTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return CompositionTypeElementSyntax(newData)
   }
 
   public var type: TypeSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withType(value)
+      self = CompositionTypeElementSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `type` replaced.
-  /// - param newChild: The new `type` to replace the node's
-  ///                   current `type`, if present.
-  public func withType(_ newChild: TypeSyntax) -> CompositionTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return CompositionTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenTypeAndAmpersand: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeAndAmpersand(value)
+      self = CompositionTypeElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeAndAmpersand` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeAndAmpersand` to replace the node's
-  ///                   current `unexpectedBetweenTypeAndAmpersand`, if present.
-  public func withUnexpectedBetweenTypeAndAmpersand(_ newChild: UnexpectedNodesSyntax?) -> CompositionTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return CompositionTypeElementSyntax(newData)
   }
 
   public var ampersand: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withAmpersand(value)
+      self = CompositionTypeElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `ampersand` replaced.
-  /// - param newChild: The new `ampersand` to replace the node's
-  ///                   current `ampersand`, if present.
-  public func withAmpersand(_ newChild: TokenSyntax?) -> CompositionTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return CompositionTypeElementSyntax(newData)
   }
 
   public var unexpectedAfterAmpersand: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterAmpersand(value)
+      self = CompositionTypeElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterAmpersand` replaced.
-  /// - param newChild: The new `unexpectedAfterAmpersand` to replace the node's
-  ///                   current `unexpectedAfterAmpersand`, if present.
-  public func withUnexpectedAfterAmpersand(_ newChild: UnexpectedNodesSyntax?) -> CompositionTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return CompositionTypeElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -25573,358 +17381,155 @@ public struct TupleTypeElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeInOut: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeInOut(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeInOut` replaced.
-  /// - param newChild: The new `unexpectedBeforeInOut` to replace the node's
-  ///                   current `unexpectedBeforeInOut`, if present.
-  public func withUnexpectedBeforeInOut(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var inOut: TokenSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withInOut(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `inOut` replaced.
-  /// - param newChild: The new `inOut` to replace the node's
-  ///                   current `inOut`, if present.
-  public func withInOut(_ newChild: TokenSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenInOutAndName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenInOutAndName(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenInOutAndName` replaced.
-  /// - param newChild: The new `unexpectedBetweenInOutAndName` to replace the node's
-  ///                   current `unexpectedBetweenInOutAndName`, if present.
-  public func withUnexpectedBetweenInOutAndName(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var name: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withName(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `name` replaced.
-  /// - param newChild: The new `name` to replace the node's
-  ///                   current `name`, if present.
-  public func withName(_ newChild: TokenSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenNameAndSecondName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenNameAndSecondName(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenNameAndSecondName` replaced.
-  /// - param newChild: The new `unexpectedBetweenNameAndSecondName` to replace the node's
-  ///                   current `unexpectedBetweenNameAndSecondName`, if present.
-  public func withUnexpectedBetweenNameAndSecondName(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var secondName: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withSecondName(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `secondName` replaced.
-  /// - param newChild: The new `secondName` to replace the node's
-  ///                   current `secondName`, if present.
-  public func withSecondName(_ newChild: TokenSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenSecondNameAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenSecondNameAndColon(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenSecondNameAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenSecondNameAndColon` to replace the node's
-  ///                   current `unexpectedBetweenSecondNameAndColon`, if present.
-  public func withUnexpectedBetweenSecondNameAndColon(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var colon: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withColon(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndType(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndType` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndType` to replace the node's
-  ///                   current `unexpectedBetweenColonAndType`, if present.
-  public func withUnexpectedBetweenColonAndType(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var type: TypeSyntax {
     get {
-      let childData = data.child(at: 9, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = withType(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `type` replaced.
-  /// - param newChild: The new `type` to replace the node's
-  ///                   current `type`, if present.
-  public func withType(_ newChild: TypeSyntax) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 9, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenTypeAndEllipsis: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 10, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenTypeAndEllipsis(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenTypeAndEllipsis` replaced.
-  /// - param newChild: The new `unexpectedBetweenTypeAndEllipsis` to replace the node's
-  ///                   current `unexpectedBetweenTypeAndEllipsis`, if present.
-  public func withUnexpectedBetweenTypeAndEllipsis(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 10, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var ellipsis: TokenSyntax? {
     get {
-      let childData = data.child(at: 11, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 11, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withEllipsis(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `ellipsis` replaced.
-  /// - param newChild: The new `ellipsis` to replace the node's
-  ///                   current `ellipsis`, if present.
-  public func withEllipsis(_ newChild: TokenSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 11, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenEllipsisAndInitializer: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 12, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenEllipsisAndInitializer(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenEllipsisAndInitializer` replaced.
-  /// - param newChild: The new `unexpectedBetweenEllipsisAndInitializer` to replace the node's
-  ///                   current `unexpectedBetweenEllipsisAndInitializer`, if present.
-  public func withUnexpectedBetweenEllipsisAndInitializer(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 12, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var initializer: InitializerClauseSyntax? {
     get {
-      let childData = data.child(at: 13, parent: Syntax(self))
-      if childData == nil { return nil }
-      return InitializerClauseSyntax(childData!)
+      return data.child(at: 13, parent: Syntax(self)).map(InitializerClauseSyntax.init)
     }
     set(value) {
-      self = withInitializer(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `initializer` replaced.
-  /// - param newChild: The new `initializer` to replace the node's
-  ///                   current `initializer`, if present.
-  public func withInitializer(_ newChild: InitializerClauseSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 13, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var unexpectedBetweenInitializerAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 14, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenInitializerAndTrailingComma(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenInitializerAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenInitializerAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenInitializerAndTrailingComma`, if present.
-  public func withUnexpectedBetweenInitializerAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 14, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 15, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 15, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 15, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 15, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 16, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = TupleTypeElementSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> TupleTypeElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 16, with: raw, arena: arena)
-    return TupleTypeElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -26062,106 +17667,47 @@ public struct GenericArgumentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeArgumentType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeArgumentType(value)
+      self = GenericArgumentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeArgumentType` replaced.
-  /// - param newChild: The new `unexpectedBeforeArgumentType` to replace the node's
-  ///                   current `unexpectedBeforeArgumentType`, if present.
-  public func withUnexpectedBeforeArgumentType(_ newChild: UnexpectedNodesSyntax?) -> GenericArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return GenericArgumentSyntax(newData)
   }
 
   public var argumentType: TypeSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withArgumentType(value)
+      self = GenericArgumentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `argumentType` replaced.
-  /// - param newChild: The new `argumentType` to replace the node's
-  ///                   current `argumentType`, if present.
-  public func withArgumentType(_ newChild: TypeSyntax) -> GenericArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return GenericArgumentSyntax(newData)
   }
 
   public var unexpectedBetweenArgumentTypeAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenArgumentTypeAndTrailingComma(value)
+      self = GenericArgumentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenArgumentTypeAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenArgumentTypeAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenArgumentTypeAndTrailingComma`, if present.
-  public func withUnexpectedBetweenArgumentTypeAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> GenericArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return GenericArgumentSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = GenericArgumentSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> GenericArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return GenericArgumentSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = GenericArgumentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> GenericArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return GenericArgumentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -26255,73 +17801,37 @@ public struct GenericArgumentClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLeftAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLeftAngleBracket(value)
+      self = GenericArgumentClauseSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLeftAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedBeforeLeftAngleBracket` to replace the node's
-  ///                   current `unexpectedBeforeLeftAngleBracket`, if present.
-  public func withUnexpectedBeforeLeftAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> GenericArgumentClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return GenericArgumentClauseSyntax(newData)
   }
 
   public var leftAngleBracket: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLeftAngleBracket(value)
+      self = GenericArgumentClauseSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `leftAngleBracket` replaced.
-  /// - param newChild: The new `leftAngleBracket` to replace the node's
-  ///                   current `leftAngleBracket`, if present.
-  public func withLeftAngleBracket(_ newChild: TokenSyntax) -> GenericArgumentClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return GenericArgumentClauseSyntax(newData)
   }
 
   public var unexpectedBetweenLeftAngleBracketAndArguments: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLeftAngleBracketAndArguments(value)
+      self = GenericArgumentClauseSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLeftAngleBracketAndArguments` replaced.
-  /// - param newChild: The new `unexpectedBetweenLeftAngleBracketAndArguments` to replace the node's
-  ///                   current `unexpectedBetweenLeftAngleBracketAndArguments`, if present.
-  public func withUnexpectedBetweenLeftAngleBracketAndArguments(_ newChild: UnexpectedNodesSyntax?) -> GenericArgumentClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return GenericArgumentClauseSyntax(newData)
   }
 
   public var arguments: GenericArgumentListSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return GenericArgumentListSyntax(childData!)
+      return GenericArgumentListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withArguments(value)
+      self = GenericArgumentClauseSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
 
@@ -26344,76 +17854,31 @@ public struct GenericArgumentClauseSyntax: SyntaxProtocol, SyntaxHashable {
     return GenericArgumentClauseSyntax(newData)
   }
 
-  /// Returns a copy of the receiver with its `arguments` replaced.
-  /// - param newChild: The new `arguments` to replace the node's
-  ///                   current `arguments`, if present.
-  public func withArguments(_ newChild: GenericArgumentListSyntax) -> GenericArgumentClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return GenericArgumentClauseSyntax(newData)
-  }
-
   public var unexpectedBetweenArgumentsAndRightAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenArgumentsAndRightAngleBracket(value)
+      self = GenericArgumentClauseSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenArgumentsAndRightAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedBetweenArgumentsAndRightAngleBracket` to replace the node's
-  ///                   current `unexpectedBetweenArgumentsAndRightAngleBracket`, if present.
-  public func withUnexpectedBetweenArgumentsAndRightAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> GenericArgumentClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return GenericArgumentClauseSyntax(newData)
   }
 
   public var rightAngleBracket: TokenSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withRightAngleBracket(value)
+      self = GenericArgumentClauseSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `rightAngleBracket` replaced.
-  /// - param newChild: The new `rightAngleBracket` to replace the node's
-  ///                   current `rightAngleBracket`, if present.
-  public func withRightAngleBracket(_ newChild: TokenSyntax) -> GenericArgumentClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return GenericArgumentClauseSyntax(newData)
   }
 
   public var unexpectedAfterRightAngleBracket: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterRightAngleBracket(value)
+      self = GenericArgumentClauseSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterRightAngleBracket` replaced.
-  /// - param newChild: The new `unexpectedAfterRightAngleBracket` to replace the node's
-  ///                   current `unexpectedAfterRightAngleBracket`, if present.
-  public func withUnexpectedAfterRightAngleBracket(_ newChild: UnexpectedNodesSyntax?) -> GenericArgumentClauseSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return GenericArgumentClauseSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -26511,105 +17976,47 @@ public struct TypeAnnotationSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeColon(value)
+      self = TypeAnnotationSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeColon` replaced.
-  /// - param newChild: The new `unexpectedBeforeColon` to replace the node's
-  ///                   current `unexpectedBeforeColon`, if present.
-  public func withUnexpectedBeforeColon(_ newChild: UnexpectedNodesSyntax?) -> TypeAnnotationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return TypeAnnotationSyntax(newData)
   }
 
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = TypeAnnotationSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> TypeAnnotationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return TypeAnnotationSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndType(value)
+      self = TypeAnnotationSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndType` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndType` to replace the node's
-  ///                   current `unexpectedBetweenColonAndType`, if present.
-  public func withUnexpectedBetweenColonAndType(_ newChild: UnexpectedNodesSyntax?) -> TypeAnnotationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return TypeAnnotationSyntax(newData)
   }
 
   public var type: TypeSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TypeSyntax(childData!)
+      return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withType(value)
+      self = TypeAnnotationSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `type` replaced.
-  /// - param newChild: The new `type` to replace the node's
-  ///                   current `type`, if present.
-  public func withType(_ newChild: TypeSyntax) -> TypeAnnotationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return TypeAnnotationSyntax(newData)
   }
 
   public var unexpectedAfterType: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterType(value)
+      self = TypeAnnotationSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterType` replaced.
-  /// - param newChild: The new `unexpectedAfterType` to replace the node's
-  ///                   current `unexpectedAfterType`, if present.
-  public func withUnexpectedAfterType(_ newChild: UnexpectedNodesSyntax?) -> TypeAnnotationSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return TypeAnnotationSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -26707,190 +18114,83 @@ public struct TuplePatternElementSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeLabelName: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLabelName(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLabelName` replaced.
-  /// - param newChild: The new `unexpectedBeforeLabelName` to replace the node's
-  ///                   current `unexpectedBeforeLabelName`, if present.
-  public func withUnexpectedBeforeLabelName(_ newChild: UnexpectedNodesSyntax?) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public var labelName: TokenSyntax? {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withLabelName(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `labelName` replaced.
-  /// - param newChild: The new `labelName` to replace the node's
-  ///                   current `labelName`, if present.
-  public func withLabelName(_ newChild: TokenSyntax?) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public var unexpectedBetweenLabelNameAndLabelColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelNameAndLabelColon(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelNameAndLabelColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelNameAndLabelColon` to replace the node's
-  ///                   current `unexpectedBetweenLabelNameAndLabelColon`, if present.
-  public func withUnexpectedBetweenLabelNameAndLabelColon(_ newChild: UnexpectedNodesSyntax?) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public var labelColon: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withLabelColon(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `labelColon` replaced.
-  /// - param newChild: The new `labelColon` to replace the node's
-  ///                   current `labelColon`, if present.
-  public func withLabelColon(_ newChild: TokenSyntax?) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public var unexpectedBetweenLabelColonAndPattern: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelColonAndPattern(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelColonAndPattern` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelColonAndPattern` to replace the node's
-  ///                   current `unexpectedBetweenLabelColonAndPattern`, if present.
-  public func withUnexpectedBetweenLabelColonAndPattern(_ newChild: UnexpectedNodesSyntax?) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public var pattern: PatternSyntax {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return PatternSyntax(childData!)
+      return PatternSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPattern(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `pattern` replaced.
-  /// - param newChild: The new `pattern` to replace the node's
-  ///                   current `pattern`, if present.
-  public func withPattern(_ newChild: PatternSyntax) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public var unexpectedBetweenPatternAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPatternAndTrailingComma(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPatternAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenPatternAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenPatternAndTrailingComma`, if present.
-  public func withUnexpectedBetweenPatternAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 7, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 7, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 8, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = TuplePatternElementSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> TuplePatternElementSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 8, with: raw, arena: arena)
-    return TuplePatternElementSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -27046,65 +18346,30 @@ public struct AvailabilityArgumentSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeEntry: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeEntry(value)
+      self = AvailabilityArgumentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeEntry` replaced.
-  /// - param newChild: The new `unexpectedBeforeEntry` to replace the node's
-  ///                   current `unexpectedBeforeEntry`, if present.
-  public func withUnexpectedBeforeEntry(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AvailabilityArgumentSyntax(newData)
   }
 
   /// The actual argument
   public var entry: Entry {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return Entry(childData!)
+      return Entry(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withEntry(value)
+      self = AvailabilityArgumentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `entry` replaced.
-  /// - param newChild: The new `entry` to replace the node's
-  ///                   current `entry`, if present.
-  public func withEntry(_ newChild: Entry) -> AvailabilityArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AvailabilityArgumentSyntax(newData)
   }
 
   public var unexpectedBetweenEntryAndTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenEntryAndTrailingComma(value)
+      self = AvailabilityArgumentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenEntryAndTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedBetweenEntryAndTrailingComma` to replace the node's
-  ///                   current `unexpectedBetweenEntryAndTrailingComma`, if present.
-  public func withUnexpectedBetweenEntryAndTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AvailabilityArgumentSyntax(newData)
   }
 
   /// 
@@ -27113,44 +18378,20 @@ public struct AvailabilityArgumentSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var trailingComma: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withTrailingComma(value)
+      self = AvailabilityArgumentSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `trailingComma` replaced.
-  /// - param newChild: The new `trailingComma` to replace the node's
-  ///                   current `trailingComma`, if present.
-  public func withTrailingComma(_ newChild: TokenSyntax?) -> AvailabilityArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AvailabilityArgumentSyntax(newData)
   }
 
   public var unexpectedAfterTrailingComma: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterTrailingComma(value)
+      self = AvailabilityArgumentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterTrailingComma` replaced.
-  /// - param newChild: The new `unexpectedAfterTrailingComma` to replace the node's
-  ///                   current `unexpectedAfterTrailingComma`, if present.
-  public func withUnexpectedAfterTrailingComma(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AvailabilityArgumentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -27284,149 +18525,68 @@ public struct AvailabilityLabeledArgumentSyntax: SyntaxProtocol, SyntaxHashable 
 
   public var unexpectedBeforeLabel: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeLabel(value)
+      self = AvailabilityLabeledArgumentSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeLabel` replaced.
-  /// - param newChild: The new `unexpectedBeforeLabel` to replace the node's
-  ///                   current `unexpectedBeforeLabel`, if present.
-  public func withUnexpectedBeforeLabel(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityLabeledArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AvailabilityLabeledArgumentSyntax(newData)
   }
 
   /// The label of the argument
   public var label: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withLabel(value)
+      self = AvailabilityLabeledArgumentSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `label` replaced.
-  /// - param newChild: The new `label` to replace the node's
-  ///                   current `label`, if present.
-  public func withLabel(_ newChild: TokenSyntax) -> AvailabilityLabeledArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AvailabilityLabeledArgumentSyntax(newData)
   }
 
   public var unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenLabelAndColon(value)
+      self = AvailabilityLabeledArgumentSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenLabelAndColon` replaced.
-  /// - param newChild: The new `unexpectedBetweenLabelAndColon` to replace the node's
-  ///                   current `unexpectedBetweenLabelAndColon`, if present.
-  public func withUnexpectedBetweenLabelAndColon(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityLabeledArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AvailabilityLabeledArgumentSyntax(newData)
   }
 
   /// The colon separating label and value
   public var colon: TokenSyntax {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = withColon(value)
+      self = AvailabilityLabeledArgumentSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `colon` replaced.
-  /// - param newChild: The new `colon` to replace the node's
-  ///                   current `colon`, if present.
-  public func withColon(_ newChild: TokenSyntax) -> AvailabilityLabeledArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AvailabilityLabeledArgumentSyntax(newData)
   }
 
   public var unexpectedBetweenColonAndValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenColonAndValue(value)
+      self = AvailabilityLabeledArgumentSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenColonAndValue` replaced.
-  /// - param newChild: The new `unexpectedBetweenColonAndValue` to replace the node's
-  ///                   current `unexpectedBetweenColonAndValue`, if present.
-  public func withUnexpectedBetweenColonAndValue(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityLabeledArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AvailabilityLabeledArgumentSyntax(newData)
   }
 
   /// The value of this labeled argument
   public var value: Value {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      return Value(childData!)
+      return Value(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = withValue(value)
+      self = AvailabilityLabeledArgumentSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `value` replaced.
-  /// - param newChild: The new `value` to replace the node's
-  ///                   current `value`, if present.
-  public func withValue(_ newChild: Value) -> AvailabilityLabeledArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return AvailabilityLabeledArgumentSyntax(newData)
   }
 
   public var unexpectedAfterValue: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterValue(value)
+      self = AvailabilityLabeledArgumentSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterValue` replaced.
-  /// - param newChild: The new `unexpectedAfterValue` to replace the node's
-  ///                   current `unexpectedAfterValue`, if present.
-  public func withUnexpectedAfterValue(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityLabeledArgumentSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return AvailabilityLabeledArgumentSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -27528,23 +18688,11 @@ public struct AvailabilityVersionRestrictionSyntax: SyntaxProtocol, SyntaxHashab
 
   public var unexpectedBeforePlatform: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforePlatform(value)
+      self = AvailabilityVersionRestrictionSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforePlatform` replaced.
-  /// - param newChild: The new `unexpectedBeforePlatform` to replace the node's
-  ///                   current `unexpectedBeforePlatform`, if present.
-  public func withUnexpectedBeforePlatform(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityVersionRestrictionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionSyntax(newData)
   }
 
   /// 
@@ -27554,85 +18702,38 @@ public struct AvailabilityVersionRestrictionSyntax: SyntaxProtocol, SyntaxHashab
   /// 
   public var platform: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withPlatform(value)
+      self = AvailabilityVersionRestrictionSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `platform` replaced.
-  /// - param newChild: The new `platform` to replace the node's
-  ///                   current `platform`, if present.
-  public func withPlatform(_ newChild: TokenSyntax) -> AvailabilityVersionRestrictionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionSyntax(newData)
   }
 
   public var unexpectedBetweenPlatformAndVersion: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPlatformAndVersion(value)
+      self = AvailabilityVersionRestrictionSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPlatformAndVersion` replaced.
-  /// - param newChild: The new `unexpectedBetweenPlatformAndVersion` to replace the node's
-  ///                   current `unexpectedBetweenPlatformAndVersion`, if present.
-  public func withUnexpectedBetweenPlatformAndVersion(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityVersionRestrictionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionSyntax(newData)
   }
 
   public var version: VersionTupleSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return VersionTupleSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(VersionTupleSyntax.init)
     }
     set(value) {
-      self = withVersion(value)
+      self = AvailabilityVersionRestrictionSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `version` replaced.
-  /// - param newChild: The new `version` to replace the node's
-  ///                   current `version`, if present.
-  public func withVersion(_ newChild: VersionTupleSyntax?) -> AvailabilityVersionRestrictionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionSyntax(newData)
   }
 
   public var unexpectedAfterVersion: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterVersion(value)
+      self = AvailabilityVersionRestrictionSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterVersion` replaced.
-  /// - param newChild: The new `unexpectedAfterVersion` to replace the node's
-  ///                   current `unexpectedAfterVersion`, if present.
-  public func withUnexpectedAfterVersion(_ newChild: UnexpectedNodesSyntax?) -> AvailabilityVersionRestrictionSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return AvailabilityVersionRestrictionSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {
@@ -27730,23 +18831,11 @@ public struct VersionTupleSyntax: SyntaxProtocol, SyntaxHashable {
 
   public var unexpectedBeforeMajorMinor: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 0, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBeforeMajorMinor(value)
+      self = VersionTupleSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBeforeMajorMinor` replaced.
-  /// - param newChild: The new `unexpectedBeforeMajorMinor` to replace the node's
-  ///                   current `unexpectedBeforeMajorMinor`, if present.
-  public func withUnexpectedBeforeMajorMinor(_ newChild: UnexpectedNodesSyntax?) -> VersionTupleSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 0, with: raw, arena: arena)
-    return VersionTupleSyntax(newData)
   }
 
   /// 
@@ -27758,43 +18847,20 @@ public struct VersionTupleSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var majorMinor: TokenSyntax {
     get {
-      let childData = data.child(at: 1, parent: Syntax(self))
-      return TokenSyntax(childData!)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = withMajorMinor(value)
+      self = VersionTupleSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `majorMinor` replaced.
-  /// - param newChild: The new `majorMinor` to replace the node's
-  ///                   current `majorMinor`, if present.
-  public func withMajorMinor(_ newChild: TokenSyntax) -> VersionTupleSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild.raw
-    let newData = data.replacingChild(at: 1, with: raw, arena: arena)
-    return VersionTupleSyntax(newData)
   }
 
   public var unexpectedBetweenMajorMinorAndPatchPeriod: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 2, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenMajorMinorAndPatchPeriod(value)
+      self = VersionTupleSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenMajorMinorAndPatchPeriod` replaced.
-  /// - param newChild: The new `unexpectedBetweenMajorMinorAndPatchPeriod` to replace the node's
-  ///                   current `unexpectedBetweenMajorMinorAndPatchPeriod`, if present.
-  public func withUnexpectedBetweenMajorMinorAndPatchPeriod(_ newChild: UnexpectedNodesSyntax?) -> VersionTupleSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 2, with: raw, arena: arena)
-    return VersionTupleSyntax(newData)
   }
 
   /// 
@@ -27803,44 +18869,20 @@ public struct VersionTupleSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var patchPeriod: TokenSyntax? {
     get {
-      let childData = data.child(at: 3, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 3, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withPatchPeriod(value)
+      self = VersionTupleSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `patchPeriod` replaced.
-  /// - param newChild: The new `patchPeriod` to replace the node's
-  ///                   current `patchPeriod`, if present.
-  public func withPatchPeriod(_ newChild: TokenSyntax?) -> VersionTupleSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 3, with: raw, arena: arena)
-    return VersionTupleSyntax(newData)
   }
 
   public var unexpectedBetweenPatchPeriodAndPatchVersion: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 4, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedBetweenPatchPeriodAndPatchVersion(value)
+      self = VersionTupleSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedBetweenPatchPeriodAndPatchVersion` replaced.
-  /// - param newChild: The new `unexpectedBetweenPatchPeriodAndPatchVersion` to replace the node's
-  ///                   current `unexpectedBetweenPatchPeriodAndPatchVersion`, if present.
-  public func withUnexpectedBetweenPatchPeriodAndPatchVersion(_ newChild: UnexpectedNodesSyntax?) -> VersionTupleSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 4, with: raw, arena: arena)
-    return VersionTupleSyntax(newData)
   }
 
   /// 
@@ -27848,44 +18890,20 @@ public struct VersionTupleSyntax: SyntaxProtocol, SyntaxHashable {
   /// 
   public var patchVersion: TokenSyntax? {
     get {
-      let childData = data.child(at: 5, parent: Syntax(self))
-      if childData == nil { return nil }
-      return TokenSyntax(childData!)
+      return data.child(at: 5, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = withPatchVersion(value)
+      self = VersionTupleSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `patchVersion` replaced.
-  /// - param newChild: The new `patchVersion` to replace the node's
-  ///                   current `patchVersion`, if present.
-  public func withPatchVersion(_ newChild: TokenSyntax?) -> VersionTupleSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 5, with: raw, arena: arena)
-    return VersionTupleSyntax(newData)
   }
 
   public var unexpectedAfterPatchVersion: UnexpectedNodesSyntax? {
     get {
-      let childData = data.child(at: 6, parent: Syntax(self))
-      if childData == nil { return nil }
-      return UnexpectedNodesSyntax(childData!)
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = withUnexpectedAfterPatchVersion(value)
+      self = VersionTupleSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
     }
-  }
-
-  /// Returns a copy of the receiver with its `unexpectedAfterPatchVersion` replaced.
-  /// - param newChild: The new `unexpectedAfterPatchVersion` to replace the node's
-  ///                   current `unexpectedAfterPatchVersion`, if present.
-  public func withUnexpectedAfterPatchVersion(_ newChild: UnexpectedNodesSyntax?) -> VersionTupleSyntax {
-    let arena = SyntaxArena()
-    let raw = newChild?.raw
-    let newData = data.replacingChild(at: 6, with: raw, arena: arena)
-    return VersionTupleSyntax(newData)
   }
 
   public static var structure: SyntaxNodeStructure {

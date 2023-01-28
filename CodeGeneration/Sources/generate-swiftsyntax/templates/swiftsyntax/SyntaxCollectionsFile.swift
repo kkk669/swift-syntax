@@ -40,8 +40,8 @@ let syntaxCollectionsFile = SourceFileSyntax(leadingTrivia: [.blockComment(gener
       """
     
     StructDeclSyntax("""
-      \(documentation)
-      public struct \(node.name): SyntaxCollection, SyntaxHashable
+      \(raw: documentation)
+      public struct \(raw: node.name): SyntaxCollection, SyntaxHashable
       """) {
       if let collectionElementChoices = node.collectionElementChoices, !collectionElementChoices.isEmpty {
         EnumDeclSyntax("""
@@ -291,69 +291,6 @@ let syntaxCollectionsFile = SourceFileSyntax(leadingTrivia: [.blockComment(gener
         """)
       
       FunctionDeclSyntax("""
-        /// Returns a new `\(raw: node.name)` with its leading trivia replaced
-        /// by the provided trivia.
-        public func withLeadingTrivia(_ leadingTrivia: Trivia) -> \(raw: node.name) {
-          return \(raw: node.name)(data.withLeadingTrivia(leadingTrivia, arena: SyntaxArena()))
-        }
-        """)
-      
-      FunctionDeclSyntax("""
-        /// Returns a new `\(raw: node.name)` with its trailing trivia replaced
-        /// by the provided trivia.
-        public func withTrailingTrivia(_ trailingTrivia: Trivia) -> \(raw: node.name) {
-          return \(raw: node.name)(data.withTrailingTrivia(trailingTrivia, arena: SyntaxArena()))
-        }
-        """)
-      
-      FunctionDeclSyntax("""
-        /// Returns a new `\(raw: node.name)` with its leading trivia removed.
-        public func withoutLeadingTrivia() -> \(raw: node.name) {
-          return withLeadingTrivia([])
-        }
-        """)
-      
-      
-      FunctionDeclSyntax("""
-        /// Returns a new `\(raw: node.name)` with its trailing trivia removed.
-        public func withoutTrailingTrivia() -> \(raw: node.name) {
-          return withTrailingTrivia([])
-        }
-        """)
-      
-      
-      FunctionDeclSyntax("""
-        /// Returns a new `\(raw: node.name)` with all trivia removed.
-        public func withoutTrivia() -> \(raw: node.name) {
-          return withoutLeadingTrivia().withoutTrailingTrivia()
-        }
-        """)
-      
-      VariableDeclSyntax("""
-        /// The leading trivia (spaces, newlines, etc.) associated with this `\(raw: node.name)`.
-        public var leadingTrivia: Trivia? {
-          get {
-            return raw.formLeadingTrivia()
-          }
-          set {
-            self = withLeadingTrivia(newValue ?? [])
-          }
-        }
-        """)
-      
-      VariableDeclSyntax("""
-        /// The trailing trivia (spaces, newlines, etc.) associated with this `\(raw: node.name)`.
-        public var trailingTrivia: Trivia? {
-          get {
-            return raw.formTrailingTrivia()
-          }
-          set {
-            self = withTrailingTrivia(newValue ?? [])
-          }
-        }
-        """)
-      
-      FunctionDeclSyntax("""
         public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
           return nil
         }
@@ -361,8 +298,8 @@ let syntaxCollectionsFile = SourceFileSyntax(leadingTrivia: [.blockComment(gener
     }
     
     ExtensionDeclSyntax("""
-      /// Conformance for `\(node.name)` to the `BidirectionalCollection` protocol.
-      extension \(node.name): BidirectionalCollection
+      /// Conformance for `\(raw: node.name)` to the `BidirectionalCollection` protocol.
+      extension \(raw: node.name): BidirectionalCollection
       """) {
       TypealiasDeclSyntax("public typealias Index = SyntaxChildrenIndex")
       

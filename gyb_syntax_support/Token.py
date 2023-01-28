@@ -228,22 +228,8 @@ SYNTAX_TOKENS = [
                text='\\\"\\\"\\\"', classification='StringLiteral'),
 
     # Keywords prefixed with a '#'.
-
-    PoundKeyword('PoundKeyPath', 'keyPath', text='#keyPath'),
-    PoundKeyword('PoundLine', 'line', text='#line'),
-    PoundKeyword('PoundSelector', 'selector', text='#selector'),
-    PoundKeyword('PoundFile', 'file', text='#file'),
-    PoundKeyword('PoundFileID', 'fileID', text='#fileID'),
-    PoundKeyword('PoundFilePath', 'filePath', text='#filePath'),
-    PoundKeyword('PoundColumn', 'column', text='#column'),
-    PoundKeyword('PoundFunction', 'function', text='#function'),
-    PoundKeyword('PoundDsohandle', 'dsohandle', text='#dsohandle'),
-    PoundKeyword('PoundAssert', 'assert', text='#assert'),
-
     PoundDirectiveKeyword('PoundSourceLocation', 'sourceLocation',
                           text='#sourceLocation'),
-    PoundDirectiveKeyword('PoundWarning', 'warning', text='#warning'),
-    PoundDirectiveKeyword('PoundError', 'error', text='#error'),
 
     PoundConditionalDirectiveKeyword('PoundIf', 'if', text='#if'),
     PoundConditionalDirectiveKeyword('PoundElse', 'else', text='#else'),
@@ -254,21 +240,6 @@ SYNTAX_TOKENS = [
 
     PoundConfig('PoundAvailable', 'available', text='#available'),
     PoundConfig('PoundUnavailable', 'unavailable', text='#unavailable'),
-
-    PoundObjectLiteral('PoundFileLiteral', 'fileLiteral',
-                       text='#fileLiteral',
-                       name_for_diagnostics='file reference',
-                       protocol='ExpressibleByFileReferenceLiteral'),
-    PoundObjectLiteral('PoundImageLiteral', 'imageLiteral',
-                       text='#imageLiteral',
-                       name_for_diagnostics='image',
-                       protocol='ExpressibleByImageLiteral'),
-    PoundObjectLiteral('PoundColorLiteral', 'colorLiteral',
-                       text='#colorLiteral',
-                       name_for_diagnostics='color',
-                       protocol='ExpressibleByColorLiteral'),
-
-    PoundConfig('PoundHasSymbol', '_hasSymbol', text='#_hasSymbol'),
 
     Literal('IntegerLiteral', 'integer_literal', name_for_diagnostics='integer literal',
             classification='IntegerLiteral'),

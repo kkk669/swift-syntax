@@ -137,7 +137,7 @@ extension SyntaxClassification {
 
 extension RawTokenKind {
   internal var classification: SyntaxClassification {
-    switch self {
+    switch self.base {
     case .wildcard: 
       return .none
     case .leftParen: 
@@ -192,31 +192,7 @@ extension RawTokenKind {
       return .stringLiteral
     case .multilineStringQuote: 
       return .stringLiteral
-    case .poundKeyPathKeyword: 
-      return .keyword
-    case .poundLineKeyword: 
-      return .keyword
-    case .poundSelectorKeyword: 
-      return .keyword
-    case .poundFileKeyword: 
-      return .keyword
-    case .poundFileIDKeyword: 
-      return .keyword
-    case .poundFilePathKeyword: 
-      return .keyword
-    case .poundColumnKeyword: 
-      return .keyword
-    case .poundFunctionKeyword: 
-      return .keyword
-    case .poundDsohandleKeyword: 
-      return .keyword
-    case .poundAssertKeyword: 
-      return .keyword
     case .poundSourceLocationKeyword: 
-      return .poundDirectiveKeyword
-    case .poundWarningKeyword: 
-      return .poundDirectiveKeyword
-    case .poundErrorKeyword: 
       return .poundDirectiveKeyword
     case .poundIfKeyword: 
       return .poundDirectiveKeyword
@@ -229,14 +205,6 @@ extension RawTokenKind {
     case .poundAvailableKeyword: 
       return .keyword
     case .poundUnavailableKeyword: 
-      return .keyword
-    case .poundFileLiteralKeyword: 
-      return .objectLiteral
-    case .poundImageLiteralKeyword: 
-      return .objectLiteral
-    case .poundColorLiteralKeyword: 
-      return .objectLiteral
-    case .poundHasSymbolKeyword: 
       return .keyword
     case .integerLiteral: 
       return .integerLiteral

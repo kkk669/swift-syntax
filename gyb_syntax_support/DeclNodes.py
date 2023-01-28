@@ -65,7 +65,8 @@ DECL_NODES = [
              Child('RightParen', kind='RightParenToken'),
          ]),
 
-    # -> Type
+    # return-clause ->
+    #   '->' type
     Node('ReturnClause', name_for_diagnostics=None, kind='Syntax',
          children=[
              Child('Arrow', kind='ArrowToken'),
@@ -73,15 +74,12 @@ DECL_NODES = [
          ]),
 
     # function-signature ->
-    #   '(' parameter-list? ')' async? (throws | rethrows)? '->'? type?
+    #   '(' parameter-list? ')' decl-effect-specifiers? return-clause?
     Node('FunctionSignature', name_for_diagnostics='function signature', kind='Syntax',
          children=[
              Child('Input', kind='ParameterClause'),
-             Child('AsyncOrReasyncKeyword', kind='KeywordToken',
-                   text_choices=['async', 'reasync'], is_optional=True),
-             Child('ThrowsOrRethrowsKeyword', kind='KeywordToken',
-                   is_optional=True,
-                   text_choices=['throws', 'rethrows']),
+             Child('EffectSpecifiers', kind='DeclEffectSpecifiers',
+                   is_optional=True),
              Child('Output', kind='ReturnClause', is_optional=True),
          ]),
 
@@ -121,24 +119,6 @@ DECL_NODES = [
                    collection_element_name='Clause'),
              Child('PoundEndif', kind='PoundEndifToken',
                    classification='BuildConfigId'),
-         ]),
-
-    Node('PoundErrorDecl', name_for_diagnostics="'#error' directive", kind='Decl',
-         traits=['Parenthesized'],
-         children=[
-             Child('PoundError', kind='PoundErrorToken'),
-             Child('LeftParen', kind='LeftParenToken'),
-             Child('Message', kind='StringLiteralExpr', name_for_diagnostics='message'),
-             Child('RightParen', kind='RightParenToken')
-         ]),
-
-    Node('PoundWarningDecl', name_for_diagnostics="'#warning' directive", kind='Decl',
-         traits=['Parenthesized'],
-         children=[
-             Child('PoundWarning', kind='PoundWarningToken'),
-             Child('LeftParen', kind='LeftParenToken'),
-             Child('Message', kind='StringLiteralExpr', name_for_diagnostics='message'),
-             Child('RightParen', kind='RightParenToken')
          ]),
 
     Node('PoundSourceLocation', name_for_diagnostics="'#sourceLocation' directive",
@@ -566,12 +546,7 @@ DECL_NODES = [
                       '_read', '_modify'
                    ]),
              Child('Parameter', name_for_diagnostics='parameter', kind='AccessorParameter', is_optional=True),
-             Child('AsyncKeyword', kind='KeywordToken',
-                   text_choices=['async'], is_optional=True),
-             Child('ThrowsKeyword', kind='KeywordToken',
-                   is_optional=True,
-                   text_choices=['throws', 'rethrows']
-                   ),
+             Child('EffectSpecifiers', kind='DeclEffectSpecifiers', is_optional=True),
              Child('Body', kind='CodeBlock', is_optional=True),
          ]),
 
@@ -923,7 +898,8 @@ DECL_NODES = [
 
     # e.g., "#embed("filename.txt")"
     Node('MacroExpansionDecl',
-         name_for_diagnostics="pound literal declaration", kind='Decl',
+         name_for_diagnostics="macro expansion", kind='Decl',
+         traits=['FreestandingMacroExpansion'],
          children=[
              Child('PoundToken', kind='PoundToken',
                    description='The `#` sign.'),

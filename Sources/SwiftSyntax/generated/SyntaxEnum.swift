@@ -141,6 +141,8 @@ public enum SyntaxEnum {
   
   case conventionWitnessMethodAttributeArguments(ConventionWitnessMethodAttributeArgumentsSyntax)
   
+  case declEffectSpecifiers(DeclEffectSpecifiersSyntax)
+  
   case declModifierDetail(DeclModifierDetailSyntax)
   
   case declModifier(DeclModifierSyntax)
@@ -254,8 +256,6 @@ public enum SyntaxEnum {
   case genericWhereClause(GenericWhereClauseSyntax)
   
   case guardStmt(GuardStmtSyntax)
-  
-  case hasSymbolCondition(HasSymbolConditionSyntax)
   
   case identifierExpr(IdentifierExprSyntax)
   
@@ -391,15 +391,9 @@ public enum SyntaxEnum {
   
   case postfixUnaryExpr(PostfixUnaryExprSyntax)
   
-  case poundAssertStmt(PoundAssertStmtSyntax)
-  
-  case poundErrorDecl(PoundErrorDeclSyntax)
-  
   case poundSourceLocationArgs(PoundSourceLocationArgsSyntax)
   
   case poundSourceLocation(PoundSourceLocationSyntax)
-  
-  case poundWarningDecl(PoundWarningDeclSyntax)
   
   case precedenceGroupAssignment(PrecedenceGroupAssignmentSyntax)
   
@@ -498,6 +492,8 @@ public enum SyntaxEnum {
   case tupleType(TupleTypeSyntax)
   
   case typeAnnotation(TypeAnnotationSyntax)
+  
+  case typeEffectSpecifiers(TypeEffectSpecifiersSyntax)
   
   case typeExpr(TypeExprSyntax)
   
@@ -670,6 +666,8 @@ public extension Syntax {
       return .conventionAttributeArguments(ConventionAttributeArgumentsSyntax(self)!)
     case .conventionWitnessMethodAttributeArguments: 
       return .conventionWitnessMethodAttributeArguments(ConventionWitnessMethodAttributeArgumentsSyntax(self)!)
+    case .declEffectSpecifiers: 
+      return .declEffectSpecifiers(DeclEffectSpecifiersSyntax(self)!)
     case .declModifierDetail: 
       return .declModifierDetail(DeclModifierDetailSyntax(self)!)
     case .declModifier: 
@@ -784,8 +782,6 @@ public extension Syntax {
       return .genericWhereClause(GenericWhereClauseSyntax(self)!)
     case .guardStmt: 
       return .guardStmt(GuardStmtSyntax(self)!)
-    case .hasSymbolCondition: 
-      return .hasSymbolCondition(HasSymbolConditionSyntax(self)!)
     case .identifierExpr: 
       return .identifierExpr(IdentifierExprSyntax(self)!)
     case .identifierPattern: 
@@ -920,16 +916,10 @@ public extension Syntax {
       return .postfixIfConfigExpr(PostfixIfConfigExprSyntax(self)!)
     case .postfixUnaryExpr: 
       return .postfixUnaryExpr(PostfixUnaryExprSyntax(self)!)
-    case .poundAssertStmt: 
-      return .poundAssertStmt(PoundAssertStmtSyntax(self)!)
-    case .poundErrorDecl: 
-      return .poundErrorDecl(PoundErrorDeclSyntax(self)!)
     case .poundSourceLocationArgs: 
       return .poundSourceLocationArgs(PoundSourceLocationArgsSyntax(self)!)
     case .poundSourceLocation: 
       return .poundSourceLocation(PoundSourceLocationSyntax(self)!)
-    case .poundWarningDecl: 
-      return .poundWarningDecl(PoundWarningDeclSyntax(self)!)
     case .precedenceGroupAssignment: 
       return .precedenceGroupAssignment(PrecedenceGroupAssignmentSyntax(self)!)
     case .precedenceGroupAssociativity: 
@@ -1028,6 +1018,8 @@ public extension Syntax {
       return .tupleType(TupleTypeSyntax(self)!)
     case .typeAnnotation: 
       return .typeAnnotation(TypeAnnotationSyntax(self)!)
+    case .typeEffectSpecifiers: 
+      return .typeEffectSpecifiers(TypeEffectSpecifiersSyntax(self)!)
     case .typeExpr: 
       return .typeExpr(TypeExprSyntax(self)!)
     case .typeInheritanceClause: 

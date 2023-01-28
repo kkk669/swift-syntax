@@ -82,6 +82,7 @@ class SwiftParserCli: ParsableCommand {
   static var configuration = CommandConfiguration(
     abstract: "Utility to test SwiftSyntax syntax tree creation.",
     subcommands: [
+      PerformanceTest.self,
       PrintDiags.self,
       PrintTree.self,
       Reduce.self,
@@ -138,18 +139,57 @@ class VerifyRoundTrip: ParsableCommand {
   ) throws {
     let tree = Parser.parse(source: source)
 
-    _ = ParseDiagnosticsGenerator.diagnostics(for: tree)
+    var diags = ParseDiagnosticsGenerator.diagnostics(for: tree)
 
     let resultTree: Syntax
     if foldSequences {
-      resultTree = foldAllSequences(tree).0
+      let folded = foldAllSequences(tree)
+      resultTree = folded.0
+      diags += folded.1
     } else {
       resultTree = Syntax(tree)
     }
 
+    _ = DiagnosticsFormatter.annotatedSource(tree: tree, diags: diags)
+
     if resultTree.syntaxTextBytes != [UInt8](source) {
       throw Error.roundTripFailed
     }
+  }
+}
+
+class PerformanceTest: ParsableCommand {
+  static var configuration = CommandConfiguration(
+    commandName: "performance-test",
+    abstract: "Parse all .swift files in '--directory' and its subdirectories '--iteration' times and output the average time (in milliseconds) one iteration took."
+  )
+
+  required init() {}
+
+  @Option(help: "The directory in which all .swift files should be parsed")
+  var directory: String
+
+  @Option(help: "How many times should the directory be parsed?")
+  var iterations: Int
+
+  func run() throws {
+    let sourceDir = URL(fileURLWithPath: self.directory)
+
+    let files = try FileManager.default
+      .enumerator(at: sourceDir, includingPropertiesForKeys: nil)!
+      .compactMap({ $0 as? URL })
+      .filter { $0.pathExtension == "swift" }
+      .map { try Data(contentsOf: $0) }
+
+    let start = Date()
+    for _ in 0..<self.iterations {
+      for file in files {
+        file.withUnsafeBytes { buf in
+          _ = Parser.parse(source: buf.bindMemory(to: UInt8.self))
+        }
+      }
+    }
+    print(Date().timeIntervalSince(start) / Double(self.iterations) * 1000)
   }
 }
 
@@ -167,18 +207,25 @@ class PrintDiags: ParsableCommand {
   @Flag(name: .long, help: "Perform sequence folding with the standard operators")
   var foldSequences: Bool = false
 
+  @Flag(name: .long, help: "Force output coloring with ANSI color codes")
+  var colorize: Bool = false
+
   func run() throws {
     let source = try getContentsOfSourceFile(at: sourceFile)
 
     source.withUnsafeBufferPointer { sourceBuffer in
       let tree = Parser.parse(source: sourceBuffer)
-
       var diags = ParseDiagnosticsGenerator.diagnostics(for: tree)
-      print(DiagnosticsFormatter.annotatedSource(tree: tree, diags: diags))
-
       if foldSequences {
         diags += foldAllSequences(tree).1
       }
+      let annotatedSource = DiagnosticsFormatter.annotatedSource(
+        tree: tree,
+        diags: diags,
+        colorize: colorize || TerminalHelper.isConnectedToTerminal
+      )
+
+      print(annotatedSource)
 
       if diags.isEmpty {
         print("No diagnostics produced")
@@ -385,8 +432,8 @@ class Reduce: ParsableCommand {
     if verbose {
       printerr("Reduced from \(source.count) to \(reduced.count) characters in \(checks) iterations")
     }
-    let reducedString = String(decoding: reduced, as: UTF8.self)
-    print(reducedString)
+
+    FileHandle.standardOutput.write(Data(reduced))
   }
 }
 #endif

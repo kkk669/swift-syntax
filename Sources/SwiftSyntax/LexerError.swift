@@ -19,6 +19,7 @@ public struct LexerError: Hashable {
 
     case expectedBinaryExponentInHexFloatLiteral
     case expectedDigitInFloatLiteral
+    case insufficientIndentationInMultilineStringLiteral
     case invalidBinaryDigitInIntegerLiteral
     case invalidDecimalDigitInIntegerLiteral
     case invalidFloatingPointCharacter
@@ -33,8 +34,8 @@ public struct LexerError: Hashable {
 
   public let kind: Kind
 
-  /// The offset at which the error is, in bytes relative to the token's content
-  /// start (i.e. relative to the tokens `positionAfterSkippingLeadingTrivia`)
+  /// The offset at which the error is, in bytes relative to the token's leading
+  /// trivia start (i.e. relative to the token's `position`)
   public let byteOffset: UInt16
 
   public init(_ kind: Kind, byteOffset: UInt16) {
@@ -43,6 +44,7 @@ public struct LexerError: Hashable {
   }
 
   public init(_ kind: Kind, byteOffset: Int) {
+    assert(byteOffset >= 0)
     // `type(of: self.byteOffset).max` gets optimized to a constant
     if byteOffset > type(of: self.byteOffset).max {
       self.kind = .lexerErrorOffsetOverflow

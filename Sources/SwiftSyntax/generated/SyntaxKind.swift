@@ -141,6 +141,8 @@ public enum SyntaxKind {
   
   case conventionWitnessMethodAttributeArguments
   
+  case declEffectSpecifiers
+  
   case declModifierDetail
   
   case declModifier
@@ -254,8 +256,6 @@ public enum SyntaxKind {
   case genericWhereClause
   
   case guardStmt
-  
-  case hasSymbolCondition
   
   case identifierExpr
   
@@ -391,15 +391,9 @@ public enum SyntaxKind {
   
   case postfixUnaryExpr
   
-  case poundAssertStmt
-  
-  case poundErrorDecl
-  
   case poundSourceLocationArgs
   
   case poundSourceLocation
-  
-  case poundWarningDecl
   
   case precedenceGroupAssignment
   
@@ -498,6 +492,8 @@ public enum SyntaxKind {
   case tupleType
   
   case typeAnnotation
+  
+  case typeEffectSpecifiers
   
   case typeExpr
   

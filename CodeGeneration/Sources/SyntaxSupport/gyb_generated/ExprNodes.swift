@@ -303,17 +303,8 @@ public let EXPR_NODES: [Node] = [
        nameForDiagnostics: nil,
        kind: "Expr",
        children: [
-         Child(name: "AsyncKeyword",
-               kind: "KeywordToken",
-               isOptional: true,
-               tokenChoices: [
-                 "Keyword"
-               ],
-               textChoices: [
-                 "async"
-               ]),
-         Child(name: "ThrowsToken",
-               kind: "ThrowsToken",
+         Child(name: "EffectSpecifiers",
+               kind: "TypeEffectSpecifiers",
                isOptional: true),
          Child(name: "ArrowToken",
                kind: "ArrowToken",
@@ -796,24 +787,9 @@ public let EXPR_NODES: [Node] = [
                  Child(name: "Input",
                        kind: "ParameterClause")
                ]),
-         Child(name: "AsyncKeyword",
-               kind: "KeywordToken",
-               isOptional: true,
-               tokenChoices: [
-                 "Keyword"
-               ],
-               textChoices: [
-                 "async"
-               ]),
-         Child(name: "ThrowsTok",
-               kind: "KeywordToken",
-               isOptional: true,
-               tokenChoices: [
-                 "Keyword"
-               ],
-               textChoices: [
-                 "throws"
-               ]),
+         Child(name: "EffectSpecifiers",
+               kind: "TypeEffectSpecifiers",
+               isOptional: true),
          Child(name: "Output",
                kind: "ReturnClause",
                isOptional: true),
@@ -1184,8 +1160,11 @@ public let EXPR_NODES: [Node] = [
        ]),
 
   Node(name: "MacroExpansionExpr",
-       nameForDiagnostics: "pound literal expression",
+       nameForDiagnostics: "macro expansion expression",
        kind: "Expr",
+       traits: [
+         "FreestandingMacroExpansion"
+       ],
        children: [
          Child(name: "PoundToken",
                kind: "PoundToken",
