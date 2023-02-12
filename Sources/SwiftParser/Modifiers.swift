@@ -150,9 +150,35 @@ extension Parser {
   }
 
   mutating func parseAccessLevelModifier() -> RawDeclModifierSyntax {
-    let (unexpectedBeforeName, name) = expectAny(
-      [.keyword(.private), .keyword(.fileprivate), .keyword(.internal), .keyword(.public)],
-      default: .keyword(.internal)
+    enum AccessLevelModifier: TokenSpecSet {
+      case `private`
+      case `fileprivate`
+      case `internal`
+      case `public`
+
+      var spec: TokenSpec {
+        switch self {
+        case .private: return .keyword(.private)
+        case .fileprivate: return .keyword(.fileprivate)
+        case .internal: return .keyword(.internal)
+        case .public: return .keyword(.public)
+        }
+      }
+
+      init?(lexeme: Lexer.Lexeme) {
+        switch lexeme {
+        case TokenSpec(.private): self = .private
+        case TokenSpec(.fileprivate): self = .fileprivate
+        case TokenSpec(.internal): self = .internal
+        case TokenSpec(.public): self = .public
+        default: return nil
+        }
+      }
+    }
+
+    let (unexpectedBeforeName, name) = expect(
+      anyIn: AccessLevelModifier.self,
+      default: .internal
     )
     let details = self.parseAccessModifierDetails()
     return RawDeclModifierSyntax(
@@ -170,7 +196,7 @@ extension Parser {
 
     let unexpectedBeforeDetail: RawUnexpectedNodesSyntax?
     let detail: RawTokenSyntax
-    if let setHandle = canRecoverTo(.keyword(.set), recoveryPrecedence: .weakBracketClose) {
+    if let setHandle = canRecoverTo(TokenSpec(.set, recoveryPrecedence: .weakBracketClose)) {
       (unexpectedBeforeDetail, detail) = eat(setHandle)
     } else {
       unexpectedBeforeDetail = nil

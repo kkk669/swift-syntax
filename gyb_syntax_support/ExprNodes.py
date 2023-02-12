@@ -29,13 +29,14 @@ EXPR_NODES = [
     # try! foo()
     Node('TryExpr', name_for_diagnostics="'try' expression", kind='Expr',
          children=[
-             Child('TryKeyword', kind='KeywordToken', text_choices=['try']),
+             Child('TryKeyword', kind='KeywordToken', token_choices=['KeywordToken|try']),
              Child('QuestionOrExclamationMark', kind='Token',
                    is_optional=True,
                    token_choices=[
                        'PostfixQuestionMarkToken',
                        'ExclamationMarkToken',
-                   ]),
+                   ],
+                   requires_trailing_space=True),
              Child('Expression', kind='Expr'),
          ]),
 
@@ -44,7 +45,7 @@ EXPR_NODES = [
     Node('AwaitExpr', name_for_diagnostics="'await' expression", kind='Expr',
          children=[
              Child('AwaitKeyword', kind='KeywordToken',
-                   text_choices=['await']),
+                   token_choices=['KeywordToken|await']),
              Child('Expression', kind='Expr'),
          ]),
 
@@ -52,7 +53,7 @@ EXPR_NODES = [
     Node('MoveExpr', name_for_diagnostics="'_move' expression", kind='Expr',
          children=[
              Child('MoveKeyword', kind='KeywordToken',
-                   text_choices=['_move']),
+                   token_choices=['KeywordToken|_move']),
              Child('Expression', kind='Expr'),
          ]),
 
@@ -60,7 +61,7 @@ EXPR_NODES = [
     Node('BorrowExpr', name_for_diagnostics="'_borrow' expression", kind='Expr',
          children=[
              Child('BorrowKeyword', kind='KeywordToken',
-                   text_choices=['_borrow']),
+                   token_choices=['KeywordToken|_borrow']),
              Child('Expression', kind='Expr'),
          ]),
 
@@ -70,7 +71,7 @@ EXPR_NODES = [
     Node('DeclNameArgument', name_for_diagnostics=None, kind='Syntax',
          children=[
              Child('Name', kind='Token'),
-             Child('Colon', kind='ColonToken'),
+             Child('Colon', kind='ColonToken', requires_trailing_space=False),
          ]),
     Node('DeclNameArgumentList', name_for_diagnostics=None, kind='SyntaxCollection',
          element='DeclNameArgument'),
@@ -100,13 +101,13 @@ EXPR_NODES = [
     # An 'super' expression.
     Node('SuperRefExpr', name_for_diagnostics=None, kind='Expr',
          children=[
-             Child('SuperKeyword', kind='KeywordToken', text_choices=['super']),
+             Child('SuperKeyword', kind='KeywordToken', token_choices=['KeywordToken|super']),
          ]),
 
     # A nil expression.
     Node('NilLiteralExpr', name_for_diagnostics=None, kind='Expr',
          children=[
-             Child('NilKeyword', kind='KeywordToken', text_choices=['nil']),
+             Child('NilKeyword', kind='KeywordToken', token_choices=['KeywordToken|nil']),
          ]),
 
     # A _ expression.
@@ -124,7 +125,7 @@ EXPR_NODES = [
     # A pack expansion expr spelled with 'repeat'.
     Node('PackExpansionExpr', name_for_diagnostics=None, kind='Expr',
          children=[
-             Child('RepeatKeyword', kind='KeywordToken', text_choices=['repeat']),
+             Child('RepeatKeyword', kind='KeywordToken', token_choices=['KeywordToken|repeat']),
              Child('PatternExpr', kind='Expr'),
          ]),
 
@@ -132,7 +133,7 @@ EXPR_NODES = [
     Node('PackElementExpr', name_for_diagnostics=None, kind='Expr',
          children=[
              Child('EachKeyword', kind='KeywordToken',
-                   text_choices=['each']),
+                   token_choices=['KeywordToken|each']),
              Child('PackRefExpr', kind='Expr'),
          ]),
 
@@ -154,7 +155,7 @@ EXPR_NODES = [
     # A prefix operator expression.
     # -x
     # !true
-    Node('PrefixOperatorExpr', name_for_diagnostics='prefix operator expression',
+    Node('PrefixOperatorExpr', name_for_diagnostics='operator',
          kind='Expr',
          children=[
              Child('OperatorToken', kind='PrefixOperatorToken',
@@ -164,7 +165,7 @@ EXPR_NODES = [
 
     # An operator like + or -.
     # NOTE: This appears only in SequenceExpr.
-    Node('BinaryOperatorExpr', name_for_diagnostics=None,
+    Node('BinaryOperatorExpr', name_for_diagnostics='operator',
          kind='Expr',
          children=[
              Child('OperatorToken', kind='BinaryOperatorToken'),
@@ -222,7 +223,7 @@ EXPR_NODES = [
              Child('LeftSquare', kind='LeftSquareBracketToken'),
              Child('Content', kind='Syntax',
                    node_choices=[
-                       Child('Colon', kind='ColonToken'),
+                       Child('Colon', kind='ColonToken', requires_trailing_space=False),
                        Child('Elements', kind='DictionaryElementList'),
                    ], is_indented=True),
              Child('RightSquare', kind='RightSquareBracketToken'),
@@ -275,13 +276,102 @@ EXPR_NODES = [
     # true or false
     Node('BooleanLiteralExpr', name_for_diagnostics='bool literal', kind='Expr',
          children=[
-             Child("BooleanLiteral", kind='KeywordToken', text_choices=['true', 'false'])
+             Child("BooleanLiteral", kind='KeywordToken', token_choices=['KeywordToken|true', 'KeywordToken|false'])
+         ]),
+
+    # if-expr -> identifier? ':'? 'if' condition-list code-block
+    #   else-clause ';'?
+    #
+    # This node represents both an 'if' expression, as well as an 'if' statement
+    # when wrapped in a ExpressionStmt node.
+    Node('IfExpr', name_for_diagnostics="'if' statement", kind='Expr',
+         traits=['WithCodeBlock'],
+         children=[
+              Child('IfKeyword', kind='KeywordToken', token_choices=['KeywordToken|if']),
+             Child('Conditions', kind='ConditionElementList',
+                   collection_element_name='Condition'),
+             Child('Body', kind='CodeBlock', name_for_diagnostics='body'),
+             Child('ElseKeyword', kind='ElseToken',
+                   is_optional=True),
+             Child('ElseBody', kind='Syntax', name_for_diagnostics='else body',
+                   node_choices=[
+                       Child('IfExpr', kind='IfExpr'),
+                       Child('CodeBlock', kind='CodeBlock'),
+                   ],
+                   is_optional=True),
+         ]),
+
+    # switch-expr -> identifier? ':'? 'switch' expr '{'
+    #   switch-case-list '}' ';'?
+    #
+    # This node represents both a 'switch' expression, as well as a 'switch'
+    # statement when wrapped in a ExpressionStmt node.
+    Node('SwitchExpr', name_for_diagnostics="'switch' statement", kind='Expr',
+         traits=['Braced'],
+         children=[
+             Child('SwitchKeyword', kind='KeywordToken', token_choices=['KeywordToken|switch']),
+             Child('Expression', kind='Expr'),
+             Child('LeftBrace', kind='LeftBraceToken'),
+             Child('Cases', kind='SwitchCaseList',
+                   collection_element_name='Case'),
+             Child('RightBrace', kind='RightBraceToken',
+                   requires_leading_newline=True),
+         ]),
+
+    # switch-case-list -> switch-case switch-case-list?
+    Node('SwitchCaseList', name_for_diagnostics=None, kind='SyntaxCollection',
+         element='Syntax', element_name='SwitchCase',
+         element_choices=['SwitchCase', 'IfConfigDecl'],
+         elements_separated_by_newline=True),
+
+    # switch-case -> unknown-attr? switch-case-label stmt-list
+    #              | unknown-attr? switch-default-label stmt-list
+    Node('SwitchCase', name_for_diagnostics='switch case', kind='Syntax',
+         traits=['WithStatements'],
+         parser_function='parseSwitchCase',
+         children=[
+             Child('UnknownAttr', kind='Attribute', is_optional=True),
+             Child('Label', kind='Syntax', name_for_diagnostics='label',
+                   node_choices=[
+                       Child('Default', kind='SwitchDefaultLabel'),
+                       Child('Case', kind='SwitchCaseLabel'),
+                   ]),
+             Child('Statements', kind='CodeBlockItemList',
+                   collection_element_name='Statement',
+                   is_indented=True),
+         ]),
+
+    # switch-case-label -> 'case' case-item-list ':'
+    Node('SwitchCaseLabel', name_for_diagnostics=None, kind='Syntax',
+         children=[
+             Child('CaseKeyword', kind='KeywordToken', token_choices=['KeywordToken|case']),
+             Child('CaseItems', kind='CaseItemList',
+                   collection_element_name='CaseItem'),
+             Child('Colon', kind='ColonToken', requires_trailing_space=False),
+         ]),
+
+    # switch-default-label -> 'default' ':'
+    Node('SwitchDefaultLabel', name_for_diagnostics=None, kind='Syntax',
+         children=[
+             Child('DefaultKeyword', kind='KeywordToken', token_choices=['KeywordToken|default']),
+             Child('Colon', kind='ColonToken', requires_trailing_space=False),
+         ]),
+
+    # case-item -> pattern where-clause? ','?
+    Node('CaseItem', name_for_diagnostics=None, kind='Syntax',
+         traits=['WithTrailingComma'],
+         children=[
+             Child('Pattern', kind='Pattern'),
+             Child('WhereClause', kind='WhereClause',
+                   is_optional=True),
+             Child('TrailingComma', kind='CommaToken',
+                   is_optional=True),
          ]),
 
     # ? expr :
     # Ternary expression without the condition and the second choice.
     # NOTE: This appears only in SequenceExpr.
-    Node('UnresolvedTernaryExpr', name_for_diagnostics=None, kind='Expr',
+    Node('UnresolvedTernaryExpr', name_for_diagnostics='ternary operator', kind='Expr',
          children=[
              Child("QuestionMark", kind='InfixQuestionMarkToken'),
              Child("FirstChoice", kind='Expr'),
@@ -318,28 +408,28 @@ EXPR_NODES = [
     # 'is'
     # "is" type casting ooperator without operands.
     # NOTE: This appears only in SequenceExpr.
-    Node('UnresolvedIsExpr', name_for_diagnostics=None, kind='Expr',
+    Node('UnresolvedIsExpr', name_for_diagnostics="'is'", kind='Expr',
          children=[
-             Child("IsTok", kind='KeywordToken', text_choices=['is']),
+             Child("IsTok", kind='KeywordToken', token_choices=['KeywordToken|is']),
          ]),
 
     # expression is TypeName
     # NOTE: This won't come directly out of the parser. Rather, it is the
     # result of "folding" a SequenceExpr based on knowing the precedence
     # relationships amongst the different infix operators.
-    Node('IsExpr', name_for_diagnostics="'is' expression", kind='Expr',
+    Node('IsExpr', name_for_diagnostics="'is'", kind='Expr',
          children=[
              Child("Expression", kind="Expr"),
-             Child("IsTok", kind='KeywordToken', text_choices=['is']),
+             Child("IsTok", kind='KeywordToken', token_choices=['KeywordToken|is']),
              Child("TypeName", kind='Type')
          ]),
 
     # 'as' ('?'|'!')
     # "as" type casting ooperator without operands.
     # NOTE: This appears only in SequenceExpr.
-    Node('UnresolvedAsExpr', name_for_diagnostics=None, kind='Expr',
+    Node('UnresolvedAsExpr', name_for_diagnostics="'as'", kind='Expr',
          children=[
-             Child("AsTok", kind='KeywordToken', text_choices=['as']),
+             Child("AsTok", kind='KeywordToken', token_choices=['KeywordToken|as']),
              Child("QuestionOrExclamationMark", kind='Token',
                    is_optional=True,
                    token_choices=[
@@ -352,10 +442,10 @@ EXPR_NODES = [
     # NOTE: This won't come directly out of the parser. Rather, it is the
     # result of "folding" a SequenceExpr based on knowing the precedence
     # relationships amongst the different infix operators.
-    Node('AsExpr', name_for_diagnostics="'as' expression", kind='Expr',
+    Node('AsExpr', name_for_diagnostics="'as'", kind='Expr',
          children=[
              Child("Expression", kind="Expr"),
-             Child("AsTok", kind='KeywordToken', text_choices=['as']),
+             Child("AsTok", kind='KeywordToken', token_choices=['KeywordToken|as']),
              Child("QuestionOrExclamationMark", kind='Token',
                    is_optional=True,
                    token_choices=[
@@ -373,9 +463,9 @@ EXPR_NODES = [
 
     Node('ClosureCaptureItemSpecifier', name_for_diagnostics='closure capture specifier', kind='Syntax',
          children=[
-             Child('Specifier', kind='ContextualKeywordToken', text_choices=['weak', 'unowned']),
+             Child('Specifier', kind='KeywordToken', token_choices=['KeywordToken|weak', 'KeywordToken|unowned']),
              Child('LeftParen', kind='LeftParenToken', is_optional=True),
-             Child('Detail', kind='ContextualKeywordToken', is_optional=True, text_choices=['safe', 'unsafe']),
+             Child('Detail', kind='KeywordToken', is_optional=True, token_choices=['KeywordToken|safe', 'KeywordToken|unsafe']),
              Child('RightParen', kind='RightParenToken', is_optional=True),
          ]),
 
@@ -432,7 +522,7 @@ EXPR_NODES = [
              Child('EffectSpecifiers', kind='TypeEffectSpecifiers',
                    is_optional=True),
              Child('Output', kind='ReturnClause', is_optional=True),
-             Child('InTok', kind='KeywordToken', text_choices=['in']),
+             Child('InTok', kind='KeywordToken', token_choices=['KeywordToken|in']),
          ]),
 
     Node('ClosureExpr', name_for_diagnostics='closure', kind='Expr',
@@ -563,6 +653,7 @@ EXPR_NODES = [
                    token_choices=[
                        'StringQuoteToken',
                        'MultilineStringQuoteToken',
+                       'SingleQuoteToken',
                    ]),
              Child('Segments', kind='StringLiteralSegments',
                    collection_element_name='Segment'),
@@ -570,6 +661,7 @@ EXPR_NODES = [
                    token_choices=[
                        'StringQuoteToken',
                        'MultilineStringQuoteToken',
+                       'SingleQuoteToken',
                    ]),
              Child('CloseDelimiter', kind='RawStringDelimiterToken',
                    is_optional=True),
@@ -648,7 +740,7 @@ EXPR_NODES = [
 
     # e.g., "#embed("filename.txt")"
     Node('MacroExpansionExpr',
-         name_for_diagnostics="macro expansion expression", kind='Expr',
+         name_for_diagnostics="macro expansion", kind='Expr',
          traits=['FreestandingMacroExpansion'],
          children=[
              Child('PoundToken', kind='PoundToken',

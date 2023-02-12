@@ -5,7 +5,7 @@ GENERIC_NODES = [
     # generic-where-clause -> 'where' requirement-list
     Node('GenericWhereClause', name_for_diagnostics="'where' clause", kind='Syntax',
          children=[
-             Child('WhereKeyword', kind='KeywordToken', text_choices=['where']),
+             Child('WhereKeyword', kind='KeywordToken', token_choices=['KeywordToken|where']),
              Child('RequirementList', kind='GenericRequirementList',
                    collection_element_name='Requirement'),
          ]),
@@ -52,7 +52,7 @@ GENERIC_NODES = [
          children=[
              Child('TypeIdentifier', kind='Type', name_for_diagnostics='constrained type'),
              Child('Colon', kind='ColonToken'),
-             Child('LayoutConstraint', kind='IdentifierToken'),
+             Child('LayoutConstraint', kind='KeywordToken', token_choices=['KeywordToken|_Trivial', 'KeywordToken|_TrivialAtMost', 'KeywordToken|_UnknownLayout', 'KeywordToken|_RefCountedObject', 'KeywordToken|_NativeRefCountedObject', 'KeywordToken|_Class', 'KeywordToken|_NativeClass']),
              Child('LeftParen', kind='LeftParenToken',
                    is_optional=True),
              Child('Size', kind='IntegerLiteralToken', name_for_diagnostics='size', is_optional=True),

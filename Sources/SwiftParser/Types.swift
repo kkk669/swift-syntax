@@ -140,7 +140,7 @@ extension Parser {
       )
     }
 
-    let someOrAny = self.consume(ifAny: [.keyword(.some), .keyword(.any)])
+    let someOrAny = self.consume(if: .keyword(.some), .keyword(.any))
 
     var base = self.parseSimpleType()
     guard self.atContextualPunctuator("&") else {
@@ -227,16 +227,16 @@ extension Parser {
     stopAtFirstPeriod: Bool = false
   ) -> RawTypeSyntax {
     var base: RawTypeSyntax
-    switch self.currentToken.rawTokenKind {
-    case .keyword(.Self),
-      .keyword(.Any),
-      .identifier:
+    switch self.currentToken {
+    case TokenSpec(.Self),
+      TokenSpec(.Any),
+      TokenSpec(.identifier):
       base = self.parseTypeIdentifier()
-    case .leftParen:
+    case TokenSpec(.leftParen):
       base = RawTypeSyntax(self.parseTupleTypeBody())
-    case .leftSquareBracket:
+    case TokenSpec(.leftSquareBracket):
       base = RawTypeSyntax(self.parseCollectionType())
-    case .wildcard:
+    case TokenSpec(.wildcard):
       base = RawTypeSyntax(self.parsePlaceholderType())
     default:
       return RawTypeSyntax(RawMissingTypeSyntax(arena: self.arena))
@@ -486,7 +486,7 @@ extension Parser {
     do {
       var keepGoing = true
       var loopProgress = LoopProgressCondition()
-      while !self.at(any: [.eof, .rightParen]) && keepGoing && loopProgress.evaluate(currentToken) {
+      while !self.at(.eof, .rightParen) && keepGoing && loopProgress.evaluate(currentToken) {
         let unexpectedBeforeFirst: RawUnexpectedNodesSyntax?
         let first: RawTokenSyntax?
         let unexpectedBeforeSecond: RawUnexpectedNodesSyntax?
@@ -548,7 +548,7 @@ extension Parser {
         }
         // Parse the type annotation.
         let type = self.parseType(misplacedSpecifiers: misplacedSpecifiers)
-        let ellipsis = self.currentToken.isEllipsis ? self.consumeAnyToken() : nil
+        let ellipsis = self.consumeIfContextualPunctuator("...", remapping: .ellipsis)
         var trailingComma = self.consume(if: .comma)
         if trailingComma == nil && self.withLookahead({ $0.canParseType() }) {
           // If the next token does not close the tuple, it is very likely the user forgot the comma.
@@ -719,19 +719,19 @@ extension Parser.Lookahead {
   }
 
   mutating func canParseSimpleType() -> Bool {
-    switch self.currentToken.rawTokenKind {
-    case .keyword(.Any):
+    switch self.currentToken {
+    case TokenSpec(.Any):
       self.consumeAnyToken()
-    case .keyword(.Self), .identifier:
+    case TokenSpec(.Self), TokenSpec(.identifier):
       guard self.canParseTypeIdentifier() else {
         return false
       }
-    case .leftParen:
+    case TokenSpec(.leftParen):
       self.consumeAnyToken()
       guard self.canParseTupleBodyType() else {
         return false
       }
-    case .leftSquareBracket:
+    case TokenSpec(.leftSquareBracket):
       self.consumeAnyToken()
       guard self.canParseType() else {
         return false
@@ -744,9 +744,9 @@ extension Parser.Lookahead {
       guard self.consume(if: .rightSquareBracket) != nil else {
         return false
       }
-    case .wildcard:
+    case TokenSpec(.wildcard):
       self.consumeAnyToken()
-    case .keyword(.repeat):
+    case TokenSpec(.repeat):
       return true
     default:
       return false
@@ -783,7 +783,7 @@ extension Parser.Lookahead {
 
   mutating func canParseTupleBodyType() -> Bool {
     guard
-      !self.at(any: [.rightParen, .rightBrace]) && !self.atContextualPunctuator("...") && !self.atStartOfDeclaration()
+      !self.at(.rightParen, .rightBrace) && !self.atContextualPunctuator("...") && !self.atStartOfDeclaration()
     else {
       return self.consume(if: .rightParen) != nil
     }
@@ -814,7 +814,8 @@ extension Parser.Lookahead {
         // better if we skip over them.
         if self.consume(if: .equal) != nil {
           var skipProgress = LoopProgressCondition()
-          while !self.at(any: [.eof, .rightParen, .rightBrace, .comma])
+          while !self.at(.eof)
+            && !self.at(.rightParen, .rightBrace, .comma)
             && !self.atContextualPunctuator("...")
             && !self.atStartOfDeclaration()
             && skipProgress.evaluate(currentToken)
@@ -929,7 +930,37 @@ extension Parser {
       specifier = missingToken(misplacedSpecifier.tokenKind, text: misplacedSpecifier.tokenText)
     }
     var extraneousSpecifiers: [RawTokenSyntax] = []
-    while let extraSpecifier = self.consume(ifAny: [.keyword(.inout), .keyword(.__shared), .keyword(.__owned), .keyword(.isolated), .keyword(._const)]) {
+
+    enum ExtraneousSpecifier: TokenSpecSet {
+      case `inout`
+      case __shared
+      case __owned
+      case isolated
+      case _const
+
+      var spec: TokenSpec {
+        switch self {
+        case .inout: return .keyword(.inout)
+        case .__shared: return .keyword(.__shared)
+        case .__owned: return .keyword(.__owned)
+        case .isolated: return .keyword(.isolated)
+        case ._const: return .keyword(._const)
+        }
+      }
+
+      init?(lexeme: Lexer.Lexeme) {
+        switch lexeme {
+        case TokenSpec(.inout): self = .inout
+        case TokenSpec(.__shared): self = .__shared
+        case TokenSpec(.__owned): self = .__owned
+        case TokenSpec(.isolated): self = .isolated
+        case TokenSpec(._const): self = ._const
+        default: return nil
+        }
+      }
+    }
+
+    while let extraSpecifier = self.consume(ifAnyIn: ExtraneousSpecifier.self) {
       if specifier == nil {
         specifier = extraSpecifier
       } else {

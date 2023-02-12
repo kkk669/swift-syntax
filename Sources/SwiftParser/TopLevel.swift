@@ -157,7 +157,7 @@ extension Parser {
         arena: self.arena
       )
     }
-    if self.at(any: [.keyword(.case), .keyword(.default)]) {
+    if self.at(.keyword(.case), .keyword(.default)) {
       // 'case' and 'default' are invalid in code block items.
       // Parse them and put them in their own CodeBlockItem but as an unexpected node.
       let switchCase = self.parseSwitchCase()
@@ -187,6 +187,36 @@ extension Parser {
       RawUnexpectedNodesSyntax(trailingSemis, arena: self.arena),
       arena: self.arena
     )
+  }
+
+  private mutating func parseStatementItem() -> RawCodeBlockItemSyntax.Item {
+    let stmt = self.parseStatement()
+
+    // Special case: An 'if' or 'switch' statement followed by an 'as' must
+    // be an if/switch expression in a coercion.
+    // We could also achieve this by more eagerly attempting to parse an 'if'
+    // or 'switch' as an expression when in statement position, but that
+    // could result in less useful recovery behavior.
+    if at(.keyword(.as)),
+      let expr = stmt.as(RawExpressionStmtSyntax.self)?.expression
+    {
+      if expr.is(RawIfExprSyntax.self) || expr.is(RawSwitchExprSyntax.self) {
+        let (op, rhs) = parseUnresolvedAsExpr(
+          handle: .init(spec: .keyword(.as))
+        )
+        let sequence = RawExprSyntax(
+          RawSequenceExprSyntax(
+            elements: RawExprListSyntax(
+              elements: [expr, op, rhs],
+              arena: self.arena
+            ),
+            arena: self.arena
+          )
+        )
+        return .expr(sequence)
+      }
+    }
+    return .stmt(stmt)
   }
 
   /// `isAtTopLevel` determines whether this is trying to parse an item that's at
@@ -222,13 +252,13 @@ extension Parser {
     } else if self.atStartOfDeclaration(allowInitDecl: allowInitDecl) {
       return .decl(self.parseDeclaration())
     } else if self.atStartOfStatement() {
-      return .stmt(self.parseStatement())
+      return self.parseStatementItem()
     } else if self.atStartOfExpression() {
       return .expr(self.parseExpression())
     } else if self.atStartOfDeclaration(isAtTopLevel: isAtTopLevel, allowInitDecl: allowInitDecl, allowRecovery: true) {
       return .decl(self.parseDeclaration())
     } else if self.atStartOfStatement(allowRecovery: true) {
-      return .stmt(self.parseStatement())
+      return self.parseStatementItem()
     } else {
       return .expr(RawExprSyntax(RawMissingExprSyntax(arena: self.arena)))
     }

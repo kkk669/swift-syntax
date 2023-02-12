@@ -24,7 +24,7 @@ let buildableNodesFile = SourceFileSyntax {
   for node in SYNTAX_NODES where node.isBuildable {
     let type = node.type
 
-    if let convenienceInit = createConvenienceInitializer(node: node) {
+    if let convenienceInit = try! createConvenienceInitializer(node: node) {
       let docComment: SwiftSyntax.Trivia = node.documentation.isEmpty ? [] : .docLineComment("/// \(node.documentation)") + .newline
       ExtensionDeclSyntax(
         leadingTrivia: docComment,
@@ -37,15 +37,14 @@ let buildableNodesFile = SourceFileSyntax {
 }
 
 private func convertFromSyntaxProtocolToSyntaxType(child: Child) -> ExprSyntax {
-  if child.type.isBaseType && child.nodeChoices.isEmpty {
-    return ExprSyntax(FunctionCallExprSyntax("\(raw: child.type.syntaxBaseName)(fromProtocol: \(raw: child.swiftName))"))
-  } else {
-    return ExprSyntax(IdentifierExprSyntax(identifier: .identifier(child.swiftName)))
+  if child.type.isBaseType && !child.kind.isNodeChoices {
+    return ExprSyntax("\(raw: child.type.syntaxBaseName)(fromProtocol: \(raw: child.swiftName))")
   }
+  return ExprSyntax("\(raw: child.swiftName)")
 }
 
 /// Create a builder-based convenience initializer, if needed.
-private func createConvenienceInitializer(node: Node) -> InitializerDeclSyntax? {
+private func createConvenienceInitializer(node: Node) throws -> InitializerDeclSyntax? {
   // Only create the convenience initializer if at least one parameter
   // is different than in the default initializer generated above.
   var shouldCreateInitializer = false
@@ -67,32 +66,29 @@ private func createConvenienceInitializer(node: Node) -> InitializerDeclSyntax? 
       if child.type.builderInitializableType != child.type {
         let param = Node.from(type: child.type).singleNonDefaultedChild
         if child.isOptional {
-          produceExpr = ExprSyntax(FunctionCallExprSyntax("\(raw: child.swiftName)Builder().map { \(raw: child.type.syntaxBaseName)(\(raw: param.swiftName): $0) }"))
+          produceExpr = ExprSyntax("\(raw: child.swiftName)Builder().map { \(raw: child.type.syntaxBaseName)(\(raw: param.swiftName): $0) }")
         } else {
-          produceExpr = ExprSyntax(FunctionCallExprSyntax("\(raw: child.type.syntaxBaseName)(\(raw: param.swiftName): \(raw: child.swiftName)Builder())"))
+          produceExpr = ExprSyntax("\(raw: child.type.syntaxBaseName)(\(raw: param.swiftName): \(raw: child.swiftName)Builder())")
         }
       } else {
-        produceExpr = ExprSyntax(FunctionCallExprSyntax("\(raw: child.swiftName)Builder()"))
+        produceExpr = ExprSyntax("\(raw: child.swiftName)Builder()")
       }
-      let defaultArgument = ClosureExprSyntax {
-        if child.type.isOptional {
-          NilLiteralExprSyntax()
-        } else {
-          FunctionCallExprSyntax("\(builderInitializableType.syntax)([])")
-        }
-      }
-      builderParameters.append(FunctionParameterSyntax(
-        "@\(builderInitializableType.resultBuilderBaseName) \(child.swiftName)Builder: () -> \(builderInitializableType.syntax) = \(defaultArgument)",
-        for: .functionParameters
-      ))
+      builderParameters.append(
+        FunctionParameterSyntax(
+          "@\(raw: builderInitializableType.resultBuilderBaseName) \(raw: child.swiftName)Builder: () throws-> \(raw: builderInitializableType.syntax)",
+          for: .functionParameters
+        )
+      )
     } else {
       produceExpr = convertFromSyntaxProtocolToSyntaxType(child: child)
-      normalParameters.append(FunctionParameterSyntax(
-        firstName: .identifier(child.swiftName),
-        colon: .colonToken(),
-        type: child.parameterType,
-        defaultArgument: child.defaultInitialization.map { InitializerClauseSyntax(value: $0) }
-      ))
+      normalParameters.append(
+        FunctionParameterSyntax(
+          firstName: .identifier(child.swiftName),
+          colon: .colonToken(),
+          type: child.parameterType,
+          defaultArgument: child.defaultInitialization.map { InitializerClauseSyntax(value: $0) }
+        )
+      )
     }
     delegatedInitArgs.append(TupleExprElementSyntax(label: child.isUnexpectedNodes ? nil : child.swiftName, expression: produceExpr))
   }
@@ -101,20 +97,21 @@ private func createConvenienceInitializer(node: Node) -> InitializerDeclSyntax? 
     return nil
   }
 
-  return InitializerDeclSyntax(
-    leadingTrivia: .docLineComment("/// A convenience initializer that allows initializing syntax collections using result builders") + .newline,
-    modifiers: [DeclModifierSyntax(name: .keyword(.public))],
-    signature: FunctionSignatureSyntax(
-      input: ParameterClauseSyntax {
-        FunctionParameterSyntax("leadingTrivia: Trivia? = nil", for: .functionParameters)
-        for param in normalParameters + builderParameters {
-          param
-        }
-        FunctionParameterSyntax("trailingTrivia: Trivia? = nil", for: .functionParameters)
-      }
-    )
+  let params = ParameterClauseSyntax {
+    FunctionParameterSyntax("leadingTrivia: Trivia? = nil", for: .functionParameters)
+    for param in normalParameters + builderParameters {
+      param
+    }
+    FunctionParameterSyntax("trailingTrivia: Trivia? = nil", for: .functionParameters)
+  }
+
+  return try InitializerDeclSyntax(
+    """
+    /// A convenience initializer that allows initializing syntax collections using result builders
+    public init\(params) rethrows
+    """
   ) {
-    FunctionCallExprSyntax(callee: ExprSyntax("self.init")) {
+    FunctionCallExprSyntax(callee: ExprSyntax("try self.init")) {
       TupleExprElementSyntax(label: "leadingTrivia", expression: ExprSyntax("leadingTrivia"))
       for arg in delegatedInitArgs {
         arg
@@ -123,4 +120,3 @@ private func createConvenienceInitializer(node: Node) -> InitializerDeclSyntax? 
     }
   }
 }
-

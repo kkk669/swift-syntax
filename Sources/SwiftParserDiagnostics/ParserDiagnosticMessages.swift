@@ -134,6 +134,9 @@ extension DiagnosticMessage where Self == StaticParserError {
   public static var invalidFlagAfterPrecedenceGroupAssignment: Self {
     .init("expected 'true' or 'false' after 'assignment'")
   }
+  public static var invalidPrecedenceGroupAssociativity: Self {
+    .init("Expected 'none', 'left', or 'right' after 'associativity'")
+  }
   public static var invalidWhitespaceAfterPeriod: Self {
     .init("extraneous whitespace after '.' is not permitted")
   }
@@ -471,6 +474,12 @@ extension FixItMessage where Self == StaticParserFixIt {
   public static var removeOperatorBody: Self {
     .init("remove operator body")
   }
+  public static var replaceCurlyQuoteByNormalQuote: Self {
+    .init(#"replace curly quotes with '"'"#)
+  }
+  public static var replaceNonBreakingSpaceBySpace: Self {
+    .init("replace non-breaking space with ' '")
+  }
   public static var wrapInBackticks: Self {
     .init("if this name is unavoidable, use backticks to escape it")
   }
@@ -481,7 +490,7 @@ public struct MoveTokensAfterFixIt: ParserFixIt {
   public let movedTokens: [TokenSyntax]
 
   /// The token after which `movedTokens` should be moved
-  public let after: RawTokenKind
+  public let after: TokenKind
 
   public var message: String {
     "move \(nodesDescription(movedTokens, format: false)) after '\(after.nameForDiagnostics)'"
@@ -493,7 +502,7 @@ public struct MoveTokensInFrontOfFixIt: ParserFixIt {
   public let movedTokens: [TokenSyntax]
 
   /// The token after which 'try' should be moved
-  public let inFrontOf: RawTokenKind
+  public let inFrontOf: TokenKind
 
   public var message: String {
     "move \(nodesDescription(movedTokens, format: false)) in front of '\(inFrontOf.nameForDiagnostics)'"
@@ -539,6 +548,6 @@ public struct ReplaceTokensFixIt: ParserFixIt {
   public let replacement: TokenSyntax
 
   public var message: String {
-    "replace \(nodesDescription(replaceTokens, format: false)) by '\(replacement.text)'"
+    "replace \(nodesDescription(replaceTokens, format: false)) with '\(replacement.text)'"
   }
 }

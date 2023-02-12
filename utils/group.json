@@ -38,7 +38,6 @@
     "SyntaxBuilders.swift",
     "SyntaxClassifier.swift",
     "SyntaxClassification.swift",
-    "SyntaxFactory.swift",
     "SyntaxRewriter.swift",
     "SyntaxTransform.swift",
     "SyntaxText.swift",
@@ -53,7 +52,7 @@
   ],
   "Parse": [
     "IncrementalParseTransition.swift",
-    "LexerError.swift",
+    "TokenDiagnostic.swift",
   ],
   "Internal": [
     "SyntaxArena.swift",

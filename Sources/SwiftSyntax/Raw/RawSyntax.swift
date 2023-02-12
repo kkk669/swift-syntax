@@ -23,10 +23,16 @@ fileprivate extension SyntaxKind {
 struct RecursiveRawSyntaxFlags: OptionSet {
   let rawValue: UInt8
 
-  /// Whether the tree contained by this layout has any missing or unexpected nodes.
+  /// Whether the tree contained by this layout has any
+  ///  - missing nodes or
+  ///  - unexpected nodes or
+  ///  - tokens with a `TokenDiagnostic` of severity `error`
   static let hasError = RecursiveRawSyntaxFlags(rawValue: 1 << 0)
-  static let hasSequenceExpr = RecursiveRawSyntaxFlags(rawValue: 1 << 1)
-  static let hasMaximumNestingLevelOverflow = RecursiveRawSyntaxFlags(rawValue: 1 << 2)
+  /// Whether the tree contained by this layout has any tokens with a
+  /// `TokenDiagnostic` of severity `warning`.
+  static let hasWarning = RecursiveRawSyntaxFlags(rawValue: 1 << 1)
+  static let hasSequenceExpr = RecursiveRawSyntaxFlags(rawValue: 1 << 2)
+  static let hasMaximumNestingLevelOverflow = RecursiveRawSyntaxFlags(rawValue: 1 << 3)
 }
 
 /// Node data for RawSyntax tree. Tagged union plus common data.
@@ -55,38 +61,38 @@ internal struct RawSyntaxData {
 
     var presence: SourcePresence
 
-    /// Store the members of `LexerError` individually so the compiler can pack
+    /// Store the members of `TokenDiagnostic` individually so the compiler can pack
     /// `ParsedToken` more efficiently (saving 2 bytes)
-    /// `lexerErrorByteOffset` is ignored if `lexerErrorKind` is `nil`
-    private var lexerErrorKind: LexerError.Kind?
-    private var lexerErrorByteOffset: UInt16
+    /// `tokenDiagnosticByteOffset` is ignored if `tokenDiagnosticKind` is `nil`
+    private var tokenDiagnosticKind: TokenDiagnostic.Kind?
+    private var tokenDiagnosticByteOffset: UInt16
 
-    var lexerError: LexerError? {
+    var tokenDiagnostic: TokenDiagnostic? {
       get {
-        if let kind = lexerErrorKind {
-          return LexerError(kind, byteOffset: lexerErrorByteOffset)
+        if let kind = tokenDiagnosticKind {
+          return TokenDiagnostic(kind, byteOffset: tokenDiagnosticByteOffset)
         } else {
           return nil
         }
       }
       set {
         if let newValue = newValue {
-          self.lexerErrorKind = newValue.kind
-          self.lexerErrorByteOffset = newValue.byteOffset
+          self.tokenDiagnosticKind = newValue.kind
+          self.tokenDiagnosticByteOffset = newValue.byteOffset
         } else {
-          self.lexerErrorKind = nil
-          self.lexerErrorByteOffset = 0
+          self.tokenDiagnosticKind = nil
+          self.tokenDiagnosticByteOffset = 0
         }
       }
     }
 
-    init(tokenKind: RawTokenKind, wholeText: SyntaxText, textRange: Range<SyntaxText.Index>, presence: SourcePresence, lexerError: LexerError?) {
+    init(tokenKind: RawTokenKind, wholeText: SyntaxText, textRange: Range<SyntaxText.Index>, presence: SourcePresence, tokenDiagnostic: TokenDiagnostic?) {
       self.tokenKind = tokenKind
       self.wholeText = wholeText
       self.textRange = textRange
       self.presence = presence
-      self.lexerErrorKind = lexerError?.kind
-      self.lexerErrorByteOffset = lexerError?.byteOffset ?? 0
+      self.tokenDiagnosticKind = tokenDiagnostic?.kind
+      self.tokenDiagnosticByteOffset = tokenDiagnostic?.byteOffset ?? 0
     }
   }
 
@@ -98,38 +104,38 @@ internal struct RawSyntaxData {
     var numLeadingTrivia: UInt32
     var byteLength: UInt32
     var presence: SourcePresence
-    /// Store the members of `LexerError` individually so the compiler can pack
+    /// Store the members of `TokenDiagnostic` individually so the compiler can pack
     /// `ParsedToken` more efficiently (saving 2 bytes)
-    /// `lexerErrorByteOffset` is ignored if `lexerErrorKind` is `nil`
-    private var lexerErrorKind: LexerError.Kind?
-    private var lexerErrorByteOffset: UInt16
+    /// `tokenDiagnosticByteOffset` is ignored if `tokenDiagnosticKind` is `nil`
+    private var tokenDiagnosticKind: TokenDiagnostic.Kind?
+    private var tokenDiagnosticByteOffset: UInt16
 
-    init(tokenKind: RawTokenKind, tokenText: SyntaxText, triviaPieces: RawTriviaPieceBuffer, numLeadingTrivia: UInt32, byteLength: UInt32, presence: SourcePresence, lexerError: LexerError?) {
+    init(tokenKind: RawTokenKind, tokenText: SyntaxText, triviaPieces: RawTriviaPieceBuffer, numLeadingTrivia: UInt32, byteLength: UInt32, presence: SourcePresence, tokenDiagnostic: TokenDiagnostic?) {
       self.tokenKind = tokenKind
       self.tokenText = tokenText
       self.triviaPieces = triviaPieces
       self.numLeadingTrivia = numLeadingTrivia
       self.byteLength = byteLength
       self.presence = presence
-      self.lexerErrorKind = lexerError?.kind
-      self.lexerErrorByteOffset = lexerError?.byteOffset ?? 0
+      self.tokenDiagnosticKind = tokenDiagnostic?.kind
+      self.tokenDiagnosticByteOffset = tokenDiagnostic?.byteOffset ?? 0
     }
 
-    var lexerError: LexerError? {
+    var tokenDiagnostic: TokenDiagnostic? {
       get {
-        if let kind = lexerErrorKind {
-          return LexerError(kind, byteOffset: lexerErrorByteOffset)
+        if let kind = tokenDiagnosticKind {
+          return TokenDiagnostic(kind, byteOffset: tokenDiagnosticByteOffset)
         } else {
           return nil
         }
       }
       set {
         if let newValue = newValue {
-          self.lexerErrorKind = newValue.kind
-          self.lexerErrorByteOffset = newValue.byteOffset
+          self.tokenDiagnosticKind = newValue.kind
+          self.tokenDiagnosticByteOffset = newValue.byteOffset
         } else {
-          self.lexerErrorKind = nil
-          self.lexerErrorByteOffset = 0
+          self.tokenDiagnosticKind = nil
+          self.tokenDiagnosticByteOffset = 0
         }
       }
     }
@@ -227,8 +233,16 @@ extension RawSyntax {
     switch view {
     case .token(let tokenView):
       var recursiveFlags: RecursiveRawSyntaxFlags = []
-      if tokenView.lexerError != nil || tokenView.presence == .missing {
+      if tokenView.presence == .missing {
         recursiveFlags.insert(.hasError)
+      }
+      switch tokenView.tokenDiagnostic?.severity {
+      case .error:
+        recursiveFlags.insert(.hasError)
+      case .warning:
+        recursiveFlags.insert(.hasWarning)
+      case nil:
+        break
       }
       return recursiveFlags
     case .layout(let layoutView):
@@ -287,7 +301,7 @@ extension RawSyntax {
         leadingTrivia: leadingTrivia,
         trailingTrivia: tokenView.formTrailingTrivia(),
         presence: tokenView.presence,
-        lexerError: tokenView.lexerError,
+        tokenDiagnostic: tokenView.tokenDiagnostic,
         arena: arena
       )
     case .layout(let layoutView):
@@ -313,7 +327,7 @@ extension RawSyntax {
         leadingTrivia: tokenView.formLeadingTrivia(),
         trailingTrivia: trailingTrivia,
         presence: tokenView.presence,
-        lexerError: tokenView.lexerError,
+        tokenDiagnostic: tokenView.tokenDiagnostic,
         arena: arena
       )
     case .layout(let layoutView):
@@ -519,7 +533,7 @@ extension RawSyntax {
     wholeText: SyntaxText,
     textRange: Range<SyntaxText.Index>,
     presence: SourcePresence,
-    lexerError: LexerError?,
+    tokenDiagnostic: TokenDiagnostic?,
     arena: __shared SyntaxArena
   ) -> RawSyntax {
     assert(
@@ -535,7 +549,7 @@ extension RawSyntax {
       wholeText: wholeText,
       textRange: textRange,
       presence: presence,
-      lexerError: lexerError
+      tokenDiagnostic: tokenDiagnostic
     )
     return RawSyntax(arena: arena, payload: .parsedToken(payload))
   }
@@ -561,7 +575,7 @@ extension RawSyntax {
     numLeadingTrivia: UInt32,
     byteLength: UInt32,
     presence: SourcePresence,
-    lexerError: LexerError?,
+    tokenDiagnostic: TokenDiagnostic?,
     arena: __shared SyntaxArena
   ) -> RawSyntax {
     let payload = RawSyntaxData.MaterializedToken(
@@ -571,7 +585,7 @@ extension RawSyntax {
       numLeadingTrivia: numLeadingTrivia,
       byteLength: byteLength,
       presence: presence,
-      lexerError: lexerError
+      tokenDiagnostic: tokenDiagnostic
     )
     return RawSyntax(arena: arena, payload: .materializedToken(payload))
   }
@@ -593,7 +607,7 @@ extension RawSyntax {
     leadingTriviaPieceCount: Int,
     trailingTriviaPieceCount: Int,
     presence: SourcePresence,
-    lexerError: LexerError?,
+    tokenDiagnostic: TokenDiagnostic?,
     arena: __shared SyntaxArena,
     initializingLeadingTriviaWith: (UnsafeMutableBufferPointer<RawTriviaPiece>) -> Void,
     initializingTrailingTriviaWith: (UnsafeMutableBufferPointer<RawTriviaPiece>) -> Void
@@ -616,7 +630,7 @@ extension RawSyntax {
       numLeadingTrivia: numericCast(leadingTriviaPieceCount),
       byteLength: numericCast(byteLength),
       presence: presence,
-      lexerError: lexerError,
+      tokenDiagnostic: tokenDiagnostic,
       arena: arena
     )
   }
@@ -634,7 +648,7 @@ extension RawSyntax {
     leadingTrivia: Trivia,
     trailingTrivia: Trivia,
     presence: SourcePresence,
-    lexerError: LexerError?,
+    tokenDiagnostic: TokenDiagnostic?,
     arena: __shared SyntaxArena
   ) -> RawSyntax {
     let decomposed = kind.decomposeToRaw()
@@ -647,7 +661,7 @@ extension RawSyntax {
       leadingTriviaPieceCount: leadingTrivia.count,
       trailingTriviaPieceCount: trailingTrivia.count,
       presence: presence,
-      lexerError: lexerError,
+      tokenDiagnostic: tokenDiagnostic,
       arena: arena,
       initializingLeadingTriviaWith: { buffer in
         guard var ptr = buffer.baseAddress else { return }
@@ -678,7 +692,7 @@ extension RawSyntax {
       numLeadingTrivia: 0,
       byteLength: 0,
       presence: .missing,
-      lexerError: nil,
+      tokenDiagnostic: nil,
       arena: arena
     )
   }

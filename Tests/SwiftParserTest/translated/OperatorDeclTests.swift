@@ -326,7 +326,7 @@ final class OperatorDeclTests: XCTestCase {
   func testOperatorDecl15a() {
     AssertParse(
       """
-      precedencegroup 1️⃣{ 
+      precedencegroup 1️⃣{
         associativity: right
       }
       """,
@@ -366,9 +366,12 @@ final class OperatorDeclTests: XCTestCase {
     AssertParse(
       """
       precedencegroup C {
-        associativity: sinister
+        associativity: 1️⃣sinister
       }
-      """
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "Expected 'none', 'left', or 'right' after 'associativity'")
+      ]
     )
   }
 
@@ -413,7 +416,7 @@ final class OperatorDeclTests: XCTestCase {
       """
       precedencegroup BangBangBang {
         associativity: none
-        associativity: left 
+        associativity: left
       }
       """
     )
@@ -423,8 +426,8 @@ final class OperatorDeclTests: XCTestCase {
     AssertParse(
       """
       precedencegroup CaretCaretCaret {
-        assignment: true 
-        assignment: false 
+        assignment: true
+        assignment: false
       }
       """
     )
@@ -434,7 +437,7 @@ final class OperatorDeclTests: XCTestCase {
     AssertParse(
       """
       class Foo {
-        infix operator ||| 
+        infix operator |||
       }
       """
     )

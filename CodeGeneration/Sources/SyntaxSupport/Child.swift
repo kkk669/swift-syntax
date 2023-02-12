@@ -10,26 +10,88 @@
 //
 //===----------------------------------------------------------------------===//
 
+/// The kind of token a node can contain. Either a token of a specific kind or a
+/// keyword with the given text.
+public enum TokenChoice {
+  case keyword(text: String)
+  case token(tokenKind: String)
+
+  public var isKeyword: Bool {
+    switch self {
+    case .keyword: return true
+    case .token: return false
+    }
+  }
+}
+
+public enum ChildKind {
+  /// The child always contains a node of the given `kind`.
+  case node(kind: String)
+  /// The child always contains a node that matches one of the `choices`.
+  case nodeChoices(choices: [Child])
+  /// The child is a collection of `kind`.
+  case collection(kind: String, collectionElementName: String)
+  /// The child is a token that matches one of the given `choices`.
+  /// If `requiresLeadingSpace` or `requiresTrailingSpace` is not `nil`, it
+  /// overrides the default leading/trailing space behavior of the token.
+  case token(choices: [TokenChoice], requiresLeadingSpace: Bool? = nil, requiresTrailingSpace: Bool? = nil)
+
+  public var isNodeChoices: Bool {
+    if case .nodeChoices = self {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  public var isNodeChoicesEmpty: Bool {
+    if case .nodeChoices(let nodeChoices) = self {
+      return nodeChoices.isEmpty
+    } else {
+      return true
+    }
+  }
+}
+
 /// A child of a node, that may be declared optional or a token with a
 /// restricted subset of acceptable kinds or texts.
 public class Child {
   public let name: String
-  public let syntaxKind: String
+  public let kind: ChildKind
+  public let nameForDiagnostics: String?
   public let description: String?
-  public let collectionElementName: String?
   public let forceClassification: Bool
   public let isIndented: Bool
   public let requiresLeadingNewline: Bool
   public let isOptional: Bool
-  public let textChoices: [String]
-  public let nodeChoices: [Child]
   public let classification: SyntaxClassification?
-  /// A restricted set of token kinds that will be accepted for this child.
-  public let tokenChoices: [TokenSpec]
-  public let tokenCanContainArbitraryText: Bool
 
   public var swiftName: String {
     return lowercaseFirstWord(name: name)
+  }
+
+  public var syntaxKind: String {
+    switch kind {
+    case .node(kind: let kind):
+      return kind
+    case .nodeChoices:
+      return "Syntax"
+    case .collection(kind: let kind, collectionElementName: _):
+      return kind
+    case .token(choices: let choices, requiresLeadingSpace: _, requiresTrailingSpace: _):
+      if choices.count == 1 {
+        switch choices.first! {
+        case .keyword: return "KeywordToken"
+        case .token(tokenKind: let tokenKind): return tokenKind
+        }
+      } else {
+        if choices.allSatisfy({ $0.isKeyword }) {
+          return "KeywordToken"
+        } else {
+          return "Token"
+        }
+      }
+    }
   }
 
   public var swiftSyntaxKind: String {
@@ -59,14 +121,28 @@ public class Child {
     return SYNTAX_TOKEN_MAP[tokenKind]
   }
 
-  /// Returns the first choice from the `tokenChoices` if there are any, otherwise returns `nil`.
-  public var mainToken: TokenSpec? {
-    return tokenChoices.first
-  }
-
   /// Whether this child has syntax kind `UnexpectedNodes`.
   public var isUnexpectedNodes: Bool {
     syntaxKind == "UnexpectedNodes"
+  }
+
+  /// Returns `true` if this child's type is one of the base syntax kinds and
+  /// it has no node choices.
+  public var hasBaseType: Bool {
+    switch kind {
+    case .nodeChoices(let choices):
+      return choices.isEmpty && SYNTAX_BASE_KINDS.contains(syntaxKind)
+    case .node,
+      .collection,
+      .token:
+      return SYNTAX_BASE_KINDS.contains(syntaxKind)
+    }
+  }
+
+  /// Returns `true` if this child's type is one of the base syntax kinds and
+  /// it's optional.
+  public var hasOptionalBaseType: Bool {
+    return hasBaseType && isOptional
   }
 
   /// If a classification is passed, it specifies the color identifiers in
@@ -74,48 +150,25 @@ public class Child {
   /// SyntaxClassification in SyntaxClassifier.h.gyb
   /// If force_classification is also set to true, all child nodes (not only
   /// identifiers) inherit the syntax classification.
-  init(name: String,
-       kind: String,
-       description: String? = nil,
-       isOptional: Bool = false,
-       tokenChoices: [String] = [],
-       textChoices: [String] = [],
-       nodeChoices: [Child] = [],
-       collectionElementName: String? = nil,
-       classification: String? = nil,
-       forceClassification: Bool = false,
-       isIndented: Bool = false,
-       requiresLeadingNewline: Bool = false) {
+  init(
+    name: String,
+    kind: ChildKind,
+    nameForDiagnostics: String? = nil,
+    description: String? = nil,
+    isOptional: Bool = false,
+    classification: String? = nil,
+    forceClassification: Bool = false,
+    isIndented: Bool = false,
+    requiresLeadingNewline: Bool = false
+  ) {
     self.name = name
-    self.syntaxKind = kind
+    self.kind = kind
+    self.nameForDiagnostics = nameForDiagnostics
     self.description = description
-    self.collectionElementName = collectionElementName
     self.classification = classificationByName(classification)
     self.forceClassification = forceClassification
     self.isIndented = isIndented
     self.requiresLeadingNewline = requiresLeadingNewline
     self.isOptional = isOptional
-
-    self.tokenChoices = tokenChoices.compactMap { SYNTAX_TOKEN_MAP["\($0)Token"] }
-
-    // If mappedTokenChoices contains `nil`, the token can contain arbitrary text
-    self.tokenCanContainArbitraryText = self.tokenChoices.contains { $0.text == nil }
-    
-    // A list of valid text for tokens, if specified.
-    // This will force validation logic to check the text passed into the
-    // token against the choices.
-    self.textChoices = textChoices
-
-    // A list of valid choices for a child
-    self.nodeChoices = nodeChoices
-
-    // Check the choices are either empty or multiple
-    assert(nodeChoices.count != 1)
-
-    // Check node choices are well-formed
-    for choice in self.nodeChoices {
-      assert(!choice.isOptional, "node choice \(choice.name) cannot be optional")
-      assert(choice.nodeChoices.isEmpty, "node choice \(choice.name) cannot have further choices")
-    }
   }
 }

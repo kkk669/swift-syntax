@@ -27,10 +27,10 @@ let buildableCollectionNodesFile = SourceFileSyntax {
 
     let docComment = node.documentation.isEmpty ? "" : "/// \(node.documentation)\n"
     // Generate collection node struct
-    ExtensionDeclSyntax("\(raw: docComment)extension \(raw: node.type.syntaxBaseName): ExpressibleByArrayLiteral") {
+    try! ExtensionDeclSyntax("\(raw: docComment)extension \(raw: node.type.syntaxBaseName): ExpressibleByArrayLiteral") {
       // Generate initializers
       if elementType.isBaseType && node.collectionElementChoices?.isEmpty ?? true {
-        InitializerDeclSyntax(
+        DeclSyntax(
           """
           public init(_ elements: \(ArrayTypeSyntax(elementType: elementType.parameterType))) {
             self = \(raw: node.type.syntaxBaseName)(elements.map { \(elementType.syntax)(fromProtocol: $0) })
@@ -38,7 +38,7 @@ let buildableCollectionNodesFile = SourceFileSyntax {
           """
         )
 
-        InitializerDeclSyntax(
+        DeclSyntax(
           """
           public init(arrayLiteral elements: \(elementType.parameterType)...) {
             self.init(elements)
@@ -46,7 +46,7 @@ let buildableCollectionNodesFile = SourceFileSyntax {
           """
         )
       } else {
-        InitializerDeclSyntax(
+        DeclSyntax(
           """
           public init(arrayLiteral elements: Element...) {
             self.init(elements)

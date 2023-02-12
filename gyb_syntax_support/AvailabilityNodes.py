@@ -22,7 +22,9 @@ AVAILABILITY_NODES = [
                    description='The actual argument',
                    node_choices=[
                        Child('Token', kind='Token', 
-                             token_choices=['BinaryOperatorToken', 'IdentifierToken']),
+                             token_choices=['BinaryOperatorToken', 'IdentifierToken'],
+                             requires_leading_space=False,
+                             requires_trailing_space=False),
                        Child('AvailabilityVersionRestriction',
                              kind='AvailabilityVersionRestriction'),
                        Child('AvailabilityLabeledArgument',
@@ -44,7 +46,8 @@ AVAILABILITY_NODES = [
          a value, e.g. `message: "This has been deprecated"`.
          ''',
          children=[
-             Child('Label', kind='IdentifierToken', name_for_diagnostics='label',
+             Child('Label', kind='KeywordToken', name_for_diagnostics='label',
+                   token_choices=['KeywordToken|message', 'KeywordToken|renamed', 'KeywordToken|introduced', 'KeywordToken|obsoleted', 'KeywordToken|deprecated'],
                    description='The label of the argument'),
              Child('Colon', kind='ColonToken',
                    description='The colon separating label and value'),

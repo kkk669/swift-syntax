@@ -42,8 +42,8 @@ ATTRIBUTE_NODES = [
                              kind='DifferentiableAttributeArguments'),
                        Child('DerivativeRegistrationArguments',
                              kind='DerivativeRegistrationAttributeArguments'),
-                       Child('BackDeployArguments',
-                             kind='BackDeployAttributeSpecList'),
+                       Child('BackDeployedArguments',
+                             kind='BackDeployedAttributeSpecList'),
                        Child('ConventionArguments',
                              kind='ConventionAttributeArguments'),
                        Child('ConventionWitnessMethodArguments',
@@ -107,7 +107,7 @@ ATTRIBUTE_NODES = [
          The availability argument for the _specialize attribute
          ''',
          children=[
-             Child('Label', kind='IdentifierToken', name_for_diagnostics='label',
+             Child('Label', kind='KeywordToken', token_choices=['KeywordToken|availability'], name_for_diagnostics='label',
                    description='The label of the argument'),
              Child('Colon', kind='ColonToken',
                    description='The colon separating the label and the value'),
@@ -126,7 +126,8 @@ ATTRIBUTE_NODES = [
          ''',
          traits=['WithTrailingComma'],
          children=[
-             Child('Label', kind='IdentifierToken', name_for_diagnostics='label',
+             Child('Label', kind='Token', name_for_diagnostics='label',
+                   token_choices=['KeywordToken|available', 'KeywordToken|exported', 'KeywordToken|kind', 'KeywordToken|spi', 'KeywordToken|spiModule', 'IdentifierToken'],
                    description='The label of the argument'),
              Child('Colon', kind='ColonToken',
                    description='The colon separating the label and the value'),
@@ -148,7 +149,7 @@ ATTRIBUTE_NODES = [
          ''',
          traits=['WithTrailingComma'],
          children=[
-             Child('Label', kind='IdentifierToken', name_for_diagnostics='label',
+             Child('Label', kind='KeywordToken', token_choices=['KeywordToken|target'], name_for_diagnostics='label',
                    description='The label of the argument'),
              Child('Colon', kind='ColonToken',
                    description='The colon separating the label and the value'),
@@ -162,7 +163,7 @@ ATTRIBUTE_NODES = [
 
     Node('DeclName', name_for_diagnostics='declaration name', kind='Syntax', children=[
          Child('DeclBaseName', kind='Token', name_for_diagnostics='base name', 
-               token_choices=['IdentifierToken', 'PrefixOperatorToken'],
+               token_choices=['IdentifierToken', 'PrefixOperatorToken', 'KeywordToken|init'],
                description='''
                The base name of the protocol\'s requirement.
                '''),
@@ -229,8 +230,8 @@ ATTRIBUTE_NODES = [
          and an optional 'where' clause.
          ''',
          children=[
-             Child('DiffKind', kind='IdentifierToken',
-                   text_choices=['forward', 'reverse', 'linear'],
+             Child('DiffKind', kind='KeywordToken',
+                   token_choices=['KeywordToken|forward', 'KeywordToken|reverse', 'KeywordToken|linear'],
                    is_optional=True),
              Child('DiffKindComma', kind='CommaToken', description='''
                    The comma following the differentiability kind, if it exists.
@@ -250,8 +251,8 @@ ATTRIBUTE_NODES = [
          name_for_diagnostics="'@differentiable' argument", kind='Syntax',
          description='A clause containing differentiability parameters.',
          children=[
-             Child('WrtLabel', kind='IdentifierToken',
-                   text_choices=['wrt'], description='The "wrt" label.'),
+             Child('WrtLabel', kind='KeywordToken',
+                   token_choices=['KeywordToken|wrt'], description='The "wrt" label.'),
              Child('Colon', kind='ColonToken', description='''
                    The colon separating "wrt" and the parameter list.
                    '''),
@@ -308,7 +309,7 @@ ATTRIBUTE_NODES = [
          optional differentiability parameter list.
          ''',
          children=[
-             Child('OfLabel', kind='IdentifierToken', text_choices=['of'],
+             Child('OfLabel', kind='KeywordToken', token_choices=['KeywordToken|of'],
                    description='The "of" label.'),
              Child('Colon', kind='ColonToken', description='''
                    The colon separating the "of" label and the original
@@ -321,9 +322,9 @@ ATTRIBUTE_NODES = [
                    The period separating the original declaration name and the
                    accessor name.
                    ''', is_optional=True),
-             Child('AccessorKind', kind='IdentifierToken',
+             Child('AccessorKind', kind='KeywordToken',
                    description='The accessor name.',
-                   text_choices=['get', 'set'],
+                   token_choices=['KeywordToken|get', 'KeywordToken|set'],
                    is_optional=True),
              Child('Comma', kind='CommaToken', is_optional=True),
              Child('DiffParams', kind='DifferentiabilityParamsClause',
@@ -366,16 +367,16 @@ ATTRIBUTE_NODES = [
                    '''),
          ]),
 
-    # The arguments of '@_backDeploy(...)'
-    # back-deploy-attr-spec-list -> 'before' ':' back-deploy-version-list
-    Node('BackDeployAttributeSpecList', kind='Syntax',
-         name_for_diagnostics="'@_backDeploy' arguments",
+    # The arguments of '@backDeployed(...)'
+    # back-deployed-attr-spec-list -> 'before' ':' back-deployed-version-list
+    Node('BackDeployedAttributeSpecList', kind='Syntax',
+         name_for_diagnostics="'@backDeployed' arguments",
          description='''
-         A collection of arguments for the `@_backDeploy` attribute
+         A collection of arguments for the `@backDeployed` attribute
          ''',
          children=[
-             Child('BeforeLabel', kind='IdentifierToken',
-                   text_choices=['before'], description='The "before" label.'),
+             Child('BeforeLabel', kind='KeywordToken',
+                   token_choices=['KeywordToken|before'], description='The "before" label.'),
              Child('Colon', kind='ColonToken', description='''
                    The colon separating "before" and the parameter list.
                    '''),
@@ -430,11 +431,10 @@ ATTRIBUTE_NODES = [
          ''',
          children=[
              Child('ConventionLabel', kind='IdentifierToken',
-                   text_choices=['block', 'c', 'objc_method', 'thin', 'thick'],
                    description='The convention label.'),
              Child('Comma', kind='CommaToken', is_optional=True),
-             Child('CTypeLabel', kind='IdentifierToken',
-                   text_choices=['cType'], is_optional=True),
+             Child('CTypeLabel', kind='KeywordToken',
+                   token_choices=['KeywordToken|cType'], is_optional=True),
              Child('Colon', kind='ColonToken', is_optional=True),
              Child('CTypeString', kind='StringLiteralExpr', is_optional=True),
         ]),
@@ -447,7 +447,7 @@ ATTRIBUTE_NODES = [
          The arguments for the '@convention(witness_method: ...)'.
          ''',
          children=[
-             Child('WitnessMethodLabel', kind='IdentifierToken'),
+             Child('WitnessMethodLabel', kind='KeywordToken', token_choices=['KeywordToken|witness_method']),
              Child('Colon', kind='ColonToken'),
              Child('ProtocolName', kind='IdentifierToken'),
         ]),
@@ -469,7 +469,7 @@ ATTRIBUTE_NODES = [
          The arguments for the '@_originallyDefinedIn' attribute
          ''',
          children=[
-           Child('ModuleLabel', kind='IdentifierToken', text_choices=['module']),
+           Child('ModuleLabel', kind='KeywordToken', token_choices=['KeywordToken|module']),
            Child('Colon', kind='ColonToken'),
            Child('ModuleName', kind='StringLiteralExpr'),
            Child('Comma', kind='CommaToken'),
@@ -482,7 +482,7 @@ ATTRIBUTE_NODES = [
          The arguments for the '@_private' attribute
          ''',
          children=[
-           Child('SourceFileLabel', kind='IdentifierToken', text_choices=['sourceFile']),
+           Child('SourceFileLabel', kind='KeywordToken', token_choices=['KeywordToken|sourceFile']),
            Child('Colon', kind='ColonToken'),
            Child('Filename', kind='StringLiteralExpr'),
          ]),
@@ -493,7 +493,8 @@ ATTRIBUTE_NODES = [
          The arguments for the '@_dynamicReplacement' attribute
          ''',
          children=[
-           Child('ForLabel', kind='IdentifierToken', text_choices=['for']),
+           Child('ForLabel', kind='KeywordToken', token_choices=['KeywordToken|for'],
+                 requires_trailing_space=False),
            Child('Colon', kind='ColonToken'),
            Child('Declname', kind='DeclName'),
          ]),
@@ -504,7 +505,7 @@ ATTRIBUTE_NODES = [
          The arguments for the '@_unavailableFromAsync' attribute
          ''',
          children=[
-           Child('MessageLabel', kind='IdentifierToken', text_choices=['message']),
+           Child('MessageLabel', kind='KeywordToken', token_choices=['KeywordToken|message']),
            Child('Colon', kind='ColonToken'),
            Child('Message', kind='StringLiteralExpr'),
          ]),
@@ -518,7 +519,7 @@ ATTRIBUTE_NODES = [
     Node('DocumentationAttributeArgument', name_for_diagnostics='@_documentation argument', kind='Syntax',
          traits=['WithTrailingComma'],
          children=[
-            Child('Label', kind='IdentifierToken', text_choices=['visibility', 'metadata'], name_for_diagnostics='label'),
+            Child('Label', kind='KeywordToken', token_choices=['KeywordToken|visibility', 'KeywordToken|metadata'], name_for_diagnostics='label'),
             Child('Colon', kind='ColonToken'),
             Child('Value', kind='Syntax', node_choices=[
                   Child('Token', kind='Token', token_choices=['IdentifierToken', 'KeywordToken']), # Keywords can be: public, internal, private, fileprivate, open

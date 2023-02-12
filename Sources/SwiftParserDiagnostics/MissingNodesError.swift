@@ -42,7 +42,7 @@ fileprivate enum NodesDescriptionPart {
       if let childName = token.childNameInParent {
         return childName
       }
-      return token.tokenKind.decomposeToRaw().rawKind.nameForDiagnostics
+      return token.tokenKind.nameForDiagnostics
     case .node(let node):
       var walk: Syntax = node
       while true {
@@ -223,6 +223,25 @@ public struct MissingNodesError: ParserError {
       }
     }
 
+    let missingExpr: ExprSyntax?
+    if let expr = firstMissingNode.as(MissingExprSyntax.self) {
+      missingExpr = ExprSyntax(expr)
+    } else if let typeExpr = firstMissingNode.parent?.as(TypeExprSyntax.self) {
+      missingExpr = ExprSyntax(typeExpr)
+    } else {
+      missingExpr = nil
+    }
+    if let missingExpr = missingExpr,
+      let exprList = missingExpr.parent?.as(ExprListSyntax.self),
+      exprList.parent?.is(SequenceExprSyntax.self) ?? false,
+      let previousSiblingIndex = exprList.index(missingExpr.index, offsetBy: -1, limitedBy: exprList.startIndex)
+    {
+      let previousSibling = exprList[previousSiblingIndex]
+      if let previousSiblingName = previousSibling.nodeTypeNameForDiagnostics(allowBlockNames: false) {
+        return "after \(previousSiblingName)"
+      }
+    }
+
     return nil
   }
 
@@ -261,8 +280,7 @@ public struct MissingNodesError: ParserError {
     var message = "expected \(description)"
     if let afterClause = afterClause {
       message += " \(afterClause)"
-    }
-    if let parentContextClause = parentContextClause(anchor: anchor?.parent ?? findCommonAncestor(missingNodes)) {
+    } else if let parentContextClause = parentContextClause(anchor: anchor?.parent ?? findCommonAncestor(missingNodes)) {
       message += " \(parentContextClause)"
     }
     return message
@@ -334,8 +352,6 @@ extension ParseDiagnosticsGenerator {
           break
         }
       }
-    } else {
-      missingNodes = []
     }
 
     let changes = missingNodes.enumerated().map { (index, missingNode) -> FixIt.Changes in

@@ -27,7 +27,7 @@ final class AttributeTests: XCTestCase {
         DiagnosticSpec(message: "expected ')' to end attribute", fixIts: ["insert ')'"]),
       ],
       fixedSource: """
-        @_dynamicReplacement(for: <#identifier#>)
+        @_dynamicReplacement(for : <#identifier#>)
         func test_dynamic_replacement_for2() {
         }
         """
@@ -348,7 +348,30 @@ final class AttributeTests: XCTestCase {
     )
   }
 
-  func testBackDeploy() {
+  func testBackDeployed() {
+    AssertParse(
+      """
+      @backDeployed(before: macOS 12.0)
+      struct Foo {}
+      """
+    )
+
+    AssertParse(
+      """
+      @backDeployed(before: macos 12.0, iOS 15.0)
+      struct Foo {}
+      """
+    )
+
+    AssertParse(
+      """
+      @available(macOS 11.0, *)
+      @backDeployed(before: _macOS12_1)
+      public func backDeployTopLevelFunc2() -> Int { return 48 }
+      """
+    )
+
+    // Legacy spelling @_backDeploy(before:)
     AssertParse(
       """
       @_backDeploy(before: macOS 12.0)

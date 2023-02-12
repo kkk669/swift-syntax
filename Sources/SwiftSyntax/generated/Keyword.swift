@@ -145,7 +145,11 @@ public enum Keyword: UInt8, Hashable {
   
   case await
   
+  case backDeployed
+  
   case before
+  
+  case block
   
   case `break`
   
@@ -160,6 +164,8 @@ public enum Keyword: UInt8, Hashable {
   case convenience
   
   case convention
+  
+  case cType
   
   case `default`
   
@@ -199,11 +205,15 @@ public enum Keyword: UInt8, Hashable {
   
   case `false`
   
+  case file
+  
   case `fileprivate`
   
   case final
   
   case `for`
+  
+  case forward
   
   case `func`
   
@@ -241,7 +251,13 @@ public enum Keyword: UInt8, Hashable {
   
   case lazy
   
+  case left
+  
   case `let`
+  
+  case line
+  
+  case linear
   
   case lowerThan
   
@@ -266,6 +282,8 @@ public enum Keyword: UInt8, Hashable {
   case noDerivative
   
   case noescape
+  
+  case none
   
   case nonisolated
   
@@ -314,6 +332,8 @@ public enum Keyword: UInt8, Hashable {
   case `return`
   
   case reverse
+  
+  case right
   
   case safe
   
@@ -449,6 +469,8 @@ public enum Keyword: UInt8, Hashable {
         self = .`else`
       case "enum": 
         self = .`enum`
+      case "file": 
+        self = .file
       case "func": 
         self = .`func`
       case "init": 
@@ -457,6 +479,12 @@ public enum Keyword: UInt8, Hashable {
         self = .kind
       case "lazy": 
         self = .lazy
+      case "left": 
+        self = .left
+      case "line": 
+        self = .line
+      case "none": 
+        self = .none
       case "objc": 
         self = .objc
       case "open": 
@@ -490,12 +518,16 @@ public enum Keyword: UInt8, Hashable {
         self = .async
       case "await": 
         self = .await
+      case "block": 
+        self = .block
       case "break": 
         self = .`break`
       case "catch": 
         self = .`catch`
       case "class": 
         self = .`class`
+      case "cType": 
+        self = .cType
       case "defer": 
         self = .`defer`
       case "false": 
@@ -510,6 +542,8 @@ public enum Keyword: UInt8, Hashable {
         self = .`inout`
       case "macro": 
         self = .macro
+      case "right": 
+        self = .right
       case "super": 
         self = .`super`
       case "swift": 
@@ -545,6 +579,8 @@ public enum Keyword: UInt8, Hashable {
         self = .`import`
       case "inline": 
         self = .inline
+      case "linear": 
+        self = .linear
       case "module": 
         self = .module
       case "prefix": 
@@ -586,6 +622,8 @@ public enum Keyword: UInt8, Hashable {
         self = .`default`
       case "dynamic": 
         self = .dynamic
+      case "forward": 
+        self = .forward
       case "message": 
         self = .message
       case "noasync": 
@@ -753,6 +791,8 @@ public enum Keyword: UInt8, Hashable {
         self = ._silgen_name
       case "availability": 
         self = .availability
+      case "backDeployed": 
+        self = .backDeployed
       case "noDerivative": 
         self = .noDerivative
       default: 
@@ -1000,190 +1040,200 @@ public enum Keyword: UInt8, Hashable {
   /// constant-evaluate `Keyword.spi.defaultText` to a `SyntaxText` but I don't
   /// see how that's possible right now.
   private static let keywordTextLookupTable: [SyntaxText] = [
-    "__consuming", 
-    "__owned", 
-    "__setter_access", 
-    "__shared", 
-    "_alignment", 
-    "_backDeploy", 
-    "_borrow", 
-    "_cdecl", 
-    "_Class", 
-    "_compilerInitialized", 
-    "_const", 
-    "_documentation", 
-    "_dynamicReplacement", 
-    "_effects", 
-    "_expose", 
-    "_forward", 
-    "_implements", 
-    "_linear", 
-    "_local", 
-    "_modify", 
-    "_move", 
-    "_NativeClass", 
-    "_NativeRefCountedObject", 
-    "_noMetadata", 
-    "_nonSendable", 
-    "_objcImplementation", 
-    "_objcRuntimeName", 
-    "_opaqueReturnTypeOf", 
-    "_optimize", 
-    "_originallyDefinedIn", 
-    "_PackageDescription", 
-    "_private", 
-    "_projectedValueProperty", 
-    "_read", 
-    "_RefCountedObject", 
-    "_semantics", 
-    "_silgen_name", 
-    "_specialize", 
-    "_spi", 
-    "_spi_available", 
-    "_swift_native_objc_runtime_base", 
-    "_Trivial", 
-    "_TrivialAtMost", 
-    "_typeEraser", 
-    "_unavailableFromAsync", 
-    "_UnknownLayout", 
-    "actor", 
-    "addressWithNativeOwner", 
-    "addressWithOwner", 
-    "any", 
-    "Any", 
-    "as", 
-    "assignment", 
-    "associatedtype", 
-    "associativity", 
-    "async", 
-    "autoclosure", 
-    "availability", 
-    "available", 
-    "await", 
-    "before", 
-    "break", 
-    "case", 
-    "catch", 
-    "class", 
-    "continue", 
-    "convenience", 
-    "convention", 
-    "default", 
-    "defer", 
-    "deinit", 
-    "deprecated", 
-    "derivative", 
-    "didSet", 
-    "differentiable", 
-    "distributed", 
-    "do", 
-    "dynamic", 
-    "each", 
-    "else", 
-    "enum", 
-    "escaping", 
-    "exclusivity", 
-    "exported", 
-    "extension", 
-    "fallthrough", 
-    "false", 
-    "fileprivate", 
-    "final", 
-    "for", 
-    "func", 
-    "get", 
-    "guard", 
-    "higherThan", 
-    "if", 
-    "import", 
-    "in", 
-    "indirect", 
-    "infix", 
-    "init", 
-    "inline", 
-    "inout", 
-    "internal", 
-    "introduced", 
-    "is", 
-    "isolated", 
-    "kind", 
-    "lazy", 
-    "let", 
-    "lowerThan", 
-    "macro", 
-    "message", 
-    "metadata", 
-    "module", 
-    "mutableAddressWithNativeOwner", 
-    "mutableAddressWithOwner", 
-    "mutating", 
-    "nil", 
-    "noasync", 
-    "noDerivative", 
-    "noescape", 
-    "nonisolated", 
-    "nonmutating", 
-    "objc", 
-    "obsoleted", 
-    "of", 
-    "open", 
-    "operator", 
-    "optional", 
-    "override", 
-    "package", 
-    "postfix", 
-    "precedencegroup", 
-    "prefix", 
-    "private", 
-    "Protocol", 
-    "protocol", 
-    "public", 
-    "reasync", 
-    "renamed", 
-    "repeat", 
-    "required", 
-    "rethrows", 
-    "return", 
-    "reverse", 
-    "safe", 
-    "self", 
-    "Self", 
-    "Sendable", 
-    "set", 
-    "some", 
-    "sourceFile", 
-    "spi", 
-    "spiModule", 
-    "static", 
-    "struct", 
-    "subscript", 
-    "super", 
-    "swift", 
-    "switch", 
-    "target", 
-    "throw", 
-    "throws", 
-    "transpose", 
-    "true", 
-    "try", 
-    "Type", 
-    "typealias", 
-    "unavailable", 
-    "unchecked", 
-    "unowned", 
-    "unsafe", 
-    "unsafeAddress", 
-    "unsafeMutableAddress", 
-    "var", 
-    "visibility", 
-    "weak", 
-    "where", 
-    "while", 
-    "willSet", 
-    "witness_method", 
-    "wrt", 
-    "yield", 
-  ]
+      "__consuming", 
+      "__owned", 
+      "__setter_access", 
+      "__shared", 
+      "_alignment", 
+      "_backDeploy", 
+      "_borrow", 
+      "_cdecl", 
+      "_Class", 
+      "_compilerInitialized", 
+      "_const", 
+      "_documentation", 
+      "_dynamicReplacement", 
+      "_effects", 
+      "_expose", 
+      "_forward", 
+      "_implements", 
+      "_linear", 
+      "_local", 
+      "_modify", 
+      "_move", 
+      "_NativeClass", 
+      "_NativeRefCountedObject", 
+      "_noMetadata", 
+      "_nonSendable", 
+      "_objcImplementation", 
+      "_objcRuntimeName", 
+      "_opaqueReturnTypeOf", 
+      "_optimize", 
+      "_originallyDefinedIn", 
+      "_PackageDescription", 
+      "_private", 
+      "_projectedValueProperty", 
+      "_read", 
+      "_RefCountedObject", 
+      "_semantics", 
+      "_silgen_name", 
+      "_specialize", 
+      "_spi", 
+      "_spi_available", 
+      "_swift_native_objc_runtime_base", 
+      "_Trivial", 
+      "_TrivialAtMost", 
+      "_typeEraser", 
+      "_unavailableFromAsync", 
+      "_UnknownLayout", 
+      "actor", 
+      "addressWithNativeOwner", 
+      "addressWithOwner", 
+      "any", 
+      "Any", 
+      "as", 
+      "assignment", 
+      "associatedtype", 
+      "associativity", 
+      "async", 
+      "autoclosure", 
+      "availability", 
+      "available", 
+      "await", 
+      "backDeployed", 
+      "before", 
+      "block", 
+      "break", 
+      "case", 
+      "catch", 
+      "class", 
+      "continue", 
+      "convenience", 
+      "convention", 
+      "cType", 
+      "default", 
+      "defer", 
+      "deinit", 
+      "deprecated", 
+      "derivative", 
+      "didSet", 
+      "differentiable", 
+      "distributed", 
+      "do", 
+      "dynamic", 
+      "each", 
+      "else", 
+      "enum", 
+      "escaping", 
+      "exclusivity", 
+      "exported", 
+      "extension", 
+      "fallthrough", 
+      "false", 
+      "file", 
+      "fileprivate", 
+      "final", 
+      "for", 
+      "forward", 
+      "func", 
+      "get", 
+      "guard", 
+      "higherThan", 
+      "if", 
+      "import", 
+      "in", 
+      "indirect", 
+      "infix", 
+      "init", 
+      "inline", 
+      "inout", 
+      "internal", 
+      "introduced", 
+      "is", 
+      "isolated", 
+      "kind", 
+      "lazy", 
+      "left", 
+      "let", 
+      "line", 
+      "linear", 
+      "lowerThan", 
+      "macro", 
+      "message", 
+      "metadata", 
+      "module", 
+      "mutableAddressWithNativeOwner", 
+      "mutableAddressWithOwner", 
+      "mutating", 
+      "nil", 
+      "noasync", 
+      "noDerivative", 
+      "noescape", 
+      "none", 
+      "nonisolated", 
+      "nonmutating", 
+      "objc", 
+      "obsoleted", 
+      "of", 
+      "open", 
+      "operator", 
+      "optional", 
+      "override", 
+      "package", 
+      "postfix", 
+      "precedencegroup", 
+      "prefix", 
+      "private", 
+      "Protocol", 
+      "protocol", 
+      "public", 
+      "reasync", 
+      "renamed", 
+      "repeat", 
+      "required", 
+      "rethrows", 
+      "return", 
+      "reverse", 
+      "right", 
+      "safe", 
+      "self", 
+      "Self", 
+      "Sendable", 
+      "set", 
+      "some", 
+      "sourceFile", 
+      "spi", 
+      "spiModule", 
+      "static", 
+      "struct", 
+      "subscript", 
+      "super", 
+      "swift", 
+      "switch", 
+      "target", 
+      "throw", 
+      "throws", 
+      "transpose", 
+      "true", 
+      "try", 
+      "Type", 
+      "typealias", 
+      "unavailable", 
+      "unchecked", 
+      "unowned", 
+      "unsafe", 
+      "unsafeAddress", 
+      "unsafeMutableAddress", 
+      "var", 
+      "visibility", 
+      "weak", 
+      "where", 
+      "while", 
+      "willSet", 
+      "witness_method", 
+      "wrt", 
+      "yield",
+    ]
   
   @_spi(RawSyntax)
   public var defaultText: SyntaxText {

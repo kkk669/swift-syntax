@@ -46,7 +46,7 @@ extension Parser {
   ///     expression-pattern → expression
   @_spi(RawSyntax)
   public mutating func parsePattern() -> RawPatternSyntax {
-    enum ExpectedTokens: RawTokenKindSubset {
+    enum ExpectedTokens: TokenSpecSet {
       case leftParen
       case wildcard
       case identifier
@@ -55,18 +55,18 @@ extension Parser {
       case varKeyword
 
       init?(lexeme: Lexer.Lexeme) {
-        switch lexeme.rawTokenKind {
-        case .leftParen: self = .leftParen
-        case .wildcard: self = .wildcard
-        case .identifier: self = .identifier
-        case .dollarIdentifier: self = .dollarIdentifier
-        case .keyword(.let): self = .letKeyword
-        case .keyword(.var): self = .varKeyword
+        switch lexeme {
+        case TokenSpec(.leftParen): self = .leftParen
+        case TokenSpec(.wildcard): self = .wildcard
+        case TokenSpec(.identifier): self = .identifier
+        case TokenSpec(.dollarIdentifier): self = .dollarIdentifier
+        case TokenSpec(.let): self = .letKeyword
+        case TokenSpec(.var): self = .varKeyword
         default: return nil
         }
       }
 
-      var rawTokenKind: RawTokenKind {
+      var spec: TokenSpec {
         switch self {
         case .leftParen: return .leftParen
         case .wildcard: return .wildcard
@@ -131,7 +131,7 @@ extension Parser {
         )
       )
     case nil:
-      if self.currentToken.rawTokenKind.isLexerClassifiedKeyword, !self.currentToken.isAtStartOfLine {
+      if self.currentToken.isLexerClassifiedKeyword, !self.currentToken.isAtStartOfLine {
         // Recover if a keyword was used instead of an identifier
         let keyword = self.consumeAnyToken()
         return RawPatternSyntax(
@@ -210,7 +210,7 @@ extension Parser {
     do {
       var keepGoing = true
       var loopProgress = LoopProgressCondition()
-      while !self.at(any: [.eof, .rightParen]) && keepGoing && loopProgress.evaluate(currentToken) {
+      while !self.at(.eof, .rightParen) && keepGoing && loopProgress.evaluate(currentToken) {
         // If the tuple element has a label, parse it.
         let labelAndColon = self.consume(if: .identifier, followedBy: .colon)
         let (label, colon) = (labelAndColon?.0, labelAndColon?.1)
@@ -288,7 +288,7 @@ extension Parser.Lookahead {
   ///   pattern ::= 'var' pattern
   ///   pattern ::= 'let' pattern
   mutating func canParsePattern() -> Bool {
-    enum PatternStartTokens: RawTokenKindSubset {
+    enum PatternStartTokens: TokenSpecSet {
       case identifier
       case wildcard
       case letKeyword
@@ -296,17 +296,17 @@ extension Parser.Lookahead {
       case leftParen
 
       init?(lexeme: Lexer.Lexeme) {
-        switch lexeme.rawTokenKind {
-        case .identifier: self = .identifier
-        case .wildcard: self = .wildcard
-        case .keyword(.let): self = .letKeyword
-        case .keyword(.var): self = .varKeyword
-        case .leftParen: self = .leftParen
+        switch lexeme {
+        case TokenSpec(.identifier): self = .identifier
+        case TokenSpec(.wildcard): self = .wildcard
+        case TokenSpec(.let): self = .letKeyword
+        case TokenSpec(.var): self = .varKeyword
+        case TokenSpec(.leftParen): self = .leftParen
         default: return nil
         }
       }
 
-      var rawTokenKind: RawTokenKind {
+      var spec: TokenSpec {
         switch self {
         case .identifier: return .identifier
         case .wildcard: return .wildcard

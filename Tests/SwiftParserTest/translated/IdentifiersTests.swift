@@ -68,13 +68,13 @@ final class IdentifiersTests: XCTestCase {
   }
 
   func testIdentifiers6() {
+    // Private-use characters aren't valid in Swift source.
     AssertParse(
       """
-      // Private-use characters aren't valid in Swift source.
-      ()
+      1️⃣()
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 2: invalid character in source file, Fix-It replacements: 1 - 4 = ' '
+        DiagnosticSpec(message: "invalid character in source file")
       ]
     )
   }
@@ -167,14 +167,14 @@ final class IdentifiersTests: XCTestCase {
     AssertParse(
       """
       // SIL keywords are tokenized as normal identifiers in non-SIL mode.
-      _ = undef 
-      _ = sil 
-      _ = sil_stage 
-      _ = sil_vtable 
-      _ = sil_global 
-      _ = sil_witness_table 
-      _ = sil_default_witness_table 
-      _ = sil_coverage_map 
+      _ = undef
+      _ = sil
+      _ = sil_stage
+      _ = sil_vtable
+      _ = sil_global
+      _ = sil_witness_table
+      _ = sil_default_witness_table
+      _ = sil_coverage_map
       _ = sil_scope
       """
     )
@@ -192,7 +192,7 @@ final class IdentifiersTests: XCTestCase {
   func testIdentifiers11() {
     AssertParse(
       """
-      @propertyWrapper 
+      @propertyWrapper
       struct Wrapper {
         var wrappedValue = 0
       }

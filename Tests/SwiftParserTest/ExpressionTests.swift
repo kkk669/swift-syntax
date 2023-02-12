@@ -27,7 +27,7 @@ final class ExpressionTests: XCTestCase {
     AssertParse(
       "a ? b :1️⃣",
       diagnostics: [
-        DiagnosticSpec(message: "expected expression")
+        DiagnosticSpec(message: "expected expression after ternary operator")
       ]
     )
   }
@@ -611,9 +611,10 @@ final class ExpressionTests: XCTestCase {
     )
 
     AssertParse(
-      ###""\1️⃣"###,
+      ###""1️⃣\2️⃣"###,
       diagnostics: [
-        DiagnosticSpec(message: #"expected '"' to end string literal"#)
+        DiagnosticSpec(locationMarker: "1️⃣", message: "invalid escape sequence in literal"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: #"expected '"' to end string literal"#),
       ]
     )
   }
@@ -640,7 +641,7 @@ final class ExpressionTests: XCTestCase {
       1️⃣'red'
       """#,
       diagnostics: [
-        DiagnosticSpec(message: #"Single-quoted string literal found, use '"'"#, fixIts: [#"replace ''' by '"'"#])
+        DiagnosticSpec(message: #"Single-quoted string literal found, use '"'"#, fixIts: [#"replace ''' with '"'"#])
       ],
       fixedSource: """
         "red"
@@ -652,7 +653,7 @@ final class ExpressionTests: XCTestCase {
        1️⃣' red ' + 1
       """#,
       diagnostics: [
-        DiagnosticSpec(message: #"Single-quoted string literal found, use '"'"#, fixIts: [#"replace ''' by '"'"#])
+        DiagnosticSpec(message: #"Single-quoted string literal found, use '"'"#, fixIts: [#"replace ''' with '"'"#])
       ],
       fixedSource: """
          " red " + 1
@@ -699,9 +700,12 @@ final class ExpressionTests: XCTestCase {
   func testPoundsInStringInterpolationWhereNotNecessary() {
     AssertParse(
       ##"""
-      "\#(1)"
+      "1️⃣\#(1)"
       """##,
-      substructure: Syntax(StringSegmentSyntax(content: .stringSegment(##"\#(1)"##)))
+      substructure: Syntax(StringSegmentSyntax(content: .stringSegment(##"\#(1)"##))),
+      diagnostics: [
+        DiagnosticSpec(message: "invalid escape sequence in literal")
+      ]
     )
   }
 
@@ -788,7 +792,7 @@ final class ExpressionTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected expression in 'do' statement")
+        DiagnosticSpec(message: "expected expression after ternary operator")
       ]
     )
   }
@@ -896,6 +900,10 @@ final class ExpressionTests: XCTestCase {
   }
 
   func testMacroExpansionExpression() {
+    AssertParse(
+      #"#file == $0.path"#
+    )
+
     AssertParse(
       #"let a = #embed("filename.txt")"#
     )
@@ -1095,6 +1103,95 @@ final class ExpressionTests: XCTestCase {
         """#
     )
   }
+
+  func testMissingExpresssionInSequenceExpression() {
+    AssertParse(
+      """
+      a ? b :1️⃣
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "expected expression after ternary operator")
+      ],
+      fixedSource: """
+        a ? b : <#expression#>
+        """
+    )
+
+    AssertParse(
+      """
+      a +1️⃣
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "expected expression after operator")
+      ],
+      fixedSource: """
+        a + <#expression#>
+        """
+    )
+
+    AssertParse(
+      """
+      a as1️⃣
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "expected type after 'as'")
+      ],
+      fixedSource: """
+        a as <#type#>
+        """
+    )
+
+    AssertParse(
+      """
+      a is1️⃣
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "expected type after 'is'")
+      ],
+      fixedSource: """
+        a is <#type#>
+        """
+    )
+  }
+
+  func testNonBreakingSpace() {
+    AssertParse(
+      "a 1️⃣\u{a0}+ 2",
+      diagnostics: [
+        DiagnosticSpec(message: "non-breaking space (U+00A0) used instead of regular space", severity: .warning, fixIts: ["replace non-breaking space with ' '"])
+      ],
+      fixedSource: "a  + 2"
+    )
+  }
+
+  func testTabsIndentationInMultilineStringLiteral() {
+    AssertParse(
+      #"""
+      _ = """
+      \#taq
+      \#t"""
+      """#
+    )
+  }
+
+  func testMixedIndentationInMultilineStringLiteral() {
+    AssertParse(
+      #"""
+      _ = """
+      \#t aq
+      \#t """
+      """#
+    )
+  }
+
+  func testNulCharacterInSourceFile() {
+    AssertParse(
+      "let a = 1️⃣\u{0}1",
+      diagnostics: [
+        DiagnosticSpec(message: "nul character embedded in middle of file", severity: .warning)
+      ]
+    )
+  }
 }
 
 final class MemberExprTests: XCTestCase {
@@ -1114,5 +1211,420 @@ final class MemberExprTests: XCTestCase {
         line: line
       )
     }
+  }
+}
+
+final class StatementExpressionTests: XCTestCase {
+  private func ifZeroElseOne() -> ExprSyntax {
+    .init(
+      IfExprSyntax(
+        conditions: [
+          .init(
+            condition: .expression(
+              .init(
+                FunctionCallExprSyntax(callee: MemberAccessExprSyntax(name: "random"))
+              )
+            )
+          )
+        ],
+        body: .init(statements: [
+          .init(item: .expr(.init(IntegerLiteralExprSyntax(0))))
+        ]),
+        elseKeyword: .keyword(.else),
+        elseBody: .init(
+          .codeBlock(
+            .init(statements: [
+              .init(item: .expr(.init(IntegerLiteralExprSyntax(1))))
+            ])
+          )
+        )
+      )
+    )
+  }
+  private func switchRandomZeroOne() -> ExprSyntax {
+    .init(
+      SwitchExprSyntax(
+        expression: FunctionCallExprSyntax(
+          callee: MemberAccessExprSyntax(
+            base: IdentifierExprSyntax(identifier: .identifier("Bool")),
+            name: "random"
+          )
+        ),
+        cases: [
+          .switchCase(
+            .init(
+              label: .case(
+                .init(caseItems: [
+                  .init(pattern: ExpressionPatternSyntax(expression: BooleanLiteralExprSyntax(true)))
+                ])
+              ),
+              statements: [
+                .init(item: .expr(.init(IntegerLiteralExprSyntax(0))))
+              ]
+            )
+          ),
+          .switchCase(
+            .init(
+              label: .case(
+                .init(caseItems: [
+                  .init(pattern: ExpressionPatternSyntax(expression: BooleanLiteralExprSyntax(false)))
+                ])
+              ),
+              statements: [
+                .init(item: .expr(.init(IntegerLiteralExprSyntax(1))))
+              ]
+            )
+          ),
+        ]
+      )
+    )
+  }
+  func testIfExprInCoercion() {
+    AssertParse(
+      """
+      func foo() {
+        if .random() { 0 } else { 1 } as Int
+      }
+      """,
+      substructure: Syntax(
+        SequenceExprSyntax(
+          elements: ExprListSyntax([
+            ifZeroElseOne(),
+            ExprSyntax(
+              UnresolvedAsExprSyntax()
+            ),
+            ExprSyntax(
+              TypeExprSyntax(type: TypeSyntax(SimpleTypeIdentifierSyntax(name: .identifier("Int"))))
+            ),
+          ])
+        )
+      )
+    )
+  }
+  func testSwitchExprInCoercion() {
+    AssertParse(
+      """
+      switch Bool.random() { case true: 0 case false: 1 } as Int
+      """,
+      substructure: Syntax(
+        SequenceExprSyntax(
+          elements: ExprListSyntax([
+            switchRandomZeroOne(),
+            ExprSyntax(
+              UnresolvedAsExprSyntax()
+            ),
+            ExprSyntax(
+              TypeExprSyntax(type: TypeSyntax(SimpleTypeIdentifierSyntax(name: .identifier("Int"))))
+            ),
+          ])
+        )
+      )
+    )
+  }
+  func testIfExprInReturn() {
+    AssertParse(
+      """
+      func foo() {
+        return if .random() { 0 } else { 1 }
+      }
+      """,
+      substructure: Syntax(
+        ReturnStmtSyntax(expression: ifZeroElseOne())
+      )
+    )
+  }
+  func testSwitchExprInReturn() {
+    AssertParse(
+      """
+      func foo() {
+        return switch Bool.random() { case true: 0 case false: 1 }
+      }
+      """,
+      substructure: Syntax(
+        ReturnStmtSyntax(expression: switchRandomZeroOne())
+      )
+    )
+  }
+  func testTryIf1() {
+    AssertParse(
+      """
+      func foo() -> Int {
+        try if .random() { 0 } else { 1 }
+      }
+      """,
+      substructure: Syntax(
+        TryExprSyntax(expression: ifZeroElseOne())
+      )
+    )
+  }
+  func testTryIf2() {
+    AssertParse(
+      """
+      func foo() -> Int {
+        return try if .random() { 0 } else { 1 }
+      }
+      """,
+      substructure: Syntax(
+        ReturnStmtSyntax(expression: TryExprSyntax(expression: ifZeroElseOne()))
+      )
+    )
+  }
+  func testTryIf3() {
+    AssertParse(
+      """
+      func foo() -> Int {
+        let x = try if .random() { 0 } else { 1 }
+        return x
+      }
+      """,
+      substructure: Syntax(
+        TryExprSyntax(expression: ifZeroElseOne())
+      )
+    )
+  }
+  func testAwaitIf1() {
+    AssertParse(
+      """
+      func foo() async -> Int {
+        await if .random() { 0 } else { 1 }
+      }
+      """,
+      substructure: Syntax(
+        AwaitExprSyntax(expression: ifZeroElseOne())
+      )
+    )
+  }
+  func testAwaitIf2() {
+    AssertParse(
+      """
+      func foo() async -> Int {
+        return await if .random() { 0 } else { 1 }
+      }
+      """,
+      substructure: Syntax(
+        ReturnStmtSyntax(expression: AwaitExprSyntax(expression: ifZeroElseOne()))
+      )
+    )
+  }
+  func testAwaitIf3() {
+    AssertParse(
+      """
+      func foo() async -> Int {
+        let x = await if .random() { 0 } else { 1 }
+        return x
+      }
+      """,
+      substructure: Syntax(
+        AwaitExprSyntax(expression: ifZeroElseOne())
+      )
+    )
+  }
+  func testTrySwitch1() {
+    AssertParse(
+      """
+      try switch Bool.random() { case true: 0 case false: 1 }
+      """,
+      substructure: Syntax(
+        TryExprSyntax(expression: switchRandomZeroOne())
+      )
+    )
+  }
+  func testTrySwitch2() {
+    AssertParse(
+      """
+      func foo() -> Int {
+        return try switch Bool.random() { case true: 0 case false: 1 }
+      }
+      """,
+      substructure: Syntax(
+        ReturnStmtSyntax(expression: TryExprSyntax(expression: switchRandomZeroOne()))
+      )
+    )
+  }
+  func testTrySwitch3() {
+    AssertParse(
+      """
+      func foo() -> Int {
+        let x = try switch Bool.random() { case true: 0 case false: 1 }
+        return x
+      }
+      """,
+      substructure: Syntax(
+        TryExprSyntax(expression: switchRandomZeroOne())
+      )
+    )
+  }
+  func testAwaitSwitch1() {
+    AssertParse(
+      """
+      await switch Bool.random() { case true: 0 case false: 1 }
+      """,
+      substructure: Syntax(
+        AwaitExprSyntax(expression: switchRandomZeroOne())
+      )
+    )
+  }
+  func testAwaitSwitch2() {
+    AssertParse(
+      """
+      func foo() async -> Int {
+        return await switch Bool.random() { case true: 0 case false: 1 }
+      }
+      """,
+      substructure: Syntax(
+        ReturnStmtSyntax(expression: AwaitExprSyntax(expression: switchRandomZeroOne()))
+      )
+    )
+  }
+  func testAwaitSwitch3() {
+    AssertParse(
+      """
+      func foo() async -> Int {
+        let x = await switch Bool.random() { case true: 0 case false: 1 }
+        return x
+      }
+      """,
+      substructure: Syntax(
+        AwaitExprSyntax(expression: switchRandomZeroOne())
+      )
+    )
+  }
+  func testIfExprMultipleCoerce() {
+    // We only allow coercions as a narrow case in the parser, so attempting to
+    // double them up is invalid.
+    AssertParse(
+      """
+      func foo() {
+        if .random() { 0 } else { 1 } as Int 1️⃣as Int
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "unexpected code 'as Int' in function")
+      ]
+    )
+  }
+  func testIfExprIs() {
+    // We don't parse 'is Int'.
+    AssertParse(
+      """
+      func foo() -> Bool {
+        if .random() { 0 } else { 1 } 1️⃣is Int
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "unexpected code 'is Int' in function")
+      ]
+    )
+  }
+  func testIfExprCondCast() {
+    // We parse 'as? Int', but it will be a semantic error.
+    AssertParse(
+      """
+      if .random() { 0 } else { 1 } as? Int
+      """,
+      substructure: Syntax(
+        SequenceExprSyntax(
+          elements: ExprListSyntax([
+            ifZeroElseOne(),
+            ExprSyntax(
+              UnresolvedAsExprSyntax(questionOrExclamationMark: .postfixQuestionMarkToken())
+            ),
+            ExprSyntax(
+              TypeExprSyntax(type: TypeSyntax(SimpleTypeIdentifierSyntax(name: .identifier("Int"))))
+            ),
+          ])
+        )
+      )
+    )
+  }
+  func testIfExprForceCast() {
+    // We parse 'as! Int', but it will be a semantic error.
+    AssertParse(
+      """
+      if .random() { 0 } else { 1 } as! Int
+      """,
+      substructure: Syntax(
+        SequenceExprSyntax(
+          elements: ExprListSyntax([
+            ifZeroElseOne(),
+            ExprSyntax(
+              UnresolvedAsExprSyntax(questionOrExclamationMark: .exclamationMarkToken())
+            ),
+            ExprSyntax(
+              TypeExprSyntax(type: TypeSyntax(SimpleTypeIdentifierSyntax(name: .identifier("Int"))))
+            ),
+          ])
+        )
+      )
+    )
+  }
+  func testSwitchExprMultipleCoerce() {
+    // We only allow coercions as a narrow case in the parser, so attempting to
+    // double them up is invalid.
+    AssertParse(
+      """
+      func foo() {
+        switch Bool.random() { case true: 0 case false: 1 } as Int 1️⃣as Int
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "unexpected code 'as Int' in function")
+      ]
+    )
+  }
+  func testSwitchExprIs() {
+    // We don't parse 'is Int'.
+    AssertParse(
+      """
+      func foo() -> Bool {
+        switch Bool.random() { case true: 0 case false: 1 } 1️⃣is Int
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "unexpected code 'is Int' in function")
+      ]
+    )
+  }
+  func testSwitchExprCondCast() {
+    // We parse 'as? Int', but it will be a semantic error.
+    AssertParse(
+      """
+      switch Bool.random() { case true: 0 case false: 1 } as? Int
+      """,
+      substructure: Syntax(
+        SequenceExprSyntax(
+          elements: ExprListSyntax([
+            switchRandomZeroOne(),
+            ExprSyntax(
+              UnresolvedAsExprSyntax(questionOrExclamationMark: .postfixQuestionMarkToken())
+            ),
+            ExprSyntax(
+              TypeExprSyntax(type: TypeSyntax(SimpleTypeIdentifierSyntax(name: .identifier("Int"))))
+            ),
+          ])
+        )
+      )
+    )
+  }
+  func testSwitchExprForceCast() {
+    // We parse 'as! Int', but it will be a semantic error.
+    AssertParse(
+      """
+      switch Bool.random() { case true: 0 case false: 1 } as! Int
+      """,
+      substructure: Syntax(
+        SequenceExprSyntax(
+          elements: ExprListSyntax([
+            switchRandomZeroOne(),
+            ExprSyntax(
+              UnresolvedAsExprSyntax(questionOrExclamationMark: .exclamationMarkToken())
+            ),
+            ExprSyntax(
+              TypeExprSyntax(type: TypeSyntax(SimpleTypeIdentifierSyntax(name: .identifier("Int"))))
+            ),
+          ])
+        )
+      )
+    )
   }
 }

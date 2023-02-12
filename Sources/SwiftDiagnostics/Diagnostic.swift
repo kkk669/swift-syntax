@@ -71,3 +71,18 @@ public struct Diagnostic: CustomDebugStringConvertible {
     return "\(location): \(message)"
   }
 }
+
+public struct DiagnosticsError: Error {
+  public var diagnostics: [Diagnostic]
+
+  /// The diagnostics must contain at least one with severity == `.error`.
+  /// Asserts if this condition is not satisfied.
+  public init(diagnostics: [Diagnostic]) {
+    self.diagnostics = diagnostics
+
+    assert(
+      diagnostics.contains(where: { $0.diagMessage.severity == .error }),
+      "at least one diagnostic must have severity == .error"
+    )
+  }
+}

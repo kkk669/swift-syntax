@@ -19,8 +19,7 @@
 /// Protocol to which all `DeclSyntax` nodes conform. Extension point to add
 /// common methods to all `DeclSyntax` nodes.
 /// DO NOT CONFORM TO THIS PROTOCOL YOURSELF!
-public protocol DeclSyntaxProtocol: SyntaxProtocol {
-}
+public protocol DeclSyntaxProtocol: SyntaxProtocol {}
 
 public extension Syntax {
   /// Check whether the non-type erased version of this syntax node conforms to
@@ -42,7 +41,7 @@ public struct DeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
   /// Create a `DeclSyntax` node from a specialized syntax node.
-  public init <S: DeclSyntaxProtocol>(_ syntax: S) {
+  public init<S: DeclSyntaxProtocol>(_ syntax: S) {
     // We know this cast is going to succeed. Go through init(_: SyntaxData)
     // to do a sanity check and verify the kind matches in debug builds and get
     // maximum performance in release builds.
@@ -123,30 +122,31 @@ public struct DeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   public static var structure: SyntaxNodeStructure {
     return .choices([
-        .node(AccessorDeclSyntax.self), 
-        .node(ActorDeclSyntax.self), 
-        .node(AssociatedtypeDeclSyntax.self), 
-        .node(ClassDeclSyntax.self), 
-        .node(DeinitializerDeclSyntax.self), 
-        .node(EditorPlaceholderDeclSyntax.self), 
-        .node(EnumCaseDeclSyntax.self), 
-        .node(EnumDeclSyntax.self), 
-        .node(ExtensionDeclSyntax.self), 
-        .node(FunctionDeclSyntax.self), 
-        .node(IfConfigDeclSyntax.self), 
-        .node(ImportDeclSyntax.self), 
-        .node(InitializerDeclSyntax.self), 
-        .node(MacroDeclSyntax.self), 
-        .node(MacroExpansionDeclSyntax.self), 
-        .node(MissingDeclSyntax.self), 
-        .node(OperatorDeclSyntax.self), 
-        .node(PoundSourceLocationSyntax.self), 
-        .node(PrecedenceGroupDeclSyntax.self), 
-        .node(ProtocolDeclSyntax.self), 
-        .node(StructDeclSyntax.self), 
-        .node(SubscriptDeclSyntax.self), 
-        .node(TypealiasDeclSyntax.self), 
-        .node(VariableDeclSyntax.self)])
+          .node(AccessorDeclSyntax.self), 
+          .node(ActorDeclSyntax.self), 
+          .node(AssociatedtypeDeclSyntax.self), 
+          .node(ClassDeclSyntax.self), 
+          .node(DeinitializerDeclSyntax.self), 
+          .node(EditorPlaceholderDeclSyntax.self), 
+          .node(EnumCaseDeclSyntax.self), 
+          .node(EnumDeclSyntax.self), 
+          .node(ExtensionDeclSyntax.self), 
+          .node(FunctionDeclSyntax.self), 
+          .node(IfConfigDeclSyntax.self), 
+          .node(ImportDeclSyntax.self), 
+          .node(InitializerDeclSyntax.self), 
+          .node(MacroDeclSyntax.self), 
+          .node(MacroExpansionDeclSyntax.self), 
+          .node(MissingDeclSyntax.self), 
+          .node(OperatorDeclSyntax.self), 
+          .node(PoundSourceLocationSyntax.self), 
+          .node(PrecedenceGroupDeclSyntax.self), 
+          .node(ProtocolDeclSyntax.self), 
+          .node(StructDeclSyntax.self), 
+          .node(SubscriptDeclSyntax.self), 
+          .node(TypealiasDeclSyntax.self), 
+          .node(VariableDeclSyntax.self)
+        ])
   }
   
   public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
@@ -167,8 +167,7 @@ extension DeclSyntax: CustomReflectable {
 /// Protocol to which all `ExprSyntax` nodes conform. Extension point to add
 /// common methods to all `ExprSyntax` nodes.
 /// DO NOT CONFORM TO THIS PROTOCOL YOURSELF!
-public protocol ExprSyntaxProtocol: SyntaxProtocol {
-}
+public protocol ExprSyntaxProtocol: SyntaxProtocol {}
 
 public extension Syntax {
   /// Check whether the non-type erased version of this syntax node conforms to
@@ -190,7 +189,7 @@ public struct ExprSyntax: ExprSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
   /// Create a `ExprSyntax` node from a specialized syntax node.
-  public init <S: ExprSyntaxProtocol>(_ syntax: S) {
+  public init<S: ExprSyntaxProtocol>(_ syntax: S) {
     // We know this cast is going to succeed. Go through init(_: SyntaxData)
     // to do a sanity check and verify the kind matches in debug builds and get
     // maximum performance in release builds.
@@ -222,7 +221,7 @@ public struct ExprSyntax: ExprSyntaxProtocol, SyntaxHashable {
   
   public init?<S: SyntaxProtocol>(_ node: S) {
     switch node.raw.kind {
-    case .arrayExpr, .arrowExpr, .asExpr, .assignmentExpr, .awaitExpr, .binaryOperatorExpr, .booleanLiteralExpr, .borrowExpr, .closureExpr, .dictionaryExpr, .discardAssignmentExpr, .editorPlaceholderExpr, .floatLiteralExpr, .forcedValueExpr, .functionCallExpr, .identifierExpr, .inOutExpr, .infixOperatorExpr, .integerLiteralExpr, .isExpr, .keyPathExpr, .macroExpansionExpr, .memberAccessExpr, .missingExpr, .moveExpr, .nilLiteralExpr, .optionalChainingExpr, .packElementExpr, .packExpansionExpr, .postfixIfConfigExpr, .postfixUnaryExpr, .prefixOperatorExpr, .regexLiteralExpr, .sequenceExpr, .specializeExpr, .stringLiteralExpr, .subscriptExpr, .superRefExpr, .ternaryExpr, .tryExpr, .tupleExpr, .typeExpr, .unresolvedAsExpr, .unresolvedIsExpr, .unresolvedPatternExpr, .unresolvedTernaryExpr: 
+    case .arrayExpr, .arrowExpr, .asExpr, .assignmentExpr, .awaitExpr, .binaryOperatorExpr, .booleanLiteralExpr, .borrowExpr, .closureExpr, .dictionaryExpr, .discardAssignmentExpr, .editorPlaceholderExpr, .floatLiteralExpr, .forcedValueExpr, .functionCallExpr, .identifierExpr, .ifExpr, .inOutExpr, .infixOperatorExpr, .integerLiteralExpr, .isExpr, .keyPathExpr, .macroExpansionExpr, .memberAccessExpr, .missingExpr, .moveExpr, .nilLiteralExpr, .optionalChainingExpr, .packElementExpr, .packExpansionExpr, .postfixIfConfigExpr, .postfixUnaryExpr, .prefixOperatorExpr, .regexLiteralExpr, .sequenceExpr, .specializeExpr, .stringLiteralExpr, .subscriptExpr, .superRefExpr, .switchExpr, .ternaryExpr, .tryExpr, .tupleExpr, .typeExpr, .unresolvedAsExpr, .unresolvedIsExpr, .unresolvedPatternExpr, .unresolvedTernaryExpr: 
       self._syntaxNode = node._syntaxNode
     default: 
       return nil
@@ -235,7 +234,7 @@ public struct ExprSyntax: ExprSyntaxProtocol, SyntaxHashable {
   internal init(_ data: SyntaxData) {
     #if DEBUG
     switch data.raw.kind {
-    case .arrayExpr, .arrowExpr, .asExpr, .assignmentExpr, .awaitExpr, .binaryOperatorExpr, .booleanLiteralExpr, .borrowExpr, .closureExpr, .dictionaryExpr, .discardAssignmentExpr, .editorPlaceholderExpr, .floatLiteralExpr, .forcedValueExpr, .functionCallExpr, .identifierExpr, .inOutExpr, .infixOperatorExpr, .integerLiteralExpr, .isExpr, .keyPathExpr, .macroExpansionExpr, .memberAccessExpr, .missingExpr, .moveExpr, .nilLiteralExpr, .optionalChainingExpr, .packElementExpr, .packExpansionExpr, .postfixIfConfigExpr, .postfixUnaryExpr, .prefixOperatorExpr, .regexLiteralExpr, .sequenceExpr, .specializeExpr, .stringLiteralExpr, .subscriptExpr, .superRefExpr, .ternaryExpr, .tryExpr, .tupleExpr, .typeExpr, .unresolvedAsExpr, .unresolvedIsExpr, .unresolvedPatternExpr, .unresolvedTernaryExpr: 
+    case .arrayExpr, .arrowExpr, .asExpr, .assignmentExpr, .awaitExpr, .binaryOperatorExpr, .booleanLiteralExpr, .borrowExpr, .closureExpr, .dictionaryExpr, .discardAssignmentExpr, .editorPlaceholderExpr, .floatLiteralExpr, .forcedValueExpr, .functionCallExpr, .identifierExpr, .ifExpr, .inOutExpr, .infixOperatorExpr, .integerLiteralExpr, .isExpr, .keyPathExpr, .macroExpansionExpr, .memberAccessExpr, .missingExpr, .moveExpr, .nilLiteralExpr, .optionalChainingExpr, .packElementExpr, .packExpansionExpr, .postfixIfConfigExpr, .postfixUnaryExpr, .prefixOperatorExpr, .regexLiteralExpr, .sequenceExpr, .specializeExpr, .stringLiteralExpr, .subscriptExpr, .superRefExpr, .switchExpr, .ternaryExpr, .tryExpr, .tupleExpr, .typeExpr, .unresolvedAsExpr, .unresolvedIsExpr, .unresolvedPatternExpr, .unresolvedTernaryExpr: 
       break 
     default: 
       fatalError("Unable to create ExprSyntax from \(data.raw.kind)")
@@ -271,52 +270,55 @@ public struct ExprSyntax: ExprSyntaxProtocol, SyntaxHashable {
   
   public static var structure: SyntaxNodeStructure {
     return .choices([
-        .node(ArrayExprSyntax.self), 
-        .node(ArrowExprSyntax.self), 
-        .node(AsExprSyntax.self), 
-        .node(AssignmentExprSyntax.self), 
-        .node(AwaitExprSyntax.self), 
-        .node(BinaryOperatorExprSyntax.self), 
-        .node(BooleanLiteralExprSyntax.self), 
-        .node(BorrowExprSyntax.self), 
-        .node(ClosureExprSyntax.self), 
-        .node(DictionaryExprSyntax.self), 
-        .node(DiscardAssignmentExprSyntax.self), 
-        .node(EditorPlaceholderExprSyntax.self), 
-        .node(FloatLiteralExprSyntax.self), 
-        .node(ForcedValueExprSyntax.self), 
-        .node(FunctionCallExprSyntax.self), 
-        .node(IdentifierExprSyntax.self), 
-        .node(InOutExprSyntax.self), 
-        .node(InfixOperatorExprSyntax.self), 
-        .node(IntegerLiteralExprSyntax.self), 
-        .node(IsExprSyntax.self), 
-        .node(KeyPathExprSyntax.self), 
-        .node(MacroExpansionExprSyntax.self), 
-        .node(MemberAccessExprSyntax.self), 
-        .node(MissingExprSyntax.self), 
-        .node(MoveExprSyntax.self), 
-        .node(NilLiteralExprSyntax.self), 
-        .node(OptionalChainingExprSyntax.self), 
-        .node(PackElementExprSyntax.self), 
-        .node(PackExpansionExprSyntax.self), 
-        .node(PostfixIfConfigExprSyntax.self), 
-        .node(PostfixUnaryExprSyntax.self), 
-        .node(PrefixOperatorExprSyntax.self), 
-        .node(RegexLiteralExprSyntax.self), 
-        .node(SequenceExprSyntax.self), 
-        .node(SpecializeExprSyntax.self), 
-        .node(StringLiteralExprSyntax.self), 
-        .node(SubscriptExprSyntax.self), 
-        .node(SuperRefExprSyntax.self), 
-        .node(TernaryExprSyntax.self), 
-        .node(TryExprSyntax.self), 
-        .node(TupleExprSyntax.self), 
-        .node(TypeExprSyntax.self), 
-        .node(UnresolvedAsExprSyntax.self), 
-        .node(UnresolvedIsExprSyntax.self), 
-        .node(UnresolvedPatternExprSyntax.self), 
-        .node(UnresolvedTernaryExprSyntax.self)])
+          .node(ArrayExprSyntax.self), 
+          .node(ArrowExprSyntax.self), 
+          .node(AsExprSyntax.self), 
+          .node(AssignmentExprSyntax.self), 
+          .node(AwaitExprSyntax.self), 
+          .node(BinaryOperatorExprSyntax.self), 
+          .node(BooleanLiteralExprSyntax.self), 
+          .node(BorrowExprSyntax.self), 
+          .node(ClosureExprSyntax.self), 
+          .node(DictionaryExprSyntax.self), 
+          .node(DiscardAssignmentExprSyntax.self), 
+          .node(EditorPlaceholderExprSyntax.self), 
+          .node(FloatLiteralExprSyntax.self), 
+          .node(ForcedValueExprSyntax.self), 
+          .node(FunctionCallExprSyntax.self), 
+          .node(IdentifierExprSyntax.self), 
+          .node(IfExprSyntax.self), 
+          .node(InOutExprSyntax.self), 
+          .node(InfixOperatorExprSyntax.self), 
+          .node(IntegerLiteralExprSyntax.self), 
+          .node(IsExprSyntax.self), 
+          .node(KeyPathExprSyntax.self), 
+          .node(MacroExpansionExprSyntax.self), 
+          .node(MemberAccessExprSyntax.self), 
+          .node(MissingExprSyntax.self), 
+          .node(MoveExprSyntax.self), 
+          .node(NilLiteralExprSyntax.self), 
+          .node(OptionalChainingExprSyntax.self), 
+          .node(PackElementExprSyntax.self), 
+          .node(PackExpansionExprSyntax.self), 
+          .node(PostfixIfConfigExprSyntax.self), 
+          .node(PostfixUnaryExprSyntax.self), 
+          .node(PrefixOperatorExprSyntax.self), 
+          .node(RegexLiteralExprSyntax.self), 
+          .node(SequenceExprSyntax.self), 
+          .node(SpecializeExprSyntax.self), 
+          .node(StringLiteralExprSyntax.self), 
+          .node(SubscriptExprSyntax.self), 
+          .node(SuperRefExprSyntax.self), 
+          .node(SwitchExprSyntax.self), 
+          .node(TernaryExprSyntax.self), 
+          .node(TryExprSyntax.self), 
+          .node(TupleExprSyntax.self), 
+          .node(TypeExprSyntax.self), 
+          .node(UnresolvedAsExprSyntax.self), 
+          .node(UnresolvedIsExprSyntax.self), 
+          .node(UnresolvedPatternExprSyntax.self), 
+          .node(UnresolvedTernaryExprSyntax.self)
+        ])
   }
   
   public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
@@ -337,8 +339,7 @@ extension ExprSyntax: CustomReflectable {
 /// Protocol to which all `PatternSyntax` nodes conform. Extension point to add
 /// common methods to all `PatternSyntax` nodes.
 /// DO NOT CONFORM TO THIS PROTOCOL YOURSELF!
-public protocol PatternSyntaxProtocol: SyntaxProtocol {
-}
+public protocol PatternSyntaxProtocol: SyntaxProtocol {}
 
 public extension Syntax {
   /// Check whether the non-type erased version of this syntax node conforms to
@@ -360,7 +361,7 @@ public struct PatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
   /// Create a `PatternSyntax` node from a specialized syntax node.
-  public init <S: PatternSyntaxProtocol>(_ syntax: S) {
+  public init<S: PatternSyntaxProtocol>(_ syntax: S) {
     // We know this cast is going to succeed. Go through init(_: SyntaxData)
     // to do a sanity check and verify the kind matches in debug builds and get
     // maximum performance in release builds.
@@ -441,13 +442,14 @@ public struct PatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
   
   public static var structure: SyntaxNodeStructure {
     return .choices([
-        .node(ExpressionPatternSyntax.self), 
-        .node(IdentifierPatternSyntax.self), 
-        .node(IsTypePatternSyntax.self), 
-        .node(MissingPatternSyntax.self), 
-        .node(TuplePatternSyntax.self), 
-        .node(ValueBindingPatternSyntax.self), 
-        .node(WildcardPatternSyntax.self)])
+          .node(ExpressionPatternSyntax.self), 
+          .node(IdentifierPatternSyntax.self), 
+          .node(IsTypePatternSyntax.self), 
+          .node(MissingPatternSyntax.self), 
+          .node(TuplePatternSyntax.self), 
+          .node(ValueBindingPatternSyntax.self), 
+          .node(WildcardPatternSyntax.self)
+        ])
   }
   
   public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
@@ -468,8 +470,7 @@ extension PatternSyntax: CustomReflectable {
 /// Protocol to which all `StmtSyntax` nodes conform. Extension point to add
 /// common methods to all `StmtSyntax` nodes.
 /// DO NOT CONFORM TO THIS PROTOCOL YOURSELF!
-public protocol StmtSyntaxProtocol: SyntaxProtocol {
-}
+public protocol StmtSyntaxProtocol: SyntaxProtocol {}
 
 public extension Syntax {
   /// Check whether the non-type erased version of this syntax node conforms to
@@ -491,7 +492,7 @@ public struct StmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
   /// Create a `StmtSyntax` node from a specialized syntax node.
-  public init <S: StmtSyntaxProtocol>(_ syntax: S) {
+  public init<S: StmtSyntaxProtocol>(_ syntax: S) {
     // We know this cast is going to succeed. Go through init(_: SyntaxData)
     // to do a sanity check and verify the kind matches in debug builds and get
     // maximum performance in release builds.
@@ -523,7 +524,7 @@ public struct StmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   
   public init?<S: SyntaxProtocol>(_ node: S) {
     switch node.raw.kind {
-    case .breakStmt, .continueStmt, .deferStmt, .doStmt, .fallthroughStmt, .forInStmt, .guardStmt, .ifStmt, .labeledStmt, .missingStmt, .repeatWhileStmt, .returnStmt, .switchStmt, .throwStmt, .whileStmt, .yieldStmt: 
+    case .breakStmt, .continueStmt, .deferStmt, .doStmt, .expressionStmt, .fallthroughStmt, .forInStmt, .guardStmt, .labeledStmt, .missingStmt, .repeatWhileStmt, .returnStmt, .throwStmt, .whileStmt, .yieldStmt: 
       self._syntaxNode = node._syntaxNode
     default: 
       return nil
@@ -536,7 +537,7 @@ public struct StmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   internal init(_ data: SyntaxData) {
     #if DEBUG
     switch data.raw.kind {
-    case .breakStmt, .continueStmt, .deferStmt, .doStmt, .fallthroughStmt, .forInStmt, .guardStmt, .ifStmt, .labeledStmt, .missingStmt, .repeatWhileStmt, .returnStmt, .switchStmt, .throwStmt, .whileStmt, .yieldStmt: 
+    case .breakStmt, .continueStmt, .deferStmt, .doStmt, .expressionStmt, .fallthroughStmt, .forInStmt, .guardStmt, .labeledStmt, .missingStmt, .repeatWhileStmt, .returnStmt, .throwStmt, .whileStmt, .yieldStmt: 
       break 
     default: 
       fatalError("Unable to create StmtSyntax from \(data.raw.kind)")
@@ -572,22 +573,22 @@ public struct StmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   
   public static var structure: SyntaxNodeStructure {
     return .choices([
-        .node(BreakStmtSyntax.self), 
-        .node(ContinueStmtSyntax.self), 
-        .node(DeferStmtSyntax.self), 
-        .node(DoStmtSyntax.self), 
-        .node(FallthroughStmtSyntax.self), 
-        .node(ForInStmtSyntax.self), 
-        .node(GuardStmtSyntax.self), 
-        .node(IfStmtSyntax.self), 
-        .node(LabeledStmtSyntax.self), 
-        .node(MissingStmtSyntax.self), 
-        .node(RepeatWhileStmtSyntax.self), 
-        .node(ReturnStmtSyntax.self), 
-        .node(SwitchStmtSyntax.self), 
-        .node(ThrowStmtSyntax.self), 
-        .node(WhileStmtSyntax.self), 
-        .node(YieldStmtSyntax.self)])
+          .node(BreakStmtSyntax.self), 
+          .node(ContinueStmtSyntax.self), 
+          .node(DeferStmtSyntax.self), 
+          .node(DoStmtSyntax.self), 
+          .node(ExpressionStmtSyntax.self), 
+          .node(FallthroughStmtSyntax.self), 
+          .node(ForInStmtSyntax.self), 
+          .node(GuardStmtSyntax.self), 
+          .node(LabeledStmtSyntax.self), 
+          .node(MissingStmtSyntax.self), 
+          .node(RepeatWhileStmtSyntax.self), 
+          .node(ReturnStmtSyntax.self), 
+          .node(ThrowStmtSyntax.self), 
+          .node(WhileStmtSyntax.self), 
+          .node(YieldStmtSyntax.self)
+        ])
   }
   
   public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {
@@ -608,8 +609,7 @@ extension StmtSyntax: CustomReflectable {
 /// Protocol to which all `TypeSyntax` nodes conform. Extension point to add
 /// common methods to all `TypeSyntax` nodes.
 /// DO NOT CONFORM TO THIS PROTOCOL YOURSELF!
-public protocol TypeSyntaxProtocol: SyntaxProtocol {
-}
+public protocol TypeSyntaxProtocol: SyntaxProtocol {}
 
 public extension Syntax {
   /// Check whether the non-type erased version of this syntax node conforms to
@@ -631,7 +631,7 @@ public struct TypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
   /// Create a `TypeSyntax` node from a specialized syntax node.
-  public init <S: TypeSyntaxProtocol>(_ syntax: S) {
+  public init<S: TypeSyntaxProtocol>(_ syntax: S) {
     // We know this cast is going to succeed. Go through init(_: SyntaxData)
     // to do a sanity check and verify the kind matches in debug builds and get
     // maximum performance in release builds.
@@ -712,23 +712,24 @@ public struct TypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   
   public static var structure: SyntaxNodeStructure {
     return .choices([
-        .node(ArrayTypeSyntax.self), 
-        .node(AttributedTypeSyntax.self), 
-        .node(ClassRestrictionTypeSyntax.self), 
-        .node(CompositionTypeSyntax.self), 
-        .node(ConstrainedSugarTypeSyntax.self), 
-        .node(DictionaryTypeSyntax.self), 
-        .node(FunctionTypeSyntax.self), 
-        .node(ImplicitlyUnwrappedOptionalTypeSyntax.self), 
-        .node(MemberTypeIdentifierSyntax.self), 
-        .node(MetatypeTypeSyntax.self), 
-        .node(MissingTypeSyntax.self), 
-        .node(NamedOpaqueReturnTypeSyntax.self), 
-        .node(OptionalTypeSyntax.self), 
-        .node(PackExpansionTypeSyntax.self), 
-        .node(PackReferenceTypeSyntax.self), 
-        .node(SimpleTypeIdentifierSyntax.self), 
-        .node(TupleTypeSyntax.self)])
+          .node(ArrayTypeSyntax.self), 
+          .node(AttributedTypeSyntax.self), 
+          .node(ClassRestrictionTypeSyntax.self), 
+          .node(CompositionTypeSyntax.self), 
+          .node(ConstrainedSugarTypeSyntax.self), 
+          .node(DictionaryTypeSyntax.self), 
+          .node(FunctionTypeSyntax.self), 
+          .node(ImplicitlyUnwrappedOptionalTypeSyntax.self), 
+          .node(MemberTypeIdentifierSyntax.self), 
+          .node(MetatypeTypeSyntax.self), 
+          .node(MissingTypeSyntax.self), 
+          .node(NamedOpaqueReturnTypeSyntax.self), 
+          .node(OptionalTypeSyntax.self), 
+          .node(PackExpansionTypeSyntax.self), 
+          .node(PackReferenceTypeSyntax.self), 
+          .node(SimpleTypeIdentifierSyntax.self), 
+          .node(TupleTypeSyntax.self)
+        ])
   }
   
   public func childNameForDiagnostics(_ index: SyntaxChildrenIndex) -> String? {

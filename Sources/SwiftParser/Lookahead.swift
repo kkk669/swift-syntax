@@ -60,16 +60,15 @@ extension Parser {
 
 @_spi(RawSyntax)
 extension Parser.Lookahead: TokenConsumer {
-  /// Consumes the current token, and asserts that the kind of token that was
-  /// consumed matches the given kind.
+  /// Consumes the current token, and asserts that it matches `spec`.
   ///
   /// If the token kind did not match, this function will abort. It is useful
   /// to insert structural invariants during parsing.
   ///
   /// - Parameter kind: The kind of token to consume.
   /// - Returns: A token of the given kind.
-  public mutating func eat(_ kind: RawTokenKind) -> Token {
-    return self.consume(if: kind)!
+  mutating func eat(_ spec: TokenSpec) -> Token {
+    return self.consume(if: spec)!
   }
 }
 
@@ -95,15 +94,14 @@ extension Parser.Lookahead {
     self.consumeAnyToken()
   }
 
-  /// Consume tokens of lower precedence than `kind` until reaching a token of that kind.
-  /// The token of `kind` is also consumed.
-  @_spi(RawSyntax)
-  public mutating func consume(to kind: RawTokenKind) {
-    if self.consume(if: kind) != nil {
+  /// Consume tokens of lower precedence than `spec` until reaching a token that
+  /// matches that `spec`. The token that matches `spec` is also consumed.
+  mutating func consume(to spec: TokenSpec) {
+    if self.consume(if: spec) != nil {
       return
     }
     var lookahead = self.lookahead()
-    if lookahead.canRecoverTo([kind]) != nil {
+    if lookahead.canRecoverTo(spec) != nil {
       for _ in 0..<lookahead.tokensConsumed {
         self.consumeAnyToken()
       }
@@ -138,7 +136,7 @@ extension Parser.Lookahead {
 extension Parser.Lookahead {
   mutating func skipTypeAttribute() {
     // These are keywords that we accept as attribute names.
-    guard self.at(.identifier) || self.at(any: [.keyword(.in), .keyword(.inout)]) else {
+    guard self.at(.identifier) || self.at(.keyword(.in), .keyword(.inout)) else {
       return
     }
 
@@ -169,7 +167,7 @@ extension Parser.Lookahead {
         backtrack.skipSingle()
         // If we found '->', or 'throws' after paren, it's likely a parameter
         // of function type.
-        guard backtrack.at(any: [.arrow, .keyword(.throws), .keyword(.rethrows), .keyword(.throw)]) else {
+        guard backtrack.at(.arrow) || backtrack.at(.keyword(.throws), .keyword(.rethrows), .keyword(.throw)) else {
           self.skipSingle()
           return
         }
@@ -198,7 +196,7 @@ extension Parser.Lookahead {
       } while self.consume(if: .period) != nil
 
       if self.consume(if: .leftParen) != nil {
-        while !self.at(any: [.eof, .rightParen, .poundEndifKeyword]) {
+        while !self.at(.eof, .rightParen, .poundEndifKeyword) {
           self.skipSingle()
         }
         self.consume(if: .rightParen)
@@ -217,7 +215,7 @@ extension Parser.Lookahead {
     var didSeeAnyAttributes = false
     var poundIfLoopProgress = LoopProgressCondition()
     repeat {
-      assert(self.at(any: [.poundIfKeyword, .poundElseKeyword, .poundElseifKeyword]))
+      assert(self.at(.poundIfKeyword, .poundElseKeyword, .poundElseifKeyword))
       self.consumeAnyToken()
 
       // <expression> after `#if` or `#elseif`
@@ -235,7 +233,7 @@ extension Parser.Lookahead {
           break ATTRIBUTE_LOOP
         }
       }
-    } while self.at(any: [.poundElseifKeyword, .poundElseKeyword]) && poundIfLoopProgress.evaluate(self.currentToken)
+    } while self.at(.poundElseifKeyword, .poundElseKeyword) && poundIfLoopProgress.evaluate(self.currentToken)
 
     return didSeeAnyAttributes && self.currentToken.isAtStartOfLine && self.consume(if: .poundEndifKeyword) != nil
   }
@@ -256,7 +254,7 @@ extension Parser.Lookahead {
     // If we have a 'didSet' or a 'willSet' label, disambiguate immediately as
     // an accessor block.
     let nextToken = self.peek()
-    if RawTokenKindMatch(.keyword(.didSet)) ~= nextToken || RawTokenKindMatch(.keyword(.willSet)) ~= nextToken {
+    if TokenSpec(.didSet) ~= nextToken || TokenSpec(.willSet) ~= nextToken {
       return true
     }
 
@@ -281,14 +279,14 @@ extension Parser.Lookahead {
     }
 
     // Check if we have 'didSet'/'willSet' after attributes.
-    return lookahead.at(any: [.keyword(.didSet), .keyword(.willSet)])
+    return lookahead.at(.keyword(.didSet), .keyword(.willSet))
   }
 }
 
 // MARK: Skipping Tokens
 
 extension Parser.Lookahead {
-  mutating func skipUntil(_ t1: RawTokenKind, _ t2: RawTokenKind) {
+  mutating func skipUntil(_ t1: TokenSpec, _ t2: TokenSpec) {
     return skip(initialState: .skipUntil(t1, t2))
   }
 
@@ -309,7 +307,7 @@ extension Parser.Lookahead {
   //    automatically skip over those as individual tokens
   //  - String interpolation contains parentheses, so it automatically skips
   //    until the closing parenthesis.
-  private enum BracketedTokens: RawTokenKindSubset {
+  private enum BracketedTokens: TokenSpecSet {
     case leftParen
     case leftBrace
     case leftSquareBracket
@@ -329,7 +327,7 @@ extension Parser.Lookahead {
       }
     }
 
-    var rawTokenKind: RawTokenKind {
+    var spec: TokenSpec {
       switch self {
       case .leftParen: return .leftParen
       case .leftBrace: return .leftBrace
@@ -348,7 +346,7 @@ extension Parser.Lookahead {
     /// Execute code after skipping bracketed tokens detected from `skipSingle`.
     case skipSinglePost(start: BracketedTokens)
     /// Skip until either `t1` or `t2`.
-    case skipUntil(_ t1: RawTokenKind, _ t2: RawTokenKind)
+    case skipUntil(_ t1: TokenSpec, _ t2: TokenSpec)
   }
 
   /// A non-recursie function to skip tokens.
@@ -387,7 +385,7 @@ extension Parser.Lookahead {
         case .leftSquareBracket:
           self.consume(if: .rightSquareBracket)
         case .poundIfKeyword, .poundElseKeyword, .poundElseifKeyword:
-          if self.at(any: [.poundElseKeyword, .poundElseifKeyword]) {
+          if self.at(.poundElseKeyword, .poundElseifKeyword) {
             stack += [.skipSingle]
           } else {
             self.consume(if: .poundElseifKeyword)
@@ -395,7 +393,7 @@ extension Parser.Lookahead {
           return
         }
       case .skipUntil(let t1, let t2):
-        if !self.at(any: [.eof, t1, t2, .poundEndifKeyword, .poundElseKeyword, .poundElseifKeyword]) {
+        if !self.at(.eof, t1, t2) && !self.at(.poundEndifKeyword, .poundElseKeyword, .poundElseifKeyword) {
           stack += [.skipUntil(t1, t2), .skipSingle]
         }
       }

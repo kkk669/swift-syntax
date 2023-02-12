@@ -55,13 +55,13 @@ fileprivate class StringLiteralExpressionIndentationChecker {
     if hasSufficientIndentation {
       return nil
     }
-    if token.tokenView.lexerError != nil {
+    if let tokenDiagnostic = token.tokenView.tokenDiagnostic, tokenDiagnostic.severity == .error {
       // Token already has a lexer error, ignore the indentation error until that
       // error is fixed
       return nil
     }
-    return token.tokenView.withLexerError(
-      lexerError: LexerError(.insufficientIndentationInMultilineStringLiteral, byteOffset: 0),
+    return token.tokenView.withTokenDiagnostic(
+      tokenDiagnostic: TokenDiagnostic(.insufficientIndentationInMultilineStringLiteral, byteOffset: 0),
       arena: arena
     )
   }
@@ -136,7 +136,7 @@ extension Parser {
     in token: RawTokenSyntax,
     leading reclassifyLeading: SyntaxText = "",
     trailing reclassifyTrailing: SyntaxText = "",
-    lexerError: LexerError? = nil
+    tokenDiagnostic: TokenDiagnostic? = nil
   ) -> RawTokenSyntax {
     assert(SyntaxText(rebasing: token.tokenText.prefix(reclassifyLeading.count)) == reclassifyLeading)
     assert(SyntaxText(rebasing: token.tokenText.suffix(reclassifyTrailing.count)) == reclassifyTrailing)
@@ -146,7 +146,7 @@ extension Parser {
       leadingTriviaPieces: token.leadingTriviaPieces + TriviaParser.parseTrivia(reclassifyLeading, position: .trailing),
       trailingTriviaPieces: TriviaParser.parseTrivia(reclassifyTrailing, position: .trailing) + token.trailingTriviaPieces,
       presence: token.presence,
-      lexerError: token.tokenView.lexerError ?? lexerError,
+      tokenDiagnostic: token.tokenView.tokenDiagnostic ?? tokenDiagnostic,
       arena: self.arena
     )
   }
@@ -253,8 +253,8 @@ extension Parser {
             // Empty lines don't need to be indented and there's no indentation we need to strip away.
           } else {
             let actualIndentation = SyntaxText(rebasing: segment.content.tokenText.prefix(while: { $0 == UInt8(ascii: " ") || $0 == UInt8(ascii: "\t") }))
-            let lexerError = LexerError(.insufficientIndentationInMultilineStringLiteral, byteOffset: 0)
-            let content = self.reclassifyTrivia(in: segment.content, leading: actualIndentation, lexerError: lexerError)
+            let tokenDiagnostic = TokenDiagnostic(.insufficientIndentationInMultilineStringLiteral, byteOffset: 0)
+            let content = self.reclassifyTrivia(in: segment.content, leading: actualIndentation, tokenDiagnostic: tokenDiagnostic)
             segment = RawStringSegmentSyntax(
               segment.unexpectedBeforeContent,
               content: content,
@@ -372,7 +372,7 @@ extension Parser {
         leadingTriviaPieces: parsedTrivia + closeQuote.leadingTriviaPieces,
         trailingTriviaPieces: closeQuote.trailingTriviaPieces,
         presence: closeQuote.presence,
-        lexerError: closeQuote.tokenView.lexerError,
+        tokenDiagnostic: closeQuote.tokenView.tokenDiagnostic,
         arena: self.arena
       )
     } else {
@@ -465,7 +465,7 @@ extension Parser {
     let openDelimiter = self.consume(if: .rawStringDelimiter)
 
     /// Parse open quote.
-    var (unexpectedBeforeOpenQuote, openQuote) = self.expectAny([.stringQuote, .multilineStringQuote], default: .stringQuote)
+    var (unexpectedBeforeOpenQuote, openQuote) = self.expect(.stringQuote, .multilineStringQuote, default: .stringQuote)
     var openQuoteKind: RawTokenKind = openQuote.tokenKind
     if openQuote.isMissing, let singleQuote = self.consume(if: .singleQuote) {
       unexpectedBeforeOpenQuote = RawUnexpectedNodesSyntax(combining: unexpectedBeforeOpenQuote, singleQuote, arena: self.arena)
@@ -487,7 +487,7 @@ extension Parser {
         // This allows us to skip over extraneous identifiers etc. in an unterminated string interpolation.
         var unexpectedBeforeRightParen: [RawTokenSyntax] = []
         var unexpectedProgress = LoopProgressCondition()
-        while !self.at(any: [.rightParen, .stringSegment, .backslash, openQuoteKind, .eof]) && unexpectedProgress.evaluate(self.currentToken) {
+        while !self.at(.rightParen, .stringSegment, .backslash) && !self.at(TokenSpec(openQuoteKind), .eof) && unexpectedProgress.evaluate(self.currentToken) {
           unexpectedBeforeRightParen.append(self.consumeAnyToken())
         }
         let rightParen = self.expectWithoutRecovery(.rightParen)
@@ -533,7 +533,7 @@ extension Parser {
       closeQuote = missingToken(.stringQuote)
     } else {
       unexpectedBeforeCloseQuote = nil
-      closeQuote = self.expectWithoutRecovery(openQuote.tokenKind)
+      closeQuote = self.expectWithoutRecovery(TokenSpec(openQuote.tokenKind))
     }
 
     let (unexpectedBeforeCloseDelimiter, closeDelimiter) = self.parseStringDelimiter(openDelimiter: openDelimiter)

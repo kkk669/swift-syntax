@@ -13,6 +13,29 @@
 @_spi(RawSyntax) import SwiftSyntax
 
 extension Parser {
+  private enum IfConfigClauseStartKeyword: TokenSpecSet {
+    case poundIfKeyword
+    case poundElseifKeyword
+    case poundElseKeyword
+
+    var spec: TokenSpec {
+      switch self {
+      case .poundIfKeyword: return .poundIfKeyword
+      case .poundElseifKeyword: return .poundElseifKeyword
+      case .poundElseKeyword: return .poundElseKeyword
+      }
+    }
+
+    init?(lexeme: Lexer.Lexeme) {
+      switch lexeme {
+      case TokenSpec(.poundIfKeyword): self = .poundIfKeyword
+      case TokenSpec(.poundElseifKeyword): self = .poundElseifKeyword
+      case TokenSpec(.poundElseKeyword): self = .poundElseKeyword
+      default: return nil
+      }
+    }
+  }
+
   /// Parse a conditional compilation block.
   ///
   /// This function should be used to parse conditional compilation statements,
@@ -83,7 +106,7 @@ extension Parser {
     do {
       var firstIteration = true
       var loopProgress = LoopProgressCondition()
-      while let poundIfHandle = self.canRecoverTo(any: firstIteration ? [.poundIfKeyword] : [.poundIfKeyword, .poundElseifKeyword, .poundElseKeyword]),
+      while let poundIfHandle = firstIteration ? self.canRecoverTo(.poundIfKeyword) : self.canRecoverTo(anyIn: IfConfigClauseStartKeyword.self)?.handle,
         loopProgress.evaluate(self.currentToken)
       {
         let (unexpectedBeforePoundIf, poundIf) = self.eat(poundIfHandle)
@@ -102,7 +125,7 @@ extension Parser {
         var elements = [Element]()
         do {
           var elementsProgress = LoopProgressCondition()
-          while !self.at(any: [.eof, .poundElseKeyword, .poundElseifKeyword, .poundEndifKeyword]) && elementsProgress.evaluate(currentToken) {
+          while !self.at(.eof) && !self.at(.poundElseKeyword, .poundElseifKeyword, .poundEndifKeyword) && elementsProgress.evaluate(currentToken) {
             let newItemAtStartOfLine = self.currentToken.isAtStartOfLine
             guard let element = parseElement(&self), !element.isEmpty else {
               break
@@ -152,12 +175,12 @@ extension Parser {
     let (unexpectedBeforeLParen, lparen) = self.expect(.leftParen)
     let args: RawPoundSourceLocationArgsSyntax?
     if !self.at(.rightParen) {
-      let (unexpectedBeforeFile, file) = self.expectIdentifier()
+      let (unexpectedBeforeFile, file) = self.expect(.keyword(.file))
       let (unexpectedBeforeFileColon, fileColon) = self.expect(.colon)
       let fileName = self.parseStringLiteral()
       let (unexpectedBeforeComma, comma) = self.expect(.comma)
 
-      let (unexpectedBeforeLine, line) = self.expectIdentifier()
+      let (unexpectedBeforeLine, line) = self.expect(.keyword(.line))
       let (unexpectedBeforeLineColon, lineColon) = self.expect(.colon)
       let lineNumber = self.expectWithoutRecovery(.integerLiteral)
 

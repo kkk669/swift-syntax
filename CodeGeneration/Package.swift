@@ -5,13 +5,13 @@ import PackageDescription
 let package = Package(
   name: "CodeGeneration",
   platforms: [
-      .macOS(.v10_15),
-    ],
+    .macOS(.v10_15)
+  ],
   products: [
-    .executable(name: "generate-swiftsyntax", targets: ["generate-swiftsyntax"]),
+    .executable(name: "generate-swiftsyntax", targets: ["generate-swiftsyntax"])
   ],
   dependencies: [
-    .package(url: "https://github.com/apple/swift-syntax.git", revision: "05916332d79994097ed7780f2fe34d33b16ddd31"),
+    .package(url: "https://github.com/apple/swift-syntax.git", revision: "013a48e2312e57b7b355db25bd3ea75282ebf274"),
     .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMinor(from: "1.1.4")),
   ],
   targets: [
@@ -22,7 +22,7 @@ let package = Package(
         .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
         .product(name: "ArgumentParser", package: "swift-argument-parser"),
         "SyntaxSupport",
-        "Utils"
+        "Utils",
       ]
     ),
     .target(
@@ -44,7 +44,7 @@ let package = Package(
         "TokenSpec.swift.gyb",
         "Traits.swift.gyb",
         "Trivia.swift.gyb",
-        "TypeNodes.swift.gyb"
+        "TypeNodes.swift.gyb",
       ]
     ),
     .target(
@@ -52,7 +52,7 @@ let package = Package(
       dependencies: [
         .product(name: "SwiftSyntax", package: "swift-syntax"),
         .product(name: "SwiftSyntaxBuilder", package: "swift-syntax"),
-        "SyntaxSupport"
+        "SyntaxSupport",
       ]
     ),
   ]

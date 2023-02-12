@@ -30,6 +30,19 @@ fileprivate extension TokenSyntax {
   }
 }
 
+fileprivate extension DiagnosticSeverity {
+  func matches(_ lexerErorSeverity: SwiftSyntax.TokenDiagnostic.Severity) -> Bool {
+    switch (self, lexerErorSeverity) {
+    case (.error, .error):
+      return true
+    case (.warning, .warning):
+      return true
+    default:
+      return false
+    }
+  }
+}
+
 public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
   private var diagnostics: [Diagnostic] = []
 
@@ -101,7 +114,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
   /// Whether the node should be skipped for diagnostic emission.
   /// Every visit method must check this at the beginning.
   func shouldSkip<T: SyntaxProtocol>(_ node: T) -> Bool {
-    if !node.hasError {
+    if !node.hasError && !node.hasWarning {
       return true
     }
     return handledNodes.contains(node.id)
@@ -238,7 +251,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         unexpectedTokenCondition: { AsyncEffectSpecifier(token: $0) != nil },
         correctTokens: [node.asyncSpecifier],
         message: { AsyncMustPrecedeThrows(asyncKeywords: $0, throwsKeyword: throwsSpecifier) },
-        moveFixIt: { MoveTokensInFrontOfFixIt(movedTokens: $0, inFrontOf: throwsSpecifier.rawTokenKind) },
+        moveFixIt: { MoveTokensInFrontOfFixIt(movedTokens: $0, inFrontOf: throwsSpecifier.tokenKind) },
         removeRedundantFixIt: { RemoveRedundantFixIt(removeTokens: $0) }
       )
     }
@@ -346,8 +359,15 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if token.presence == .missing {
       handleMissingToken(token)
     } else {
-      if let lexerError = token.lexerError {
-        self.addDiagnostic(token, position: token.position.advanced(by: Int(lexerError.byteOffset)), lexerError.diagnostic(in: token))
+      if let tokenDiagnostic = token.tokenDiagnostic {
+        let message = tokenDiagnostic.diagnosticMessage(in: token)
+        assert(message.severity.matches(tokenDiagnostic.severity))
+        self.addDiagnostic(
+          token,
+          position: token.position.advanced(by: Int(tokenDiagnostic.byteOffset)),
+          message,
+          fixIts: tokenDiagnostic.fixIts(in: token)
+        )
       }
     }
 
@@ -765,6 +785,20 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
     if let unexpected = node.unexpectedBetweenColonAndFlag ?? node.unexpectedAfterFlag, node.flag.presence == .missing {
       addDiagnostic(unexpected, .invalidFlagAfterPrecedenceGroupAssignment, handledNodes: [unexpected.id, node.flag.id])
+    }
+    return .visitChildren
+  }
+
+  public override func visit(_ node: PrecedenceGroupAssociativitySyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+    if node.value.presence == .missing {
+      addDiagnostic(
+        Syntax(node.unexpectedBetweenColonAndValue) ?? Syntax(node.value),
+        .invalidPrecedenceGroupAssociativity,
+        handledNodes: [node.unexpectedBetweenColonAndValue?.id, node.value.id].compactMap({ $0 })
+      )
     }
     return .visitChildren
   }

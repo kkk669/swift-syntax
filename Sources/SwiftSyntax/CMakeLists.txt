@@ -11,7 +11,6 @@ add_swift_host_library(SwiftSyntax
   BumpPtrAllocator.swift
   CommonAncestor.swift
   IncrementalParseTransition.swift
-  LexerError.swift
   SourceLength.swift
   SourceLocation.swift
   SourcePresence.swift
@@ -22,6 +21,7 @@ add_swift_host_library(SwiftSyntax
   SyntaxOtherNodes.swift
   SyntaxText.swift
   SyntaxTreeViewMode.swift
+  TokenDiagnostic.swift
   Utils.swift
 
   Raw/RawSyntax.swift
@@ -29,7 +29,7 @@ add_swift_host_library(SwiftSyntax
   Raw/RawSyntaxNodeProtocol.swift
   Raw/RawSyntaxTokenView.swift
 
-  Raw/gyb_generated/RawSyntaxNodes.swift
+  generated/raw/RawSyntaxNodes.swift
   Raw/gyb_generated/RawSyntaxValidation.swift
 
   generated/Keyword.swift
@@ -38,7 +38,6 @@ add_swift_host_library(SwiftSyntax
   generated/SyntaxBaseNodes.swift
   generated/SyntaxCollections.swift
   generated/SyntaxEnum.swift
-  gyb_generated/SyntaxFactory.swift
   generated/SyntaxKind.swift
   generated/SyntaxRewriter.swift
   generated/SyntaxTraits.swift
@@ -48,10 +47,10 @@ add_swift_host_library(SwiftSyntax
   generated/Tokens.swift
   generated/Trivia.swift
 
-  gyb_generated/syntax_nodes/SyntaxDeclNodes.swift
-  gyb_generated/syntax_nodes/SyntaxExprNodes.swift
-  gyb_generated/syntax_nodes/SyntaxNodes.swift
-  gyb_generated/syntax_nodes/SyntaxPatternNodes.swift
-  gyb_generated/syntax_nodes/SyntaxStmtNodes.swift
-  gyb_generated/syntax_nodes/SyntaxTypeNodes.swift
+  generated/syntaxNodes/SyntaxDeclNodes.swift
+  generated/syntaxNodes/SyntaxExprNodes.swift
+  generated/syntaxNodes/SyntaxNodes.swift
+  generated/syntaxNodes/SyntaxPatternNodes.swift
+  generated/syntaxNodes/SyntaxStmtNodes.swift
+  generated/syntaxNodes/SyntaxTypeNodes.swift
 )

@@ -13,7 +13,9 @@ class Child(object):
                  token_choices=None, text_choices=None, node_choices=None,
                  collection_element_name=None,
                  classification=None, force_classification=False,
-                 is_indented=False, requires_leading_newline=False):
+                 is_indented=False, requires_leading_newline=False,
+                 requires_leading_space=None,
+                 requires_trailing_space=None):
         """
         If a classification is passed, it specifies the color identifiers in
         that subtree should inherit for syntax coloring. Must be a member of
@@ -33,6 +35,8 @@ class Child(object):
         self.force_classification = force_classification
         self.is_indented = is_indented
         self.requires_leading_newline = requires_leading_newline
+        self.requires_leading_space = requires_leading_space
+        self.requires_trailing_space = requires_trailing_space
 
         # If the child ends with "token" in the kind, it's considered
         # a token node. Grab the existing reference to that token from the
@@ -46,16 +50,17 @@ class Child(object):
         # A restricted set of token kinds that will be accepted for this
         # child.
         self.token_choices = []
-        if self.token:
-            self.token_choices.append(self.token)
+        if self.token and not token_choices:
+            self.token_choices.append((self.token, None))
         for choice in token_choices or []:
+            pipe_index = choice.find('|')
+            choice_text = None
+            if pipe_index != -1:
+                full_choice = choice
+                choice = full_choice[:pipe_index]
+                choice_text = full_choice[(pipe_index+1):]
             token = SYNTAX_TOKEN_MAP[choice]
-            self.token_choices.append(token)
-
-        # A list of valid text for tokens, if specified.
-        # This will force validation logic to check the text passed into the
-        # token against the choices.
-        self.text_choices = text_choices or []
+            self.token_choices.append((token, choice_text))
 
         # A list of valid choices for a child
         self.node_choices = node_choices or []
@@ -101,7 +106,7 @@ class Child(object):
         otherwise returns None.
         """
         if self.token_choices:
-            return self.token_choices[0]
+            return self.token_choices[0][0]
         return None
 
     def is_unexpected_nodes(self):
@@ -129,8 +134,10 @@ class Child(object):
         return f" = .{self.token.swift_kind()}()"
       if self.token.text:
         return f" = .{self.token.swift_kind()}Token()"
-      if self.text_choices and len(self.text_choices) == 1:
-        text_choice = self.text_choices[0]
+      text_choice = None
+      if self.token_choices and len(self.token_choices) == 1 and self.token_choices[0][1] is not None:
+        text_choice = self.token_choices[0][1]
+      if text_choice:
         if self.token.associated_value_class:
           if text_choice == "init":
             text_choice = "`init`"

@@ -13,11 +13,6 @@ public enum SyntaxVisitorContinueKind {
 open class SyntaxVisitor {
   public let viewMode: SyntaxTreeViewMode
   
-  @available(*, deprecated, message: "Use init(viewMode:) instead")
-  public convenience init() {
-    self.init(viewMode: .sourceAccurate)
-  }
-  
   public init(viewMode: SyntaxTreeViewMode) {
     self.viewMode = viewMode
   }
@@ -352,16 +347,16 @@ open class SyntaxVisitor {
   open func visitPost(_ node: AwaitExprSyntax) {
   }
   
-  /// Visiting `BackDeployAttributeSpecListSyntax` specifically.
+  /// Visiting `BackDeployedAttributeSpecListSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
-  open func visit(_ node: BackDeployAttributeSpecListSyntax) -> SyntaxVisitorContinueKind {
+  open func visit(_ node: BackDeployedAttributeSpecListSyntax) -> SyntaxVisitorContinueKind {
     return .visitChildren
   }
   
-  /// The function called after visiting `BackDeployAttributeSpecListSyntax` and its descendents.
+  /// The function called after visiting `BackDeployedAttributeSpecListSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
-  open func visitPost(_ node: BackDeployAttributeSpecListSyntax) {
+  open func visitPost(_ node: BackDeployedAttributeSpecListSyntax) {
   }
   
   /// Visiting `BinaryOperatorExprSyntax` specifically.
@@ -1204,6 +1199,18 @@ open class SyntaxVisitor {
   open func visitPost(_ node: ExpressionSegmentSyntax) {
   }
   
+  /// Visiting `ExpressionStmtSyntax` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: how should we continue visiting.
+  open func visit(_ node: ExpressionStmtSyntax) -> SyntaxVisitorContinueKind {
+    return .visitChildren
+  }
+  
+  /// The function called after visiting `ExpressionStmtSyntax` and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: ExpressionStmtSyntax) {
+  }
+  
   /// Visiting `ExtensionDeclSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
@@ -1516,16 +1523,16 @@ open class SyntaxVisitor {
   open func visitPost(_ node: IfConfigDeclSyntax) {
   }
   
-  /// Visiting `IfStmtSyntax` specifically.
+  /// Visiting `IfExprSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
-  open func visit(_ node: IfStmtSyntax) -> SyntaxVisitorContinueKind {
+  open func visit(_ node: IfExprSyntax) -> SyntaxVisitorContinueKind {
     return .visitChildren
   }
   
-  /// The function called after visiting `IfStmtSyntax` and its descendents.
+  /// The function called after visiting `IfExprSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
-  open func visitPost(_ node: IfStmtSyntax) {
+  open func visitPost(_ node: IfExprSyntax) {
   }
   
   /// Visiting `ImplementsAttributeArgumentsSyntax` specifically.
@@ -2692,16 +2699,16 @@ open class SyntaxVisitor {
   open func visitPost(_ node: SwitchDefaultLabelSyntax) {
   }
   
-  /// Visiting `SwitchStmtSyntax` specifically.
+  /// Visiting `SwitchExprSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
-  open func visit(_ node: SwitchStmtSyntax) -> SyntaxVisitorContinueKind {
+  open func visit(_ node: SwitchExprSyntax) -> SyntaxVisitorContinueKind {
     return .visitChildren
   }
   
-  /// The function called after visiting `SwitchStmtSyntax` and its descendents.
+  /// The function called after visiting `SwitchExprSyntax` and its descendents.
   ///   - node: the node we just finished visiting.
-  open func visitPost(_ node: SwitchStmtSyntax) {
+  open func visitPost(_ node: SwitchExprSyntax) {
   }
   
   /// Visiting `TargetFunctionEntrySyntax` specifically.
@@ -3446,8 +3453,8 @@ open class SyntaxVisitor {
   }
   
   /// Implementation detail of doVisit(_:_:). Do not call directly.
-  private func visitImplBackDeployAttributeSpecListSyntax(_ data: SyntaxData) {
-    let node = BackDeployAttributeSpecListSyntax(data)
+  private func visitImplBackDeployedAttributeSpecListSyntax(_ data: SyntaxData) {
+    let node = BackDeployedAttributeSpecListSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
     // Avoid calling into visitChildren if possible.
     if needsChildren && !node.raw.layoutView!.children.isEmpty {
@@ -4227,6 +4234,17 @@ open class SyntaxVisitor {
   }
   
   /// Implementation detail of doVisit(_:_:). Do not call directly.
+  private func visitImplExpressionStmtSyntax(_ data: SyntaxData) {
+    let node = ExpressionStmtSyntax(data)
+    let needsChildren = (visit(node) == .visitChildren)
+    // Avoid calling into visitChildren if possible.
+    if needsChildren && !node.raw.layoutView!.children.isEmpty {
+      visitChildren(node)
+    }
+    visitPost(node)
+  }
+  
+  /// Implementation detail of doVisit(_:_:). Do not call directly.
   private func visitImplExtensionDeclSyntax(_ data: SyntaxData) {
     let node = ExtensionDeclSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
@@ -4513,8 +4531,8 @@ open class SyntaxVisitor {
   }
   
   /// Implementation detail of doVisit(_:_:). Do not call directly.
-  private func visitImplIfStmtSyntax(_ data: SyntaxData) {
-    let node = IfStmtSyntax(data)
+  private func visitImplIfExprSyntax(_ data: SyntaxData) {
+    let node = IfExprSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
     // Avoid calling into visitChildren if possible.
     if needsChildren && !node.raw.layoutView!.children.isEmpty {
@@ -5591,8 +5609,8 @@ open class SyntaxVisitor {
   }
   
   /// Implementation detail of doVisit(_:_:). Do not call directly.
-  private func visitImplSwitchStmtSyntax(_ data: SyntaxData) {
-    let node = SwitchStmtSyntax(data)
+  private func visitImplSwitchExprSyntax(_ data: SyntaxData) {
+    let node = SwitchExprSyntax(data)
     let needsChildren = (visit(node) == .visitChildren)
     // Avoid calling into visitChildren if possible.
     if needsChildren && !node.raw.layoutView!.children.isEmpty {
@@ -6058,8 +6076,8 @@ open class SyntaxVisitor {
       visitImplAvailabilityVersionRestrictionSyntax(data)
     case .awaitExpr: 
       visitImplAwaitExprSyntax(data)
-    case .backDeployAttributeSpecList: 
-      visitImplBackDeployAttributeSpecListSyntax(data)
+    case .backDeployedAttributeSpecList: 
+      visitImplBackDeployedAttributeSpecListSyntax(data)
     case .binaryOperatorExpr: 
       visitImplBinaryOperatorExprSyntax(data)
     case .booleanLiteralExpr: 
@@ -6200,6 +6218,8 @@ open class SyntaxVisitor {
       visitImplExpressionPatternSyntax(data)
     case .expressionSegment: 
       visitImplExpressionSegmentSyntax(data)
+    case .expressionStmt: 
+      visitImplExpressionStmtSyntax(data)
     case .extensionDecl: 
       visitImplExtensionDeclSyntax(data)
     case .fallthroughStmt: 
@@ -6252,8 +6272,8 @@ open class SyntaxVisitor {
       visitImplIfConfigClauseSyntax(data)
     case .ifConfigDecl: 
       visitImplIfConfigDeclSyntax(data)
-    case .ifStmt: 
-      visitImplIfStmtSyntax(data)
+    case .ifExpr: 
+      visitImplIfExprSyntax(data)
     case .implementsAttributeArguments: 
       visitImplImplementsAttributeArgumentsSyntax(data)
     case .implicitlyUnwrappedOptionalType: 
@@ -6448,8 +6468,8 @@ open class SyntaxVisitor {
       visitImplSwitchCaseSyntax(data)
     case .switchDefaultLabel: 
       visitImplSwitchDefaultLabelSyntax(data)
-    case .switchStmt: 
-      visitImplSwitchStmtSyntax(data)
+    case .switchExpr: 
+      visitImplSwitchExprSyntax(data)
     case .targetFunctionEntry: 
       visitImplTargetFunctionEntrySyntax(data)
     case .ternaryExpr: 

@@ -255,11 +255,6 @@ extension SyntaxProtocol {
 }
 
 public extension SyntaxProtocol {
-  @available(*, deprecated, message: "Use children(viewMode:) instead")
-  var children: SyntaxChildren {
-    return children(viewMode: .sourceAccurate)
-  }
-
   /// A sequence over the `present` children of this node.
   func children(viewMode: SyntaxTreeViewMode) -> SyntaxChildren {
     return SyntaxChildren(_syntaxNode, viewMode: viewMode)
@@ -283,9 +278,18 @@ public extension SyntaxProtocol {
     return raw.kind.isSyntaxCollection
   }
 
-  /// Whether this tree contains a missing token or unexpected node.
+  /// Whether the tree contained by this layout has any
+  ///  - missing nodes or
+  ///  - unexpected nodes or
+  ///  - tokens with a `TokenDiagnostic` of severity `error`
   var hasError: Bool {
     return raw.recursiveFlags.contains(.hasError)
+  }
+
+  /// Whether the tree contained by this layout has any tokens with a
+  /// `TokenDiagnostic` of severity `warning`.
+  var hasWarning: Bool {
+    return raw.recursiveFlags.contains(.hasWarning)
   }
 
   /// Whether this tree contains a missing token or unexpected node.
@@ -524,12 +528,6 @@ public extension SyntaxProtocol {
   }
 
   /// Sequence of tokens that are part of this Syntax node.
-  @available(*, deprecated, message: "Use tokens(viewMode:) instead")
-  var tokens: TokenSequence {
-    return tokens(viewMode: .sourceAccurate)
-  }
-
-  /// Sequence of tokens that are part of this Syntax node.
   func tokens(viewMode: SyntaxTreeViewMode) -> TokenSequence {
     return TokenSequence(_syntaxNode, viewMode: viewMode)
   }
@@ -565,12 +563,19 @@ public extension SyntaxProtocol {
     data.raw.write(to: &target)
   }
 
+  /// A copy of this node without the leading trivia of the first token in the
+  /// node and the trailing trivia of the last token in the node.
+  var trimmed: Self {
+    // TODO: Should only need one new node here
+    return self.with(\.leadingTrivia, []).with(\.trailingTrivia, [])
+  }
+
   /// The description of this node without the leading trivia of the first token
-  /// in the node and the trailing trivia of the last token in the node
+  /// in the node and the trailing trivia of the last token in the node.
   var trimmedDescription: String {
-    // TODO: We shouldn't need to create two intermediate nodes from the `with`
-    // functions just to get the description without trivia.
-    return self.with(\.leadingTrivia, []).with(\.trailingTrivia, []).description
+    // TODO: We shouldn't need to create to copies just to get the description
+    // without trivia.
+    return self.trimmed.description
   }
 }
 

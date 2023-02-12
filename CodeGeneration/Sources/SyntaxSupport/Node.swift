@@ -33,32 +33,32 @@ public class Node {
   public let elementsSeparatedByNewline: Bool
   public let collectionElement: String
 
-  /// Returns `True` if this node declares one of the base syntax kinds.
+  /// Returns `true` if this node declares one of the base syntax kinds.
   public var isBase: Bool {
     return SYNTAX_BASE_KINDS.contains(syntaxKind)
   }
 
-  /// Returns `True` if this node is a subclass of SyntaxCollection.
+  /// Returns `true` if this node is a subclass of SyntaxCollection.
   public var isSyntaxCollection: Bool {
     return baseKind == "SyntaxCollection"
   }
 
-  /// Returns `True` if this node should have a `validate` method associated.
+  /// Returns `true` if this node should have a `validate` method associated.
   public var requiresValidation: Bool {
     return isBuildable
   }
 
-  /// Returns `True` if this node is an `Unknown` syntax subclass.
+  /// Returns `true` if this node is an `Unknown` syntax subclass.
   public var isUnknown: Bool {
     return syntaxKind.contains("Unknown")
   }
 
-  /// Returns `True` if this node is an `Unknown` syntax subclass.
+  /// Returns `true` if this node is an `Unknown` syntax subclass.
   public var isMissing: Bool {
     return syntaxKind.contains("Missing")
   }
 
-  /// Returns `True` if this node should have a builder associated.
+  /// Returns `true` if this node should have a builder associated.
   public var isBuildable: Bool {
     return !isBase && !isUnknown && !isMissing && !isSyntaxCollection
   }
@@ -76,19 +76,31 @@ public class Node {
   public var isVisitable: Bool {
     return !isBase
   }
-  
-  init(name: String,
-       nameForDiagnostics: String?,
-       description: String? = nil,
-       kind: String,
-       traits: [String] = [],
-       parserFunction: String? = nil,
-       children: [Child] = [],
-       element: String = "",
-       elementName: String? = nil,
-       elementChoices: [String]? = nil,
-       omitWhenEmpty: Bool = false,
-       elementsSeparatedByNewline: Bool = false) {
+
+  public var hasOptionalBaseTypeChild: Bool {
+    return children.contains { child in
+      if child.hasOptionalBaseType {
+        return true
+      } else {
+        return false
+      }
+    }
+  }
+
+  init(
+    name: String,
+    nameForDiagnostics: String?,
+    description: String? = nil,
+    kind: String,
+    traits: [String] = [],
+    parserFunction: String? = nil,
+    children: [Child] = [],
+    element: String = "",
+    elementName: String? = nil,
+    elementChoices: [String]? = nil,
+    omitWhenEmpty: Bool = false,
+    elementsSeparatedByNewline: Bool = false
+  ) {
     self.syntaxKind = name
     self.swiftSyntaxKind = lowercaseFirstWord(name: name)
     self.name = kindToType(kind: self.syntaxKind)
@@ -100,26 +112,38 @@ public class Node {
 
     if kind == "SyntaxCollection" {
       self.children = children
-    } else {
+    } else if children.count > 0 {
       // Add implicitly generated UnexpectedNodes children between
       // any two defined children
-      self.children = children.enumerated().flatMap { (i, child) -> [Child] in
-        let unexpectedName: String
-        if i == 0 {
-          unexpectedName = "UnexpectedBefore\(child.name)"
-        } else {
-          unexpectedName = "UnexpectedBetween\(children[i - 1].name)And\(child.name)"
+      self.children =
+        children.enumerated().flatMap { (i, child) -> [Child] in
+          let unexpectedName: String
+          if i == 0 {
+            unexpectedName = "UnexpectedBefore\(child.name)"
+          } else {
+            unexpectedName = "UnexpectedBetween\(children[i - 1].name)And\(child.name)"
+          }
+          return [
+            Child(
+              name: unexpectedName,
+              kind: .collection(kind: "UnexpectedNodes", collectionElementName: unexpectedName),
+              isOptional: true
+            ),
+            child,
+          ]
         }
-        return [
-          Child(
-            name: unexpectedName,
-            kind: "UnexpectedNodes",
-            isOptional: true,
-            collectionElementName: unexpectedName
-          ),
-          child,
-        ]
-      }
+        + (!children.isEmpty
+          ? [
+            Child(
+              name: "UnexpectedAfter\(children.last!.name)",
+              kind: .collection(kind: "UnexpectedNodes", collectionElementName: "UnexpectedAfter\(children.last!.name)"),
+              isOptional: true
+            )
+          ] : [])
+    } else {
+      self.children = [
+        Child(name: "Unexpected", kind: .collection(kind: "UnexpectedNodes", collectionElementName: "Unexpected"), isOptional: true)
+      ]
     }
 
     self.nonUnexpectedChildren = children.filter { !$0.isUnexpectedNodes }
@@ -136,7 +160,7 @@ public class Node {
     self.collectionElementName = elementName ?? self.collectionElement
     self.collectionElementChoices = elementChoices ?? []
     self.elementsSeparatedByNewline = elementsSeparatedByNewline
-    
+
     // For SyntaxCollections make sure that the elementName is set.
     assert(!isSyntaxCollection || elementName != nil || element != "")
   }

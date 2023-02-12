@@ -61,11 +61,11 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery5a() {
     AssertParse(
       """
-      if !1️⃣#available(OSX 10.52, *) { 
+      if !1️⃣#available(OSX 10.52, *) {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "availability condition cannot be used in an expression; did you mean '#unavailable'?", fixIts: ["replace '!#available' by '#unavailable'"])
+        DiagnosticSpec(message: "availability condition cannot be used in an expression; did you mean '#unavailable'?", fixIts: ["replace '!#available' with '#unavailable'"])
       ],
       fixedSource: """
         if #unavailable(OSX 10.52, *) {
@@ -81,7 +81,7 @@ final class AvailabilityQueryTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "availability condition cannot be used in an expression; did you mean '#unavailable'?", fixIts: ["replace '!#available' by '#unavailable'"])
+        DiagnosticSpec(message: "availability condition cannot be used in an expression; did you mean '#unavailable'?", fixIts: ["replace '!#available' with '#unavailable'"])
       ]
     )
   }
@@ -89,11 +89,11 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery6() {
     AssertParse(
       """
-      if #available(OSX 10.51, *) 1️⃣&& #available(OSX 10.52, *) { 
+      if #available(OSX 10.51, *) 1️⃣&& #available(OSX 10.52, *) {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected ',' joining parts of a multi-clause condition", fixIts: ["replace '&&' by ','"])
+        DiagnosticSpec(message: "expected ',' joining parts of a multi-clause condition", fixIts: ["replace '&&' with ','"])
       ],
       fixedSource: """
         if #available(OSX 10.51, *) , #available(OSX 10.52, *) {
@@ -105,7 +105,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery7() {
     AssertParse(
       """
-      if #available 1️⃣{ 
+      if #available 1️⃣{
       }
       """,
       diagnostics: [
@@ -160,7 +160,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery11() {
     AssertParse(
       """
-      if #available(OSX) { 
+      if #available(OSX) {
       }
       """,
       diagnostics: [
@@ -190,7 +190,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery13() {
     AssertParse(
       """
-      if #available(iDishwasherOS 10.51) { 
+      if #available(iDishwasherOS 10.51) {
       }
       """
     )
@@ -199,7 +199,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery14() {
     AssertParse(
       """
-      if #available(iDishwasherOS 10.51, *) { 
+      if #available(iDishwasherOS 10.51, *) {
       }
       """
     )
@@ -208,7 +208,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery15() {
     AssertParse(
       """
-      if #available(macos 10.51, *) { 
+      if #available(macos 10.51, *) {
       }
       """
     )
@@ -217,7 +217,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery16() {
     AssertParse(
       """
-      if #available(mscos 10.51, *) { 
+      if #available(mscos 10.51, *) {
       }
       """
     )
@@ -226,7 +226,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery17() {
     AssertParse(
       """
-      if #available(macoss 10.51, *) { 
+      if #available(macoss 10.51, *) {
       }
       """
     )
@@ -235,7 +235,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery18() {
     AssertParse(
       """
-      if #available(mac 10.51, *) { 
+      if #available(mac 10.51, *) {
       }
       """
     )
@@ -244,7 +244,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery19() {
     AssertParse(
       """
-      if #available(OSX 10.51, OSX 10.52, *) {  
+      if #available(OSX 10.51, OSX 10.52, *) {
       }
       """
     )
@@ -367,7 +367,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery30() {
     AssertParse(
       """
-      if #available(OSX 10.51, iOS 8.0, iDishwasherOS 10.51) { 
+      if #available(OSX 10.51, iOS 8.0, iDishwasherOS 10.51) {
       }
       """
     )
@@ -376,7 +376,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery31() {
     AssertParse(
       """
-      if #available(iDishwasherOS 10.51, OSX 10.51) { 
+      if #available(iDishwasherOS 10.51, OSX 10.51) {
       }
       """
     )
@@ -389,7 +389,7 @@ final class AvailabilityQueryTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected ',' joining platforms in availability condition", fixIts: ["replace '||' by ','"])
+        DiagnosticSpec(message: "expected ',' joining platforms in availability condition", fixIts: ["replace '||' with ','"])
       ],
       fixedSource: """
         if #available(OSX 10.51 , iOS 8.0) {
@@ -409,7 +409,7 @@ final class AvailabilityQueryTests: XCTestCase {
   func testAvailabilityQuery34() {
     AssertParse(
       """
-      if #available(OSX 1️⃣>= 10.51, *) { 
+      if #available(OSX 1️⃣>= 10.51, *) {
       }
       """,
       diagnostics: [

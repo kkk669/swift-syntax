@@ -32,13 +32,12 @@ extension TokenConsumer {
   mutating func atStartOfDeclaration(
     isAtTopLevel: Bool = false,
     allowInitDecl: Bool = true,
-    allowRecovery: Bool = false,
-    preferPoundAsExpression: Bool = false
+    allowRecovery: Bool = false
   ) -> Bool {
     if self.at(anyIn: PoundDeclarationStart.self) != nil {
-      // If we are in a context where we prefer # to be an expression,
-      // treat it as one if it's not at the start of the line.
-      if preferPoundAsExpression && self.at(.pound) && !self.currentToken.isAtStartOfLine {
+      // Don't treat freestanding macro expansions as declarations. They'll be
+      // parsed as expressions.
+      if self.at(.pound) {
         return false
       }
 
@@ -84,7 +83,7 @@ extension TokenConsumer {
       declStartKeyword =
         subparser.canRecoverTo(
           anyIn: DeclarationStart.self,
-          recoveryPrecedence: isAtTopLevel ? nil : .closingBrace
+          overrideRecoveryPrecedence: isAtTopLevel ? nil : .closingBrace
         )?.0
     } else {
       declStartKeyword = subparser.at(anyIn: DeclarationStart.self)?.0
@@ -219,7 +218,7 @@ extension Parser {
     // while recoverying to the declaration start.
     let recoveryPrecedence = inMemberDeclList ? TokenPrecedence.closingBrace : nil
 
-    switch self.canRecoverTo(anyIn: DeclarationStart.self, recoveryPrecedence: recoveryPrecedence) {
+    switch self.canRecoverTo(anyIn: DeclarationStart.self, overrideRecoveryPrecedence: recoveryPrecedence) {
     case (.importKeyword, let handle)?:
       return RawDeclSyntax(self.parseImportDeclaration(attrs, handle))
     case (.classKeyword, let handle)?:
@@ -258,8 +257,8 @@ extension Parser {
       return RawDeclSyntax(self.parseMacroDeclaration(attrs: attrs, introducerHandle: handle))
     case nil:
       if inMemberDeclList {
-        let isProbablyVarDecl = self.at(any: [.identifier, .wildcard]) && self.peek().rawTokenKind.is(any: [.colon, .equal, .comma])
-        let isProbablyTupleDecl = self.at(.leftParen) && self.peek().rawTokenKind.is(any: [.identifier, .wildcard])
+        let isProbablyVarDecl = self.at(.identifier, .wildcard) && self.peek().rawTokenKind.is(.colon, .equal, .comma)
+        let isProbablyTupleDecl = self.at(.leftParen) && self.peek().rawTokenKind.is(.identifier, .wildcard)
 
         if isProbablyVarDecl || isProbablyTupleDecl {
           return RawDeclSyntax(self.parseLetOrVarDeclaration(attrs, .missing(.keyword(.var))))
@@ -275,7 +274,7 @@ extension Parser {
           )
         }
 
-        let isProbablyFuncDecl = self.at(any: [.identifier, .wildcard]) || self.at(anyIn: Operator.self) != nil
+        let isProbablyFuncDecl = self.at(.identifier, .wildcard) || self.at(anyIn: Operator.self) != nil
 
         if isProbablyFuncDecl {
           return RawDeclSyntax(self.parseFuncDeclaration(attrs, .missing(.keyword(.func))))
@@ -322,7 +321,45 @@ extension Parser {
 
   @_spi(RawSyntax)
   public mutating func parseImportKind() -> RawTokenSyntax? {
-    return self.consume(ifAny: [.keyword(.typealias), .keyword(.struct), .keyword(.class), .keyword(.enum), .keyword(.protocol), .keyword(.var), .keyword(.let), .keyword(.func)])
+    enum ImportKind: TokenSpecSet {
+      case `typealias`
+      case `struct`
+      case `class`
+      case `enum`
+      case `protocol`
+      case `var`
+      case `let`
+      case `func`
+
+      var spec: TokenSpec {
+        switch self {
+        case .typealias: return .keyword(.typealias)
+        case .struct: return .keyword(.struct)
+        case .class: return .keyword(.class)
+        case .enum: return .keyword(.enum)
+        case .protocol: return .keyword(.protocol)
+        case .var: return .keyword(.var)
+        case .let: return .keyword(.let)
+        case .func: return .keyword(.func)
+        }
+      }
+
+      init?(lexeme: Lexer.Lexeme) {
+        switch lexeme {
+        case TokenSpec(.typealias): self = .typealias
+        case TokenSpec(.struct): self = .struct
+        case TokenSpec(.class): self = .class
+        case TokenSpec(.enum): self = .enum
+        case TokenSpec(.protocol): self = .protocol
+        case TokenSpec(.var): self = .var
+        case TokenSpec(.let): self = .let
+        case TokenSpec(.func): self = .func
+        default: return nil
+        }
+      }
+    }
+
+    return self.consume(ifAnyIn: ImportKind.self)
   }
 
   @_spi(RawSyntax)
@@ -443,7 +480,7 @@ extension Parser {
         let unexpectedBeforeInherited: RawUnexpectedNodesSyntax?
         let inherited: RawTypeSyntax?
         if colon != nil {
-          if self.at(any: [.identifier, .keyword(.protocol), .keyword(.Any)]) {
+          if self.at(.identifier, .keyword(.protocol), .keyword(.Any)) {
             unexpectedBeforeInherited = nil
             inherited = self.parseType()
           } else if let classKeyword = self.consume(if: .keyword(.class)) {
@@ -509,7 +546,7 @@ extension Parser {
     )
   }
 
-  enum LayoutConstraint: RawTokenKindSubset {
+  enum LayoutConstraint: TokenSpecSet {
     case trivialLayout
     case trivialAtMostLayout
     case unknownLayout
@@ -520,18 +557,18 @@ extension Parser {
 
     init?(lexeme: Lexer.Lexeme) {
       switch lexeme {
-      case RawTokenKindMatch(._Trivial): self = .trivialLayout
-      case RawTokenKindMatch(._TrivialAtMost): self = .trivialAtMostLayout
-      case RawTokenKindMatch(._UnknownLayout): self = .unknownLayout
-      case RawTokenKindMatch(._RefCountedObject): self = .refCountedObjectLayout
-      case RawTokenKindMatch(._NativeRefCountedObject): self = .nativeRefCountedObjectLayout
-      case RawTokenKindMatch(._Class): self = .classLayout
-      case RawTokenKindMatch(._NativeClass): self = .nativeClassLayout
+      case TokenSpec(._Trivial): self = .trivialLayout
+      case TokenSpec(._TrivialAtMost): self = .trivialAtMostLayout
+      case TokenSpec(._UnknownLayout): self = .unknownLayout
+      case TokenSpec(._RefCountedObject): self = .refCountedObjectLayout
+      case TokenSpec(._NativeRefCountedObject): self = .nativeRefCountedObjectLayout
+      case TokenSpec(._Class): self = .classLayout
+      case TokenSpec(._NativeClass): self = .nativeClassLayout
       default: return nil
       }
     }
 
-    var rawTokenKind: RawTokenKind {
+    var spec: TokenSpec {
       switch self {
       case .trivialLayout: return .keyword(._Trivial)
       case .trivialAtMostLayout: return .keyword(._TrivialAtMost)
@@ -588,7 +625,7 @@ extension Parser {
           continue
         }
 
-        enum ExpectedTokenKind: RawTokenKindSubset {
+        enum ExpectedTokenKind: TokenSpecSet {
           case colon
           case binaryOperator
           case postfixOperator
@@ -604,7 +641,7 @@ extension Parser {
             }
           }
 
-          var rawTokenKind: RawTokenKind {
+          var spec: TokenSpec {
             switch self {
             case .colon: return .colon
             case .binaryOperator: return .binaryOperator
@@ -696,7 +733,7 @@ extension Parser {
           requirement = .sameTypeRequirement(
             RawSameTypeRequirementSyntax(
               leftTypeIdentifier: firstType,
-              equalityToken: RawTokenSyntax(missing: .equal, arena: self.arena),
+              equalityToken: RawTokenSyntax(missing: .binaryOperator, text: "==", arena: self.arena),
               rightTypeIdentifier: RawTypeSyntax(RawMissingTypeSyntax(arena: self.arena)),
               arena: self.arena
             )
@@ -770,7 +807,7 @@ extension Parser {
     let (unexpectedBeforeLBrace, lbrace) = self.expect(.leftBrace)
     do {
       var loopProgress = LoopProgressCondition()
-      while !self.at(any: [.eof, .rightBrace]) && loopProgress.evaluate(currentToken) {
+      while !self.at(.eof, .rightBrace) && loopProgress.evaluate(currentToken) {
         let newItemAtStartOfLine = self.currentToken.isAtStartOfLine
         guard let newElement = self.parseMemberDeclListItem() else {
           break
@@ -838,7 +875,7 @@ extension Parser {
         let (unexpectedBeforeName, name) = self.expectIdentifier(allowIdentifierLikeKeywords: false, keywordRecovery: true)
 
         let associatedValue: RawParameterClauseSyntax?
-        if self.at(.leftParen, allowTokenAtStartOfLine: false) {
+        if self.at(TokenSpec(.leftParen, allowAtStartOfLine: false)) {
           associatedValue = self.parseParameterClause(for: .enumCase)
         } else {
           associatedValue = nil
@@ -980,9 +1017,9 @@ extension Parser {
 
     // Parse the '!' or '?' for a failable initializer.
     let failable: RawTokenSyntax?
-    if let parsedFailable = self.consume(ifAny: [.exclamationMark, .postfixQuestionMark, .infixQuestionMark]) {
+    if let parsedFailable = self.consume(if: .exclamationMark, .postfixQuestionMark, .infixQuestionMark) {
       failable = parsedFailable
-    } else if let parsedFailable = self.consumeIfContextualPunctuator("!") {
+    } else if let parsedFailable = self.consumeIfContextualPunctuator("!", remapping: .exclamationMark) {
       failable = parsedFailable
     } else {
       failable = nil
@@ -1034,7 +1071,7 @@ extension Parser {
   ) -> RawDeinitializerDeclSyntax {
     let (unexpectedBeforeDeinitKeyword, deinitKeyword) = self.eat(handle)
     var unexpectedNameAndSignature: [RawSyntax?] = []
-    unexpectedNameAndSignature.append(self.consume(if: .identifier, allowTokenAtStartOfLine: false).map(RawSyntax.init))
+    unexpectedNameAndSignature.append(self.consume(if: TokenSpec(.identifier, allowAtStartOfLine: false)).map(RawSyntax.init))
     if self.at(.leftParen) && !self.currentToken.isAtStartOfLine {
       unexpectedNameAndSignature.append(RawSyntax(parseFunctionSignature()))
     }
@@ -1196,7 +1233,7 @@ extension Parser {
     if !shouldSkipParameterParsing {
       var keepGoing = true
       var loopProgress = LoopProgressCondition()
-      while !self.at(any: [.eof, .rightParen])
+      while !self.at(.eof, .rightParen)
         && keepGoing
         && loopProgress.evaluate(currentToken)
       {
@@ -1278,7 +1315,7 @@ extension Parser {
     let (unexpectedBeforeFuncKeyword, funcKeyword) = self.eat(handle)
     let unexpectedBeforeIdentifier: RawUnexpectedNodesSyntax?
     let identifier: RawTokenSyntax
-    if self.at(anyIn: Operator.self) != nil || self.at(any: [.exclamationMark, .prefixAmpersand]) || self.atRegexLiteralThatCouldBeAnOperator() {
+    if self.at(anyIn: Operator.self) != nil || self.at(.exclamationMark, .prefixAmpersand) || self.atRegexLiteralThatCouldBeAnOperator() {
       var name = self.currentToken.tokenText
       if name.count > 1 && name.hasSuffix("<") && self.peek().rawTokenKind == .identifier {
         name = SyntaxText(rebasing: name.dropLast())
@@ -1440,7 +1477,7 @@ extension Parser {
     inMemberDeclList: Bool = false
   ) -> RawVariableDeclSyntax {
     let (unexpectedBeforeIntroducer, introducer) = self.eat(handle)
-    let hasTryBeforeIntroducer = unexpectedBeforeIntroducer?.containsToken(where: { $0.tokenKind == .keyword(.try) }) ?? false
+    let hasTryBeforeIntroducer = unexpectedBeforeIntroducer?.containsToken(where: { TokenSpec(.try) ~= $0 }) ?? false
 
     var elements = [RawPatternBindingSyntax]()
     do {
@@ -1553,7 +1590,7 @@ extension Parser {
     // Check there is an identifier before consuming
     var look = self.lookahead()
     let _ = look.consumeAttributeList()
-    let hasModifier = look.consume(ifAny: [.keyword(.mutating), .keyword(.nonmutating), .keyword(.__consuming)]) != nil
+    let hasModifier = look.consume(if: .keyword(.mutating), .keyword(.nonmutating), .keyword(.__consuming)) != nil
     guard let (kind, handle) = look.at(anyIn: AccessorKind.self) ?? forcedKind else {
       return nil
     }
@@ -1564,8 +1601,10 @@ extension Parser {
     // get and set.
     let modifier: RawDeclModifierSyntax?
     if hasModifier {
+      let (unexpectedBeforeName, name) = self.expect(.keyword(.mutating), .keyword(.nonmutating), .keyword(.__consuming), default: .keyword(.mutating))
       modifier = RawDeclModifierSyntax(
-        name: self.consumeAnyToken(),
+        unexpectedBeforeName,
+        name: name,
         detail: nil,
         arena: self.arena
       )
@@ -1584,7 +1623,7 @@ extension Parser {
 
   /// Parse an accessor.
   mutating func parseAccessorDecl() -> RawAccessorDeclSyntax {
-    let forcedHandle = TokenConsumptionHandle(tokenKind: .keyword(.get), missing: true)
+    let forcedHandle = TokenConsumptionHandle(spec: .keyword(.get), missing: true)
     let introducer = parseAccessorIntroducer(forcedKind: (.get, forcedHandle))!
     return parseAccessorDecl(introducer: introducer)
   }
@@ -1666,7 +1705,7 @@ extension Parser {
     var elements = [RawAccessorDeclSyntax]()
     do {
       var loopProgress = LoopProgressCondition()
-      while !self.at(any: [.eof, .rightBrace]) && loopProgress.evaluate(currentToken) {
+      while !self.at(.eof, .rightBrace) && loopProgress.evaluate(currentToken) {
         guard let introducer = self.parseAccessorIntroducer() else {
           // There can only be an implicit getter if no other accessors were
           // seen before this one.
@@ -1811,7 +1850,7 @@ extension Parser {
     case (_, let handle)?:
       (unexpectedBeforeName, name) = self.eat(handle)
     default:
-      if let identifier = self.consume(ifAny: [.identifier, .dollarIdentifier], allowTokenAtStartOfLine: false) {
+      if let identifier = self.consume(if: TokenSpec(.identifier, allowAtStartOfLine: false), TokenSpec(.dollarIdentifier, allowAtStartOfLine: false)) {
         // Recover if the developer tried to use an identifier as the operator name
         unexpectedBeforeName = RawUnexpectedNodesSyntax([identifier], arena: self.arena)
       } else {
@@ -1826,7 +1865,7 @@ extension Parser {
     var loopProgress = LoopProgressCondition()
     while (identifiersAfterOperatorName.last ?? name).trailingTriviaByteLength == 0,
       self.currentToken.leadingTriviaByteLength == 0,
-      !self.at(any: [.colon, .leftBrace, .eof]),
+      !self.at(.colon, .leftBrace, .eof),
       loopProgress.evaluate(self.currentToken)
     {
       identifiersAfterOperatorName.append(consumeAnyToken())
@@ -1947,7 +1986,7 @@ extension Parser {
 
   @_spi(RawSyntax)
   public mutating func parsePrecedenceGroupAttributeListSyntax() -> RawPrecedenceGroupAttributeListSyntax {
-    enum LabelText: RawTokenKindSubset {
+    enum LabelText: TokenSpecSet {
       case associativity
       case assignment
       case higherThan
@@ -1955,15 +1994,15 @@ extension Parser {
 
       init?(lexeme: Lexer.Lexeme) {
         switch lexeme {
-        case RawTokenKindMatch(.associativity): self = .associativity
-        case RawTokenKindMatch(.assignment): self = .assignment
-        case RawTokenKindMatch(.higherThan): self = .higherThan
-        case RawTokenKindMatch(.lowerThan): self = .lowerThan
+        case TokenSpec(.associativity): self = .associativity
+        case TokenSpec(.assignment): self = .assignment
+        case TokenSpec(.higherThan): self = .higherThan
+        case TokenSpec(.lowerThan): self = .lowerThan
         default: return nil
         }
       }
 
-      var rawTokenKind: RawTokenKind {
+      var spec: TokenSpec {
         switch self {
         case .associativity: return .keyword(.associativity)
         case .assignment: return .keyword(.assignment)
@@ -1976,12 +2015,15 @@ extension Parser {
     var elements = [RawPrecedenceGroupAttributeListSyntax.Element]()
     do {
       var attributesProgress = LoopProgressCondition()
-      LOOP: while !self.at(any: [.eof, .rightBrace]) && attributesProgress.evaluate(currentToken) {
+      LOOP: while !self.at(.eof, .rightBrace) && attributesProgress.evaluate(currentToken) {
         switch self.at(anyIn: LabelText.self) {
         case (.associativity, let handle)?:
           let associativity = self.eat(handle)
           let (unexpectedBeforeColon, colon) = self.expect(.colon)
-          let (unexpectedBeforeValue, value) = self.expectIdentifier()
+          var (unexpectedBeforeValue, value) = self.expect(.keyword(.left), .keyword(.right), .keyword(.none), default: .keyword(.none))
+          if value.isMissing, let identifier = self.consume(if: .identifier) {
+            unexpectedBeforeValue = RawUnexpectedNodesSyntax(combining: unexpectedBeforeValue, identifier, arena: self.arena)
+          }
           elements.append(
             .precedenceGroupAssociativity(
               RawPrecedenceGroupAssociativitySyntax(
@@ -1997,9 +2039,9 @@ extension Parser {
         case (.assignment, let handle)?:
           let assignmentKeyword = self.eat(handle)
           let (unexpectedBeforeColon, colon) = self.expect(.colon)
-          let (unexpectedBeforeFlag, flag) = self.expectAny([.keyword(.true), .keyword(.false)], default: .keyword(.true))
+          let (unexpectedBeforeFlag, flag) = self.expect(.keyword(.true), .keyword(.false), default: .keyword(.true))
           let unexpectedAfterFlag: RawUnexpectedNodesSyntax?
-          if flag.isMissing, let unexpectedIdentifier = self.consume(if: .identifier, allowTokenAtStartOfLine: false) {
+          if flag.isMissing, let unexpectedIdentifier = self.consume(if: TokenSpec(.identifier, allowAtStartOfLine: false)) {
             unexpectedAfterFlag = RawUnexpectedNodesSyntax([unexpectedIdentifier], arena: self.arena)
           } else {
             unexpectedAfterFlag = nil
@@ -2143,7 +2185,7 @@ extension Parser {
     }
 
     // Parse the optional parenthesized argument list.
-    let leftParen = self.consume(if: .leftParen, allowTokenAtStartOfLine: false)
+    let leftParen = self.consume(if: TokenSpec(.leftParen, allowAtStartOfLine: false))
     let args: [RawTupleExprElementSyntax]
     let unexpectedBeforeRightParen: RawUnexpectedNodesSyntax?
     let rightParen: RawTokenSyntax?

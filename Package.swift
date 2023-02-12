@@ -11,13 +11,15 @@ if ProcessInfo.processInfo.environment["SWIFT_BUILD_SCRIPT_ENVIRONMENT"] != nil 
     .deletingLastPathComponent()
     .appendingPathComponent("utils")
     .appendingPathComponent("group.json")
-  swiftSyntaxSwiftSettings = [.unsafeFlags([
-    "-Xfrontend", "-group-info-path", 
-    "-Xfrontend", groupFile.path, 
-    // Enforcing exclusivity increases compile time of release builds by 2 minutes.
-    // Disable it when we're in a controlled CI environment.
-    "-enforce-exclusivity=unchecked",
-  ])]
+  swiftSyntaxSwiftSettings = [
+    .unsafeFlags([
+      "-Xfrontend", "-group-info-path",
+      "-Xfrontend", groupFile.path,
+      // Enforcing exclusivity increases compile time of release builds by 2 minutes.
+      // Disable it when we're in a controlled CI environment.
+      "-enforce-exclusivity=unchecked",
+    ])
+  ]
 } else {
   swiftSyntaxSwiftSettings = []
 }
@@ -40,7 +42,7 @@ let package = Package(
     .library(name: "SwiftSyntax", targets: ["SwiftSyntax"]),
     .library(name: "SwiftSyntaxParser", targets: ["SwiftSyntaxParser"]),
     .library(name: "SwiftSyntaxBuilder", targets: ["SwiftSyntaxBuilder"]),
-    .library(name: "_SwiftSyntaxMacros", targets: ["_SwiftSyntaxMacros"]),
+    .library(name: "SwiftSyntaxMacros", targets: ["SwiftSyntaxMacros"]),
     .library(name: "SwiftRefactor", targets: ["SwiftRefactor"]),
   ],
   targets: [
@@ -63,10 +65,7 @@ let package = Package(
       dependencies: [],
       exclude: [
         "CMakeLists.txt",
-        "Raw/RawSyntaxNodes.swift.gyb",
         "Raw/RawSyntaxValidation.swift.gyb",
-        "SyntaxFactory.swift.gyb",
-        "SyntaxNodes.swift.gyb.template",
       ],
       swiftSettings: swiftSyntaxSwiftSettings
     ),
@@ -74,7 +73,7 @@ let package = Package(
       name: "SwiftSyntaxBuilder",
       dependencies: ["SwiftBasicFormat", "SwiftSyntax", "SwiftParser", "SwiftParserDiagnostics"],
       exclude: [
-        "CMakeLists.txt",
+        "CMakeLists.txt"
       ]
     ),
     .target(
@@ -90,7 +89,7 @@ let package = Package(
       name: "IDEUtils",
       dependencies: ["SwiftSyntax"],
       exclude: [
-        "CMakeLists.txt",
+        "CMakeLists.txt"
       ]
     ),
     .target(
@@ -105,29 +104,31 @@ let package = Package(
       name: "SwiftParserDiagnostics",
       dependencies: ["SwiftBasicFormat", "SwiftDiagnostics", "SwiftParser", "SwiftSyntax"],
       exclude: [
-        "CMakeLists.txt",
+        "CMakeLists.txt"
       ]
     ),
     .target(
       name: "SwiftOperators",
       dependencies: ["SwiftSyntax", "SwiftParser", "SwiftDiagnostics"],
       exclude: [
-        "CMakeLists.txt",
+        "CMakeLists.txt"
       ]
     ),
     .target(
-      name: "_SwiftSyntaxMacros",
+      name: "SwiftSyntaxMacros",
       dependencies: [
-        "SwiftSyntax", "SwiftSyntaxBuilder", "SwiftParser", "SwiftDiagnostics"
+        "SwiftSyntax", "SwiftSyntaxBuilder", "SwiftParser", "SwiftDiagnostics",
       ],
       exclude: [
-        "CMakeLists.txt",
-      ]),
+        "CMakeLists.txt"
+      ]
+    ),
     .target(
       name: "SwiftRefactor",
       dependencies: [
         "SwiftSyntax", "SwiftParser",
-      ]),
+      ]
+    ),
     .target(
       name: "WASIHelpers"
     ),
@@ -137,8 +138,10 @@ let package = Package(
     ),
     .executableTarget(
       name: "swift-parser-cli",
-      dependencies: ["SwiftDiagnostics", "SwiftSyntax", "SwiftParser", "SwiftParserDiagnostics", "SwiftOperators",
-                     .product(name: "ArgumentParser", package: "swift-argument-parser")]
+      dependencies: [
+        "SwiftDiagnostics", "SwiftSyntax", "SwiftParser", "SwiftParserDiagnostics", "SwiftOperators",
+        .product(name: "ArgumentParser", package: "swift-argument-parser"),
+      ]
     ),
     .testTarget(name: "IDEUtilsTest", dependencies: ["_SwiftSyntaxTestSupport", "SwiftParser", "SwiftSyntax", "IDEUtils"]),
     .testTarget(
@@ -161,9 +164,11 @@ let package = Package(
     ),
     .testTarget(
       name: "SwiftSyntaxMacrosTest",
-      dependencies: ["SwiftDiagnostics", "SwiftOperators", "SwiftParser",
-                     "_SwiftSyntaxTestSupport", "SwiftSyntaxBuilder",
-                     "_SwiftSyntaxMacros"]
+      dependencies: [
+        "SwiftDiagnostics", "SwiftOperators", "SwiftParser",
+        "_SwiftSyntaxTestSupport", "SwiftSyntaxBuilder",
+        "SwiftSyntaxMacros",
+      ]
     ),
     .testTarget(
       name: "PerformanceTest",
@@ -172,9 +177,11 @@ let package = Package(
     ),
     .testTarget(
       name: "SwiftParserTest",
-      dependencies: ["SwiftDiagnostics", "SwiftOperators", "SwiftParser",
-                     "_SwiftSyntaxTestSupport", "SwiftSyntaxBuilder",
-                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))]
+      dependencies: [
+        "SwiftDiagnostics", "SwiftOperators", "SwiftParser",
+        "_SwiftSyntaxTestSupport", "SwiftSyntaxBuilder",
+        .target(name: "WASIHelpers", condition: .when(platforms: [.wasi])),
+      ]
     ),
     .testTarget(
       name: "SwiftParserDiagnosticsTest",
@@ -182,21 +189,24 @@ let package = Package(
     ),
     .testTarget(
       name: "SwiftOperatorsTest",
-      dependencies: ["SwiftOperators", "_SwiftSyntaxTestSupport",
-                     "SwiftParser"]
+      dependencies: [
+        "SwiftOperators", "_SwiftSyntaxTestSupport",
+        "SwiftParser",
+      ]
     ),
     .testTarget(
       name: "SwiftRefactorTest",
       dependencies: [
         "SwiftRefactor", "SwiftSyntaxBuilder", "_SwiftSyntaxTestSupport",
-      ]),
+      ]
+    ),
   ]
 )
 
 if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
   // Building standalone.
   package.dependencies += [
-    .package(url: "https://github.com/apple/swift-argument-parser.git", Version("1.0.1")..<Version("1.2.0")),
+    .package(url: "https://github.com/apple/swift-argument-parser.git", Version("1.0.1")..<Version("1.2.0"))
   ]
 } else {
   package.dependencies += [

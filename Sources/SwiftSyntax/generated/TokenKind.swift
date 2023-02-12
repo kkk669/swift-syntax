@@ -98,7 +98,7 @@ public enum TokenKind: Hashable {
   case stringSegment(String)
   
   /// The textual representation of this token kind.
-  @_spi(Testing) 
+  @_spi(Testing)
   public var text: String {
     switch self {
     case .wildcard: 
@@ -199,7 +199,7 @@ public enum TokenKind: Hashable {
   }
   
   /// If this token kind always has the same syntax text, that syntax text, otherwise `nil`.
-  @_spi(RawSyntax) 
+  @_spi(RawSyntax)
   public var defaultText: SyntaxText? {
     switch self {
     case .wildcard: 
@@ -276,6 +276,105 @@ public enum TokenKind: Hashable {
       return ""
     default: 
       return ""
+    }
+  }
+  
+  public var nameForDiagnostics: String {
+    switch self {
+    case .eof: 
+      return "end of file"
+    case .wildcard: 
+      return #"wildcard"#
+    case .leftParen: 
+      return #"("#
+    case .rightParen: 
+      return #")"#
+    case .leftBrace: 
+      return #"{"#
+    case .rightBrace: 
+      return #"}"#
+    case .leftSquareBracket: 
+      return #"["#
+    case .rightSquareBracket: 
+      return #"]"#
+    case .leftAngle: 
+      return #"<"#
+    case .rightAngle: 
+      return #">"#
+    case .period: 
+      return #"."#
+    case .comma: 
+      return #","#
+    case .ellipsis: 
+      return #"..."#
+    case .colon: 
+      return #":"#
+    case .semicolon: 
+      return #";"#
+    case .equal: 
+      return #"="#
+    case .atSign: 
+      return #"@"#
+    case .pound: 
+      return #"#"#
+    case .prefixAmpersand: 
+      return #"&"#
+    case .arrow: 
+      return #"->"#
+    case .backtick: 
+      return #"`"#
+    case .backslash: 
+      return #"\"#
+    case .exclamationMark: 
+      return #"!"#
+    case .postfixQuestionMark: 
+      return #"?"#
+    case .infixQuestionMark: 
+      return #"?"#
+    case .stringQuote: 
+      return #"""#
+    case .singleQuote: 
+      return #"'"#
+    case .multilineStringQuote: 
+      return #"""""#
+    case .poundSourceLocationKeyword: 
+      return #"#sourceLocation"#
+    case .poundIfKeyword: 
+      return #"#if"#
+    case .poundElseKeyword: 
+      return #"#else"#
+    case .poundElseifKeyword: 
+      return #"#elseif"#
+    case .poundEndifKeyword: 
+      return #"#endif"#
+    case .poundAvailableKeyword: 
+      return #"#available"#
+    case .poundUnavailableKeyword: 
+      return #"#unavailable"#
+    case .integerLiteral: 
+      return #"integer literal"#
+    case .floatingLiteral: 
+      return #"floating literal"#
+    case .regexLiteral: 
+      return #"regex literal"#
+    case .unknown: 
+      return #"token"#
+    case .identifier: 
+      return #"identifier"#
+    case .binaryOperator: 
+      return #"binary operator"#
+    case .postfixOperator: 
+      return #"postfix operator"#
+    case .prefixOperator: 
+      return #"prefix operator"#
+    case .dollarIdentifier: 
+      return #"dollar identifier"#
+    case .rawStringDelimiter: 
+      return #"raw string delimiter"#
+    case .stringSegment: 
+      return #"string segment"#
+    case .keyword(let keyword): 
+      return String(syntaxText: keyword.defaultText)
     }
   }
   
@@ -916,7 +1015,7 @@ public struct RawTokenKind: Equatable, Hashable {
     return RawTokenKind(base: .keyword, keyword: keyword)
   }
   
-  @_spi(RawSyntax) 
+  @_spi(RawSyntax)
   public var defaultText: SyntaxText? {
     switch self.base {
     case .eof: 
@@ -993,209 +1092,6 @@ public struct RawTokenKind: Equatable, Hashable {
       return self.keyword.defaultText
     default: 
       return nil
-    }
-  }
-  
-  public var nameForDiagnostics: String {
-    switch self.base {
-    case .eof: 
-      return "end of file"
-    case .wildcard: 
-      return #"wildcard"#
-    case .leftParen: 
-      return #"("#
-    case .rightParen: 
-      return #")"#
-    case .leftBrace: 
-      return #"{"#
-    case .rightBrace: 
-      return #"}"#
-    case .leftSquareBracket: 
-      return #"["#
-    case .rightSquareBracket: 
-      return #"]"#
-    case .leftAngle: 
-      return #"<"#
-    case .rightAngle: 
-      return #">"#
-    case .period: 
-      return #"."#
-    case .comma: 
-      return #","#
-    case .ellipsis: 
-      return #"..."#
-    case .colon: 
-      return #":"#
-    case .semicolon: 
-      return #";"#
-    case .equal: 
-      return #"="#
-    case .atSign: 
-      return #"@"#
-    case .pound: 
-      return #"#"#
-    case .prefixAmpersand: 
-      return #"&"#
-    case .arrow: 
-      return #"->"#
-    case .backtick: 
-      return #"`"#
-    case .backslash: 
-      return #"\"#
-    case .exclamationMark: 
-      return #"!"#
-    case .postfixQuestionMark: 
-      return #"?"#
-    case .infixQuestionMark: 
-      return #"?"#
-    case .stringQuote: 
-      return #"""#
-    case .singleQuote: 
-      return #"'"#
-    case .multilineStringQuote: 
-      return #"""""#
-    case .poundSourceLocationKeyword: 
-      return #"#sourceLocation"#
-    case .poundIfKeyword: 
-      return #"#if"#
-    case .poundElseKeyword: 
-      return #"#else"#
-    case .poundElseifKeyword: 
-      return #"#elseif"#
-    case .poundEndifKeyword: 
-      return #"#endif"#
-    case .poundAvailableKeyword: 
-      return #"#available"#
-    case .poundUnavailableKeyword: 
-      return #"#unavailable"#
-    case .integerLiteral: 
-      return #"integer literal"#
-    case .floatingLiteral: 
-      return #"floating literal"#
-    case .regexLiteral: 
-      return #"regex literal"#
-    case .unknown: 
-      return #"token"#
-    case .identifier: 
-      return #"identifier"#
-    case .binaryOperator: 
-      return #"binary operator"#
-    case .postfixOperator: 
-      return #"postfix operator"#
-    case .prefixOperator: 
-      return #"prefix operator"#
-    case .dollarIdentifier: 
-      return #"dollar identifier"#
-    case .rawStringDelimiter: 
-      return #"raw string delimiter"#
-    case .stringSegment: 
-      return #"string segment"#
-    case .keyword: 
-      return String(syntaxText: self.keyword.defaultText)
-    }
-  }
-  
-  /// Returns `true` if the token is a Swift keyword.
-  ///
-  /// Keywords are reserved unconditionally for use by Swift and may not
-  /// appear as identifiers in any position without being escaped. For example,
-  /// `class`, `func`, or `import`.
-  public var isLexerClassifiedKeyword: Bool {
-    switch self.base {
-    case .eof: 
-      return false
-    case .wildcard: 
-      return false
-    case .leftParen: 
-      return false
-    case .rightParen: 
-      return false
-    case .leftBrace: 
-      return false
-    case .rightBrace: 
-      return false
-    case .leftSquareBracket: 
-      return false
-    case .rightSquareBracket: 
-      return false
-    case .leftAngle: 
-      return false
-    case .rightAngle: 
-      return false
-    case .period: 
-      return false
-    case .comma: 
-      return false
-    case .ellipsis: 
-      return false
-    case .colon: 
-      return false
-    case .semicolon: 
-      return false
-    case .equal: 
-      return false
-    case .atSign: 
-      return false
-    case .pound: 
-      return false
-    case .prefixAmpersand: 
-      return false
-    case .arrow: 
-      return false
-    case .backtick: 
-      return false
-    case .backslash: 
-      return false
-    case .exclamationMark: 
-      return false
-    case .postfixQuestionMark: 
-      return false
-    case .infixQuestionMark: 
-      return false
-    case .stringQuote: 
-      return false
-    case .singleQuote: 
-      return false
-    case .multilineStringQuote: 
-      return false
-    case .poundSourceLocationKeyword: 
-      return true
-    case .poundIfKeyword: 
-      return true
-    case .poundElseKeyword: 
-      return true
-    case .poundElseifKeyword: 
-      return true
-    case .poundEndifKeyword: 
-      return true
-    case .poundAvailableKeyword: 
-      return true
-    case .poundUnavailableKeyword: 
-      return true
-    case .integerLiteral: 
-      return false
-    case .floatingLiteral: 
-      return false
-    case .regexLiteral: 
-      return false
-    case .unknown: 
-      return false
-    case .identifier: 
-      return false
-    case .binaryOperator: 
-      return false
-    case .postfixOperator: 
-      return false
-    case .prefixOperator: 
-      return false
-    case .dollarIdentifier: 
-      return false
-    case .rawStringDelimiter: 
-      return false
-    case .stringSegment: 
-      return false
-    case .keyword: 
-      return self.keyword.isLexerClassified
     }
   }
   
@@ -1312,106 +1208,106 @@ extension TokenKind {
     case .eof: 
       return .eof
     case .wildcard: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .wildcard
     case .leftParen: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .leftParen
     case .rightParen: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .rightParen
     case .leftBrace: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .leftBrace
     case .rightBrace: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .rightBrace
     case .leftSquareBracket: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .leftSquareBracket
     case .rightSquareBracket: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .rightSquareBracket
     case .leftAngle: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .leftAngle
     case .rightAngle: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .rightAngle
     case .period: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .period
     case .comma: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .comma
     case .ellipsis: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .ellipsis
     case .colon: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .colon
     case .semicolon: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .semicolon
     case .equal: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .equal
     case .atSign: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .atSign
     case .pound: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .pound
     case .prefixAmpersand: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .prefixAmpersand
     case .arrow: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .arrow
     case .backtick: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .backtick
     case .backslash: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .backslash
     case .exclamationMark: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .exclamationMark
     case .postfixQuestionMark: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .postfixQuestionMark
     case .infixQuestionMark: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .infixQuestionMark
     case .stringQuote: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .stringQuote
     case .singleQuote: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .singleQuote
     case .multilineStringQuote: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .multilineStringQuote
     case .poundSourceLocationKeyword: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundSourceLocationKeyword
     case .poundIfKeyword: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundIfKeyword
     case .poundElseKeyword: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundElseKeyword
     case .poundElseifKeyword: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundElseifKeyword
     case .poundEndifKeyword: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundEndifKeyword
     case .poundAvailableKeyword: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundAvailableKeyword
     case .poundUnavailableKeyword: 
-      assert(text.isEmpty || rawKind.defaultText.map(String.init ) == text)
+      assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundUnavailableKeyword
     case .integerLiteral: 
       return .integerLiteral(text)

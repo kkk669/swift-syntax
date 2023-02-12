@@ -171,7 +171,7 @@ final class MultilineErrorsTests: XCTestCase {
       _ = """
           Foo
       1️⃣\
-          Bar 
+          Bar
           """
       """#,
       diagnostics: [
@@ -476,13 +476,13 @@ final class MultilineErrorsTests: XCTestCase {
   func testMultilineErrors20() {
     AssertParseWithAllNewlineEndings(
       ##"""
-      _ = 1️⃣"""
-        line one \ non-whitespace
+      _ = """
+        line one 1️⃣\ non-whitespace
         line two
         """
       """##,
       diagnostics: [
-        // TODO: Old parser expected error on line 2: invalid escape sequence in literal
+        DiagnosticSpec(message: "invalid escape sequence in literal")
       ]
     )
   }
@@ -511,7 +511,7 @@ final class MultilineErrorsTests: XCTestCase {
     AssertParseWithAllNewlineEndings(
       #"""
       _ = """
-        \\1️⃣\	   
+        \\1️⃣\	  \#u{20}
         """
       """#,
       diagnostics: [
@@ -529,7 +529,7 @@ final class MultilineErrorsTests: XCTestCase {
     AssertParseWithAllNewlineEndings(
       #"""
       _ = """
-        \(42)1️⃣\		
+        \(42)1️⃣\	\#t
         """
       """#,
       diagnostics: [
@@ -583,10 +583,11 @@ final class MultilineErrorsTests: XCTestCase {
     AssertParseWithAllNewlineEndings(
       ##"""
       _ = """
-        foo\1️⃣
+        foo1️⃣\2️⃣
       """##,
       diagnostics: [
-        DiagnosticSpec(message: #"expected '"""' to end string literal"#)
+        DiagnosticSpec(locationMarker: "1️⃣", message: "invalid escape sequence in literal"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: #"expected '"""' to end string literal"#),
       ]
     )
   }
@@ -600,11 +601,10 @@ final class MultilineErrorsTests: XCTestCase {
       """#,
       diagnostics: [
         DiagnosticSpec(message: "escaped newline at the last line of a multi-line string literal is not allowed")
-        // TODO: Old parser expected error on line 2: escaped newline at the last line is not allowed, Fix-It replacements: 1 - 2 = ''
       ],
       fixedSource: #"""
         _ = """
-          
+         \#u{20}
           """
         """#
     )
@@ -622,7 +622,7 @@ final class MultilineErrorsTests: XCTestCase {
       ],
       fixedSource: #"""
         _ = """
-          
+         \#u{20}
           """
         """#
     )

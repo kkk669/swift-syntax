@@ -84,17 +84,6 @@ extension SyntaxStringInterpolation: StringInterpolationProtocol {
     self.lastIndentation = nil
   }
 
-  // Append a value of any CustomStringConvertible type as source text.
-  // Deprecated because this can cause code injection bugs (and we want the
-  // error message to tell users what to do instead).
-  @available(*, deprecated, renamed: "appendInterpolation(raw:)", message: "use '\\(raw: <value>)' to interpolate a plain string directly into Swift code, or use '\\(literal: <value>)' to add it in a literal")
-  public mutating func appendInterpolation<T: CustomStringConvertible>(
-    _ value: T
-  ) {
-    sourceText.append(contentsOf: value.description.utf8)
-    self.lastIndentation = nil
-  }
-
   public mutating func appendInterpolation<T>(raw value: T) {
     sourceText.append(contentsOf: String(describing: value).utf8)
     self.lastIndentation = nil
@@ -143,7 +132,7 @@ extension SyntaxStringInterpolation: StringInterpolationProtocol {
 public protocol SyntaxExpressibleByStringInterpolation:
   ExpressibleByStringInterpolation
 where Self.StringInterpolation == SyntaxStringInterpolation {
-  init(stringInterpolationOrThrow stringInterpolation: SyntaxStringInterpolation) throws
+  init(stringInterpolation: SyntaxStringInterpolation)
 }
 
 enum SyntaxStringInterpolationError: Error, CustomStringConvertible {
@@ -221,34 +210,10 @@ public protocol ExpressibleByLiteralSyntax {
 }
 
 extension SyntaxExpressibleByStringInterpolation {
-  /// Initialize a syntax node by parsing the contents of the interpolation.
-  /// This function is marked `@_transparent` so that fatalErrors raised here
-  /// are reported at the string literal itself.
-  /// This makes debugging easier because Xcode will jump to the string literal
-  /// that had a parsing error instead of the initializer that raised the `fatalError`
-  @_transparent
-  public init(stringInterpolation: SyntaxStringInterpolation) {
-    do {
-      try self.init(stringInterpolationOrThrow: stringInterpolation)
-    } catch {
-      fatalError(String(describing: error))
-    }
-  }
-
-  @_transparent
   public init(stringLiteral value: String) {
-    do {
-      try self.init(stringLiteralOrThrow: value)
-    } catch {
-      fatalError(String(describing: error))
-    }
-  }
-
-  /// Initialize a syntax node from a string literal.
-  public init(stringLiteralOrThrow value: String) throws {
     var interpolation = SyntaxStringInterpolation()
     interpolation.appendLiteral(value)
-    try self.init(stringInterpolationOrThrow: interpolation)
+    self.init(stringInterpolation: interpolation)
   }
 }
 
@@ -445,7 +410,7 @@ extension Optional: ExpressibleByLiteralSyntax where Wrapped: ExpressibleByLiter
 }
 
 extension TokenSyntax: SyntaxExpressibleByStringInterpolation {
-  public init(stringInterpolationOrThrow stringInterpolation: SyntaxStringInterpolation) throws {
+  public init(stringInterpolation: SyntaxStringInterpolation) {
     let string = stringInterpolation.sourceText.withUnsafeBufferPointer { buf in
       return String(syntaxText: SyntaxText(buffer: buf))
     }
@@ -476,21 +441,7 @@ struct UnexpectedTrivia: DiagnosticMessage {
 }
 
 extension Trivia: ExpressibleByStringInterpolation {
-  /// Initialize a syntax node by parsing the contents of the interpolation.
-  /// This function is marked `@_transparent` so that fatalErrors raised here
-  /// are reported at the string literal itself.
-  /// This makes debugging easier because Xcode will jump to the string literal
-  /// that had a parsing error instead of the initializer that raised the `fatalError`
-  @_transparent
   public init(stringInterpolation: String.StringInterpolation) {
-    do {
-      try self.init(stringInterpolationOrThrow: stringInterpolation)
-    } catch {
-      fatalError(String(describing: error))
-    }
-  }
-
-  public init(stringInterpolationOrThrow stringInterpolation: String.StringInterpolation) throws {
     var text = String(stringInterpolation: stringInterpolation)
     let pieces = text.withUTF8 { (buf) -> [TriviaPiece] in
       // The leading trivia position is a little bit less restrictive (it allows a shebang), so let's use it.
@@ -499,40 +450,11 @@ extension Trivia: ExpressibleByStringInterpolation {
     }
 
     self.init(pieces: pieces)
-
-    if pieces.contains(where: { $0.isUnexpected }) {
-      var diagnostics: [Diagnostic] = []
-      let tree = SourceFileSyntax(statements: [], eofToken: .eof(leadingTrivia: self))
-      var offset = 0
-      for piece in pieces {
-        if case .unexpectedText(let contents) = piece {
-          diagnostics.append(
-            Diagnostic(
-              node: Syntax(tree),
-              position: tree.position.advanced(by: offset),
-              message: UnexpectedTrivia(triviaContents: contents)
-            )
-          )
-        }
-        offset += piece.sourceLength.utf8Length
-      }
-      throw SyntaxStringInterpolationError.diagnostics(diagnostics, tree: Syntax(tree))
-    }
   }
 
-  @_transparent
   public init(stringLiteral value: String) {
-    do {
-      try self.init(stringLiteralOrThrow: value)
-    } catch {
-      fatalError(String(describing: error))
-    }
-  }
-
-  /// Initialize a syntax node from a string literal.
-  public init(stringLiteralOrThrow value: String) throws {
     var interpolation = String.StringInterpolation(literalCapacity: 1, interpolationCount: 0)
     interpolation.appendLiteral(value)
-    try self.init(stringInterpolationOrThrow: interpolation)
+    self.init(stringInterpolation: interpolation)
   }
 }

@@ -14,7 +14,7 @@
 
 extension Parser {
   mutating func parseAttributeList() -> RawAttributeListSyntax? {
-    guard self.at(any: [.atSign, .poundIfKeyword]) else {
+    guard self.at(.atSign, .poundIfKeyword) else {
       return nil
     }
 
@@ -23,14 +23,14 @@ extension Parser {
     repeat {
       let attribute = self.parseAttribute()
       elements.append(attribute)
-    } while self.at(any: [.atSign, .poundIfKeyword]) && loopProgress.evaluate(currentToken)
+    } while self.at(.atSign, .poundIfKeyword) && loopProgress.evaluate(currentToken)
     return RawAttributeListSyntax(elements: elements, arena: self.arena)
   }
 }
 
 extension Parser {
   /// Compiler-known attributes that take arguments.
-  enum DeclarationAttributeWithSpecialSyntax: RawTokenKindSubset {
+  enum DeclarationAttributeWithSpecialSyntax: TokenSpecSet {
     case _alignment
     case _backDeploy
     case _cdecl
@@ -56,6 +56,7 @@ extension Parser {
     case _unavailableFromAsync
     case `rethrows`
     case available
+    case backDeployed
     case derivative
     case differentiable
     case exclusivity
@@ -65,43 +66,44 @@ extension Parser {
 
     init?(lexeme: Lexer.Lexeme) {
       switch lexeme {
-      case RawTokenKindMatch(._alignment): self = ._alignment
-      case RawTokenKindMatch(._backDeploy): self = ._backDeploy
-      case RawTokenKindMatch(._cdecl): self = ._cdecl
-      case RawTokenKindMatch(._documentation): self = ._documentation
-      case RawTokenKindMatch(._dynamicReplacement): self = ._dynamicReplacement
-      case RawTokenKindMatch(._effects): self = ._effects
-      case RawTokenKindMatch(._expose): self = ._expose
-      case RawTokenKindMatch(._implements): self = ._implements
-      case RawTokenKindMatch(._nonSendable): self = ._nonSendable
-      case RawTokenKindMatch(._objcImplementation): self = ._objcImplementation
-      case RawTokenKindMatch(._objcRuntimeName): self = ._objcRuntimeName
-      case RawTokenKindMatch(._optimize): self = ._optimize
-      case RawTokenKindMatch(._originallyDefinedIn): self = ._originallyDefinedIn
-      case RawTokenKindMatch(._private): self = ._private
-      case RawTokenKindMatch(._projectedValueProperty): self = ._projectedValueProperty
-      case RawTokenKindMatch(._semantics): self = ._semantics
-      case RawTokenKindMatch(._silgen_name): self = ._silgen_name
-      case RawTokenKindMatch(._specialize): self = ._specialize
-      case RawTokenKindMatch(._spi): self = ._spi
-      case RawTokenKindMatch(._spi_available): self = ._spi_available
-      case RawTokenKindMatch(._swift_native_objc_runtime_base): self = ._swift_native_objc_runtime_base
-      case RawTokenKindMatch(._typeEraser): self = ._typeEraser
-      case RawTokenKindMatch(._unavailableFromAsync): self = ._unavailableFromAsync
-      case RawTokenKindMatch(.`rethrows`): self = .rethrows
-      case RawTokenKindMatch(.available): self = .available
-      case RawTokenKindMatch(.derivative): self = .derivative
-      case RawTokenKindMatch(.differentiable): self = .differentiable
-      case RawTokenKindMatch(.exclusivity): self = .exclusivity
-      case RawTokenKindMatch(.inline): self = .inline
-      case RawTokenKindMatch(.objc): self = .objc
-      case RawTokenKindMatch(.transpose): self = .transpose
+      case TokenSpec(._alignment): self = ._alignment
+      case TokenSpec(._backDeploy): self = ._backDeploy
+      case TokenSpec(._cdecl): self = ._cdecl
+      case TokenSpec(._documentation): self = ._documentation
+      case TokenSpec(._dynamicReplacement): self = ._dynamicReplacement
+      case TokenSpec(._effects): self = ._effects
+      case TokenSpec(._expose): self = ._expose
+      case TokenSpec(._implements): self = ._implements
+      case TokenSpec(._nonSendable): self = ._nonSendable
+      case TokenSpec(._objcImplementation): self = ._objcImplementation
+      case TokenSpec(._objcRuntimeName): self = ._objcRuntimeName
+      case TokenSpec(._optimize): self = ._optimize
+      case TokenSpec(._originallyDefinedIn): self = ._originallyDefinedIn
+      case TokenSpec(._private): self = ._private
+      case TokenSpec(._projectedValueProperty): self = ._projectedValueProperty
+      case TokenSpec(._semantics): self = ._semantics
+      case TokenSpec(._silgen_name): self = ._silgen_name
+      case TokenSpec(._specialize): self = ._specialize
+      case TokenSpec(._spi): self = ._spi
+      case TokenSpec(._spi_available): self = ._spi_available
+      case TokenSpec(._swift_native_objc_runtime_base): self = ._swift_native_objc_runtime_base
+      case TokenSpec(._typeEraser): self = ._typeEraser
+      case TokenSpec(._unavailableFromAsync): self = ._unavailableFromAsync
+      case TokenSpec(.`rethrows`): self = .rethrows
+      case TokenSpec(.available): self = .available
+      case TokenSpec(.backDeployed): self = .backDeployed
+      case TokenSpec(.derivative): self = .derivative
+      case TokenSpec(.differentiable): self = .differentiable
+      case TokenSpec(.exclusivity): self = .exclusivity
+      case TokenSpec(.inline): self = .inline
+      case TokenSpec(.objc): self = .objc
+      case TokenSpec(.transpose): self = .transpose
       default:
         return nil
       }
     }
 
-    var rawTokenKind: RawTokenKind {
+    var spec: TokenSpec {
       switch self {
       case ._alignment: return .keyword(._alignment)
       case ._backDeploy: return .keyword(._backDeploy)
@@ -128,6 +130,7 @@ extension Parser {
       case ._unavailableFromAsync: return .keyword(._unavailableFromAsync)
       case .`rethrows`: return .keyword(.rethrows)
       case .available: return .keyword(.available)
+      case .backDeployed: return .keyword(.backDeployed)
       case .derivative: return .keyword(.derivative)
       case .differentiable: return .keyword(.differentiable)
       case .exclusivity: return .keyword(.exclusivity)
@@ -170,7 +173,7 @@ extension Parser {
     case .required:
       shouldParseArgument = true
     case .customAttribute:
-      shouldParseArgument = self.withLookahead { $0.isCustomAttributeArgument() } && self.at(.leftParen, allowTokenAtStartOfLine: false)
+      shouldParseArgument = self.withLookahead { $0.isCustomAttributeArgument() } && self.at(TokenSpec(.leftParen, allowAtStartOfLine: false))
     case .optional:
       shouldParseArgument = self.at(.leftParen)
     }
@@ -221,6 +224,10 @@ extension Parser {
     case .available, ._spi_available:
       return parseAttribute(argumentMode: .required) { parser in
         return .availability(parser.parseAvailabilityArgumentSpecList())
+      }
+    case .backDeployed, ._backDeploy:
+      return parseAttribute(argumentMode: .required) { parser in
+        return .backDeployedArguments(parser.parseBackDeployedArguments())
       }
     case .differentiable:
       return parseAttribute(argumentMode: .required) { parser in
@@ -277,7 +284,7 @@ extension Parser {
         // The contents of the @_effects attribute are parsed in SIL, we just
         // represent the contents as a list of tokens in SwiftSyntax.
         var tokens: [RawTokenSyntax] = []
-        while !parser.at(any: [.rightParen, .eof]) {
+        while !parser.at(.rightParen, .eof) {
           tokens.append(parser.consumeAnyToken())
         }
         return .effectsArguments(RawEffectsArgumentsSyntax(elements: tokens, arena: parser.arena))
@@ -294,10 +301,6 @@ extension Parser {
       return parseAttribute(argumentMode: .required) { parser in
         return .string(parser.parseStringLiteral())
       }
-    case ._backDeploy:
-      return parseAttribute(argumentMode: .required) { parser in
-        return .backDeployArguments(parser.parseBackDeployArguments())
-      }
     case ._expose:
       return parseAttribute(argumentMode: .required) { parser in
         return .exposeAttributeArguments(parser.parseExposeArguments())
@@ -312,7 +315,7 @@ extension Parser {
       }
     case .rethrows:
       let (unexpectedBeforeAtSign, atSign) = self.expect(.atSign)
-      let (unexpectedBeforeAttributeName, attributeName) = self.expect(.keyword(.rethrows), remapping: .identifier)
+      let (unexpectedBeforeAttributeName, attributeName) = self.expect(TokenSpec(.rethrows, remapping: .identifier))
       return .attribute(
         RawAttributeSyntax(
           unexpectedBeforeAtSign,
@@ -357,21 +360,21 @@ extension Parser {
     )
   }
 
-  enum DifferentiabilityKind: RawTokenKindSubset {
+  enum DifferentiabilityKind: TokenSpecSet {
     case reverse
     case linear
     case forward
 
     init?(lexeme: Lexer.Lexeme) {
       switch lexeme {
-      case RawTokenKindMatch(.reverse): self = .reverse
-      case RawTokenKindMatch(._linear): self = .linear
-      case RawTokenKindMatch(._forward): self = .forward
+      case TokenSpec(.reverse): self = .reverse
+      case TokenSpec(._linear): self = .linear
+      case TokenSpec(._forward): self = .forward
       default: return nil
       }
     }
 
-    var rawTokenKind: RawTokenKind {
+    var spec: TokenSpec {
       switch self {
       case .reverse: return .keyword(.reverse)
       case .linear: return .keyword(._linear)
@@ -418,7 +421,7 @@ extension Parser {
   }
 
   mutating func parseDifferentiabilityParameters() -> RawDifferentiabilityParamsClauseSyntax {
-    let (unexpectedBeforeWrt, wrt) = self.expectIdentifier(keywordRecovery: true)
+    let (unexpectedBeforeWrt, wrt) = self.expect(.keyword(.wrt))
     let (unexpectedBeforeColon, colon) = self.expect(.colon)
 
     guard let leftParen = self.consume(if: .leftParen) else {
@@ -442,7 +445,7 @@ extension Parser {
 
     var elements = [RawDifferentiabilityParamSyntax]()
     var loopProgress = LoopProgressCondition()
-    while !self.at(any: [.eof, .rightParen]) && loopProgress.evaluate(currentToken) {
+    while !self.at(.eof, .rightParen) && loopProgress.evaluate(currentToken) {
       guard let param = self.parseDifferentiabilityParameter() else {
         break
       }
@@ -468,21 +471,21 @@ extension Parser {
   }
 
   mutating func parseDifferentiabilityParameter() -> RawDifferentiabilityParamSyntax? {
-    enum ExpectedTokenKind: RawTokenKindSubset {
+    enum ExpectedTokenKind: TokenSpecSet {
       case identifier
       case integerLiteral
       case selfKeyword
 
       init?(lexeme: Lexer.Lexeme) {
         switch lexeme {
-        case RawTokenKindMatch(.identifier): self = .identifier
-        case RawTokenKindMatch(.integerLiteral): self = .integerLiteral
-        case RawTokenKindMatch(.self): self = .selfKeyword
+        case TokenSpec(.identifier): self = .identifier
+        case TokenSpec(.integerLiteral): self = .integerLiteral
+        case TokenSpec(.self): self = .selfKeyword
         default: return nil
         }
       }
 
-      var rawTokenKind: RawTokenKind {
+      var spec: TokenSpec {
         switch self {
         case .identifier: return .identifier
         case .integerLiteral: return .integerLiteral
@@ -604,7 +607,7 @@ extension Parser {
   mutating func parseObjectiveCSelector() -> RawObjCSelectorSyntax {
     var elements = [RawObjCSelectorPieceSyntax]()
     var loopProgress = LoopProgressCondition()
-    while !self.at(any: [.eof, .rightParen]) && loopProgress.evaluate(currentToken) {
+    while !self.at(.eof, .rightParen) && loopProgress.evaluate(currentToken) {
       // Empty selector piece.
       if let colon = self.consume(if: .colon) {
         elements.append(
@@ -648,7 +651,7 @@ extension Parser {
 }
 
 extension Parser {
-  enum SpecializeParameter: RawTokenKindSubset {
+  enum SpecializeParameter: TokenSpecSet {
     case target
     case availability
     case exported
@@ -659,18 +662,18 @@ extension Parser {
 
     init?(lexeme: Lexer.Lexeme) {
       switch lexeme {
-      case RawTokenKindMatch(.target): self = .target
-      case RawTokenKindMatch(.availability): self = .availability
-      case RawTokenKindMatch(.exported): self = .exported
-      case RawTokenKindMatch(.kind): self = .kind
-      case RawTokenKindMatch(.spi): self = .spi
-      case RawTokenKindMatch(.spiModule): self = .spiModule
-      case RawTokenKindMatch(.available): self = .available
+      case TokenSpec(.target): self = .target
+      case TokenSpec(.availability): self = .availability
+      case TokenSpec(.exported): self = .exported
+      case TokenSpec(.kind): self = .kind
+      case TokenSpec(.spi): self = .spi
+      case TokenSpec(.spiModule): self = .spiModule
+      case TokenSpec(.available): self = .available
       default: return nil
       }
     }
 
-    var rawTokenKind: RawTokenKind {
+    var spec: TokenSpec {
       switch self {
       case .target: return .keyword(.target)
       case .availability: return .keyword(.availability)
@@ -686,7 +689,7 @@ extension Parser {
     var elements = [RawSpecializeAttributeSpecListSyntax.Element]()
     // Parse optional "exported" and "kind" labeled parameters.
     var loopProgress = LoopProgressCondition()
-    while !self.at(any: [.eof, .rightParen, .keyword(.where)]) && loopProgress.evaluate(currentToken) {
+    while !self.at(.eof, .rightParen, .keyword(.where)) && loopProgress.evaluate(currentToken) {
       switch self.at(anyIn: SpecializeParameter.self) {
       case (.target, let handle)?:
         let ident = self.eat(handle)
@@ -750,7 +753,7 @@ extension Parser {
       case (.exported, let handle)?:
         let ident = self.eat(handle)
         let (unexpectedBeforeColon, colon) = self.expect(.colon)
-        let (unexpectedBeforeValue, value) = self.expectAny([.keyword(.true), .keyword(.false)], default: .keyword(.false))
+        let (unexpectedBeforeValue, value) = self.expect(.keyword(.true), .keyword(.false), default: .keyword(.false))
         let comma = self.consume(if: .comma)
         elements.append(
           .labeledSpecializeEntry(
@@ -879,21 +882,23 @@ extension Parser {
         )
       )
     } else {
-      let label = self.consumeAnyToken()
+      let (unexpectedBeforeLabel, label) = self.expect(.identifier)
       let unexpectedBeforeComma: RawUnexpectedNodesSyntax?
       let comma: RawTokenSyntax?
+      let unexpectedBeforeCTypeLabel: RawUnexpectedNodesSyntax?
       let cTypeLabel: RawTokenSyntax?
       let unexpectedBeforeColon: RawUnexpectedNodesSyntax?
       let colon: RawTokenSyntax?
       let cTypeString: RawStringLiteralExprSyntax?
       if self.at(.comma) {
         (unexpectedBeforeComma, comma) = self.expect(.comma)
-        cTypeLabel = self.consumeAnyToken()
+        (unexpectedBeforeCTypeLabel, cTypeLabel) = self.expect(.keyword(.cType))
         (unexpectedBeforeColon, colon) = self.expect(.colon)
         cTypeString = self.parseStringLiteral()
       } else {
         unexpectedBeforeComma = nil
         comma = nil
+        unexpectedBeforeCTypeLabel = nil
         cTypeLabel = nil
         unexpectedBeforeColon = nil
         colon = nil
@@ -901,9 +906,11 @@ extension Parser {
       }
       return .conventionArguments(
         RawConventionAttributeArgumentsSyntax(
+          unexpectedBeforeLabel,
           conventionLabel: label,
           unexpectedBeforeComma,
           comma: comma,
+          unexpectedBeforeCTypeLabel,
           cTypeLabel: cTypeLabel,
           unexpectedBeforeColon,
           colon: colon,
@@ -916,8 +923,8 @@ extension Parser {
 }
 
 extension Parser {
-  mutating func parseBackDeployArguments() -> RawBackDeployAttributeSpecListSyntax {
-    let (unexpectedBeforeLabel, label) = self.expect(.keyword(.before), remapping: .identifier)
+  mutating func parseBackDeployedArguments() -> RawBackDeployedAttributeSpecListSyntax {
+    let (unexpectedBeforeLabel, label) = self.expect(.keyword(.before))
     let (unexpectedBeforeColon, colon) = self.expect(.colon)
     var elements: [RawAvailabilityVersionRestrictionListEntrySyntax] = []
     var keepGoing: RawTokenSyntax? = nil
@@ -932,7 +939,7 @@ extension Parser {
         )
       )
     } while keepGoing != nil
-    return RawBackDeployAttributeSpecListSyntax(
+    return RawBackDeployedAttributeSpecListSyntax(
       unexpectedBeforeLabel,
       beforeLabel: label,
       unexpectedBeforeColon,
@@ -946,7 +953,7 @@ extension Parser {
 extension Parser {
   mutating func parseExposeArguments() -> RawExposeAttributeArgumentsSyntax {
     let language: RawTokenSyntax
-    if !self.at(any: [.rightParen, .comma]) {
+    if !self.at(.rightParen, .comma) {
       language = self.consumeAnyToken()
     } else {
       language = missingToken(.identifier)
@@ -974,7 +981,7 @@ extension Parser {
 
 extension Parser {
   mutating func parseOriginallyDefinedInArguments() -> RawOriginallyDefinedInArgumentsSyntax {
-    let (unexpectedBeforeModuleLabel, moduleLabel) = self.expect(.keyword(.module), remapping: .identifier)
+    let (unexpectedBeforeModuleLabel, moduleLabel) = self.expect(.keyword(.module))
     let (unexpectedBeforeColon, colon) = self.expect(.colon)
     let moduleName = self.parseStringLiteral()
     let (unexpectedBeforeComma, comma) = self.expect(.comma)
@@ -1009,7 +1016,7 @@ extension Parser {
 
 extension Parser {
   mutating func parseUnderscorePrivateAttributeArguments() -> RawUnderscorePrivateAttributeArgumentsSyntax {
-    let (unexpectedBeforeLabel, label) = self.expect(.keyword(.sourceFile), remapping: .identifier)
+    let (unexpectedBeforeLabel, label) = self.expect(.keyword(.sourceFile))
     let (unexpectedBeforeColon, colon) = self.expect(.colon)
     let filename = self.parseStringLiteral()
     return RawUnderscorePrivateAttributeArgumentsSyntax(
@@ -1025,7 +1032,7 @@ extension Parser {
 
 extension Parser {
   mutating func parseDynamicReplacementArguments() -> RawDynamicReplacementArgumentsSyntax {
-    let (unexpectedBeforeLabel, label) = self.expect(.keyword(.for), remapping: .identifier)
+    let (unexpectedBeforeLabel, label) = self.expect(.keyword(.for))
     let (unexpectedBeforeColon, colon) = self.expect(.colon)
     let base: RawTokenSyntax
     let args: RawDeclNameArgumentsSyntax?
@@ -1051,7 +1058,7 @@ extension Parser {
 
 extension Parser {
   mutating func parseUnavailableFromAsyncArguments() -> RawUnavailableFromAsyncArgumentsSyntax {
-    let (unexpectedBeforeLabel, label) = self.expect(.keyword(.message), remapping: .identifier)
+    let (unexpectedBeforeLabel, label) = self.expect(.keyword(.message))
     let (unexpectedBeforeColon, colon) = self.expect(.colon)
     let message = self.parseStringLiteral()
     return RawUnavailableFromAsyncArgumentsSyntax(
@@ -1071,13 +1078,42 @@ extension Parser {
 
     var keepGoing: RawTokenSyntax? = nil
     repeat {
-      let (unexpectedBeforeLabel, label) = self.expectAny([.keyword(.visibility), .keyword(.metadata)], default: .keyword(.visibility))
+      let (unexpectedBeforeLabel, label) = self.expect(.keyword(.visibility), .keyword(.metadata), default: .keyword(.visibility))
       let (unexpectedBeforeColon, colon) = self.expect(.colon)
       let unexpectedBeforeValue: RawUnexpectedNodesSyntax?
       let value: RawDocumentationAttributeArgumentSyntax.Value
       switch label.tokenText {
       case "visibility":
-        let (unexpected, token) = self.expectAny([.keyword(.open), .keyword(.public), .keyword(.internal), .keyword(.fileprivate), .keyword(.private)], default: .keyword(.internal))
+        enum AccessLevelModifier: TokenSpecSet {
+          case `private`
+          case `fileprivate`
+          case `internal`
+          case `public`
+          case `open`
+
+          var spec: TokenSpec {
+            switch self {
+            case .private: return .keyword(.private)
+            case .fileprivate: return .keyword(.fileprivate)
+            case .internal: return .keyword(.internal)
+            case .public: return .keyword(.public)
+            case .open: return .keyword(.open)
+            }
+          }
+
+          init?(lexeme: Lexer.Lexeme) {
+            switch lexeme {
+            case TokenSpec(.private): self = .private
+            case TokenSpec(.fileprivate): self = .fileprivate
+            case TokenSpec(.internal): self = .internal
+            case TokenSpec(.public): self = .public
+            case TokenSpec(.open): self = .open
+            default: return nil
+            }
+          }
+        }
+
+        let (unexpected, token) = self.expect(anyIn: AccessLevelModifier.self, default: .internal)
         unexpectedBeforeValue = unexpected
         value = .token(token)
       case "metadata":
@@ -1122,15 +1158,15 @@ extension Parser.Lookahead {
     // Alternatively, we might have a token that illustrates we're not going to
     // get anything following the attribute, which means the parentheses describe
     // what follows the attribute.
-    switch lookahead.currentToken.rawTokenKind {
-    case .arrow,
-      .keyword(.throw),
-      .keyword(.throws),
-      .keyword(.rethrows),
-      .rightParen,
-      .rightBrace,
-      .rightSquareBracket,
-      .rightAngle:
+    switch lookahead.currentToken {
+    case TokenSpec(.arrow),
+      TokenSpec(.throw),
+      TokenSpec(.throws),
+      TokenSpec(.rethrows),
+      TokenSpec(.rightParen),
+      TokenSpec(.rightBrace),
+      TokenSpec(.rightSquareBracket),
+      TokenSpec(.rightAngle):
       return false
     case _ where lookahead.at(.keyword(.async)):
       return false
@@ -1146,7 +1182,7 @@ extension Parser.Lookahead {
       return false
     }
 
-    if self.at(.leftParen, allowTokenAtStartOfLine: false) && self.withLookahead({ $0.isCustomAttributeArgument() }) {
+    if self.at(TokenSpec(.leftParen, allowAtStartOfLine: false)) && self.withLookahead({ $0.isCustomAttributeArgument() }) {
       self.skipSingle()
     }
 
