@@ -101,99 +101,99 @@ public enum TokenKind: Hashable {
   @_spi(Testing)
   public var text: String {
     switch self {
-    case .wildcard: 
+    case .wildcard:
       return #"_"#
-    case .leftParen: 
+    case .leftParen:
       return #"("#
-    case .rightParen: 
+    case .rightParen:
       return #")"#
-    case .leftBrace: 
+    case .leftBrace:
       return #"{"#
-    case .rightBrace: 
+    case .rightBrace:
       return #"}"#
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       return #"["#
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       return #"]"#
-    case .leftAngle: 
+    case .leftAngle:
       return #"<"#
-    case .rightAngle: 
+    case .rightAngle:
       return #">"#
-    case .period: 
+    case .period:
       return #"."#
-    case .comma: 
+    case .comma:
       return #","#
-    case .ellipsis: 
+    case .ellipsis:
       return #"..."#
-    case .colon: 
+    case .colon:
       return #":"#
-    case .semicolon: 
+    case .semicolon:
       return #";"#
-    case .equal: 
+    case .equal:
       return #"="#
-    case .atSign: 
+    case .atSign:
       return #"@"#
-    case .pound: 
+    case .pound:
       return #"#"#
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       return #"&"#
-    case .arrow: 
+    case .arrow:
       return #"->"#
-    case .backtick: 
+    case .backtick:
       return #"`"#
-    case .backslash: 
+    case .backslash:
       return #"\"#
-    case .exclamationMark: 
+    case .exclamationMark:
       return #"!"#
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       return #"?"#
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       return #"?"#
-    case .stringQuote: 
+    case .stringQuote:
       return #"""#
-    case .singleQuote: 
+    case .singleQuote:
       return #"'"#
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       return #"""""#
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       return #"#sourceLocation"#
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       return #"#if"#
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       return #"#else"#
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       return #"#elseif"#
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       return #"#endif"#
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       return #"#available"#
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       return #"#unavailable"#
-    case .integerLiteral(let text): 
+    case .integerLiteral(let text):
       return text
-    case .floatingLiteral(let text): 
+    case .floatingLiteral(let text):
       return text
-    case .regexLiteral(let text): 
+    case .regexLiteral(let text):
       return text
-    case .unknown(let text): 
+    case .unknown(let text):
       return text
-    case .identifier(let text): 
+    case .identifier(let text):
       return text
-    case .binaryOperator(let text): 
+    case .binaryOperator(let text):
       return text
-    case .postfixOperator(let text): 
+    case .postfixOperator(let text):
       return text
-    case .prefixOperator(let text): 
+    case .prefixOperator(let text):
       return text
-    case .dollarIdentifier(let text): 
+    case .dollarIdentifier(let text):
       return text
-    case .keyword(let assoc): 
+    case .keyword(let assoc):
       return String(syntaxText: assoc.defaultText)
-    case .rawStringDelimiter(let text): 
+    case .rawStringDelimiter(let text):
       return text
-    case .stringSegment(let text): 
+    case .stringSegment(let text):
       return text
-    case .eof: 
+    case .eof:
       return ""
     }
   }
@@ -202,178 +202,178 @@ public enum TokenKind: Hashable {
   @_spi(RawSyntax)
   public var defaultText: SyntaxText? {
     switch self {
-    case .wildcard: 
+    case .wildcard:
       return #"_"#
-    case .leftParen: 
+    case .leftParen:
       return #"("#
-    case .rightParen: 
+    case .rightParen:
       return #")"#
-    case .leftBrace: 
+    case .leftBrace:
       return #"{"#
-    case .rightBrace: 
+    case .rightBrace:
       return #"}"#
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       return #"["#
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       return #"]"#
-    case .leftAngle: 
+    case .leftAngle:
       return #"<"#
-    case .rightAngle: 
+    case .rightAngle:
       return #">"#
-    case .period: 
+    case .period:
       return #"."#
-    case .comma: 
+    case .comma:
       return #","#
-    case .ellipsis: 
+    case .ellipsis:
       return #"..."#
-    case .colon: 
+    case .colon:
       return #":"#
-    case .semicolon: 
+    case .semicolon:
       return #";"#
-    case .equal: 
+    case .equal:
       return #"="#
-    case .atSign: 
+    case .atSign:
       return #"@"#
-    case .pound: 
+    case .pound:
       return #"#"#
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       return #"&"#
-    case .arrow: 
+    case .arrow:
       return #"->"#
-    case .backtick: 
+    case .backtick:
       return #"`"#
-    case .backslash: 
+    case .backslash:
       return #"\"#
-    case .exclamationMark: 
+    case .exclamationMark:
       return #"!"#
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       return #"?"#
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       return #"?"#
-    case .stringQuote: 
+    case .stringQuote:
       return #"""#
-    case .singleQuote: 
+    case .singleQuote:
       return #"'"#
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       return #"""""#
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       return #"#sourceLocation"#
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       return #"#if"#
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       return #"#else"#
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       return #"#elseif"#
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       return #"#endif"#
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       return #"#available"#
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       return #"#unavailable"#
-    case .keyword(let assoc): 
+    case .keyword(let assoc):
       return assoc.defaultText
-    case .eof: 
+    case .eof:
       return ""
-    default: 
+    default:
       return ""
     }
   }
   
   public var nameForDiagnostics: String {
     switch self {
-    case .eof: 
+    case .eof:
       return "end of file"
-    case .wildcard: 
+    case .wildcard:
       return #"wildcard"#
-    case .leftParen: 
+    case .leftParen:
       return #"("#
-    case .rightParen: 
+    case .rightParen:
       return #")"#
-    case .leftBrace: 
+    case .leftBrace:
       return #"{"#
-    case .rightBrace: 
+    case .rightBrace:
       return #"}"#
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       return #"["#
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       return #"]"#
-    case .leftAngle: 
+    case .leftAngle:
       return #"<"#
-    case .rightAngle: 
+    case .rightAngle:
       return #">"#
-    case .period: 
+    case .period:
       return #"."#
-    case .comma: 
+    case .comma:
       return #","#
-    case .ellipsis: 
+    case .ellipsis:
       return #"..."#
-    case .colon: 
+    case .colon:
       return #":"#
-    case .semicolon: 
+    case .semicolon:
       return #";"#
-    case .equal: 
+    case .equal:
       return #"="#
-    case .atSign: 
+    case .atSign:
       return #"@"#
-    case .pound: 
+    case .pound:
       return #"#"#
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       return #"&"#
-    case .arrow: 
+    case .arrow:
       return #"->"#
-    case .backtick: 
+    case .backtick:
       return #"`"#
-    case .backslash: 
+    case .backslash:
       return #"\"#
-    case .exclamationMark: 
+    case .exclamationMark:
       return #"!"#
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       return #"?"#
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       return #"?"#
-    case .stringQuote: 
+    case .stringQuote:
       return #"""#
-    case .singleQuote: 
+    case .singleQuote:
       return #"'"#
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       return #"""""#
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       return #"#sourceLocation"#
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       return #"#if"#
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       return #"#else"#
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       return #"#elseif"#
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       return #"#endif"#
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       return #"#available"#
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       return #"#unavailable"#
-    case .integerLiteral: 
+    case .integerLiteral:
       return #"integer literal"#
-    case .floatingLiteral: 
+    case .floatingLiteral:
       return #"floating literal"#
-    case .regexLiteral: 
+    case .regexLiteral:
       return #"regex literal"#
-    case .unknown: 
+    case .unknown:
       return #"token"#
-    case .identifier: 
+    case .identifier:
       return #"identifier"#
-    case .binaryOperator: 
+    case .binaryOperator:
       return #"binary operator"#
-    case .postfixOperator: 
+    case .postfixOperator:
       return #"postfix operator"#
-    case .prefixOperator: 
+    case .prefixOperator:
       return #"prefix operator"#
-    case .dollarIdentifier: 
+    case .dollarIdentifier:
       return #"dollar identifier"#
-    case .rawStringDelimiter: 
+    case .rawStringDelimiter:
       return #"raw string delimiter"#
-    case .stringSegment: 
+    case .stringSegment:
       return #"string segment"#
-    case .keyword(let keyword): 
+    case .keyword(let keyword):
       return String(syntaxText: keyword.defaultText)
     }
   }
@@ -385,99 +385,99 @@ public enum TokenKind: Hashable {
   /// `class`, `func`, or `import`.
   public var isLexerClassifiedKeyword: Bool {
     switch self {
-    case .eof: 
+    case .eof:
       return false
-    case .wildcard: 
+    case .wildcard:
       return false
-    case .leftParen: 
+    case .leftParen:
       return false
-    case .rightParen: 
+    case .rightParen:
       return false
-    case .leftBrace: 
+    case .leftBrace:
       return false
-    case .rightBrace: 
+    case .rightBrace:
       return false
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       return false
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       return false
-    case .leftAngle: 
+    case .leftAngle:
       return false
-    case .rightAngle: 
+    case .rightAngle:
       return false
-    case .period: 
+    case .period:
       return false
-    case .comma: 
+    case .comma:
       return false
-    case .ellipsis: 
+    case .ellipsis:
       return false
-    case .colon: 
+    case .colon:
       return false
-    case .semicolon: 
+    case .semicolon:
       return false
-    case .equal: 
+    case .equal:
       return false
-    case .atSign: 
+    case .atSign:
       return false
-    case .pound: 
+    case .pound:
       return false
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       return false
-    case .arrow: 
+    case .arrow:
       return false
-    case .backtick: 
+    case .backtick:
       return false
-    case .backslash: 
+    case .backslash:
       return false
-    case .exclamationMark: 
+    case .exclamationMark:
       return false
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       return false
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       return false
-    case .stringQuote: 
+    case .stringQuote:
       return false
-    case .singleQuote: 
+    case .singleQuote:
       return false
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       return false
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       return true
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       return true
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       return true
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       return true
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       return true
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       return true
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       return true
-    case .integerLiteral: 
+    case .integerLiteral:
       return false
-    case .floatingLiteral: 
+    case .floatingLiteral:
       return false
-    case .regexLiteral: 
+    case .regexLiteral:
       return false
-    case .unknown: 
+    case .unknown:
       return false
-    case .identifier: 
+    case .identifier:
       return false
-    case .binaryOperator: 
+    case .binaryOperator:
       return false
-    case .postfixOperator: 
+    case .postfixOperator:
       return false
-    case .prefixOperator: 
+    case .prefixOperator:
       return false
-    case .dollarIdentifier: 
+    case .dollarIdentifier:
       return false
-    case .rawStringDelimiter: 
+    case .rawStringDelimiter:
       return false
-    case .stringSegment: 
+    case .stringSegment:
       return false
-    case .keyword(let keyword): 
+    case .keyword(let keyword):
       return keyword.isLexerClassified
     }
   }
@@ -489,99 +489,99 @@ public enum TokenKind: Hashable {
   /// quote characters in a string literal.
   public var isPunctuation: Bool {
     switch self {
-    case .eof: 
+    case .eof:
       return false
-    case .wildcard: 
+    case .wildcard:
       return false
-    case .leftParen: 
+    case .leftParen:
       return true
-    case .rightParen: 
+    case .rightParen:
       return true
-    case .leftBrace: 
+    case .leftBrace:
       return true
-    case .rightBrace: 
+    case .rightBrace:
       return true
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       return true
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       return true
-    case .leftAngle: 
+    case .leftAngle:
       return true
-    case .rightAngle: 
+    case .rightAngle:
       return true
-    case .period: 
+    case .period:
       return true
-    case .comma: 
+    case .comma:
       return true
-    case .ellipsis: 
+    case .ellipsis:
       return true
-    case .colon: 
+    case .colon:
       return true
-    case .semicolon: 
+    case .semicolon:
       return true
-    case .equal: 
+    case .equal:
       return true
-    case .atSign: 
+    case .atSign:
       return true
-    case .pound: 
+    case .pound:
       return true
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       return true
-    case .arrow: 
+    case .arrow:
       return true
-    case .backtick: 
+    case .backtick:
       return true
-    case .backslash: 
+    case .backslash:
       return true
-    case .exclamationMark: 
+    case .exclamationMark:
       return true
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       return true
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       return true
-    case .stringQuote: 
+    case .stringQuote:
       return true
-    case .singleQuote: 
+    case .singleQuote:
       return true
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       return true
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       return false
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       return false
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       return false
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       return false
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       return false
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       return false
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       return false
-    case .integerLiteral: 
+    case .integerLiteral:
       return false
-    case .floatingLiteral: 
+    case .floatingLiteral:
       return false
-    case .regexLiteral: 
+    case .regexLiteral:
       return false
-    case .unknown: 
+    case .unknown:
       return false
-    case .identifier: 
+    case .identifier:
       return false
-    case .binaryOperator: 
+    case .binaryOperator:
       return false
-    case .postfixOperator: 
+    case .postfixOperator:
       return false
-    case .prefixOperator: 
+    case .prefixOperator:
       return false
-    case .dollarIdentifier: 
+    case .dollarIdentifier:
       return false
-    case .keyword: 
+    case .keyword:
       return false
-    case .rawStringDelimiter: 
+    case .rawStringDelimiter:
       return false
-    case .stringSegment: 
+    case .stringSegment:
       return false
     }
   }
@@ -590,101 +590,101 @@ public enum TokenKind: Hashable {
 extension TokenKind: Equatable {
   public static func == (lhs: TokenKind, rhs: TokenKind) -> Bool {
     switch (lhs, rhs) {
-    case (.eof, .eof): 
+    case (.eof, .eof):
       return true
-    case (.wildcard, .wildcard): 
+    case (.wildcard, .wildcard):
       return true
-    case (.leftParen, .leftParen): 
+    case (.leftParen, .leftParen):
       return true
-    case (.rightParen, .rightParen): 
+    case (.rightParen, .rightParen):
       return true
-    case (.leftBrace, .leftBrace): 
+    case (.leftBrace, .leftBrace):
       return true
-    case (.rightBrace, .rightBrace): 
+    case (.rightBrace, .rightBrace):
       return true
-    case (.leftSquareBracket, .leftSquareBracket): 
+    case (.leftSquareBracket, .leftSquareBracket):
       return true
-    case (.rightSquareBracket, .rightSquareBracket): 
+    case (.rightSquareBracket, .rightSquareBracket):
       return true
-    case (.leftAngle, .leftAngle): 
+    case (.leftAngle, .leftAngle):
       return true
-    case (.rightAngle, .rightAngle): 
+    case (.rightAngle, .rightAngle):
       return true
-    case (.period, .period): 
+    case (.period, .period):
       return true
-    case (.comma, .comma): 
+    case (.comma, .comma):
       return true
-    case (.ellipsis, .ellipsis): 
+    case (.ellipsis, .ellipsis):
       return true
-    case (.colon, .colon): 
+    case (.colon, .colon):
       return true
-    case (.semicolon, .semicolon): 
+    case (.semicolon, .semicolon):
       return true
-    case (.equal, .equal): 
+    case (.equal, .equal):
       return true
-    case (.atSign, .atSign): 
+    case (.atSign, .atSign):
       return true
-    case (.pound, .pound): 
+    case (.pound, .pound):
       return true
-    case (.prefixAmpersand, .prefixAmpersand): 
+    case (.prefixAmpersand, .prefixAmpersand):
       return true
-    case (.arrow, .arrow): 
+    case (.arrow, .arrow):
       return true
-    case (.backtick, .backtick): 
+    case (.backtick, .backtick):
       return true
-    case (.backslash, .backslash): 
+    case (.backslash, .backslash):
       return true
-    case (.exclamationMark, .exclamationMark): 
+    case (.exclamationMark, .exclamationMark):
       return true
-    case (.postfixQuestionMark, .postfixQuestionMark): 
+    case (.postfixQuestionMark, .postfixQuestionMark):
       return true
-    case (.infixQuestionMark, .infixQuestionMark): 
+    case (.infixQuestionMark, .infixQuestionMark):
       return true
-    case (.stringQuote, .stringQuote): 
+    case (.stringQuote, .stringQuote):
       return true
-    case (.singleQuote, .singleQuote): 
+    case (.singleQuote, .singleQuote):
       return true
-    case (.multilineStringQuote, .multilineStringQuote): 
+    case (.multilineStringQuote, .multilineStringQuote):
       return true
-    case (.poundSourceLocationKeyword, .poundSourceLocationKeyword): 
+    case (.poundSourceLocationKeyword, .poundSourceLocationKeyword):
       return true
-    case (.poundIfKeyword, .poundIfKeyword): 
+    case (.poundIfKeyword, .poundIfKeyword):
       return true
-    case (.poundElseKeyword, .poundElseKeyword): 
+    case (.poundElseKeyword, .poundElseKeyword):
       return true
-    case (.poundElseifKeyword, .poundElseifKeyword): 
+    case (.poundElseifKeyword, .poundElseifKeyword):
       return true
-    case (.poundEndifKeyword, .poundEndifKeyword): 
+    case (.poundEndifKeyword, .poundEndifKeyword):
       return true
-    case (.poundAvailableKeyword, .poundAvailableKeyword): 
+    case (.poundAvailableKeyword, .poundAvailableKeyword):
       return true
-    case (.poundUnavailableKeyword, .poundUnavailableKeyword): 
+    case (.poundUnavailableKeyword, .poundUnavailableKeyword):
       return true
-    case (.integerLiteral(let lhsText), .integerLiteral(let rhsText)): 
+    case (.integerLiteral(let lhsText), .integerLiteral(let rhsText)):
       return lhsText == rhsText
-    case (.floatingLiteral(let lhsText), .floatingLiteral(let rhsText)): 
+    case (.floatingLiteral(let lhsText), .floatingLiteral(let rhsText)):
       return lhsText == rhsText
-    case (.regexLiteral(let lhsText), .regexLiteral(let rhsText)): 
+    case (.regexLiteral(let lhsText), .regexLiteral(let rhsText)):
       return lhsText == rhsText
-    case (.unknown(let lhsText), .unknown(let rhsText)): 
+    case (.unknown(let lhsText), .unknown(let rhsText)):
       return lhsText == rhsText
-    case (.identifier(let lhsText), .identifier(let rhsText)): 
+    case (.identifier(let lhsText), .identifier(let rhsText)):
       return lhsText == rhsText
-    case (.binaryOperator(let lhsText), .binaryOperator(let rhsText)): 
+    case (.binaryOperator(let lhsText), .binaryOperator(let rhsText)):
       return lhsText == rhsText
-    case (.postfixOperator(let lhsText), .postfixOperator(let rhsText)): 
+    case (.postfixOperator(let lhsText), .postfixOperator(let rhsText)):
       return lhsText == rhsText
-    case (.prefixOperator(let lhsText), .prefixOperator(let rhsText)): 
+    case (.prefixOperator(let lhsText), .prefixOperator(let rhsText)):
       return lhsText == rhsText
-    case (.dollarIdentifier(let lhsText), .dollarIdentifier(let rhsText)): 
+    case (.dollarIdentifier(let lhsText), .dollarIdentifier(let rhsText)):
       return lhsText == rhsText
-    case (.keyword(let lhsText), .keyword(let rhsText)): 
+    case (.keyword(let lhsText), .keyword(let rhsText)):
       return lhsText == rhsText
-    case (.rawStringDelimiter(let lhsText), .rawStringDelimiter(let rhsText)): 
+    case (.rawStringDelimiter(let lhsText), .rawStringDelimiter(let rhsText)):
       return lhsText == rhsText
-    case (.stringSegment(let lhsText), .stringSegment(let rhsText)): 
+    case (.stringSegment(let lhsText), .stringSegment(let rhsText)):
       return lhsText == rhsText
-    default: 
+    default:
       return false
     }
   }
@@ -695,7 +695,7 @@ extension TokenKind: Equatable {
 // `RawTokenBaseKind` for equality. With the raw value, it compiles down to
 // a primitive integer compare, without, it calls into `__derived_enum_equals`.
 @frozen // FIXME: Not actually stable, works around a miscompile
-public enum RawTokenBaseKind: UInt8, Equatable, Hashable {
+public enum RawTokenKind: UInt8, Equatable, Hashable {
   case eof
   
   case wildcard
@@ -789,308 +789,81 @@ public enum RawTokenBaseKind: UInt8, Equatable, Hashable {
   case rawStringDelimiter
   
   case stringSegment
-}
-
-fileprivate extension Keyword {
-  static var rawValueZero: Keyword {
-    return Keyword(rawValue: 0)!
-  }
-}
-
-/// Similar to `TokenKind` but without a `String` associated value.
-/// Technically, this should be an enum like
-/// ```
-/// enum RawTokenKind {
-///   case eof
-///   case associatedtypeKeyword
-///   // remaining case from `RawTokenBaseKind`...
-///   case keyword(Keyword)
-/// }
-/// ```
-///
-/// But modelling it this way has significant performance implications since
-/// comparing two `RawTokenKind` calls into `__derived_enum_equals`. It's more
-/// effient to model the base kind as an enum with a raw value and store the
-/// keyword separately.
-///
-/// Whenever `base` is not `keyword`, `keyword` should have a raw value
-/// of `0`.
-@frozen // FIXME: Not actually stable, works around a miscompile
-public struct RawTokenKind: Equatable, Hashable {
-  public let base: RawTokenBaseKind
-  
-  public let keyword: Keyword
-  
-  public init(base: RawTokenBaseKind, keyword: Keyword) {
-    assert(base == .keyword || keyword.rawValue == 0)
-    self.base = base
-    self.keyword = keyword
-  }
-  
-  public static var eof: RawTokenKind {
-    return RawTokenKind(base: .eof, keyword: .rawValueZero)
-  }
-  
-  public static var wildcard: RawTokenKind {
-    return RawTokenKind(base: .wildcard, keyword: .rawValueZero)
-  }
-  
-  public static var leftParen: RawTokenKind {
-    return RawTokenKind(base: .leftParen, keyword: .rawValueZero)
-  }
-  
-  public static var rightParen: RawTokenKind {
-    return RawTokenKind(base: .rightParen, keyword: .rawValueZero)
-  }
-  
-  public static var leftBrace: RawTokenKind {
-    return RawTokenKind(base: .leftBrace, keyword: .rawValueZero)
-  }
-  
-  public static var rightBrace: RawTokenKind {
-    return RawTokenKind(base: .rightBrace, keyword: .rawValueZero)
-  }
-  
-  public static var leftSquareBracket: RawTokenKind {
-    return RawTokenKind(base: .leftSquareBracket, keyword: .rawValueZero)
-  }
-  
-  public static var rightSquareBracket: RawTokenKind {
-    return RawTokenKind(base: .rightSquareBracket, keyword: .rawValueZero)
-  }
-  
-  public static var leftAngle: RawTokenKind {
-    return RawTokenKind(base: .leftAngle, keyword: .rawValueZero)
-  }
-  
-  public static var rightAngle: RawTokenKind {
-    return RawTokenKind(base: .rightAngle, keyword: .rawValueZero)
-  }
-  
-  public static var period: RawTokenKind {
-    return RawTokenKind(base: .period, keyword: .rawValueZero)
-  }
-  
-  public static var comma: RawTokenKind {
-    return RawTokenKind(base: .comma, keyword: .rawValueZero)
-  }
-  
-  public static var ellipsis: RawTokenKind {
-    return RawTokenKind(base: .ellipsis, keyword: .rawValueZero)
-  }
-  
-  public static var colon: RawTokenKind {
-    return RawTokenKind(base: .colon, keyword: .rawValueZero)
-  }
-  
-  public static var semicolon: RawTokenKind {
-    return RawTokenKind(base: .semicolon, keyword: .rawValueZero)
-  }
-  
-  public static var equal: RawTokenKind {
-    return RawTokenKind(base: .equal, keyword: .rawValueZero)
-  }
-  
-  public static var atSign: RawTokenKind {
-    return RawTokenKind(base: .atSign, keyword: .rawValueZero)
-  }
-  
-  public static var pound: RawTokenKind {
-    return RawTokenKind(base: .pound, keyword: .rawValueZero)
-  }
-  
-  public static var prefixAmpersand: RawTokenKind {
-    return RawTokenKind(base: .prefixAmpersand, keyword: .rawValueZero)
-  }
-  
-  public static var arrow: RawTokenKind {
-    return RawTokenKind(base: .arrow, keyword: .rawValueZero)
-  }
-  
-  public static var backtick: RawTokenKind {
-    return RawTokenKind(base: .backtick, keyword: .rawValueZero)
-  }
-  
-  public static var backslash: RawTokenKind {
-    return RawTokenKind(base: .backslash, keyword: .rawValueZero)
-  }
-  
-  public static var exclamationMark: RawTokenKind {
-    return RawTokenKind(base: .exclamationMark, keyword: .rawValueZero)
-  }
-  
-  public static var postfixQuestionMark: RawTokenKind {
-    return RawTokenKind(base: .postfixQuestionMark, keyword: .rawValueZero)
-  }
-  
-  public static var infixQuestionMark: RawTokenKind {
-    return RawTokenKind(base: .infixQuestionMark, keyword: .rawValueZero)
-  }
-  
-  public static var stringQuote: RawTokenKind {
-    return RawTokenKind(base: .stringQuote, keyword: .rawValueZero)
-  }
-  
-  public static var singleQuote: RawTokenKind {
-    return RawTokenKind(base: .singleQuote, keyword: .rawValueZero)
-  }
-  
-  public static var multilineStringQuote: RawTokenKind {
-    return RawTokenKind(base: .multilineStringQuote, keyword: .rawValueZero)
-  }
-  
-  public static var poundSourceLocationKeyword: RawTokenKind {
-    return RawTokenKind(base: .poundSourceLocationKeyword, keyword: .rawValueZero)
-  }
-  
-  public static var poundIfKeyword: RawTokenKind {
-    return RawTokenKind(base: .poundIfKeyword, keyword: .rawValueZero)
-  }
-  
-  public static var poundElseKeyword: RawTokenKind {
-    return RawTokenKind(base: .poundElseKeyword, keyword: .rawValueZero)
-  }
-  
-  public static var poundElseifKeyword: RawTokenKind {
-    return RawTokenKind(base: .poundElseifKeyword, keyword: .rawValueZero)
-  }
-  
-  public static var poundEndifKeyword: RawTokenKind {
-    return RawTokenKind(base: .poundEndifKeyword, keyword: .rawValueZero)
-  }
-  
-  public static var poundAvailableKeyword: RawTokenKind {
-    return RawTokenKind(base: .poundAvailableKeyword, keyword: .rawValueZero)
-  }
-  
-  public static var poundUnavailableKeyword: RawTokenKind {
-    return RawTokenKind(base: .poundUnavailableKeyword, keyword: .rawValueZero)
-  }
-  
-  public static var integerLiteral: RawTokenKind {
-    return RawTokenKind(base: .integerLiteral, keyword: .rawValueZero)
-  }
-  
-  public static var floatingLiteral: RawTokenKind {
-    return RawTokenKind(base: .floatingLiteral, keyword: .rawValueZero)
-  }
-  
-  public static var regexLiteral: RawTokenKind {
-    return RawTokenKind(base: .regexLiteral, keyword: .rawValueZero)
-  }
-  
-  public static var unknown: RawTokenKind {
-    return RawTokenKind(base: .unknown, keyword: .rawValueZero)
-  }
-  
-  public static var identifier: RawTokenKind {
-    return RawTokenKind(base: .identifier, keyword: .rawValueZero)
-  }
-  
-  public static var binaryOperator: RawTokenKind {
-    return RawTokenKind(base: .binaryOperator, keyword: .rawValueZero)
-  }
-  
-  public static var postfixOperator: RawTokenKind {
-    return RawTokenKind(base: .postfixOperator, keyword: .rawValueZero)
-  }
-  
-  public static var prefixOperator: RawTokenKind {
-    return RawTokenKind(base: .prefixOperator, keyword: .rawValueZero)
-  }
-  
-  public static var dollarIdentifier: RawTokenKind {
-    return RawTokenKind(base: .dollarIdentifier, keyword: .rawValueZero)
-  }
-  
-  public static var rawStringDelimiter: RawTokenKind {
-    return RawTokenKind(base: .rawStringDelimiter, keyword: .rawValueZero)
-  }
-  
-  public static var stringSegment: RawTokenKind {
-    return RawTokenKind(base: .stringSegment, keyword: .rawValueZero)
-  }
-  
-  public static func keyword(_ keyword: Keyword) -> RawTokenKind {
-    return RawTokenKind(base: .keyword, keyword: keyword)
-  }
   
   @_spi(RawSyntax)
   public var defaultText: SyntaxText? {
-    switch self.base {
-    case .eof: 
+    switch self {
+    case .eof:
       return ""
-    case .wildcard: 
+    case .wildcard:
       return #"_"#
-    case .leftParen: 
+    case .leftParen:
       return #"("#
-    case .rightParen: 
+    case .rightParen:
       return #")"#
-    case .leftBrace: 
+    case .leftBrace:
       return #"{"#
-    case .rightBrace: 
+    case .rightBrace:
       return #"}"#
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       return #"["#
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       return #"]"#
-    case .leftAngle: 
+    case .leftAngle:
       return #"<"#
-    case .rightAngle: 
+    case .rightAngle:
       return #">"#
-    case .period: 
+    case .period:
       return #"."#
-    case .comma: 
+    case .comma:
       return #","#
-    case .ellipsis: 
+    case .ellipsis:
       return #"..."#
-    case .colon: 
+    case .colon:
       return #":"#
-    case .semicolon: 
+    case .semicolon:
       return #";"#
-    case .equal: 
+    case .equal:
       return #"="#
-    case .atSign: 
+    case .atSign:
       return #"@"#
-    case .pound: 
+    case .pound:
       return #"#"#
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       return #"&"#
-    case .arrow: 
+    case .arrow:
       return #"->"#
-    case .backtick: 
+    case .backtick:
       return #"`"#
-    case .backslash: 
+    case .backslash:
       return #"\"#
-    case .exclamationMark: 
+    case .exclamationMark:
       return #"!"#
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       return #"?"#
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       return #"?"#
-    case .stringQuote: 
+    case .stringQuote:
       return #"""#
-    case .singleQuote: 
+    case .singleQuote:
       return #"'"#
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       return #"""""#
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       return #"#sourceLocation"#
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       return #"#if"#
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       return #"#else"#
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       return #"#elseif"#
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       return #"#endif"#
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       return #"#available"#
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       return #"#unavailable"#
-    case .keyword: 
-      return self.keyword.defaultText
-    default: 
+    default:
       return nil
     }
   }
@@ -1101,100 +874,100 @@ public struct RawTokenKind: Equatable, Hashable {
   /// example, the '<' and '>' characters in a generic parameter list, or the
   /// quote characters in a string literal.
   public var isPunctuation: Bool {
-    switch self.base {
-    case .eof: 
+    switch self {
+    case .eof:
       return false
-    case .wildcard: 
+    case .wildcard:
       return false
-    case .leftParen: 
+    case .leftParen:
       return true
-    case .rightParen: 
+    case .rightParen:
       return true
-    case .leftBrace: 
+    case .leftBrace:
       return true
-    case .rightBrace: 
+    case .rightBrace:
       return true
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       return true
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       return true
-    case .leftAngle: 
+    case .leftAngle:
       return true
-    case .rightAngle: 
+    case .rightAngle:
       return true
-    case .period: 
+    case .period:
       return true
-    case .comma: 
+    case .comma:
       return true
-    case .ellipsis: 
+    case .ellipsis:
       return true
-    case .colon: 
+    case .colon:
       return true
-    case .semicolon: 
+    case .semicolon:
       return true
-    case .equal: 
+    case .equal:
       return true
-    case .atSign: 
+    case .atSign:
       return true
-    case .pound: 
+    case .pound:
       return true
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       return true
-    case .arrow: 
+    case .arrow:
       return true
-    case .backtick: 
+    case .backtick:
       return true
-    case .backslash: 
+    case .backslash:
       return true
-    case .exclamationMark: 
+    case .exclamationMark:
       return true
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       return true
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       return true
-    case .stringQuote: 
+    case .stringQuote:
       return true
-    case .singleQuote: 
+    case .singleQuote:
       return true
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       return true
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       return false
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       return false
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       return false
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       return false
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       return false
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       return false
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       return false
-    case .integerLiteral: 
+    case .integerLiteral:
       return false
-    case .floatingLiteral: 
+    case .floatingLiteral:
       return false
-    case .regexLiteral: 
+    case .regexLiteral:
       return false
-    case .unknown: 
+    case .unknown:
       return false
-    case .identifier: 
+    case .identifier:
       return false
-    case .binaryOperator: 
+    case .binaryOperator:
       return false
-    case .postfixOperator: 
+    case .postfixOperator:
       return false
-    case .prefixOperator: 
+    case .prefixOperator:
       return false
-    case .dollarIdentifier: 
+    case .dollarIdentifier:
       return false
-    case .keyword: 
+    case .keyword:
       return false
-    case .rawStringDelimiter: 
+    case .rawStringDelimiter:
       return false
-    case .stringSegment: 
+    case .stringSegment:
       return false
     }
   }
@@ -1204,135 +977,137 @@ extension TokenKind {
   /// If the `rawKind` has a `defaultText`, `text` can be empty.
   @_spi(RawSyntax)
   public static func fromRaw(kind rawKind: RawTokenKind, text: String) -> TokenKind {
-    switch rawKind.base {
-    case .eof: 
+    switch rawKind {
+    case .eof:
       return .eof
-    case .wildcard: 
+    case .wildcard:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .wildcard
-    case .leftParen: 
+    case .leftParen:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .leftParen
-    case .rightParen: 
+    case .rightParen:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .rightParen
-    case .leftBrace: 
+    case .leftBrace:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .leftBrace
-    case .rightBrace: 
+    case .rightBrace:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .rightBrace
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .leftSquareBracket
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .rightSquareBracket
-    case .leftAngle: 
+    case .leftAngle:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .leftAngle
-    case .rightAngle: 
+    case .rightAngle:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .rightAngle
-    case .period: 
+    case .period:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .period
-    case .comma: 
+    case .comma:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .comma
-    case .ellipsis: 
+    case .ellipsis:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .ellipsis
-    case .colon: 
+    case .colon:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .colon
-    case .semicolon: 
+    case .semicolon:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .semicolon
-    case .equal: 
+    case .equal:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .equal
-    case .atSign: 
+    case .atSign:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .atSign
-    case .pound: 
+    case .pound:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .pound
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .prefixAmpersand
-    case .arrow: 
+    case .arrow:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .arrow
-    case .backtick: 
+    case .backtick:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .backtick
-    case .backslash: 
+    case .backslash:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .backslash
-    case .exclamationMark: 
+    case .exclamationMark:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .exclamationMark
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .postfixQuestionMark
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .infixQuestionMark
-    case .stringQuote: 
+    case .stringQuote:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .stringQuote
-    case .singleQuote: 
+    case .singleQuote:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .singleQuote
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .multilineStringQuote
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundSourceLocationKeyword
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundIfKeyword
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundElseKeyword
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundElseifKeyword
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundEndifKeyword
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundAvailableKeyword
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)
       return .poundUnavailableKeyword
-    case .integerLiteral: 
+    case .integerLiteral:
       return .integerLiteral(text)
-    case .floatingLiteral: 
+    case .floatingLiteral:
       return .floatingLiteral(text)
-    case .regexLiteral: 
+    case .regexLiteral:
       return .regexLiteral(text)
-    case .unknown: 
+    case .unknown:
       return .unknown(text)
-    case .identifier: 
+    case .identifier:
       return .identifier(text)
-    case .binaryOperator: 
+    case .binaryOperator:
       return .binaryOperator(text)
-    case .postfixOperator: 
+    case .postfixOperator:
       return .postfixOperator(text)
-    case .prefixOperator: 
+    case .prefixOperator:
       return .prefixOperator(text)
-    case .dollarIdentifier: 
+    case .dollarIdentifier:
       return .dollarIdentifier(text)
-    case .keyword: 
-      assert(text.isEmpty || String(syntaxText: rawKind.keyword.defaultText) == text)
-      return .keyword(rawKind.keyword)
-    case .rawStringDelimiter: 
+    case .keyword:
+      var text = text
+      return text.withSyntaxText { text in 
+        return .keyword(Keyword(text)!)
+      }
+    case .rawStringDelimiter:
       return .rawStringDelimiter(text)
-    case .stringSegment: 
+    case .stringSegment:
       return .stringSegment(text)
     }
   }
@@ -1342,99 +1117,99 @@ extension TokenKind {
   @_spi(RawSyntax)
   public func decomposeToRaw() -> (rawKind: RawTokenKind, string: String?) {
     switch self {
-    case .eof: 
+    case .eof:
       return (.eof, nil)
-    case .wildcard: 
+    case .wildcard:
       return (.wildcard, nil)
-    case .leftParen: 
+    case .leftParen:
       return (.leftParen, nil)
-    case .rightParen: 
+    case .rightParen:
       return (.rightParen, nil)
-    case .leftBrace: 
+    case .leftBrace:
       return (.leftBrace, nil)
-    case .rightBrace: 
+    case .rightBrace:
       return (.rightBrace, nil)
-    case .leftSquareBracket: 
+    case .leftSquareBracket:
       return (.leftSquareBracket, nil)
-    case .rightSquareBracket: 
+    case .rightSquareBracket:
       return (.rightSquareBracket, nil)
-    case .leftAngle: 
+    case .leftAngle:
       return (.leftAngle, nil)
-    case .rightAngle: 
+    case .rightAngle:
       return (.rightAngle, nil)
-    case .period: 
+    case .period:
       return (.period, nil)
-    case .comma: 
+    case .comma:
       return (.comma, nil)
-    case .ellipsis: 
+    case .ellipsis:
       return (.ellipsis, nil)
-    case .colon: 
+    case .colon:
       return (.colon, nil)
-    case .semicolon: 
+    case .semicolon:
       return (.semicolon, nil)
-    case .equal: 
+    case .equal:
       return (.equal, nil)
-    case .atSign: 
+    case .atSign:
       return (.atSign, nil)
-    case .pound: 
+    case .pound:
       return (.pound, nil)
-    case .prefixAmpersand: 
+    case .prefixAmpersand:
       return (.prefixAmpersand, nil)
-    case .arrow: 
+    case .arrow:
       return (.arrow, nil)
-    case .backtick: 
+    case .backtick:
       return (.backtick, nil)
-    case .backslash: 
+    case .backslash:
       return (.backslash, nil)
-    case .exclamationMark: 
+    case .exclamationMark:
       return (.exclamationMark, nil)
-    case .postfixQuestionMark: 
+    case .postfixQuestionMark:
       return (.postfixQuestionMark, nil)
-    case .infixQuestionMark: 
+    case .infixQuestionMark:
       return (.infixQuestionMark, nil)
-    case .stringQuote: 
+    case .stringQuote:
       return (.stringQuote, nil)
-    case .singleQuote: 
+    case .singleQuote:
       return (.singleQuote, nil)
-    case .multilineStringQuote: 
+    case .multilineStringQuote:
       return (.multilineStringQuote, nil)
-    case .poundSourceLocationKeyword: 
+    case .poundSourceLocationKeyword:
       return (.poundSourceLocationKeyword, nil)
-    case .poundIfKeyword: 
+    case .poundIfKeyword:
       return (.poundIfKeyword, nil)
-    case .poundElseKeyword: 
+    case .poundElseKeyword:
       return (.poundElseKeyword, nil)
-    case .poundElseifKeyword: 
+    case .poundElseifKeyword:
       return (.poundElseifKeyword, nil)
-    case .poundEndifKeyword: 
+    case .poundEndifKeyword:
       return (.poundEndifKeyword, nil)
-    case .poundAvailableKeyword: 
+    case .poundAvailableKeyword:
       return (.poundAvailableKeyword, nil)
-    case .poundUnavailableKeyword: 
+    case .poundUnavailableKeyword:
       return (.poundUnavailableKeyword, nil)
-    case .integerLiteral(let str): 
+    case .integerLiteral(let str):
       return (.integerLiteral, str)
-    case .floatingLiteral(let str): 
+    case .floatingLiteral(let str):
       return (.floatingLiteral, str)
-    case .regexLiteral(let str): 
+    case .regexLiteral(let str):
       return (.regexLiteral, str)
-    case .unknown(let str): 
+    case .unknown(let str):
       return (.unknown, str)
-    case .identifier(let str): 
+    case .identifier(let str):
       return (.identifier, str)
-    case .binaryOperator(let str): 
+    case .binaryOperator(let str):
       return (.binaryOperator, str)
-    case .postfixOperator(let str): 
+    case .postfixOperator(let str):
       return (.postfixOperator, str)
-    case .prefixOperator(let str): 
+    case .prefixOperator(let str):
       return (.prefixOperator, str)
-    case .dollarIdentifier(let str): 
+    case .dollarIdentifier(let str):
       return (.dollarIdentifier, str)
-    case .keyword(let keyword): 
-      return (.keyword(keyword), nil)
-    case .rawStringDelimiter(let str): 
+    case .keyword(let keyword):
+      return (.keyword, String(syntaxText: keyword.defaultText))
+    case .rawStringDelimiter(let str):
       return (.rawStringDelimiter, str)
-    case .stringSegment(let str): 
+    case .stringSegment(let str):
       return (.stringSegment, str)
     }
   }
