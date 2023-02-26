@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -13,14 +13,12 @@
 @_spi(RawSyntax) import SwiftSyntax
 
 extension Parser {
-  private enum IfConfigClauseStartKeyword: TokenSpecSet {
-    case poundIfKeyword
+  private enum IfConfigContinuationClauseStartKeyword: TokenSpecSet {
     case poundElseifKeyword
     case poundElseKeyword
 
     var spec: TokenSpec {
       switch self {
-      case .poundIfKeyword: return .poundIfKeyword
       case .poundElseifKeyword: return .poundElseifKeyword
       case .poundElseKeyword: return .poundElseKeyword
       }
@@ -28,7 +26,6 @@ extension Parser {
 
     init?(lexeme: Lexer.Lexeme) {
       switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.poundIfKeyword): self = .poundIfKeyword
       case TokenSpec(.poundElseifKeyword): self = .poundElseifKeyword
       case TokenSpec(.poundElseKeyword): self = .poundElseKeyword
       default: return nil
@@ -89,7 +86,7 @@ extension Parser {
   ///             into a syntax collection.
   @_spi(RawSyntax)
   public mutating func parsePoundIfDirective<Element: RawSyntaxNodeProtocol>(
-    _ parseElement: (inout Parser) -> Element?,
+    _ parseElement: (_ parser: inout Parser, _ isFirstElement: Bool) -> Element?,
     addSemicolonIfNeeded: (_ lastElement: Element, _ newItemAtStartOfLine: Bool, _ parser: inout Parser) -> Element? = { _, _, _ in nil },
     syntax: (inout Parser, [Element]) -> RawIfConfigClauseSyntax.Elements?
   ) -> RawIfConfigDeclSyntax {
@@ -106,10 +103,10 @@ extension Parser {
     do {
       var firstIteration = true
       var loopProgress = LoopProgressCondition()
-      while let poundIfHandle = firstIteration ? self.canRecoverTo(.poundIfKeyword) : self.canRecoverTo(anyIn: IfConfigClauseStartKeyword.self)?.handle,
+      while let poundIfHandle = firstIteration ? self.canRecoverTo(.poundIfKeyword) : self.canRecoverTo(anyIn: IfConfigContinuationClauseStartKeyword.self)?.handle,
         loopProgress.evaluate(self.currentToken)
       {
-        let (unexpectedBeforePoundIf, poundIf) = self.eat(poundIfHandle)
+        var (unexpectedBeforePoundIf, poundIf) = self.eat(poundIfHandle)
         firstIteration = false
         // Parse the condition.
         let condition: RawExprSyntax?
@@ -117,7 +114,13 @@ extension Parser {
         case .poundIfKeyword, .poundElseifKeyword:
           condition = RawExprSyntax(self.parseSequenceExpression(.basic, forDirective: true))
         case .poundElseKeyword:
-          condition = nil
+          if let ifToken = self.consume(if: .init(.if, allowAtStartOfLine: false)) {
+            unexpectedBeforePoundIf = RawUnexpectedNodesSyntax(combining: unexpectedBeforePoundIf, poundIf, ifToken, arena: self.arena)
+            poundIf = self.missingToken(.poundElseifKeyword)
+            condition = RawExprSyntax(self.parseSequenceExpression(.basic, forDirective: true))
+          } else {
+            condition = nil
+          }
         default:
           preconditionFailure("The loop condition should guarantee that we are at one of these tokens")
         }
@@ -127,7 +130,7 @@ extension Parser {
           var elementsProgress = LoopProgressCondition()
           while !self.at(.eof) && !self.at(.poundElseKeyword, .poundElseifKeyword, .poundEndifKeyword) && elementsProgress.evaluate(currentToken) {
             let newItemAtStartOfLine = self.currentToken.isAtStartOfLine
-            guard let element = parseElement(&self), !element.isEmpty else {
+            guard let element = parseElement(&self, elements.isEmpty), !element.isEmpty else {
               break
             }
             if let lastElement = elements.last, let fixedUpLastItem = addSemicolonIfNeeded(lastElement, newItemAtStartOfLine, &self) {

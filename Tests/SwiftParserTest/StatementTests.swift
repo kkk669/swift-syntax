@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -27,7 +27,7 @@ final class StatementTests: XCTestCase {
             ConditionElementSyntax(
               condition: .init(
                 OptionalBindingConditionSyntax(
-                  letOrVarKeyword: .keyword(.let),
+                  bindingKeyword: .keyword(.let),
                   pattern: IdentifierPatternSyntax(identifier: .identifier("baz"))
                 )
               )
@@ -53,7 +53,7 @@ final class StatementTests: XCTestCase {
             ConditionElementSyntax(
               condition: .init(
                 OptionalBindingConditionSyntax(
-                  letOrVarKeyword: .keyword(.let),
+                  bindingKeyword: .keyword(.let),
                   pattern: IdentifierPatternSyntax(identifier: .keyword(.self)),
                   initializer: InitializerClauseSyntax(equal: .equalToken(), value: IdentifierExprSyntax(identifier: .keyword(.self)))
                 )
@@ -612,6 +612,21 @@ final class StatementTests: XCTestCase {
       """,
       diagnostics: [
         DiagnosticSpec(message: "expected '}' to end 'if' statement")
+      ]
+    )
+  }
+
+  func testRecoveryInFrontOfAccessorIntroducer() {
+    AssertParse(
+      """
+      subscript(1️⃣{@2️⃣self _modify3️⃣
+      """,
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected type and ')' to end parameter clause"),
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected '->' and return type in subscript"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected name in attribute"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "unexpected 'self' keyword in accessor"),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected '}' to end subscript"),
       ]
     )
   }

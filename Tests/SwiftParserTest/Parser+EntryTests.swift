@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -42,6 +42,27 @@ public class EntryTests: XCTestCase {
       "func test() {} 1️⃣other tokens",
       { DeclSyntax.parse(from: &$0) },
       diagnostics: [DiagnosticSpec(message: "unexpected code 'other tokens' in function")]
+    )
+  }
+
+  func testRemainderUnexpectedDoesntOverrideExistingUnexpected() throws {
+    AssertParse(
+      "operator 1️⃣test 2️⃣{} other tokens",
+      { DeclSyntax.parse(from: &$0) },
+      substructure: Syntax(
+        UnexpectedNodesSyntax([
+          TokenSyntax.leftBraceToken(),
+          PrecedenceGroupAttributeListSyntax([]),
+          TokenSyntax.rightBraceToken(),
+          TokenSyntax.identifier("other"),
+          TokenSyntax.identifier("tokens"),
+        ])
+      ),
+      substructureAfterMarker: "2️⃣",
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "'test' is considered an identifier and must not appear within an operator name"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "operator should not be declared with body"),
+      ]
     )
   }
 }

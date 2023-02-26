@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -196,6 +196,9 @@ extension DiagnosticMessage where Self == StaticParserError {
   }
   public static var tryOnInitialValueExpression: Self {
     .init("'try' must be placed on the initial value expression")
+  }
+  public static var unexpectedPoundElseSpaceIf: Self {
+    .init("unexpected 'if' keyword following '#else' conditional compilation directive; did you mean '#elseif'?")
   }
   public static var unexpectedSemicolon: Self {
     .init("unexpected ';' separator")

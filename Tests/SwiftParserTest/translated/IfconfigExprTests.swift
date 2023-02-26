@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -425,6 +425,35 @@ final class IfconfigExprTests: XCTestCase {
       diagnostics: [
         // TODO: Old parser expected error on line 1: cannot parse module version '20A301'
       ]
+    )
+  }
+
+  func testIfconfigExpr31() {
+    AssertParse(
+      """
+      #if arch(x86_64)
+        debugPrint("x86_64")
+      1️⃣#else if arch(arm64)
+        debugPrint("arm64")
+      #else
+        debugPrint("Some other architecture.")
+      #endif
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "unexpected 'if' keyword following '#else' conditional compilation directive; did you mean '#elseif'?",
+          fixIts: ["replace '#else if' with '#elseif'"]
+        )
+      ],
+      fixedSource: """
+        #if arch(x86_64)
+          debugPrint("x86_64")
+        #elseif arch(arm64)
+          debugPrint("arm64")
+        #else
+          debugPrint("Some other architecture.")
+        #endif
+        """
     )
   }
 

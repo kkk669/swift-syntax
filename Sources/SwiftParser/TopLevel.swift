@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -228,8 +228,8 @@ extension Parser {
     if self.at(.poundIfKeyword) && !self.withLookahead({ $0.consumeIfConfigOfAttributes() }) {
       // If config of attributes is parsed as part of declaration parsing as it
       // doesn't constitute its own code block item.
-      let directive = self.parsePoundIfDirective {
-        $0.parseCodeBlockItem()
+      let directive = self.parsePoundIfDirective { (parser, _) in
+        parser.parseCodeBlockItem()
       } addSemicolonIfNeeded: { lastElement, newItemAtStartOfLine, parser in
         if lastElement.semicolon == nil && !newItemAtStartOfLine {
           return RawCodeBlockItemSyntax(

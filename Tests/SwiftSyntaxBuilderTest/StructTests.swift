@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -90,7 +90,7 @@ final class StructTests: XCTestCase {
     let myStruct = StructDeclSyntax(identifier: "MyStruct") {
       for i in 0..<5 {
         if i.isMultiple(of: 2) {
-          VariableDeclSyntax(letOrVarKeyword: .keyword(.let)) {
+          VariableDeclSyntax(bindingKeyword: .keyword(.let)) {
             PatternBindingSyntax(
               pattern: PatternSyntax("var\(raw: i)"),
               typeAnnotation: TypeAnnotationSyntax(type: TypeSyntax("String"))

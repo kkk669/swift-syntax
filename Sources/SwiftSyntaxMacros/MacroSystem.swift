@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -109,7 +109,7 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
           return true
         }
 
-        return !(macro is PeerMacro.Type || macro is MemberMacro.Type || macro is AccessorMacro.Type || macro is MemberAttributeMacro.Type)
+        return !(macro is PeerMacro.Type || macro is MemberMacro.Type || macro is AccessorMacro.Type || macro is MemberAttributeMacro.Type || macro is ConformanceMacro.Type)
       }
 
       if newAttributes.isEmpty {

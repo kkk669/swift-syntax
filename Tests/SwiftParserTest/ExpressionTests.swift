@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -1625,6 +1625,56 @@ final class StatementExpressionTests: XCTestCase {
           ])
         )
       )
+    )
+  }
+
+  func testPatternExprInSwitchCaseItem() {
+    AssertParse(
+      """
+      switch x {
+      case a:
+      1️⃣is
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "unexpected 'is' keyword in 'switch' statement")
+      ]
+    )
+  }
+
+  func testStandaloneAtCaseInSwitch() {
+    AssertParse(
+      """
+      switch x {
+        1️⃣@case
+      }
+      """,
+      diagnostics: [DiagnosticSpec(message: "unexpected code '@case' in 'switch' statement")]
+    )
+  }
+
+  func testUnterminatedInterpolationAtEndOfMultilineStringLiteral() {
+    AssertParse(
+      #"""
+      """\({(1️⃣})
+      2️⃣"""3️⃣
+      """#,
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected value and ')' to end tuple"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: #"unexpected code '"""' in string literal"#),
+        DiagnosticSpec(locationMarker: "3️⃣", message: #"expected '"""' to end string literal"#),
+      ]
+    )
+  }
+
+  func testStringLiteralAfterKeyPath() {
+    AssertParse(
+      #"""
+      \String.?1️⃣""
+      """#,
+      diagnostics: [
+        DiagnosticSpec(message: "consecutive statements on a line must be separated by ';'")
+      ]
     )
   }
 }

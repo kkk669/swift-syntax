@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -18,7 +18,7 @@ final class VariableTests: XCTestCase {
   func testVariableDecl() {
     let leadingTrivia = Trivia.unexpectedText("␣")
 
-    let buildable = VariableDeclSyntax(leadingTrivia: leadingTrivia, letOrVarKeyword: .keyword(.let)) {
+    let buildable = VariableDeclSyntax(leadingTrivia: leadingTrivia, bindingKeyword: .keyword(.let)) {
       PatternBindingSyntax(pattern: PatternSyntax("a"), typeAnnotation: TypeAnnotationSyntax(type: ArrayTypeSyntax(elementType: TypeSyntax("Int"))))
     }
 
@@ -126,7 +126,7 @@ final class VariableTests: XCTestCase {
   func testVariableDeclWithValue() {
     let leadingTrivia = Trivia.unexpectedText("␣")
 
-    let buildable = VariableDeclSyntax(leadingTrivia: leadingTrivia, letOrVarKeyword: .keyword(.var)) {
+    let buildable = VariableDeclSyntax(leadingTrivia: leadingTrivia, bindingKeyword: .keyword(.var)) {
       PatternBindingSyntax(
         pattern: PatternSyntax("d"),
         typeAnnotation: TypeAnnotationSyntax(type: DictionaryTypeSyntax(keyType: TypeSyntax("String"), valueType: TypeSyntax("Int"))),
@@ -139,7 +139,7 @@ final class VariableTests: XCTestCase {
 
   func testVariableDeclWithExplicitTrailingCommas() {
     let buildable = VariableDeclSyntax(
-      letOrVarKeyword: .keyword(.let),
+      bindingKeyword: .keyword(.let),
       bindings: [
         PatternBindingSyntax(
           pattern: PatternSyntax("a"),
@@ -165,7 +165,7 @@ final class VariableTests: XCTestCase {
   }
 
   func testMultiPatternVariableDecl() {
-    let buildable = VariableDeclSyntax(letOrVarKeyword: .keyword(.let)) {
+    let buildable = VariableDeclSyntax(bindingKeyword: .keyword(.let)) {
       PatternBindingSyntax(
         pattern: PatternSyntax("a"),
         initializer: InitializerClauseSyntax(
@@ -194,7 +194,7 @@ final class VariableTests: XCTestCase {
 
   func testClosureTypeVariableDecl() {
     let type = FunctionTypeSyntax(arguments: [TupleTypeElementSyntax(type: TypeSyntax("Int"))], output: ReturnClauseSyntax(returnType: TypeSyntax("Bool")))
-    let buildable = VariableDeclSyntax(letOrVarKeyword: .keyword(.let)) {
+    let buildable = VariableDeclSyntax(bindingKeyword: .keyword(.let)) {
       PatternBindingSyntax(pattern: PatternSyntax("c"), typeAnnotation: TypeAnnotationSyntax(type: type))
     }
     AssertBuildResult(buildable, "let c: (Int) -> Bool")

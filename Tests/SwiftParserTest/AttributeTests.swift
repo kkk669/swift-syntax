@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -88,6 +88,13 @@ final class AttributeTests: XCTestCase {
 
       @objc(:::::)
       func f(_: Int, _: Int, _: Int, _: Int, _: Int) { }
+      """
+    )
+
+    AssertParse(
+      """
+      @objc(_:)
+      func f(_: Int)
       """
     )
   }
@@ -539,5 +546,14 @@ final class AttributeTests: XCTestCase {
   func testSendable() {
     AssertParse("func takeRepeater(_ f: @MainActor @Sendable @escaping () -> Int) {}")
     AssertParse("takeRepesater { @MainActor @Sendable () -> Int in 0 }")
+  }
+
+  func testLexicalLifetimes() {
+    AssertParse(
+      """
+      @_lexicalLifetimes
+      func lexy(_ c: C) {}
+      """
+    )
   }
 }

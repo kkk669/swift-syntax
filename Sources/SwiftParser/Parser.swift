@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -555,36 +555,10 @@ extension Parser {
 
     self.adjustNestingLevel(for: tokenKind)
 
-    // ... or a multi-character token with the first N characters being the one
-    // that we want to consume as a separate token.
-    // Careful: We need to reset the lexer to a point just before it saw the
-    // current token, plus the split point. That means we need to take trailing
-    // trivia into account for the current token, but we only need to take the
-    // number of UTF-8 bytes of the text of the split - no trivia necessary.
-    //
-    // <TOKEN<trailing trivia>> <NEXT TOKEN> ... -> <T> <OKEN<trailing trivia>> <NEXT TOKEN>
-    //
-    // The current calculation is:
-    //
-    //        <<leading trivia>TOKEN<trailing trivia>>
-    //                                        CURSOR ^
-    // + trailing trivia length
-    //
-    //        <<leading trivia>TOKEN<trailing trivia>>
-    //                       CURSOR ^
-    // + content length
-    //
-    //        <<leading trivia>TOKEN<trailing trivia>>
-    //                  CURSOR ^
-    // - split point length
-    //
-    //        <<leading trivia>TOKEN<trailing trivia>>
-    //                   CURSOR ^
-    let offset =
-      (self.currentToken.trailingTriviaByteLength
-        + tokenText.count
-        - prefix.count)
-    self.currentToken = self.lexemes.resetForSplit(of: offset)
+    self.currentToken = self.lexemes.resetForSplit(
+      splitToken: self.currentToken,
+      consumedPrefix: self.currentToken.leadingTriviaByteLength + prefix.count
+    )
     return tok
   }
 }

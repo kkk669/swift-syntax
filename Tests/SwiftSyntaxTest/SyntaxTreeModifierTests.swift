@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -25,7 +25,7 @@ fileprivate func cannedVarDecl() -> VariableDeclSyntax {
     )
   )
   return VariableDeclSyntax(
-    letOrVarKeyword: .keyword(.let, trailingTrivia: .space),
+    bindingKeyword: .keyword(.let, trailingTrivia: .space),
     bindings: PatternBindingListSyntax([pattern])
   )
 }
@@ -35,7 +35,7 @@ public class SyntaxTreeModifierTests: XCTestCase {
   public func testAccessorAsModifier() {
     var VD = cannedVarDecl()
     XCTAssertEqual("\(VD)", "let a: Int")
-    VD.letOrVarKeyword = .keyword(.var, trailingTrivia: .space)
+    VD.bindingKeyword = .keyword(.var, trailingTrivia: .space)
     XCTAssertEqual("\(VD)", "var a: Int")
   }
 }

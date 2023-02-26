@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -49,13 +49,8 @@ extension Child {
   }
 }
 
-let basicFormatFile = SourceFileSyntax {
-  DeclSyntax(
-    """
-    \(raw: generateCopyrightHeader(for: "generate-swiftbasicformat"))
-    import SwiftSyntax
-    """
-  )
+let basicFormatFile = SourceFileSyntax(leadingTrivia: generateCopyrightHeader(for: "generate-swiftbasicformat")) {
+  DeclSyntax("import SwiftSyntax")
 
   try! ClassDeclSyntax("open class BasicFormat: SyntaxRewriter") {
     DeclSyntax("public var indentationLevel: Int = 0")
@@ -71,7 +66,7 @@ let basicFormatFile = SourceFileSyntax {
           indentationLevel += 1
         }
         if let parent = node.parent, childrenSeparatedByNewline(parent) {
-          putNextTokenOnNewLine = true
+          putNextTokenOnNewLine = true && node.previousToken != nil
         }
       }
       """
@@ -97,11 +92,14 @@ let basicFormatFile = SourceFileSyntax {
         if requiresTrailingSpace(node) && trailingTrivia.isEmpty {
           trailingTrivia += .space
         }
-        if let keyPath = getKeyPath(Syntax(node)), requiresLeadingNewline(keyPath), !(leadingTrivia.first?.isNewline ?? false) {
+        if let keyPath = getKeyPath(Syntax(node)), requiresLeadingNewline(keyPath), !(leadingTrivia.first?.isNewline ?? false), !shouldOmitNewline(node) {
           leadingTrivia = .newline + leadingTrivia
         }
-        leadingTrivia = leadingTrivia.indented(indentation: indentation)
-        trailingTrivia = trailingTrivia.indented(indentation: indentation)
+        var isOnNewline: Bool = (lastRewrittenToken?.trailingTrivia.pieces.last?.isNewline == true)
+        if case .stringSegment(let text) = lastRewrittenToken?.tokenKind {
+          isOnNewline = isOnNewline || (text.last?.isNewline == true)
+        }
+        leadingTrivia = leadingTrivia.indented(indentation: indentation, isOnNewline: isOnNewline)
         let rewritten = TokenSyntax(
           node.tokenKind,
           leadingTrivia: leadingTrivia,
@@ -111,6 +109,25 @@ let basicFormatFile = SourceFileSyntax {
         lastRewrittenToken = rewritten
         putNextTokenOnNewLine = false
         return rewritten
+      }
+      """
+    )
+
+    DeclSyntax(
+      """
+      /// If this returns `true`, ``BasicFormat`` will not wrap `node` to a new line. This can be used to e.g. keep string interpolation segments on a single line.
+      /// - Parameter node: the node that is being visited
+      /// - Returns: returns true if newline should be omitted
+      open func shouldOmitNewline(_ node: TokenSyntax) -> Bool {
+        var ancestor: Syntax = Syntax(node)
+        while let parent = ancestor.parent {
+          ancestor = parent
+          if ancestor.is(ExpressionSegmentSyntax.self) {
+            return true
+          }
+        }
+
+        return false
       }
       """
     )

@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -659,7 +659,10 @@ extension Parser {
   ) -> RawExprSyntax {
     assert(self.at(.poundIfKeyword))
 
-    let config = self.parsePoundIfDirective { parser -> RawExprSyntax? in
+    let config = self.parsePoundIfDirective { (parser, isFirstElement) -> RawExprSyntax? in
+      if !isFirstElement {
+        return nil
+      }
       let head: RawExprSyntax
       if parser.at(.period) {
         head = parser.parseDottedExpressionSuffix(nil)
@@ -2236,7 +2239,7 @@ extension Parser {
         elements.append(
           .ifConfigDecl(
             self.parsePoundIfDirective(
-              { $0.parseSwitchCases(allowStandaloneStmtRecovery: allowStandaloneStmtRecovery) },
+              { (parser, _) in parser.parseSwitchCases(allowStandaloneStmtRecovery: allowStandaloneStmtRecovery) },
               syntax: { parser, cases in
                 guard cases.count == 1, let firstCase = cases.first else {
                   assert(cases.isEmpty)
@@ -2250,6 +2253,9 @@ extension Parser {
       } else if allowStandaloneStmtRecovery && (self.atStartOfExpression() || self.atStartOfStatement() || self.atStartOfDeclaration()) {
         // Synthesize a label for the stamenent or declaration that isn't coverd by a case right now.
         let statements = parseSwitchCaseBody()
+        if statements.isEmpty {
+          break
+        }
         elements.append(
           .switchCase(
             RawSwitchCaseSyntax(

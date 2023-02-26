@@ -2,7 +2,7 @@
 //
 // This source file is part of the Swift.org open source project
 //
-// Copyright (c) 2014 - 2022 Apple Inc. and the Swift project authors
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
 // Licensed under Apache License v2.0 with Runtime Library Exception
 //
 // See https://swift.org/LICENSE.txt for license information
@@ -122,12 +122,10 @@ extension Parser.Lookahead {
     }
     assert(tokenText.hasPrefix(prefix))
 
-    // See also: Parser.consumePrefix(_:as:)
-    let offset =
-      (self.currentToken.trailingTriviaByteLength
-        + tokenText.count
-        - prefix.count)
-    self.currentToken = self.lexemes.resetForSplit(of: offset)
+    self.currentToken = self.lexemes.resetForSplit(
+      splitToken: self.currentToken,
+      consumedPrefix: self.currentToken.leadingTriviaByteLength + prefix.count
+    )
   }
 }
 
