@@ -199,7 +199,8 @@ STMT_NODES = [
          kind='Syntax',
          children=[
              Child('BindingKeyword', kind='KeywordToken',
-                   token_choices=['KeywordToken|let', 'KeywordToken|var']),
+                   token_choices=['KeywordToken|let', 'KeywordToken|var',
+                                  'KeywordToken|inout']),
              Child('Pattern', kind='Pattern'),
              Child('TypeAnnotation', kind='TypeAnnotation',
                    is_optional=True),
@@ -216,6 +217,13 @@ STMT_NODES = [
     Node('ThrowStmt', name_for_diagnostics="'throw' statement", kind='Stmt',
          children=[
              Child('ThrowKeyword', kind='KeywordToken', token_choices=['KeywordToken|throw']),
+             Child('Expression', kind='Expr'),
+         ]),
+
+     # forget-stmt -> 'forget' expr ';'?
+    Node('ForgetStmt', name_for_diagnostics="'forget' statement", kind='Stmt',
+         children=[
+             Child('ForgetKeyword', kind='KeywordToken', token_choices=['KeywordToken|_forget']),
              Child('Expression', kind='Expr'),
          ]),
 

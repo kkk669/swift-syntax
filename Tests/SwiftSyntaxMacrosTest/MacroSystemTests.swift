@@ -130,17 +130,15 @@ public struct ColumnMacro: ExpressionMacro {
     of macro: Node,
     in context: Context
   ) throws -> ExprSyntax {
-    guard let sourceLoc = context.location(of: macro),
-      let column = sourceLoc.column
+    guard let sourceLoc: AbstractSourceLocation = context.location(of: macro)
     else {
       throw CustomError.message("can't find location for macro")
     }
 
-    let fileLiteral: ExprSyntax = "\(literal: column)"
     if let leadingTrivia = macro.leadingTrivia {
-      return fileLiteral.with(\.leadingTrivia, leadingTrivia)
+      return sourceLoc.column.with(\.leadingTrivia, leadingTrivia)
     }
-    return fileLiteral
+    return sourceLoc.column
   }
 }
 
@@ -152,17 +150,15 @@ public struct FileIDMacro: ExpressionMacro {
     of macro: Node,
     in context: Context
   ) throws -> ExprSyntax {
-    guard let sourceLoc = context.location(of: macro),
-      let fileID = sourceLoc.file
+    guard let sourceLoc: AbstractSourceLocation = context.location(of: macro)
     else {
       throw CustomError.message("can't find location for macro")
     }
 
-    let fileLiteral: ExprSyntax = "\(literal: fileID)"
     if let leadingTrivia = macro.leadingTrivia {
-      return fileLiteral.with(\.leadingTrivia, leadingTrivia)
+      return sourceLoc.file.with(\.leadingTrivia, leadingTrivia)
     }
-    return fileLiteral
+    return sourceLoc.file
   }
 }
 
@@ -743,8 +739,8 @@ final class MacroSystemTests: XCTestCase {
   func testContextUniqueLocalNames() {
     let context = BasicMacroExpansionContext()
 
-    let t1 = context.createUniqueName("mine")
-    let t2 = context.createUniqueName("mine")
+    let t1 = context.makeUniqueName("mine")
+    let t2 = context.makeUniqueName("mine")
     XCTAssertNotEqual(t1.description, t2.description)
     XCTAssertEqual(t1.description, "__macro_local_4minefMu_")
     XCTAssertEqual(t2.description, "__macro_local_4minefMu0_")

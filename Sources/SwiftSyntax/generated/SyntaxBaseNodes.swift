@@ -88,7 +88,8 @@ public struct DeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       break
     default:
       fatalError("Unable to create DeclSyntax from \(data.raw.kind)")
-    }#endif 
+    }
+    #endif 
     self._syntaxNode = Syntax(data)
   }
   
@@ -236,7 +237,8 @@ public struct ExprSyntax: ExprSyntaxProtocol, SyntaxHashable {
       break
     default:
       fatalError("Unable to create ExprSyntax from \(data.raw.kind)")
-    }#endif 
+    }
+    #endif 
     self._syntaxNode = Syntax(data)
   }
   
@@ -408,7 +410,8 @@ public struct PatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
       break
     default:
       fatalError("Unable to create PatternSyntax from \(data.raw.kind)")
-    }#endif 
+    }
+    #endif 
     self._syntaxNode = Syntax(data)
   }
   
@@ -522,7 +525,7 @@ public struct StmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   
   public init?<S: SyntaxProtocol>(_ node: S) {
     switch node.raw.kind {
-    case .breakStmt, .continueStmt, .deferStmt, .doStmt, .expressionStmt, .fallthroughStmt, .forInStmt, .guardStmt, .labeledStmt, .missingStmt, .repeatWhileStmt, .returnStmt, .throwStmt, .whileStmt, .yieldStmt:
+    case .breakStmt, .continueStmt, .deferStmt, .doStmt, .expressionStmt, .fallthroughStmt, .forInStmt, .forgetStmt, .guardStmt, .labeledStmt, .missingStmt, .repeatWhileStmt, .returnStmt, .throwStmt, .whileStmt, .yieldStmt:
       self._syntaxNode = node._syntaxNode
     default:
       return nil
@@ -535,11 +538,12 @@ public struct StmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   internal init(_ data: SyntaxData) {
     #if DEBUG
     switch data.raw.kind {
-    case .breakStmt, .continueStmt, .deferStmt, .doStmt, .expressionStmt, .fallthroughStmt, .forInStmt, .guardStmt, .labeledStmt, .missingStmt, .repeatWhileStmt, .returnStmt, .throwStmt, .whileStmt, .yieldStmt:
+    case .breakStmt, .continueStmt, .deferStmt, .doStmt, .expressionStmt, .fallthroughStmt, .forInStmt, .forgetStmt, .guardStmt, .labeledStmt, .missingStmt, .repeatWhileStmt, .returnStmt, .throwStmt, .whileStmt, .yieldStmt:
       break
     default:
       fatalError("Unable to create StmtSyntax from \(data.raw.kind)")
-    }#endif 
+    }
+    #endif 
     self._syntaxNode = Syntax(data)
   }
   
@@ -578,6 +582,7 @@ public struct StmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
           .node(ExpressionStmtSyntax.self), 
           .node(FallthroughStmtSyntax.self), 
           .node(ForInStmtSyntax.self), 
+          .node(ForgetStmtSyntax.self), 
           .node(GuardStmtSyntax.self), 
           .node(LabeledStmtSyntax.self), 
           .node(MissingStmtSyntax.self), 
@@ -678,7 +683,8 @@ public struct TypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       break
     default:
       fatalError("Unable to create TypeSyntax from \(data.raw.kind)")
-    }#endif 
+    }
+    #endif 
     self._syntaxNode = Syntax(data)
   }
   

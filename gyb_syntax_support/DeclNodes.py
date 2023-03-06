@@ -94,7 +94,7 @@ DECL_NODES = [
                        'PoundIfToken',
                        'PoundElseifToken',
                        'PoundElseToken',
-                   ]),
+                   ], requires_leading_newline=True),
              Child('Condition', kind='Expr', name_for_diagnostics='condition', classification='BuildConfigId',
                    is_optional=True),
              Child('Elements', is_optional=True, kind='Syntax',
@@ -118,7 +118,7 @@ DECL_NODES = [
              Child('Clauses', kind='IfConfigClauseList',
                    collection_element_name='Clause'),
              Child('PoundEndif', kind='PoundEndifToken',
-                   classification='BuildConfigId'),
+                   classification='BuildConfigId', requires_leading_newline=True),
          ]),
 
     Node('PoundSourceLocation', name_for_diagnostics="'#sourceLocation' directive",
@@ -161,6 +161,7 @@ DECL_NODES = [
                        'KeywordToken|required', 'KeywordToken|static', 'KeywordToken|unowned', 'KeywordToken|weak', 'KeywordToken|private',
                        'KeywordToken|fileprivate', 'KeywordToken|internal', 'KeywordToken|public', 'KeywordToken|open',
                        'KeywordToken|mutating', 'KeywordToken|nonmutating', 'KeywordToken|indirect', 'KeywordToken|__consuming',
+                       'KeywordToken|borrowing', 'KeywordToken|consuming',
                        'KeywordToken|actor', 'KeywordToken|async', 'KeywordToken|distributed', 'KeywordToken|isolated',
                        'KeywordToken|nonisolated', 'KeywordToken|_const', 'KeywordToken|_local', 'KeywordToken|package'
                    ]),
@@ -514,7 +515,7 @@ DECL_NODES = [
              Child('ImportKind', kind='KeywordToken', is_optional=True,
                    token_choices=[
                       'KeywordToken|typealias', 'KeywordToken|struct', 'KeywordToken|class', 'KeywordToken|enum', 'KeywordToken|protocol', 'KeywordToken|var',
-                      'KeywordToken|let', 'KeywordToken|func',
+                      'KeywordToken|let', 'KeywordToken|func', 'KeywordToken|inout'
                    ]),
              Child('Path', kind='AccessPath',
                    collection_element_name='PathComponent'),
@@ -588,6 +589,7 @@ DECL_NODES = [
              Child('BindingKeyword', kind='KeywordToken',
                    token_choices=[
                        'KeywordToken|let', 'KeywordToken|var',
+                       'KeywordToken|inout'
                    ]),
              Child('Bindings', kind='PatternBindingList',
                    collection_element_name='Binding'),

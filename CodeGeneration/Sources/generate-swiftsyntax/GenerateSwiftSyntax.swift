@@ -73,6 +73,7 @@ struct GenerateSwiftSyntax: ParsableCommand {
         TemplateSpec(sourceFile: keywordFile, module: swiftSyntaxDir, filename: "Keyword.swift"),
         TemplateSpec(sourceFile: miscFile, module: swiftSyntaxDir, filename: "Misc.swift"),
         TemplateSpec(sourceFile: rawSyntaxNodesFile, module: swiftSyntaxDir, filename: "raw/RawSyntaxNodes.swift"),
+        TemplateSpec(sourceFile: rawSyntaxValidationFile, module: swiftSyntaxDir, filename: "raw/RawSyntaxValidation.swift"),
         TemplateSpec(sourceFile: syntaxAnyVisitorFile, module: swiftSyntaxDir, filename: "SyntaxAnyVisitor.swift"),
         TemplateSpec(sourceFile: syntaxBaseNodesFile, module: swiftSyntaxDir, filename: "SyntaxBaseNodes.swift"),
         TemplateSpec(sourceFile: syntaxCollectionsFile, module: swiftSyntaxDir, filename: "SyntaxCollections.swift"),
@@ -119,9 +120,11 @@ struct GenerateSwiftSyntax: ParsableCommand {
           .appendingPathComponent(template.module)
           .appendingPathComponent("generated")
           .appendingPathComponent(template.filename)
-        previouslyGeneratedFilesLock.withLock {
-          _ = previouslyGeneratedFiles.remove(destination)
-        }
+
+        previouslyGeneratedFilesLock.lock();
+        _ = previouslyGeneratedFiles.remove(destination)
+        previouslyGeneratedFilesLock.unlock()
+
         try generateTemplate(
           sourceFile: template.sourceFile,
           destination: destination,

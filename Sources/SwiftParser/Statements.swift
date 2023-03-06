@@ -55,6 +55,7 @@ extension Parser {
   ///     statement → control-transfer-statement ';'?
   ///     statement → defer-statement ';'?
   ///     statement → do-statement ';'?
+  ///     statement → forget-statement ';'?
   ///
   ///     loop-statement → for-in-statement
   ///     loop-statement → while-statement
@@ -123,6 +124,8 @@ extension Parser {
       return label(self.parseContinueStatement(continueHandle: handle), with: optLabel)
     case (.fallthroughKeyword, let handle)?:
       return label(self.parseFallthroughStatement(fallthroughHandle: handle), with: optLabel)
+    case (.forgetKeyword, let handle)?:
+      return label(self.parseForgetStatement(forgetHandle: handle), with: optLabel)
     case (.returnKeyword, let handle)?:
       return label(self.parseReturnStatement(returnHandle: handle), with: optLabel)
     case (.throwKeyword, let handle)?:
@@ -213,7 +216,8 @@ extension Parser {
   ///     condition → expression | availability-condition | case-condition | optional-binding-condition
   ///
   ///     case-condition → 'case' pattern initializer
-  ///     optional-binding-condition → 'let' pattern initializer? | 'var' pattern initializer?
+  ///     optional-binding-condition → 'let' pattern initializer? | 'var' pattern initializer? |
+  ///                                  'inout' pattern initializer?
   @_spi(RawSyntax)
   public mutating func parseConditionElement() -> RawConditionElementSyntax.Condition {
     // Parse a leading #available/#unavailable condition if present.
@@ -221,9 +225,9 @@ extension Parser {
       return self.parsePoundAvailableConditionElement()
     }
 
-    // Parse the basic expression case.  If we have a leading let/var/case
-    // keyword or an assignment, then we know this is a binding.
-    guard self.at(.keyword(.let), .keyword(.var), .keyword(.case)) else {
+    // Parse the basic expression case.  If we have a leading let, var, inout,
+    // borrow, case keyword or an assignment, then we know this is a binding.
+    guard self.at(.keyword(.let), .keyword(.var), .keyword(.case)) || self.at(.keyword(.inout)) else {
       // If we lack it, then this is theoretically a boolean condition.
       // However, we also need to handle migrating from Swift 2 syntax, in
       // which a comma followed by an expression could actually be a pattern
@@ -240,7 +244,7 @@ extension Parser {
     }
 
     // We're parsing a conditional binding.
-    assert(self.at(.keyword(.let), .keyword(.var), .keyword(.case)))
+    assert(self.at(.keyword(.let), .keyword(.var)) || self.at(.keyword(.inout), .keyword(.case)))
     enum BindingKind {
       case pattern(RawTokenSyntax, RawPatternSyntax)
       case optional(RawTokenSyntax, RawPatternSyntax)
@@ -252,7 +256,7 @@ extension Parser {
       kind = .pattern(caseKeyword, pattern)
     } else {
       let letOrVar = self.consumeAnyToken()
-      let pattern = self.parseMatchingPattern(context: .letOrVar)
+      let pattern = self.parseMatchingPattern(context: .bindingIntroducer)
       kind = .optional(letOrVar, pattern)
     }
 
@@ -285,10 +289,10 @@ extension Parser {
     }
 
     switch kind {
-    case let .optional(letOrVar, pattern):
+    case let .optional(bindingKeyword, pattern):
       return .optionalBinding(
         RawOptionalBindingConditionSyntax(
-          bindingKeyword: letOrVar,
+          bindingKeyword: bindingKeyword,
           pattern: pattern,
           typeAnnotation: annotation,
           initializer: initializer,
@@ -368,6 +372,28 @@ extension Parser {
     return RawThrowStmtSyntax(
       unexpectedBeforeThrowKeyword,
       throwKeyword: throwKeyword,
+      expression: expr,
+      arena: self.arena
+    )
+  }
+}
+
+// MARK: Forget Statements
+
+extension Parser {
+  /// Parse a forget statement.
+  ///
+  /// Grammar
+  /// =======
+  ///
+  ///     forget-statement → 'forget' expression
+  @_spi(RawSyntax)
+  public mutating func parseForgetStatement(forgetHandle: RecoveryConsumptionHandle) -> RawForgetStmtSyntax {
+    let (unexpectedBeforeForgetKeyword, forgetKeyword) = self.eat(forgetHandle)
+    let expr = self.parseExpression()
+    return RawForgetStmtSyntax(
+      unexpectedBeforeForgetKeyword,
+      forgetKeyword: forgetKeyword,
       expression: expr,
       arena: self.arena
     )
@@ -945,6 +971,24 @@ extension Parser.Lookahead {
         // "yield" followed immediately by any other token is likely a
         // yield statement of some singular expression.
         return !self.peek().isAtStartOfLine
+      }
+    case .forgetKeyword?:
+      let next = peek()
+      // The thing to be forgotten must be on the same line as `forget`.
+      if next.isAtStartOfLine {
+        return false
+      }
+      switch next.rawTokenKind {
+      case .identifier, .keyword:
+        // Since some identifiers like "self" are classified as keywords,
+        // we want to recognize those too, to handle "forget self". We also
+        // accept any identifier since we want to emit a nice error message
+        // later on during type checking.
+        return true
+      default:
+        // any other token following "forget" means it's not the statement.
+        // For example, could be the function call "forget()".
+        return false
       }
     case nil:
       return false

@@ -226,7 +226,7 @@ public let DECL_NODES: [Node] = [
        kind: "Syntax",
        children: [
          Child(name: "Name",
-               kind: .token(choices: [.keyword(text: "class"), .keyword(text: "convenience"), .keyword(text: "dynamic"), .keyword(text: "final"), .keyword(text: "infix"), .keyword(text: "lazy"), .keyword(text: "optional"), .keyword(text: "override"), .keyword(text: "postfix"), .keyword(text: "prefix"), .keyword(text: "required"), .keyword(text: "static"), .keyword(text: "unowned"), .keyword(text: "weak"), .keyword(text: "private"), .keyword(text: "fileprivate"), .keyword(text: "internal"), .keyword(text: "public"), .keyword(text: "open"), .keyword(text: "mutating"), .keyword(text: "nonmutating"), .keyword(text: "indirect"), .keyword(text: "__consuming"), .keyword(text: "actor"), .keyword(text: "async"), .keyword(text: "distributed"), .keyword(text: "isolated"), .keyword(text: "nonisolated"), .keyword(text: "_const"), .keyword(text: "_local"), .keyword(text: "package")]),
+               kind: .token(choices: [.keyword(text: "class"), .keyword(text: "convenience"), .keyword(text: "dynamic"), .keyword(text: "final"), .keyword(text: "infix"), .keyword(text: "lazy"), .keyword(text: "optional"), .keyword(text: "override"), .keyword(text: "postfix"), .keyword(text: "prefix"), .keyword(text: "required"), .keyword(text: "static"), .keyword(text: "unowned"), .keyword(text: "weak"), .keyword(text: "private"), .keyword(text: "fileprivate"), .keyword(text: "internal"), .keyword(text: "public"), .keyword(text: "open"), .keyword(text: "mutating"), .keyword(text: "nonmutating"), .keyword(text: "indirect"), .keyword(text: "__consuming"), .keyword(text: "borrowing"), .keyword(text: "consuming"), .keyword(text: "actor"), .keyword(text: "async"), .keyword(text: "distributed"), .keyword(text: "isolated"), .keyword(text: "nonisolated"), .keyword(text: "_const"), .keyword(text: "_local"), .keyword(text: "package")]),
                classification: "Attribute"),
          Child(name: "Detail",
                kind: .node(kind: "DeclModifierDetail"),
@@ -523,7 +523,8 @@ public let DECL_NODES: [Node] = [
        children: [
          Child(name: "PoundKeyword",
                kind: .token(choices: [.token(tokenKind: "PoundIfToken"), .token(tokenKind: "PoundElseifToken"), .token(tokenKind: "PoundElseToken")]),
-               classification: "BuildConfigId"),
+               classification: "BuildConfigId",
+               requiresLeadingNewline: true),
          Child(name: "Condition",
                kind: .node(kind: "Expr"),
                nameForDiagnostics: "condition",
@@ -553,7 +554,8 @@ public let DECL_NODES: [Node] = [
                kind: .collection(kind: "IfConfigClauseList", collectionElementName: "Clause")),
          Child(name: "PoundEndif",
                kind: .token(choices: [.token(tokenKind: "PoundEndifToken")]),
-               classification: "BuildConfigId")
+               classification: "BuildConfigId",
+               requiresLeadingNewline: true)
        ]),
 
   Node(name: "ImportDecl",
@@ -574,7 +576,7 @@ public let DECL_NODES: [Node] = [
          Child(name: "ImportTok",
                kind: .token(choices: [.keyword(text: "import")])),
          Child(name: "ImportKind",
-               kind: .token(choices: [.keyword(text: "typealias"), .keyword(text: "struct"), .keyword(text: "class"), .keyword(text: "enum"), .keyword(text: "protocol"), .keyword(text: "var"), .keyword(text: "let"), .keyword(text: "func")]),
+               kind: .token(choices: [.keyword(text: "typealias"), .keyword(text: "struct"), .keyword(text: "class"), .keyword(text: "enum"), .keyword(text: "protocol"), .keyword(text: "var"), .keyword(text: "let"), .keyword(text: "func"), .keyword(text: "inout")]),
                isOptional: true),
          Child(name: "Path",
                kind: .collection(kind: "AccessPath", collectionElementName: "PathComponent"))
@@ -1214,7 +1216,7 @@ public let DECL_NODES: [Node] = [
                nameForDiagnostics: "modifiers",
                isOptional: true),
          Child(name: "BindingKeyword",
-               kind: .token(choices: [.keyword(text: "let"), .keyword(text: "var")])),
+               kind: .token(choices: [.keyword(text: "let"), .keyword(text: "var"), .keyword(text: "inout")])),
          Child(name: "Bindings",
                kind: .collection(kind: "PatternBindingList", collectionElementName: "Binding"))
        ]),

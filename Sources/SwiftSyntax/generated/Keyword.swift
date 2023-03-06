@@ -84,10 +84,13 @@ public enum Keyword: UInt8, Hashable {
   case backDeployed
   case before
   case block
+  case borrowing
   case `break`
   case `case`
   case `catch`
   case `class`
+  case consume
+  case consuming
   case `continue`
   case convenience
   case convention
@@ -115,6 +118,7 @@ public enum Keyword: UInt8, Hashable {
   case `fileprivate`
   case final
   case `for`
+  case _forget
   case forward
   case `func`
   case get
@@ -422,10 +426,14 @@ public enum Keyword: UInt8, Hashable {
         self = ._linear
       case "_modify":
         self = ._modify
+      case "consume":
+        self = .consume
       case "default":
         self = .`default`
       case "dynamic":
         self = .dynamic
+      case "_forget":
+        self = ._forget
       case "forward":
         self = .forward
       case "message":
@@ -506,6 +514,10 @@ public enum Keyword: UInt8, Hashable {
         self = ._optimize
       case "available":
         self = .available
+      case "borrowing":
+        self = .borrowing
+      case "consuming":
+        self = .consuming
       case "extension":
         self = .`extension`
       case "lowerThan":
@@ -907,10 +919,13 @@ public enum Keyword: UInt8, Hashable {
       "backDeployed", 
       "before", 
       "block", 
+      "borrowing", 
       "break", 
       "case", 
       "catch", 
       "class", 
+      "consume", 
+      "consuming", 
       "continue", 
       "convenience", 
       "convention", 
@@ -938,6 +953,7 @@ public enum Keyword: UInt8, Hashable {
       "fileprivate", 
       "final", 
       "for", 
+      "_forget", 
       "forward", 
       "func", 
       "get", 

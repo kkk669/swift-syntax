@@ -16,8 +16,8 @@ extension DeclarationModifier {
   var canHaveParenthesizedArgument: Bool {
     switch self {
     case .__consuming, .__setter_access, ._const, ._local, .async,
-      .class, .convenience, .distributed, .dynamic, .final,
-      .indirect, .infix, .isolated, .lazy, .mutating, .nonisolated,
+      .borrowing, .class, .consuming, .convenience, .distributed, .dynamic,
+      .final, .indirect, .infix, .isolated, .lazy, .mutating, .nonisolated,
       .nonmutating, .optional, .override, .postfix, .prefix, .reasync,
       .required, .rethrows, .static, .weak:
       return false
@@ -60,7 +60,9 @@ extension TokenConsumer {
         modifierProgress.evaluate(subparser.currentToken)
       {
         subparser.eat(handle)
-        if subparser.at(.leftParen) && modifierKind.canHaveParenthesizedArgument {
+        if modifierKind != .open && subparser.at(.leftParen) && modifierKind.canHaveParenthesizedArgument {
+          // When determining whether we are at a declaration, don't consume anything in parentheses after 'open'
+          // so we don't consider a function call to open as a decl modifier. This matches the C++ parser.
           subparser.consumeAnyToken()
           subparser.consume(to: .rightParen)
         }
@@ -100,7 +102,7 @@ extension TokenConsumer {
       var lookahead = subparser.lookahead()
       repeat {
         lookahead.consumeAnyToken()
-      } while lookahead.atStartOfDeclaration(allowInitDecl: allowInitDecl)
+      } while lookahead.atStartOfDeclaration(isAtTopLevel: isAtTopLevel, allowInitDecl: allowInitDecl)
       return lookahead.at(.identifier)
     case .caseKeyword:
       // When 'case' appears inside a function, it's probably a switch
@@ -241,7 +243,8 @@ extension Parser {
       return RawDeclSyntax(self.parseFuncDeclaration(attrs, handle))
     case (.subscriptKeyword, let handle)?:
       return RawDeclSyntax(self.parseSubscriptDeclaration(attrs, handle))
-    case (.letKeyword, let handle)?, (.varKeyword, let handle)?:
+    case (.letKeyword, let handle)?, (.varKeyword, let handle)?,
+      (.inoutKeyword, let handle)?:
       return RawDeclSyntax(self.parseBindingDeclaration(attrs, handle, inMemberDeclList: inMemberDeclList))
     case (.initKeyword, let handle)?:
       return RawDeclSyntax(self.parseInitializerDeclaration(attrs, handle))
@@ -330,6 +333,7 @@ extension Parser {
       case `var`
       case `let`
       case `func`
+      case `inout`
 
       var spec: TokenSpec {
         switch self {
@@ -341,6 +345,7 @@ extension Parser {
         case .var: return .keyword(.var)
         case .let: return .keyword(.let)
         case .func: return .keyword(.func)
+        case .inout: return .keyword(.inout)
         }
       }
 
@@ -354,6 +359,7 @@ extension Parser {
         case TokenSpec(.var): self = .var
         case TokenSpec(.let): self = .let
         case TokenSpec(.func): self = .func
+        case TokenSpec(.inout): self = .inout
         default: return nil
         }
       }
@@ -467,13 +473,13 @@ extension Parser {
       repeat {
         let attributes = self.parseAttributeList()
 
-        let (unexpectedBeforeName, name) = self.expectIdentifier()
-        if attributes == nil && unexpectedBeforeName == nil && name.isMissing && elements.isEmpty {
+        // Parse the 'each' keyword for a type parameter pack 'each T'.
+        let each = self.consume(if: .keyword(.each))
+
+        let (unexpectedBetweenEachAndName, name) = self.expectIdentifier()
+        if attributes == nil && unexpectedBetweenEachAndName == nil && name.isMissing && elements.isEmpty {
           break
         }
-
-        // Parse the ellipsis for a type parameter pack  'T...'.
-        let ellipsis = tryConsumeEllipsisPrefix()
 
         // Parse the ':' followed by a type.
         let colon = self.consume(if: .colon)
@@ -504,9 +510,9 @@ extension Parser {
         elements.append(
           RawGenericParameterSyntax(
             attributes: attributes,
-            unexpectedBeforeName,
+            each: each,
+            unexpectedBetweenEachAndName,
             name: name,
-            ellipsis: ellipsis,
             colon: colon,
             unexpectedBeforeInherited,
             inheritedType: inherited,
@@ -1140,8 +1146,12 @@ extension Parser {
     let modifiers = parseParameterModifiers(for: subject)
 
     var misplacedSpecifiers: [RawTokenSyntax] = []
-    while let specifier = self.consume(ifAnyIn: TypeSpecifier.self) {
-      misplacedSpecifiers.append(specifier)
+    if self.withLookahead({ !$0.startsParameterName(isClosure: subject.isClosure, allowMisplacedSpecifierRecovery: false) }) {
+      while canHaveParameterSpecifier,
+        let specifier = self.consume(ifAnyIn: TypeSpecifier.self)
+      {
+        misplacedSpecifiers.append(specifier)
+      }
     }
 
     let unexpectedBeforeFirstName: RawUnexpectedNodesSyntax?

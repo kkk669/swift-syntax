@@ -23,18 +23,6 @@ final class MatchingPatternsTests: XCTestCase {
     )
   }
 
-  func testMatchingPatterns2() {
-    AssertParse(
-      """
-      // TODO: Implement tuple equality in the library.
-      // BLOCKED: <rdar://problem/13822406>
-      func ~= (x: (Int,Int,Int), y: (Int,Int,Int)) -> Bool {
-        return true
-      }
-      """
-    )
-  }
-
   func testMatchingPatterns3() {
     AssertParse(
       """
@@ -76,6 +64,8 @@ final class MatchingPatternsTests: XCTestCase {
       case var a:
         a = 1
       case let a:
+        a = 1
+      case inout a:
         a = 1
       case var var a:
         a += 1
@@ -193,6 +183,7 @@ final class MatchingPatternsTests: XCTestCase {
       var n : Voluntary<Int> = .Naught
       if case let .Naught(value) = n {}
       if case let .Naught(value1, value2, value3) = n {}
+      if case inout .Naught(value) = n {}
       """
     )
   }
@@ -369,6 +360,8 @@ final class MatchingPatternsTests: XCTestCase {
       case .Payload((let x)):
         acceptInt(x)
         acceptString("\(x)")
+      case .Payload(inout x):
+        acceptInt(x)
       }
       """#
     )
@@ -431,6 +424,8 @@ final class MatchingPatternsTests: XCTestCase {
       """
       switch t {
       case (_, var a, 3):
+        a += 1
+      case (_, inout a, 3):
         a += 1
       case var (_, b, 3):
         b += 1

@@ -80,6 +80,7 @@ enum CanBeStatementStart: TokenSpecSet {
   case doKeyword
   case fallthroughKeyword
   case forKeyword
+  case forgetKeyword
   case guardKeyword
   case ifKeyword
   case repeatKeyword
@@ -97,6 +98,7 @@ enum CanBeStatementStart: TokenSpecSet {
     case TokenSpec(.do): self = .doKeyword
     case TokenSpec(.fallthrough): self = .fallthroughKeyword
     case TokenSpec(.for): self = .forKeyword
+    case TokenSpec(._forget): self = .forgetKeyword
     case TokenSpec(.guard): self = .guardKeyword
     case TokenSpec(.if): self = .ifKeyword
     case TokenSpec(.repeat): self = .repeatKeyword
@@ -117,6 +119,7 @@ enum CanBeStatementStart: TokenSpecSet {
     case .doKeyword: return .keyword(.do)
     case .fallthroughKeyword: return .keyword(.fallthrough)
     case .forKeyword: return .keyword(.for)
+    case .forgetKeyword: return TokenSpec(._forget, recoveryPrecedence: .stmtKeyword)
     case .guardKeyword: return .keyword(.guard)
     case .ifKeyword: return .keyword(.if)
     case .repeatKeyword: return .keyword(.repeat)
@@ -241,6 +244,7 @@ enum DeclarationStart: TokenSpecSet {
   case subscriptKeyword
   case typealiasKeyword
   case varKeyword
+  case inoutKeyword
 
   init?(lexeme: Lexer.Lexeme) {
     switch PrepareForKeywordMatch(lexeme) {
@@ -263,6 +267,7 @@ enum DeclarationStart: TokenSpecSet {
     case TokenSpec(.subscript): self = .subscriptKeyword
     case TokenSpec(.typealias): self = .typealiasKeyword
     case TokenSpec(.var): self = .varKeyword
+    case TokenSpec(.inout): self = .inoutKeyword
     default: return nil
     }
   }
@@ -288,6 +293,7 @@ enum DeclarationStart: TokenSpecSet {
     case .subscriptKeyword: return .keyword(.subscript)
     case .typealiasKeyword: return .keyword(.typealias)
     case .varKeyword: return .keyword(.var)
+    case .inoutKeyword: return TokenSpec(.inout, recoveryPrecedence: .declKeyword)
     }
   }
 }
@@ -467,12 +473,16 @@ public enum TypeSpecifier: TokenSpecSet {
   case inoutKeyword
   case owned
   case shared
+  case borrowing
+  case consuming
 
   init?(lexeme: Lexer.Lexeme) {
     switch PrepareForKeywordMatch(lexeme) {
     case TokenSpec(.inout): self = .inoutKeyword
     case TokenSpec(.__owned): self = .owned
     case TokenSpec(.__shared): self = .shared
+    case TokenSpec(.consuming): self = .consuming
+    case TokenSpec(.borrowing): self = .borrowing
     default: return nil
     }
   }
@@ -482,6 +492,8 @@ public enum TypeSpecifier: TokenSpecSet {
     case TokenSpec(.inout): self = .inoutKeyword
     case TokenSpec(.__owned): self = .owned
     case TokenSpec(.__shared): self = .shared
+    case TokenSpec(.consuming): self = .shared
+    case TokenSpec(.borrowing): self = .shared
     default: return nil
     }
   }
@@ -491,6 +503,8 @@ public enum TypeSpecifier: TokenSpecSet {
     case .inoutKeyword: return .keyword(.inout)
     case .owned: return .keyword(.__owned)
     case .shared: return .keyword(.__shared)
+    case .borrowing: return .keyword(.borrowing)
+    case .consuming: return .keyword(.consuming)
     }
   }
 }
@@ -502,6 +516,7 @@ enum AwaitTryMove: TokenSpecSet {
   case _moveKeyword
   case _borrowKeyword
   case tryKeyword
+  case consumeKeyword
 
   init?(lexeme: Lexer.Lexeme) {
     switch PrepareForKeywordMatch(lexeme) {
@@ -509,6 +524,7 @@ enum AwaitTryMove: TokenSpecSet {
     case TokenSpec(._move): self = ._moveKeyword
     case TokenSpec(._borrow): self = ._borrowKeyword
     case TokenSpec(.try): self = .tryKeyword
+    case TokenSpec(.consume): self = .consumeKeyword
     default: return nil
     }
   }
@@ -518,6 +534,7 @@ enum AwaitTryMove: TokenSpecSet {
     case .awaitKeyword: return .keyword(.await)
     case ._moveKeyword: return .keyword(._move)
     case ._borrowKeyword: return .keyword(._borrow)
+    case .consumeKeyword: return .keyword(.consume)
     case .tryKeyword: return .keyword(.try)
     }
   }
@@ -570,12 +587,14 @@ enum MatchingPatternStart: TokenSpecSet {
   case isKeyword
   case letKeyword
   case varKeyword
+  case inoutKeyword
 
   init?(lexeme: Lexer.Lexeme) {
     switch PrepareForKeywordMatch(lexeme) {
     case TokenSpec(.is): self = .isKeyword
     case TokenSpec(.let): self = .letKeyword
     case TokenSpec(.var): self = .varKeyword
+    case TokenSpec(.inout): self = .inoutKeyword
     default: return nil
     }
   }
@@ -585,6 +604,7 @@ enum MatchingPatternStart: TokenSpecSet {
     case .isKeyword: return .keyword(.is)
     case .letKeyword: return .keyword(.let)
     case .varKeyword: return .keyword(.var)
+    case .inoutKeyword: return .keyword(.inout)
     }
   }
 }

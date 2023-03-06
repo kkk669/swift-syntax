@@ -53,6 +53,7 @@ extension Parser {
       case dollarIdentifier  // For recovery
       case letKeyword
       case varKeyword
+      case inoutKeyword
 
       init?(lexeme: Lexer.Lexeme) {
         switch PrepareForKeywordMatch(lexeme) {
@@ -62,6 +63,7 @@ extension Parser {
         case TokenSpec(.dollarIdentifier): self = .dollarIdentifier
         case TokenSpec(.let): self = .letKeyword
         case TokenSpec(.var): self = .varKeyword
+        case TokenSpec(.inout): self = .inoutKeyword
         default: return nil
         }
       }
@@ -74,6 +76,7 @@ extension Parser {
         case .dollarIdentifier: return .dollarIdentifier
         case .letKeyword: return .keyword(.let)
         case .varKeyword: return .keyword(.var)
+        case .inoutKeyword: return .keyword(.inout)
         }
       }
     }
@@ -120,12 +123,13 @@ extension Parser {
         )
       )
     case (.letKeyword, let handle)?,
-      (.varKeyword, let handle)?:
-      let letOrVar = self.eat(handle)
+      (.varKeyword, let handle)?,
+      (.inoutKeyword, let handle)?:
+      let bindingKeyword = self.eat(handle)
       let value = self.parsePattern()
       return RawPatternSyntax(
         RawValueBindingPatternSyntax(
-          bindingKeyword: letOrVar,
+          bindingKeyword: bindingKeyword,
           valuePattern: value,
           arena: self.arena
         )
@@ -239,12 +243,13 @@ extension Parser {
     // Parse productions that can only be patterns.
     switch self.at(anyIn: MatchingPatternStart.self) {
     case (.varKeyword, let handle)?,
-      (.letKeyword, let handle)?:
-      let letOrVar = self.eat(handle)
-      let value = self.parseMatchingPattern(context: .letOrVar)
+      (.letKeyword, let handle)?,
+      (.inoutKeyword, let handle)?:
+      let bindingKeyword = self.eat(handle)
+      let value = self.parseMatchingPattern(context: .bindingIntroducer)
       return RawPatternSyntax(
         RawValueBindingPatternSyntax(
-          bindingKeyword: letOrVar,
+          bindingKeyword: bindingKeyword,
           valuePattern: value,
           arena: self.arena
         )
@@ -287,6 +292,7 @@ extension Parser.Lookahead {
   ///   pattern ::= pattern-tuple
   ///   pattern ::= 'var' pattern
   ///   pattern ::= 'let' pattern
+  ///   pattern ::= 'inout' pattern
   mutating func canParsePattern() -> Bool {
     enum PatternStartTokens: TokenSpecSet {
       case identifier
@@ -294,6 +300,7 @@ extension Parser.Lookahead {
       case letKeyword
       case varKeyword
       case leftParen
+      case inoutKeyword
 
       init?(lexeme: Lexer.Lexeme) {
         switch PrepareForKeywordMatch(lexeme) {
@@ -302,6 +309,7 @@ extension Parser.Lookahead {
         case TokenSpec(.let): self = .letKeyword
         case TokenSpec(.var): self = .varKeyword
         case TokenSpec(.leftParen): self = .leftParen
+        case TokenSpec(.inout): self = .inoutKeyword
         default: return nil
         }
       }
@@ -313,6 +321,7 @@ extension Parser.Lookahead {
         case .letKeyword: return .keyword(.let)
         case .varKeyword: return .keyword(.var)
         case .leftParen: return .leftParen
+        case .inoutKeyword: return .keyword(.inout)
         }
       }
     }
@@ -323,7 +332,8 @@ extension Parser.Lookahead {
       self.eat(handle)
       return true
     case (.letKeyword, let handle)?,
-      (.varKeyword, let handle)?:
+      (.varKeyword, let handle)?,
+      (.inoutKeyword, let handle)?:
       self.eat(handle)
       return self.canParsePattern()
     case (.leftParen, _)?:
@@ -356,7 +366,9 @@ extension Parser.Lookahead {
   /// specifiers before checking whether this lookahead starts a parameter name.
   mutating func startsParameterName(isClosure: Bool, allowMisplacedSpecifierRecovery: Bool) -> Bool {
     if allowMisplacedSpecifierRecovery {
-      while self.consume(ifAnyIn: TypeSpecifier.self) != nil {}
+      while canHaveParameterSpecifier,
+        self.consume(ifAnyIn: TypeSpecifier.self) != nil
+      {}
     }
 
     // To have a parameter name here, we need a name.
@@ -372,12 +384,21 @@ extension Parser.Lookahead {
 
     // If the next token can be an argument label, we might have a name.
     if nextTok.canBeArgumentLabel(allowDollarIdentifier: true) {
-      // If the first name wasn't "isolated", we're done.
-      if !self.at(.keyword(.isolated)) && !self.at(.keyword(.some)) && !self.at(.keyword(.any)) && !self.at(.keyword(.each)) && !self.at(.keyword(.repeat)) {
+      // If the first name wasn't a contextual keyword, we're done.
+      if !self.at(.keyword(.isolated))
+        && !self.at(.keyword(.some))
+        && !self.at(.keyword(.any))
+        && !self.at(.keyword(.each))
+        && !self.at(.keyword(.repeat))
+        && !self.at(.keyword(.__shared))
+        && !self.at(.keyword(.__owned))
+        && !self.at(.keyword(.borrowing))
+        && !self.at(.keyword(.consuming))
+      {
         return true
       }
 
-      // "isolated" can be an argument label, but it's also a contextual keyword,
+      // Parameter specifiers can be an argument label, but it's also a contextual keyword,
       // so look ahead one more token (two total) see if we have a ':' that would
       // indicate that this is an argument label.
       do {
