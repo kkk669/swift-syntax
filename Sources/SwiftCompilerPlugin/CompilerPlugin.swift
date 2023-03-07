@@ -61,6 +61,7 @@ public protocol CompilerPlugin {
   var providingMacros: [Macro.Type] { get }
 }
 
+#if !os(WASI)
 extension CompilerPlugin {
 
   /// Main entry point of the plugin — sets up a communication channel with
@@ -164,6 +165,7 @@ extension CompilerPlugin {
     }
   }
 }
+#endif
 
 /// Message channel for bidirectional communication with the plugin host.
 internal fileprivate(set) var pluginHostConnection: PluginHostConnection!
