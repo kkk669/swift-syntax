@@ -18,14 +18,6 @@ public enum WASIStringError: Error {
 }
 
 extension String {
-  public init(contentsOf url: URL, encoding enc: String.Encoding = .utf8) throws {
-    let data = try Data(contentsOf: url)
-    guard let string = String(data: data, encoding: enc) else {
-      throw WASIStringError.encoding
-    }
-    self = string
-  }
-
   public func write(
     to url: URL,
     atomically useAuxiliaryFile: Bool,
