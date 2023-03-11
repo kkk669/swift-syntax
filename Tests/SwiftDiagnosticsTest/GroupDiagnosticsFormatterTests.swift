@@ -80,6 +80,9 @@ final class GroupedDiagnosticsFormatterTests: XCTestCase {
     // Main source file.
     let (mainSourceID, mainSourceMarkers) = group.addTestFile(
       """
+
+
+      // test
       let pi = 3.14159
       1️⃣#myAssert(pi == 3)
       print("hello"
@@ -111,20 +114,22 @@ final class GroupedDiagnosticsFormatterTests: XCTestCase {
     AssertStringsEqualWithDiff(
       annotated,
       """
-      === main.swift ===
-      1 │ let pi = 3.14159
-      2 │ #myAssert(pi == 3)
-        ∣ ╰─ note: in expansion of macro 'myAssert' here
+      === main.swift:5 ===
+        ┆
+      3 │ // test
+      4 │ let pi = 3.14159
+      5 │ #myAssert(pi == 3)
+        │ ╰─ note: in expansion of macro 'myAssert' here
         ╭─── #myAssert ───────────────────────────────────────────────────────
         │1 │ let __a = pi
         │2 │ let __b = 3
         │3 │ if !(__a == __b) {
-        │  ∣          ╰─ error: no matching operator '==' for types 'Double' and 'Int'
+        │  │          ╰─ error: no matching operator '==' for types 'Double' and 'Int'
         │4 │   fatalError("assertion failed: pi != 3")
         │5 │ }
         ╰─────────────────────────────────────────────────────────────────────
-      3 │ print("hello"
-        ∣              ╰─ error: expected ')' to end function call
+      6 │ print("hello"
+        │              ╰─ error: expected ')' to end function call
 
       """
     )
@@ -180,24 +185,24 @@ final class GroupedDiagnosticsFormatterTests: XCTestCase {
     AssertStringsEqualWithDiff(
       annotated,
       """
-      === main.swift ===
+      === main.swift:2 ===
       1 │ let pi = 3.14159
       2 │ #myAssert(pi == 3)
-        ∣ ╰─ note: in expansion of macro 'myAssert' here
+        │ ╰─ note: in expansion of macro 'myAssert' here
         ╭─── #myAssert ───────────────────────────────────────────────────────
         │1 │ let __a = pi
         │2 │ let __b = 3
         │3 │ if #invertedEqualityCheck(__a, __b) {
-        │  ∣    ╰─ note: in expansion of macro 'invertedEqualityCheck' here
+        │  │    ╰─ note: in expansion of macro 'invertedEqualityCheck' here
         │  ╭─── #invertedEqualityCheck ───────────────────────────────────────
         │  │1 │ !(__a == __b)
-        │  │  ∣       ╰─ error: no matching operator '==' for types 'Double' and 'Int'
+        │  │  │       ╰─ error: no matching operator '==' for types 'Double' and 'Int'
         │  ╰──────────────────────────────────────────────────────────────────
         │4 │   fatalError("assertion failed: pi != 3")
         │5 │ }
         ╰─────────────────────────────────────────────────────────────────────
       3 │ print("hello"
-        ∣              ╰─ error: expected ')' to end function call
+        │              ╰─ error: expected ')' to end function call
 
       """
     )
