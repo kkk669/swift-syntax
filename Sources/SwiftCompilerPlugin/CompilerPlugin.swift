@@ -62,7 +62,6 @@ public protocol CompilerPlugin {
   var providingMacros: [Macro.Type] { get }
 }
 
-#if !os(WASI)
 extension CompilerPlugin {
   func resolveMacro(moduleName: String, typeName: String) -> Macro.Type? {
     let qualifedName = "\(moduleName).\(typeName)"
@@ -94,6 +93,7 @@ struct MacroProviderAdapter<Plugin: CompilerPlugin>: PluginProvider {
   }
 }
 
+#if !os(WASI)
 extension CompilerPlugin {
 
   /// Main entry point of the plugin — sets up a communication channel with
