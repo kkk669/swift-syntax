@@ -1059,7 +1059,7 @@ extension Parser {
     }
 
     // Parse the signature.
-    let signature = self.parseFunctionSignature()
+    let signature = self.parseFunctionSignature(allowOutput: false)
 
     let whereClause: RawGenericWhereClauseSyntax?
     if self.at(.keyword(.where)) {
@@ -1389,12 +1389,12 @@ extension Parser {
   }
 
   @_spi(RawSyntax)
-  public mutating func parseFunctionSignature() -> RawFunctionSignatureSyntax {
+  public mutating func parseFunctionSignature(allowOutput: Bool = true) -> RawFunctionSignatureSyntax {
     let input = self.parseParameterClause(for: .functionParameters)
 
     var effectSpecifiers = self.parseDeclEffectSpecifiers()
 
-    let output: RawReturnClauseSyntax?
+    var output: RawReturnClauseSyntax?
 
     /// Only allow recovery to the arrow with exprKeyword precedence so we only
     /// skip over misplaced identifiers and don't e.g. recover to an arrow in a 'where' clause.
@@ -1404,10 +1404,19 @@ extension Parser {
       output = nil
     }
 
+    var unexpectedAfterOutput: RawUnexpectedNodesSyntax?
+    if !allowOutput,
+      let unexpectedOutput = output
+    {
+      output = nil
+      unexpectedAfterOutput = RawUnexpectedNodesSyntax([unexpectedOutput], arena: self.arena)
+    }
+
     return RawFunctionSignatureSyntax(
       input: input,
       effectSpecifiers: effectSpecifiers,
       output: output,
+      unexpectedAfterOutput,
       arena: self.arena
     )
   }
@@ -1658,7 +1667,7 @@ extension Parser {
 
   /// Parse an accessor.
   mutating func parseAccessorDecl() -> RawAccessorDeclSyntax {
-    let forcedHandle = TokenConsumptionHandle(spec: .keyword(.get), missing: true)
+    let forcedHandle = TokenConsumptionHandle(spec: .keyword(.get), tokenIsMissing: true)
     let introducer = parseAccessorIntroducer(forcedKind: (.get, forcedHandle))!
     return parseAccessorDecl(introducer: introducer)
   }

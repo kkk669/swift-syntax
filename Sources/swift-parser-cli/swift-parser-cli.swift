@@ -10,6 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import _InstructionCounter
 import SwiftDiagnostics
 import SwiftSyntax
 import SwiftParser
@@ -182,6 +183,7 @@ class PerformanceTest: ParsableCommand {
       .map { try Data(contentsOf: $0) }
 
     let start = Date()
+    let startInstructions = getInstructionsExecuted()
     for _ in 0..<self.iterations {
       for file in files {
         file.withUnsafeBytes { buf in
@@ -189,7 +191,11 @@ class PerformanceTest: ParsableCommand {
         }
       }
     }
-    print(Date().timeIntervalSince(start) / Double(self.iterations) * 1000)
+    let endInstructions = getInstructionsExecuted()
+    let endDate = Date()
+
+    print("Time:         \(endDate.timeIntervalSince(start) / Double(self.iterations) * 1000)ms")
+    print("Instructions: \(Double(endInstructions - startInstructions) / Double(self.iterations))")
   }
 }
 
@@ -219,9 +225,11 @@ class PrintDiags: ParsableCommand {
       if foldSequences {
         diags += foldAllSequences(tree).1
       }
-      let annotatedSource = DiagnosticsFormatter.annotatedSource(
-        tree: tree,
-        diags: diags,
+
+      var group = GroupedDiagnostics()
+      group.addSourceFile(tree: tree, displayName: sourceFile ?? "stdin", diagnostics: diags)
+      let annotatedSource = DiagnosticsFormatter.annotateSources(
+        in: group,
         colorize: colorize || TerminalHelper.isConnectedToTerminal
       )
 
