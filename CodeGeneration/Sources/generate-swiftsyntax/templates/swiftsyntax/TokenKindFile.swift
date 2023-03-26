@@ -15,7 +15,7 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
-let tokenKindFile = SourceFileSyntax(leadingTrivia: generateCopyrightHeader(for: "generate-swiftsyntax")) {
+let tokenKindFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
   try! EnumDeclSyntax(
     """
     /// Enumerates the kinds of tokens in the Swift language.
@@ -282,7 +282,7 @@ let tokenKindFile = SourceFileSyntax(leadingTrivia: generateCopyrightHeader(for:
             }
           } else if token.text != nil {
             SwitchCaseSyntax("case .\(raw: token.swiftKind):") {
-              ExprSyntax("assert(text.isEmpty || rawKind.defaultText.map(String.init) == text)")
+              ExprSyntax("precondition(text.isEmpty || rawKind.defaultText.map(String.init) == text)")
               StmtSyntax("return .\(raw: token.swiftKind)")
             }
           } else {

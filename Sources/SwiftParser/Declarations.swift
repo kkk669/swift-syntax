@@ -464,7 +464,7 @@ extension Parser {
       )
     }
 
-    assert(self.currentToken.starts(with: "<"))
+    precondition(self.currentToken.starts(with: "<"))
     let langle = self.consumeAnyToken(remapping: .leftAngle)
     var elements = [RawGenericParameterSyntax]()
     do {
@@ -2164,15 +2164,7 @@ extension Parser {
     }
 
     // Macro signature, which is either value-like or function-like.
-    let signature: RawMacroDeclSyntax.Signature
-    if let colon = self.consume(if: .colon) {
-      let type = self.parseType()
-      signature = .valueLike(
-        RawTypeAnnotationSyntax(colon: colon, type: type, arena: self.arena)
-      )
-    } else {
-      signature = .functionLike(self.parseFunctionSignature())
-    }
+    let signature = self.parseFunctionSignature()
 
     // Initializer, if any.
     let definition: RawInitializerClauseSyntax?

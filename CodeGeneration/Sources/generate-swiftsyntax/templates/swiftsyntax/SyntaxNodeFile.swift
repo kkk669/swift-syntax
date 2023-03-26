@@ -15,12 +15,12 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
-/// This gyb-file generates the syntax nodes for SwiftSyntax. To keep the generated
+/// This file generates the syntax nodes for SwiftSyntax. To keep the generated
 /// files at a managable file size, it is to be invoked multiple times with the
 /// variable `emitKind` set to a base kind listed in
 /// It then only emits those syntax nodes whose base kind are that specified kind.
 func syntaxNode(emitKind: String) -> SourceFileSyntax {
-  SourceFileSyntax(leadingTrivia: generateCopyrightHeader(for: "generate-swiftsyntax")) {
+  SourceFileSyntax(leadingTrivia: copyrightHeader) {
     for node in SYNTAX_NODES where !node.isBase && node.collectionElement.isEmpty && node.baseKind == emitKind {
       // We are actually handling this node now
       let nodeDoc = node.description.map { "/// \($0)" }
@@ -59,7 +59,7 @@ func syntaxNode(emitKind: String) -> SourceFileSyntax {
           /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
           /// is undefined.
           internal init(_ data: SyntaxData) {
-            assert(data.raw.kind == .\(raw: node.swiftSyntaxKind))
+            precondition(data.raw.kind == .\(raw: node.swiftSyntaxKind))
             self._syntaxNode = Syntax(data)
           }
           """

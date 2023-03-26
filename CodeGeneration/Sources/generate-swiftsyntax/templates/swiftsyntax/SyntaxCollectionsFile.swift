@@ -15,7 +15,7 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
-let syntaxCollectionsFile = SourceFileSyntax(leadingTrivia: generateCopyrightHeader(for: "generate-swiftsyntax")) {
+let syntaxCollectionsFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
   DeclSyntax(
     """
     public protocol SyntaxCollection: SyntaxProtocol, Sequence where Element: SyntaxProtocol {
@@ -158,7 +158,7 @@ let syntaxCollectionsFile = SourceFileSyntax(leadingTrivia: generateCopyrightHea
         /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
         /// is undefined.
         internal init(_ data: SyntaxData) {
-          assert(data.raw.kind == .\(raw: node.swiftSyntaxKind))
+          precondition(data.raw.kind == .\(raw: node.swiftSyntaxKind))
           self._syntaxNode = Syntax(data)
         }
         """

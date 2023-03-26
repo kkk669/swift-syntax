@@ -15,7 +15,7 @@ import SwiftSyntaxBuilder
 import SyntaxSupport
 import Utils
 
-let parserEntryFile = SourceFileSyntax(leadingTrivia: generateCopyrightHeader(for: "generate-swiftparser")) {
+let parserEntryFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
   DeclSyntax("@_spi(RawSyntax) import SwiftSyntax")
 
   try! ExtensionDeclSyntax("extension Parser") {
@@ -78,8 +78,7 @@ let parserEntryFile = SourceFileSyntax(leadingTrivia: generateCopyrightHeader(fo
       """
       mutating func parseRemainder<R: RawSyntaxNodeProtocol>(into: R) -> R {
         guard !into.raw.kind.isSyntaxCollection, let layout = into.raw.layoutView else {
-          assertionFailure("Only support parsing of non-collection layout nodes")
-          return into
+          preconditionFailure("Only support parsing of non-collection layout nodes")
         }
 
         let remainingTokens = self.consumeRemainingTokens()
@@ -89,7 +88,7 @@ let parserEntryFile = SourceFileSyntax(leadingTrivia: generateCopyrightHeader(fo
 
         let existingUnexpected: [RawSyntax]
         if let unexpectedNode = layout.children[layout.children.count - 1] {
-           assert(unexpectedNode.is(RawUnexpectedNodesSyntax.self))
+           precondition(unexpectedNode.is(RawUnexpectedNodesSyntax.self))
            existingUnexpected = unexpectedNode.as(RawUnexpectedNodesSyntax.self).elements
         } else {
            existingUnexpected = []

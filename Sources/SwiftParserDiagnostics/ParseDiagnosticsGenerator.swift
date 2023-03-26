@@ -24,8 +24,7 @@ fileprivate extension TokenSyntax {
     case .poundUnavailableKeyword:
       return self.withKind(.poundAvailableKeyword)
     default:
-      assertionFailure("The availability token of an AvailabilityConditionSyntax should always be #available or #unavailable")
-      return self
+      preconditionFailure("The availability token of an AvailabilityConditionSyntax should always be #available or #unavailable")
     }
   }
 }
@@ -361,7 +360,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     } else {
       if let tokenDiagnostic = token.tokenDiagnostic {
         let message = tokenDiagnostic.diagnosticMessage(in: token)
-        assert(message.severity.matches(tokenDiagnostic.severity))
+        precondition(message.severity.matches(tokenDiagnostic.severity))
         self.addDiagnostic(
           token,
           position: token.position.advanced(by: Int(tokenDiagnostic.byteOffset)),
@@ -435,6 +434,25 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         correctTokens: [node.trailingComma],
         message: { _ in .joinPlatformsUsingComma },
         moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: trailingComma) }
+      )
+    }
+    return .visitChildren
+  }
+
+  public override func visit(_ node: AvailabilityVersionRestrictionSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+    if let unexpected = node.unexpectedBetweenPlatformAndVersion,
+      unexpected.onlyToken(where: { $0.tokenKind == .binaryOperator(">=") }) != nil
+    {
+      addDiagnostic(
+        unexpected,
+        .versionComparisonNotNeeded,
+        fixIts: [
+          FixIt(message: RemoveNodesFixIt(unexpected), changes: .makeMissing(unexpected))
+        ],
+        handledNodes: [unexpected.id]
       )
     }
     return .visitChildren
@@ -583,7 +601,12 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         ] as [Syntax?]).compactMap({ $0 }),
         handledNodes: [node.inKeyword.id, node.sequenceExpr.id, unexpectedCondition.id]
       )
+    } else {  // If it's not a C-style for loop
+      if node.sequenceExpr.is(MissingExprSyntax.self) {
+        addDiagnostic(node.sequenceExpr, .expectedSequenceExpressionInForEachLoop, handledNodes: [node.sequenceExpr.id])
+      }
     }
+
     return .visitChildren
   }
 
@@ -729,6 +752,18 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         }
       }
     }
+    return .visitChildren
+  }
+
+  public override func visit(_ node: IfExprSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    if node.conditions.count == 1, node.conditions.first?.as(ConditionElementSyntax.self)?.condition.is(MissingExprSyntax.self) == true, !node.body.leftBrace.isMissingAllTokens {
+      addDiagnostic(node.conditions, MissingConditionInStatement(node: node), handledNodes: [node.conditions.id])
+    }
+
     return .visitChildren
   }
 
@@ -1025,6 +1060,18 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     return .visitChildren
   }
 
+  public override func visit(_ node: SwitchExprSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    if node.expression.is(MissingExprSyntax.self) && !node.cases.isEmpty {
+      addDiagnostic(node.expression, MissingExpressionInStatement(node: node), handledNodes: [node.expression.id])
+    }
+
+    return .visitChildren
+  }
+
   public override func visit(_ node: SwitchCaseSyntax) -> SyntaxVisitorContinueKind {
     if shouldSkip(node) {
       return .skipChildren
@@ -1170,6 +1217,18 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       moveFixIt: { MoveTokensAfterFixIt(movedTokens: $0, after: .equal) },
       removeRedundantFixIt: { RemoveRedundantFixIt(removeTokens: $0) }
     )
+    return .visitChildren
+  }
+
+  public override func visit(_ node: WhileStmtSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    if node.conditions.count == 1, node.conditions.first?.as(ConditionElementSyntax.self)?.condition.is(MissingExprSyntax.self) == true, !node.body.leftBrace.isMissingAllTokens {
+      addDiagnostic(node.conditions, MissingConditionInStatement(node: node), handledNodes: [node.conditions.id])
+    }
+
     return .visitChildren
   }
 

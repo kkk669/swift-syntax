@@ -181,7 +181,7 @@ struct ByteSourceRangeSet {
     var result = ByteSourceRangeSet()
     var currentOffset = 0
     for range in ranges {
-      assert(
+      precondition(
         currentOffset <= range.offset,
         "Ranges must be sorted in ascending order and not be overlapping"
       )
