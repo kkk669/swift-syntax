@@ -14,13 +14,11 @@
 import Glibc
 #elseif os(Windows)
 import CRT
-#elseif canImport(WASILibc)
-import WASILibc
 #else
 import Darwin.C
 #endif
 
-#if os(Android) || canImport(WASILibc)
+#if os(Android)
 typealias FILEPointer = OpaquePointer
 #else
 typealias FILEPointer = UnsafeMutablePointer<FILE>
