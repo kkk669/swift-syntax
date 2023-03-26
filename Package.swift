@@ -48,7 +48,6 @@ let package = Package(
     .library(name: "SwiftRefactor", targets: ["SwiftRefactor"]),
   ],
   targets: [
-    .target(name: "_InstructionCounter"),
     .target(
       name: "SwiftBasicFormat",
       dependencies: ["SwiftSyntax"],
@@ -149,13 +148,6 @@ let package = Package(
     .executableTarget(
       name: "lit-test-helper",
       dependencies: ["IDEUtils", "SwiftSyntax", "SwiftSyntaxParser"]
-    ),
-    .executableTarget(
-      name: "swift-parser-cli",
-      dependencies: [
-        "_InstructionCounter", "SwiftDiagnostics", "SwiftSyntax", "SwiftParser", "SwiftParserDiagnostics", "SwiftOperators",
-        .product(name: "ArgumentParser", package: "swift-argument-parser"),
-      ]
     ),
     .testTarget(name: "IDEUtilsTest", dependencies: ["_SwiftSyntaxTestSupport", "SwiftParser", "SwiftSyntax", "IDEUtils"]),
     .testTarget(
