@@ -23,6 +23,7 @@ public struct TokenDiagnostic: Hashable {
     // Please order these alphabetically
 
     case editorPlaceholder
+    case equalMustHaveConsistentWhitespaceOnBothSides
     case expectedBinaryExponentInHexFloatLiteral
     case expectedClosingBraceInUnicodeEscape
     case expectedDigitInFloatLiteral
@@ -48,6 +49,9 @@ public struct TokenDiagnostic: Hashable {
     case unexpectedBlockCommentEnd
     case unicodeCurlyQuote
     case unprintableAsciiCharacter
+    case spaceAtStartOfRegexLiteral
+    case spaceAtEndOfRegexLiteral
+    case multilineRegexClosingNotOnNewline
   }
 
   public let kind: Kind
@@ -96,6 +100,7 @@ public struct TokenDiagnostic: Hashable {
   public var severity: Severity {
     switch kind {
     case .editorPlaceholder: return .error
+    case .equalMustHaveConsistentWhitespaceOnBothSides: return .error
     case .expectedBinaryExponentInHexFloatLiteral: return .error
     case .expectedClosingBraceInUnicodeEscape: return .error
     case .expectedDigitInFloatLiteral: return .error
@@ -120,6 +125,9 @@ public struct TokenDiagnostic: Hashable {
     case .unexpectedBlockCommentEnd: return .error
     case .unicodeCurlyQuote: return .error
     case .unprintableAsciiCharacter: return .error
+    case .spaceAtStartOfRegexLiteral: return .error
+    case .spaceAtEndOfRegexLiteral: return .error
+    case .multilineRegexClosingNotOnNewline: return .error
     }
   }
 }

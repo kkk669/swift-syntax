@@ -39,6 +39,7 @@ public extension TokenError {
 /// Please order the cases in this enum alphabetically by case name.
 public enum StaticTokenError: String, DiagnosticMessage {
   case editorPlaceholder = "editor placeholder in source file"
+  case equalMustHaveConsistentWhitespaceOnBothSides = "'=' must have consistent whitespace on both sides"
   case expectedBinaryExponentInHexFloatLiteral = "hexadecimal floating point literal must end with an exponent"
   case expectedClosingBraceInUnicodeEscape = #"expected '}' in \u{...} escape sequence"#
   case expectedDigitInFloatLiteral = "expected a digit in floating point exponent"
@@ -53,6 +54,9 @@ public enum StaticTokenError: String, DiagnosticMessage {
   case sourceConflictMarker = "source control conflict marker in source file"
   case unexpectedBlockCommentEnd = "unexpected end of block comment"
   case unicodeCurlyQuote = #"unicode curly quote found; use '"' instead"#
+  case spaceAtStartOfRegexLiteral = "bare slash regex literal may not start with space"
+  case spaceAtEndOfRegexLiteral = "bare slash regex literal may not end with space"
+  case multilineRegexClosingNotOnNewline = "multi-line regex closing delimiter must appear on new line"
   case unprintableAsciiCharacter = "unprintable ASCII character found in source file"
 
   public var message: String { self.rawValue }
@@ -134,6 +138,7 @@ public extension SwiftSyntax.TokenDiagnostic {
 
     switch self.kind {
     case .editorPlaceholder: return StaticTokenError.editorPlaceholder
+    case .equalMustHaveConsistentWhitespaceOnBothSides: return StaticTokenError.equalMustHaveConsistentWhitespaceOnBothSides
     case .expectedBinaryExponentInHexFloatLiteral: return StaticTokenError.expectedBinaryExponentInHexFloatLiteral
     case .expectedClosingBraceInUnicodeEscape: return StaticTokenError.expectedClosingBraceInUnicodeEscape
     case .expectedDigitInFloatLiteral: return StaticTokenError.expectedDigitInFloatLiteral
@@ -161,6 +166,9 @@ public extension SwiftSyntax.TokenDiagnostic {
     case .sourceConflictMarker: return StaticTokenError.sourceConflictMarker
     case .unexpectedBlockCommentEnd: return StaticTokenError.unexpectedBlockCommentEnd
     case .unicodeCurlyQuote: return StaticTokenError.unicodeCurlyQuote
+    case .spaceAtStartOfRegexLiteral: return StaticTokenError.spaceAtStartOfRegexLiteral
+    case .spaceAtEndOfRegexLiteral: return StaticTokenError.spaceAtEndOfRegexLiteral
+    case .multilineRegexClosingNotOnNewline: return StaticTokenError.multilineRegexClosingNotOnNewline
     case .unprintableAsciiCharacter: return StaticTokenError.unprintableAsciiCharacter
     }
   }
@@ -184,7 +192,7 @@ public extension SwiftSyntax.TokenDiagnostic {
         .with(\.leadingTrivia, Trivia(pieces: token.leadingTrivia.map(replaceNonBreakingSpace)))
         .with(\.trailingTrivia, Trivia(pieces: token.trailingTrivia.map(replaceNonBreakingSpace)))
       return [
-        FixIt(message: .replaceNonBreakingSpaceBySpace, changes: [[.replace(oldNode: Syntax(token), newNode: Syntax(fixedToken))]])
+        FixIt(message: .replaceNonBreakingSpaceBySpace, changes: [.replace(oldNode: Syntax(token), newNode: Syntax(fixedToken))])
       ]
     case .unicodeCurlyQuote:
       let (rawKind, text) = token.tokenKind.decomposeToRaw()
@@ -198,7 +206,27 @@ public extension SwiftSyntax.TokenDiagnostic {
 
       let fixedToken = token.withKind(TokenKind.fromRaw(kind: rawKind, text: replacedText))
       return [
-        FixIt(message: .replaceCurlyQuoteByNormalQuote, changes: [[.replace(oldNode: Syntax(token), newNode: Syntax(fixedToken))]])
+        FixIt(message: .replaceCurlyQuoteByNormalQuote, changes: [.replace(oldNode: Syntax(token), newNode: Syntax(fixedToken))])
+      ]
+    case .equalMustHaveConsistentWhitespaceOnBothSides:
+      let hasLeadingSpace = token.previousToken(viewMode: .all)?.trailingTrivia.contains(where: { $0.isSpaceOrTab }) ?? false
+      let hasTrailingSpace = token.trailingTrivia.contains { $0.isSpaceOrTab }
+      var changes: [FixIt.Change] = []
+
+      if !hasLeadingSpace {
+        changes += [
+          .replaceLeadingTrivia(token: token, newTrivia: .space)
+        ]
+      }
+
+      if !hasTrailingSpace {
+        changes += [
+          .replaceTrailingTrivia(token: token, newTrivia: .space)
+        ]
+      }
+
+      return [
+        FixIt(message: .insertWhitespace, changes: changes)
       ]
     default:
       return []

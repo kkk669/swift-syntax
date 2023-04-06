@@ -18,6 +18,7 @@ add_swift_host_library(SwiftParser
   Modifiers.swift
   Names.swift
   Nominals.swift
+  Parameters.swift
   Parser.swift
   Patterns.swift
   TokenSpec.swift
@@ -42,6 +43,7 @@ add_swift_host_library(SwiftParser
   Lexer/Lexeme.swift
   Lexer/LexemeSequence.swift
   Lexer/Lexer.swift
+  Lexer/RegexLiteralLexer.swift
   Lexer/UnicodeScalarExtensions.swift
 )
 

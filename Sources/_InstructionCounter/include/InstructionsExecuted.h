@@ -10,8 +10,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-#include <unistd.h>
+#include <stdint.h>
 
-/// Returns the number of instructions the process has executed since it was
-/// launched.
+/// On macOS returns the number of instructions the process has executed since
+/// it was launched, on all other platforms returns 0.
 uint64_t getInstructionsExecuted();

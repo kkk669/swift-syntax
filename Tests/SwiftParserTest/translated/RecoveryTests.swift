@@ -1439,7 +1439,6 @@ final class RecoveryTests: XCTestCase {
       """#,
       diagnostics: [
         DiagnosticSpec(locationMarker: "1️⃣", message: "expected 'func' in function"),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected type in parameter"),
         DiagnosticSpec(locationMarker: "2️⃣", message: #"unexpected code '"No one else was in the room where it happened"' in parameter clause"#),
       ]
     )
@@ -1454,7 +1453,6 @@ final class RecoveryTests: XCTestCase {
       """#,
       diagnostics: [
         DiagnosticSpec(locationMarker: "1️⃣", message: "expected 'func' in function"),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected type in parameter"),
         DiagnosticSpec(locationMarker: "2️⃣", message: #"unexpected code '"The room where it happened, the room where it happened"' in parameter clause"#),
       ]
     )
@@ -1618,11 +1616,12 @@ final class RecoveryTests: XCTestCase {
       // <rdar://problem/18634543> Parser hangs at swift::Parser::parseType
       public enum TestA {
         public static func convertFromExtenndition(
-          s._core.count 1️⃣!= 0, "Can't form a Character from an empty String")
+          s1️⃣._core.count != 0, "Can't form a Character from an empty String")
       }
       """#,
       diagnostics: [
-        DiagnosticSpec(message: #"unexpected code '!= 0, "Can't form a Character from an empty String"' in parameter clause"#)
+        DiagnosticSpec(message: "expected ':' and type in parameter"),
+        DiagnosticSpec(message: #"unexpected code '._core.count != 0, "Can't form a Character from an empty String"' in parameter clause"#),
       ]
     )
   }
@@ -1632,11 +1631,12 @@ final class RecoveryTests: XCTestCase {
       #"""
       public enum TestB {
         public static func convertFromExtenndition(
-          s._core.count 1️⃣?= 0, "Can't form a Character from an empty String")
+          s1️⃣._core.count ?= 0, "Can't form a Character from an empty String")
       }
       """#,
       diagnostics: [
-        DiagnosticSpec(message: #"unexpected code '?= 0, "Can't form a Character from an empty String"' in parameter clause"#)
+        DiagnosticSpec(message: "expected ':' and type in parameter"),
+        DiagnosticSpec(message: #"unexpected code '._core.count ?= 0, "Can't form a Character from an empty String"' in parameter clause"#),
       ]
     )
   }
@@ -1654,10 +1654,11 @@ final class RecoveryTests: XCTestCase {
     assertParse(
       """
       var baz: bar
-      func foo1(bar!=baz) {}
+      func foo1(bar1️⃣!=baz) {}
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 2: unnamed parameters must be written with the empty name '_'
+        DiagnosticSpec(message: "expected ':' and type in parameter"),
+        DiagnosticSpec(message: "unexpected code '!=baz' in parameter clause"),
       ]
     )
   }
@@ -1665,10 +1666,11 @@ final class RecoveryTests: XCTestCase {
   func testRecovery137() {
     assertParse(
       """
-      func foo2(bar! = baz) {}
+      func foo2(bar1️⃣! = baz) {}
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 1: unnamed parameters must be written with the empty name '_'
+        DiagnosticSpec(message: "expected ':' and type in parameter"),
+        DiagnosticSpec(message: "unexpected code '! = baz' in parameter clause"),
       ]
     )
   }
@@ -1721,7 +1723,7 @@ final class RecoveryTests: XCTestCase {
       """,
       diagnostics: [
         DiagnosticSpec(locationMarker: "1️⃣", message: "expected '>' to end generic parameter clause"),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected type and ')' to end parameter clause"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected ')' to end parameter clause"),
         DiagnosticSpec(locationMarker: "3️⃣", message: "unexpected code ')}' before struct"),
         DiagnosticSpec(locationMarker: "4️⃣", message: "initializers cannot have a name", fixIts: ["remove 'x'"]),
       ]
@@ -1839,13 +1841,18 @@ final class RecoveryTests: XCTestCase {
   func testRecovery153() {
     assertParse(
       """
-      if var y = x, z = x {
+      if var y = x, 1️⃣z = x {
         z = y; y = z
       }
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 1: expected 'var' in conditional, Fix-It replacements: 17 - 17 = 'var '
-      ]
+        DiagnosticSpec(message: "expected 'var' in optional binding", fixIts: ["insert 'var'"])
+      ],
+      fixedSource: """
+        if var y = x, var z = x {
+          z = y; y = z
+        }
+        """
     )
   }
 
@@ -1958,34 +1965,46 @@ final class RecoveryTests: XCTestCase {
   }
 
   func testRecovery163() {
+    // <rdar://problem/22387625> QoI: Common errors: 'let x= 5' and 'let x =5' could use Fix-its
     assertParse(
       """
-      // <rdar://problem/22387625> QoI: Common errors: 'let x= 5' and 'let x =5' could use Fix-its
       func r22387625() {
-        let _= 5
-        let _ =5
+        let _1️⃣= 5
+        let _ =2️⃣5
       }
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 3: '=' must have consistent whitespace on both sides, Fix-It replacements: 8 - 8 = ' '
-        // TODO: Old parser expected error on line 4: '=' must have consistent whitespace on both sides, Fix-It replacements: 10 - 10 = ' '
-      ]
+        DiagnosticSpec(locationMarker: "1️⃣", message: "'=' must have consistent whitespace on both sides", fixIts: ["insert whitespace"]),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "'=' must have consistent whitespace on both sides", fixIts: ["insert whitespace"]),
+      ],
+      fixedSource: """
+        func r22387625() {
+          let _ = 5
+          let _ = 5
+        }
+        """
     )
   }
 
   func testRecovery164() {
+    // https://github.com/apple/swift/issues/45723
     assertParse(
       """
-      // https://github.com/apple/swift/issues/45723
       do {
-        let _: Int= 5
-        let _: Array<Int>= []
+        let _: Int1️⃣= 5
+        let _: Array<Int>2️⃣= []
       }
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 3: '=' must have consistent whitespace on both sides, Fix-It replacements: 13 - 13 = ' '
-        // TODO: Old parser expected error on line 4: '=' must have consistent whitespace on both sides, Fix-It replacements: 20 - 20 = ' '
-      ]
+        DiagnosticSpec(locationMarker: "1️⃣", message: "'=' must have consistent whitespace on both sides", fixIts: ["insert whitespace"]),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "'=' must have consistent whitespace on both sides", fixIts: ["insert whitespace"]),
+      ],
+      fixedSource: """
+        do {
+          let _: Int = 5
+          let _: Array<Int> = []
+        }
+        """
     )
   }
 
@@ -2139,16 +2158,18 @@ final class RecoveryTests: XCTestCase {
   }
 
   func testRecovery176() {
+    // rdar://problem/22478168
+    // https://github.com/apple/swift/issues/53396
     assertParse(
       """
-      // rdar://problem/22478168
-      // https://github.com/apple/swift/issues/53396
       func f_53396(a: Int 1️⃣== 0) {}
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 3: expected '=' instead of '==' to assign default value for parameter, Fix-It replacements: 21 - 23 = '='
-        DiagnosticSpec(message: "unexpected code '== 0' in parameter clause")
-      ]
+        DiagnosticSpec(message: "expected '=' instead of '==' to assign default value for parameter", fixIts: ["replace '==' with '='"])
+      ],
+      fixedSource: """
+        func f_53396(a: Int = 0) {}
+        """
     )
   }
 
@@ -2202,8 +2223,7 @@ final class RecoveryTests: XCTestCase {
       }2️⃣
       """,
       diagnostics: [
-        // TODO: Old parser expected error on line 2: expected '{' or 'if' after 'else'
-        DiagnosticSpec(locationMarker: "1️⃣", message: "expected '{' in 'if' statement"),
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected '{' or 'if' after 'else'"),
         DiagnosticSpec(locationMarker: "2️⃣", message: "expected '}' to end function"),
       ]
     )

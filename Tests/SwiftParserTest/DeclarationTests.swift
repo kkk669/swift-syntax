@@ -55,21 +55,21 @@ final class DeclarationTests: XCTestCase {
       diagnostics: [
         DiagnosticSpec(locationMarker: "1️⃣", message: "keyword 'where' cannot be used as an identifier here", fixIts: ["if this name is unavoidable, use backticks to escape it"]),
         DiagnosticSpec(locationMarker: "2️⃣", message: "expected '(' to start parameter clause", fixIts: ["insert '('"]),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected ':' and type in parameter"),
         DiagnosticSpec(locationMarker: "3️⃣", message: "expected ')' to end parameter clause", fixIts: ["insert ')'"]),
       ],
       fixedSource: """
         func `where`(
-        r)
+        r: <#type#>)
         """
     )
 
     assertParse("func /^/ (lhs: Int, rhs: Int) -> Int { 1 / 2 }")
 
     assertParse(
-      "func 1️⃣/^notoperator^/ (lhs: Int, rhs: Int) -> Int { 1 / 2 }",
+      "func /^1️⃣notoperator^/ (lhs: Int, rhs: Int) -> Int { 1 / 2 }",
       diagnostics: [
-        DiagnosticSpec(message: "expected identifier in function"),
-        DiagnosticSpec(message: "unexpected code '/^notoperator^/' before parameter clause"),
+        DiagnosticSpec(message: "unexpected code 'notoperator^/' before parameter clause")
       ]
     )
 
@@ -742,16 +742,15 @@ final class DeclarationTests: XCTestCase {
   func testExpressionMember() {
     assertParse(
       """
-      struct S {
-        1️⃣/ 2️⃣#3️⃣#4️⃣#line 5️⃣25 "line-directive.swift"
-      }
+      struct S {1️⃣
+        /2️⃣ ###line 25 "line-directive.swift"3️⃣
+      4️⃣}
       """,
       diagnostics: [
-        DiagnosticSpec(locationMarker: "1️⃣", message: "expected 'func' in function"),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected parameter clause in function signature"),
-        DiagnosticSpec(locationMarker: "3️⃣", message: "expected identifier in macro expansion"),
-        DiagnosticSpec(locationMarker: "4️⃣", message: "expected identifier in macro expansion"),
-        DiagnosticSpec(locationMarker: "5️⃣", message: #"unexpected code '25 "line-directive.swift"' in struct"#),
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected '}' to end struct"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "bare slash regex literal may not start with space"),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected '/' to end regex literal"),
+        DiagnosticSpec(locationMarker: "4️⃣", message: "extraneous brace at top level"),
       ]
     )
   }
@@ -1548,6 +1547,16 @@ final class DeclarationTests: XCTestCase {
     assertParse(
       """
       func badTypeConformance3<T>(_: T) where (T) -> () : EqualComparable { }
+      """
+    )
+  }
+
+  func testSuppressedImplicitConformance() {
+    assertParse(
+      """
+      struct Hello: ~Copyable {}
+
+      enum Whatever: Int, ~ Hashable, Equatable {}
       """
     )
   }

@@ -75,10 +75,7 @@ public struct ColorLiteralMacro: ExpressionMacro {
       with: "_colorLiteralRed"
     )
     let initSyntax: ExprSyntax = ".init(\(argList))"
-    if let leadingTrivia = macro.leadingTrivia {
-      return initSyntax.with(\.leadingTrivia, leadingTrivia)
-    }
-    return initSyntax
+    return initSyntax.with(\.leadingTrivia, macro.leadingTrivia)
   }
 }
 
@@ -95,10 +92,7 @@ public struct FileLiteralMacro: ExpressionMacro {
       with: "fileReferenceLiteralResourceName"
     )
     let initSyntax: ExprSyntax = ".init(\(argList))"
-    if let leadingTrivia = macro.leadingTrivia {
-      return initSyntax.with(\.leadingTrivia, leadingTrivia)
-    }
-    return initSyntax
+    return initSyntax.with(\.leadingTrivia, macro.leadingTrivia)
   }
 }
 
@@ -115,10 +109,7 @@ public struct ImageLiteralMacro: ExpressionMacro {
       with: "imageLiteralResourceName"
     )
     let initSyntax: ExprSyntax = ".init(\(argList))"
-    if let leadingTrivia = macro.leadingTrivia {
-      return initSyntax.with(\.leadingTrivia, leadingTrivia)
-    }
-    return initSyntax
+    return initSyntax.with(\.leadingTrivia, macro.leadingTrivia)
   }
 }
 
@@ -134,11 +125,7 @@ public struct ColumnMacro: ExpressionMacro {
     else {
       throw CustomError.message("can't find location for macro")
     }
-
-    if let leadingTrivia = macro.leadingTrivia {
-      return sourceLoc.column.with(\.leadingTrivia, leadingTrivia)
-    }
-    return sourceLoc.column
+    return sourceLoc.column.with(\.leadingTrivia, macro.leadingTrivia)
   }
 }
 
@@ -154,11 +141,7 @@ public struct FileIDMacro: ExpressionMacro {
     else {
       throw CustomError.message("can't find location for macro")
     }
-
-    if let leadingTrivia = macro.leadingTrivia {
-      return sourceLoc.file.with(\.leadingTrivia, leadingTrivia)
-    }
-    return sourceLoc.file
+    return sourceLoc.file.with(\.leadingTrivia, macro.leadingTrivia)
   }
 }
 
@@ -378,15 +361,11 @@ public struct AddCompletionHandler: PeerMacro {
       newParameterList = parameterList.appending(completionHandlerParam)
     }
 
-    let callArguments: [String] = try parameterList.map { param in
-      guard let argName = param.secondName ?? param.firstName else {
-        throw CustomError.message(
-          "@addCompletionHandler argument must have a name"
-        )
-      }
+    let callArguments: [String] = parameterList.map { param in
+      let argName = param.secondName ?? param.firstName
 
-      if let paramName = param.firstName, paramName.text != "_" {
-        return "\(paramName.text): \(argName.text)"
+      if param.firstName.text != "_" {
+        return "\(param.firstName.text): \(argName.text)"
       }
 
       return "\(argName.text)"
@@ -618,6 +597,59 @@ extension CustomTypeWrapperMacro: AccessorMacro {
   }
 }
 
+public struct UnwrapMacro: CodeItemMacro {
+  public static func expansion(
+    of node: some FreestandingMacroExpansionSyntax,
+    in context: some MacroExpansionContext
+  ) throws -> [CodeBlockItemSyntax] {
+    guard !node.argumentList.isEmpty else {
+      throw CustomError.message("'#unwrap' requires arguments")
+    }
+    let errorThrower = node.trailingClosure
+    let identifiers = try node.argumentList.map { argument in
+      guard let tupleElement = argument.as(TupleExprElementSyntax.self),
+        let identifierExpr = tupleElement.expression.as(IdentifierExprSyntax.self)
+      else {
+        throw CustomError.message("Arguments must be identifiers")
+      }
+      return identifierExpr.identifier
+    }
+
+    func elseBlock(_ token: TokenSyntax) -> CodeBlockSyntax {
+      let expr: ExprSyntax
+      if let errorThrower {
+        expr = """
+          \(errorThrower)("\(raw: token.text)")
+          """
+      } else {
+        expr = """
+          fatalError("'\(raw: token.text)' is nil")
+          """
+      }
+      return .init(
+        statements: .init([
+          .init(
+            leadingTrivia: " ",
+            item: .expr(expr),
+            trailingTrivia: " "
+          )
+        ])
+      )
+    }
+
+    return identifiers.map { identifier in
+      CodeBlockItemSyntax(
+        item: CodeBlockItemSyntax.Item.stmt(
+          """
+
+          guard let \(raw: identifier.text) else \(elseBlock(identifier))
+          """
+        )
+      )
+    }
+  }
+}
+
 // MARK: Assertion helper functions
 
 /// Assert that expanding the given macros in the original source produces
@@ -685,6 +717,7 @@ public let testMacros: [String: Macro.Type] = [
   "wrapAllProperties": WrapAllProperties.self,
   "wrapStoredProperties": WrapStoredProperties.self,
   "customTypeWrapper": CustomTypeWrapperMacro.self,
+  "unwrap": UnwrapMacro.self,
 ]
 
 final class MacroSystemTests: XCTestCase {
@@ -975,5 +1008,37 @@ final class MacroSystemTests: XCTestCase {
       """
     )
 
+  }
+
+  func testUnwrap() {
+    assertMacroExpansion(
+      macros: testMacros,
+      #"""
+      let x: Int? = 1
+      let y: Int? = nil
+      let z: Int? = 3
+      #unwrap(x, y, z)
+      #unwrap(x, y, z) {
+        fatalError("nil is \\($0)")
+      }
+      """#,
+      #"""
+      let x: Int? = 1
+      let y: Int? = nil
+      let z: Int? = 3
+      guard let x else { fatalError("'x' is nil") }
+      guard let y else { fatalError("'y' is nil") }
+      guard let z else { fatalError("'z' is nil") }
+      guard let x else { {
+        fatalError("nil is \\($0)")
+      }("x") }
+      guard let y else { {
+        fatalError("nil is \\($0)")
+      }("y") }
+      guard let z else { {
+        fatalError("nil is \\($0)")
+      }("z") }
+      """#
+    )
   }
 }

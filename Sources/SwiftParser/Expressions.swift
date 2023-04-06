@@ -1170,7 +1170,7 @@ extension Parser {
       )
     case (.rawStringDelimiter, _)?, (.stringQuote, _)?, (.multilineStringQuote, _)?, (.singleQuote, _)?:
       return RawExprSyntax(self.parseStringLiteral())
-    case (.regexLiteral, _)?:
+    case (.extendedRegexDelimiter, _)?, (.regexSlash, _)?:
       return RawExprSyntax(self.parseRegexLiteral())
     case (.nilKeyword, let handle)?:
       let nilKeyword = self.eat(handle)
@@ -1433,13 +1433,37 @@ extension Parser {
   /// Grammar
   /// =======
   ///
-  ///     regular-expression-literal → '\' `Any valid regular expression characters` '\'
+  ///     regular-expression-literal → '#'* '/' `Any valid regular expression characters` '/' '#'*
   @_spi(RawSyntax)
   public mutating func parseRegexLiteral() -> RawRegexLiteralExprSyntax {
-    let (unexpectedBeforeLiteral, literal) = self.expect(.regexLiteral)
+    // See if we have an opening set of pounds.
+    let openPounds = self.consume(if: .extendedRegexDelimiter)
+
+    // Parse the opening slash.
+    let (unexpectedBeforeSlash, openSlash) = self.expect(.regexSlash)
+
+    // If we had opening pounds, there should be no trivia for the slash.
+    if let openPounds = openPounds {
+      precondition(openPounds.trailingTriviaByteLength == 0 && openSlash.leadingTriviaByteLength == 0)
+    }
+
+    // Parse the pattern and closing slash, avoiding recovery or leading trivia
+    // as the lexer should provide the tokens exactly in order without trivia,
+    // otherwise they should be treated as missing.
+    let pattern = self.expectWithoutRecoveryOrLeadingTrivia(.regexLiteralPattern)
+    let closeSlash = self.expectWithoutRecoveryOrLeadingTrivia(.regexSlash)
+
+    // Finally, parse a closing set of pounds.
+    let (unexpectedBeforeClosePounds, closePounds) = parsePoundDelimiter(.extendedRegexDelimiter, matching: openPounds)
+
     return RawRegexLiteralExprSyntax(
-      unexpectedBeforeLiteral,
-      regex: literal,
+      openingPounds: openPounds,
+      unexpectedBeforeSlash,
+      openSlash: openSlash,
+      regexPattern: pattern,
+      closeSlash: closeSlash,
+      unexpectedBeforeClosePounds,
+      closingPounds: closePounds,
       arena: self.arena
     )
   }
@@ -1671,7 +1695,18 @@ extension Parser {
 extension Parser {
   @_spi(RawSyntax)
   public mutating func parseDefaultArgument() -> RawInitializerClauseSyntax {
-    let (unexpectedBeforeEq, eq) = self.expect(.equal)
+    let unexpectedBeforeEq: RawUnexpectedNodesSyntax?
+    let eq: RawTokenSyntax
+    if let comparison = self.consumeIfContextualPunctuator("==") {
+      unexpectedBeforeEq = RawUnexpectedNodesSyntax(
+        elements: [RawSyntax(comparison)],
+        arena: self.arena
+      )
+      eq = missingToken(.equal)
+    } else {
+      (unexpectedBeforeEq, eq) = self.expect(.equal)
+    }
+
     let expr = self.parseExpression()
     return RawInitializerClauseSyntax(
       unexpectedBeforeEq,
@@ -1785,7 +1820,7 @@ extension Parser {
           let expression: RawExprSyntax
           if self.peek().rawTokenKind == .equal {
             // The name is a new declaration.
-            (unexpectedBeforeName, name) = self.expectIdentifier()
+            (unexpectedBeforeName, name) = self.expect(.identifier, TokenSpec(.self, remapping: .identifier), default: .identifier)
             (unexpectedBeforeAssignToken, assignToken) = self.expect(.equal)
             expression = self.parseExpression()
           } else {
@@ -1838,7 +1873,10 @@ extension Parser {
     if !self.at(.keyword(.in)) {
       if self.at(.leftParen) {
         // Parse the closure arguments.
-        input = .input(self.parseParameterClause(for: .closure))
+        let params = self.parseParameterClause(RawClosureParameterClauseSyntax.self) { parser in
+          parser.parseClosureParameter()
+        }
+        input = .input(params)
       } else {
         var params = [RawClosureParamSyntax]()
         var loopProgress = LoopProgressCondition()
@@ -2314,7 +2352,7 @@ extension Parser {
                       RawCaseItemSyntax(
                         pattern: RawPatternSyntax(
                           RawIdentifierPatternSyntax(
-                            identifier: missingToken(.identifier, text: nil),
+                            identifier: missingToken(.identifier),
                             arena: self.arena
                           )
                         ),
@@ -2325,7 +2363,7 @@ extension Parser {
                     ],
                     arena: self.arena
                   ),
-                  colon: missingToken(.colon, text: nil),
+                  colon: missingToken(.colon),
                   arena: self.arena
                 )
               ),

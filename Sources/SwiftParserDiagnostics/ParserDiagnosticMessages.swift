@@ -128,6 +128,12 @@ extension DiagnosticMessage where Self == StaticParserError {
   public static var expectedExpressionAfterTry: Self {
     .init("expected expression after 'try'")
   }
+  public static var expectedAssignmentInsteadOfComparisonOperator: Self {
+    .init("expected '=' instead of '==' to assign default value for parameter")
+  }
+  public static var expectedLeftBraceOrIfAfterElse: Self {
+    .init("expected '{' or 'if' after 'else'")
+  }
   public static var expectedSequenceExpressionInForEachLoop: Self {
     .init("expected Sequence expression for for-each loop")
   }
@@ -191,8 +197,11 @@ extension DiagnosticMessage where Self == StaticParserError {
   public static var subscriptsCannotHaveNames: Self {
     .init("subscripts cannot have a name")
   }
-  public static var tooManyClosingRawStringDelimiters: Self {
+  public static var tooManyClosingPoundDelimiters: Self {
     .init("too many '#' characters in closing delimiter")
+  }
+  public static var tooFewClosingPoundDelimiters: Self {
+    .init("expected additional '#' characters in closing delimiter")
   }
   public static var tooManyRawStringDelimitersToStartInterpolation: Self {
     .init("too many '#' characters to start string interpolation")
@@ -498,6 +507,9 @@ extension FixItMessage where Self == StaticParserFixIt {
   public static var insertNewline: Self {
     .init("insert newline")
   }
+  public static var insertWhitespace: Self {
+    .init("insert whitespace")
+  }
   public static var joinIdentifiers: Self {
     .init("join the identifiers together")
   }
@@ -509,6 +521,9 @@ extension FixItMessage where Self == StaticParserFixIt {
   }
   public static var removeExtraneousDelimiters: Self {
     .init("remove extraneous delimiters")
+  }
+  public static var insertExtraClosingPounds: Self {
+    .init("insert additional closing '#' delimiters")
   }
   public static var removeExtraneousWhitespace: Self {
     .init("remove whitespace")

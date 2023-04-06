@@ -304,14 +304,6 @@ final class ExpressionTests: XCTestCase {
     )
   }
 
-  func testRegexLiteral() {
-    assertParse(
-      #"""
-      /(?<identifier>[[:alpha:]]\w*) = (?<hex>[0-9A-F]+)/
-      """#
-    )
-  }
-
   func testInitializerExpression() {
     assertParse("Lexer.Cursor(input: input, previous: 0)")
   }
@@ -1920,5 +1912,35 @@ final class StatementExpressionTests: XCTestCase {
         DiagnosticSpec(message: "consecutive statements on a line must be separated by ';'")
       ]
     )
+  }
+
+  func testClosureParameterWithModifier() {
+    assertParse(
+      """
+      _ = { (_const x: Int) in }
+      """
+    )
+  }
+
+  func testClosureWithExternalParameterName() {
+    assertParse(
+      """
+      _ = { (_ x: MyType) in }
+      """
+    )
+
+    // Using anything but '_' for the first parameter name is valid in SwiftSyntax
+    // but should be diagnosed in the compiler.
+    assertParse(
+      """
+      _ = { (x y: MyType) in }
+      """
+    )
+  }
+
+  func testClosureParameterWithAttribute() {
+    assertParse("_ = { (@_noImplicitCopy _ x: Int) -> () in }")
+
+    assertParse("_ = { (@Wrapper x) in }")
   }
 }

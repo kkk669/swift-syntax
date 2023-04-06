@@ -24,11 +24,13 @@ extension Parser {
   }
 
   mutating func parseArgumentLabel() -> (RawUnexpectedNodesSyntax?, RawTokenSyntax) {
-    precondition(self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true))
+    guard self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true) else {
+      return (nil, missingToken(.identifier))
+    }
     if let dollarIdent = self.consume(if: .dollarIdentifier) {
       return (
         RawUnexpectedNodesSyntax(elements: [RawSyntax(dollarIdent)], arena: self.arena),
-        self.missingToken(.identifier, text: nil)
+        self.missingToken(.identifier)
       )
     } else {
       if let wildcardToken = self.consume(if: .wildcard) {
@@ -63,20 +65,20 @@ extension Parser {
 
   mutating func parseDeclNameRef(_ flags: DeclNameOptions = []) -> (RawTokenSyntax, RawDeclNameArgumentsSyntax?) {
     // Consume the base name.
-    let ident: RawTokenSyntax
-    if self.at(.identifier) || self.at(.keyword(.self), .keyword(.Self), .keyword(.`init`)) {
-      ident = self.expectIdentifierWithoutRecovery()
+    let base: RawTokenSyntax
+    if let identOrSelf = self.consume(if: .identifier, .keyword(.self), .keyword(.Self)) ?? self.consume(if: .keyword(.`init`)) {
+      base = identOrSelf
     } else if flags.contains(.operators), let (_, _) = self.at(anyIn: Operator.self) {
-      ident = self.consumeAnyToken(remapping: .binaryOperator)
+      base = self.consumeAnyToken(remapping: .binaryOperator)
     } else if flags.contains(.keywords) && self.currentToken.isLexerClassifiedKeyword {
-      ident = self.consumeAnyToken(remapping: .identifier)
+      base = self.consumeAnyToken(remapping: .identifier)
     } else {
-      ident = self.expectIdentifierWithoutRecovery()
+      base = missingToken(.identifier)
     }
 
     // Parse an argument list, if the flags allow it and it's present.
     let args = self.parseArgLabelList(flags)
-    return (ident, args)
+    return (base, args)
   }
 
   mutating func parseArgLabelList(_ flags: DeclNameOptions) -> RawDeclNameArgumentsSyntax? {
@@ -176,7 +178,7 @@ extension Parser {
     var keepGoing: RawTokenSyntax? = nil
     var loopProgress = LoopProgressCondition()
     repeat {
-      let (name, _) = self.parseDeclNameRef()
+      let (unexpectedBeforeName, name) = self.expect(.identifier, .keyword(.self), .keyword(.Self), default: .identifier)
       let generics: RawGenericArgumentClauseSyntax?
       if self.atContextualPunctuator("<") {
         generics = self.parseGenericArguments()
@@ -188,6 +190,7 @@ extension Parser {
           RawMemberTypeIdentifierSyntax(
             baseType: result!,
             period: keepGoing,
+            unexpectedBeforeName,
             name: name,
             genericArgumentClause: generics,
             arena: self.arena
@@ -196,6 +199,7 @@ extension Parser {
       } else {
         result = RawTypeSyntax(
           RawSimpleTypeIdentifierSyntax(
+            unexpectedBeforeName,
             name: name,
             genericArgumentClause: generics,
             arena: self.arena

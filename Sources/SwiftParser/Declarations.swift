@@ -192,7 +192,7 @@ extension Parser {
             lastElement.unexpectedBeforeDecl,
             decl: lastElement.decl,
             lastElement.unexpectedBetweenDeclAndSemicolon,
-            semicolon: parser.missingToken(.semicolon, text: nil),
+            semicolon: parser.missingToken(.semicolon),
             lastElement.unexpectedAfterSemicolon,
             arena: parser.arena
           )
@@ -476,7 +476,7 @@ extension Parser {
         // Parse the 'each' keyword for a type parameter pack 'each T'.
         var each = self.consume(if: .keyword(.each))
 
-        let (unexpectedBetweenEachAndName, name) = self.expectIdentifier()
+        let (unexpectedBetweenEachAndName, name) = self.expectIdentifier(allowSelfOrCapitalSelfAsIdentifier: true)
         if attributes == nil && each == nil && unexpectedBetweenEachAndName == nil && name.isMissing && elements.isEmpty {
           break
         }
@@ -631,7 +631,7 @@ extension Parser {
               body: .sameTypeRequirement(
                 RawSameTypeRequirementSyntax(
                   leftTypeIdentifier: RawTypeSyntax(RawMissingTypeSyntax(arena: self.arena)),
-                  equalityToken: missingToken(.equal),
+                  equalityToken: missingToken(.binaryOperator, text: "=="),
                   rightTypeIdentifier: RawTypeSyntax(RawMissingTypeSyntax(arena: self.arena)),
                   arena: self.arena
                 )
@@ -835,7 +835,7 @@ extension Parser {
             lastItem.unexpectedBeforeDecl,
             decl: lastItem.decl,
             lastItem.unexpectedBetweenDeclAndSemicolon,
-            semicolon: self.missingToken(.semicolon, text: nil),
+            semicolon: self.missingToken(.semicolon),
             lastItem.unexpectedAfterSemicolon,
             arena: self.arena
           )
@@ -890,11 +890,13 @@ extension Parser {
       var loopProgress = LoopProgressCondition()
       repeat {
         let unexpectedPeriod = self.consume(if: .period)
-        let (unexpectedBeforeName, name) = self.expectIdentifier(allowIdentifierLikeKeywords: false, keywordRecovery: true)
+        let (unexpectedBeforeName, name) = self.expectIdentifier(keywordRecovery: true)
 
-        let associatedValue: RawParameterClauseSyntax?
+        let associatedValue: RawEnumCaseParameterClauseSyntax?
         if self.at(TokenSpec(.leftParen, allowAtStartOfLine: false)) {
-          associatedValue = self.parseParameterClause(for: .enumCase)
+          associatedValue = self.parseParameterClause(RawEnumCaseParameterClauseSyntax.self) { parser in
+            parser.parseEnumCaseParameter()
+          }
         } else {
           associatedValue = nil
         }
@@ -1115,182 +1117,6 @@ extension Parser {
 }
 
 extension Parser {
-  public enum ParameterSubject {
-    case closure
-    case enumCase
-    case functionParameters
-    case indices
-
-    var isClosure: Bool {
-      switch self {
-      case .closure: return true
-      case .enumCase: return false
-      case .functionParameters: return false
-      case .indices: return false
-      }
-    }
-  }
-
-  mutating func parseParameterModifiers(for subject: ParameterSubject) -> RawModifierListSyntax? {
-    var elements = [RawDeclModifierSyntax]()
-    var loopCondition = LoopProgressCondition()
-    MODIFIER_LOOP: while loopCondition.evaluate(currentToken) {
-      switch self.at(anyIn: ParameterModifier.self) {
-      case (._const, let handle)?:
-        elements.append(RawDeclModifierSyntax(name: self.eat(handle), detail: nil, arena: self.arena))
-      case (.isolated, let handle)? where self.withLookahead({ !$0.startsParameterName(isClosure: subject.isClosure, allowMisplacedSpecifierRecovery: false) }):
-        elements.append(RawDeclModifierSyntax(name: self.eat(handle), detail: nil, arena: self.arena))
-      default:
-        break MODIFIER_LOOP
-      }
-    }
-    if elements.isEmpty {
-      return nil
-    } else {
-      return RawModifierListSyntax(elements: elements, arena: self.arena)
-    }
-  }
-
-  @_spi(RawSyntax)
-  public mutating func parseFunctionParameter(for subject: ParameterSubject) -> RawFunctionParameterSyntax {
-    // Parse any declaration attributes. The exception here is enum cases
-    // which only allow types, so we do not consume attributes to allow the
-    // type attribute grammar a chance to examine them.
-    let attrs: RawAttributeListSyntax?
-    if case .enumCase = subject {
-      attrs = nil
-    } else {
-      attrs = self.parseAttributeList()
-    }
-
-    let modifiers = parseParameterModifiers(for: subject)
-
-    var misplacedSpecifiers: [RawTokenSyntax] = []
-    if self.withLookahead({ !$0.startsParameterName(isClosure: subject.isClosure, allowMisplacedSpecifierRecovery: false) }) {
-      while canHaveParameterSpecifier,
-        let specifier = self.consume(ifAnyIn: TypeSpecifier.self)
-      {
-        misplacedSpecifiers.append(specifier)
-      }
-    }
-
-    let unexpectedBeforeFirstName: RawUnexpectedNodesSyntax?
-    let firstName: RawTokenSyntax?
-    let unexpectedBeforeSecondName: RawUnexpectedNodesSyntax?
-    let secondName: RawTokenSyntax?
-    let unexpectedBeforeColon: RawUnexpectedNodesSyntax?
-    let colon: RawTokenSyntax?
-    let shouldParseType: Bool
-
-    if self.withLookahead({ $0.startsParameterName(isClosure: subject.isClosure, allowMisplacedSpecifierRecovery: false) }) {
-      if self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true) {
-        (unexpectedBeforeFirstName, firstName) = self.parseArgumentLabel()
-      } else {
-        unexpectedBeforeFirstName = nil
-        firstName = nil
-      }
-
-      if self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true) {
-        (unexpectedBeforeSecondName, secondName) = self.parseArgumentLabel()
-      } else {
-        unexpectedBeforeSecondName = nil
-        secondName = nil
-      }
-      if subject.isClosure {
-        unexpectedBeforeColon = nil
-        colon = self.consume(if: .colon)
-        shouldParseType = (colon != nil)
-      } else {
-        (unexpectedBeforeColon, colon) = self.expect(.colon)
-        shouldParseType = true
-      }
-    } else {
-      unexpectedBeforeFirstName = nil
-      firstName = nil
-      unexpectedBeforeSecondName = nil
-      secondName = nil
-      unexpectedBeforeColon = nil
-      colon = nil
-      shouldParseType = true
-    }
-
-    let type: RawTypeSyntax?
-    if shouldParseType {
-      type = self.parseType(misplacedSpecifiers: misplacedSpecifiers)
-    } else {
-      type = nil
-    }
-
-    let ellipsis: RawTokenSyntax?
-    if self.atContextualPunctuator("...") {
-      ellipsis = self.consumeAnyToken(remapping: .ellipsis)
-    } else {
-      ellipsis = nil
-    }
-
-    let defaultArgument: RawInitializerClauseSyntax?
-    if self.at(.equal) {
-      defaultArgument = self.parseDefaultArgument()
-    } else {
-      defaultArgument = nil
-    }
-
-    let trailingComma = self.consume(if: .comma)
-    return RawFunctionParameterSyntax(
-      attributes: attrs,
-      modifiers: modifiers,
-      RawUnexpectedNodesSyntax(combining: misplacedSpecifiers, unexpectedBeforeFirstName, arena: self.arena),
-      firstName: firstName,
-      unexpectedBeforeSecondName,
-      secondName: secondName,
-      unexpectedBeforeColon,
-      colon: colon,
-      type: type,
-      ellipsis: ellipsis,
-      defaultArgument: defaultArgument,
-      trailingComma: trailingComma,
-      arena: self.arena
-    )
-  }
-
-  @_spi(RawSyntax)
-  public mutating func parseParameterClause(for subject: ParameterSubject) -> RawParameterClauseSyntax {
-    let (unexpectedBeforeLParen, lparen) = self.expect(.leftParen)
-    var elements = [RawFunctionParameterSyntax]()
-    // If we are missing the left parenthesis and the next token doesn't appear
-    // to be an argument label, don't parse any parameters.
-    let shouldSkipParameterParsing = lparen.isMissing && (!currentToken.canBeArgumentLabel(allowDollarIdentifier: true) || currentToken.isLexerClassifiedKeyword)
-    if !shouldSkipParameterParsing {
-      var keepGoing = true
-      var loopProgress = LoopProgressCondition()
-      while !self.at(.eof, .rightParen)
-        && keepGoing
-        && loopProgress.evaluate(currentToken)
-      {
-        let parameter = parseFunctionParameter(for: subject)
-        keepGoing = parameter.trailingComma != nil
-        elements.append(parameter)
-      }
-    }
-    let (unexpectedBeforeRParen, rparen) = self.expect(.rightParen)
-
-    let parameters: RawFunctionParameterListSyntax
-    if elements.isEmpty && (lparen.isMissing || rparen.isMissing) {
-      parameters = RawFunctionParameterListSyntax(elements: [], arena: self.arena)
-    } else {
-      parameters = RawFunctionParameterListSyntax(elements: elements, arena: self.arena)
-    }
-
-    return RawParameterClauseSyntax(
-      unexpectedBeforeLParen,
-      leftParen: lparen,
-      parameterList: parameters,
-      unexpectedBeforeRParen,
-      rightParen: rparen,
-      arena: self.arena
-    )
-  }
-
   /// If a `throws` keyword appears right in front of the `arrow`, it is returned as `misplacedThrowsKeyword` so it can be synthesized in front of the arrow.
   mutating func parseFunctionReturnClause<S: RawEffectSpecifiersTrait>(effectSpecifiers: inout S?, allowNamedOpaqueResultType: Bool) -> RawReturnClauseSyntax {
     let (unexpectedBeforeArrow, arrow) = self.expect(.arrow)
@@ -1315,28 +1141,6 @@ extension Parser {
 }
 
 extension Parser {
-  /// Are we at a regular expression literal that could act as an operator?
-  private mutating func atRegexLiteralThatCouldBeAnOperator() -> Bool {
-    guard self.at(.regexLiteral) else {
-      return false
-    }
-
-    /// Try to re-lex at regex literal as an operator. If it succeeds and
-    /// consumes the entire regex literal, we're done.
-    return self.currentToken.tokenText.withBuffer {
-      (buffer: UnsafeBufferPointer<UInt8>) -> Bool in
-      var cursor = Lexer.Cursor(input: buffer, previous: 0)
-      guard buffer[0] == UInt8(ascii: "/") else { return false }
-      switch cursor.lexOperatorIdentifier(sourceBufferStart: cursor).tokenKind {
-      case .unknown:
-        return false
-
-      default:
-        return cursor.input.isEmpty
-      }
-    }
-  }
-
   @_spi(RawSyntax)
   public mutating func parseFuncDeclaration(
     _ attrs: DeclAttributes,
@@ -1345,7 +1149,7 @@ extension Parser {
     let (unexpectedBeforeFuncKeyword, funcKeyword) = self.eat(handle)
     let unexpectedBeforeIdentifier: RawUnexpectedNodesSyntax?
     let identifier: RawTokenSyntax
-    if self.at(anyIn: Operator.self) != nil || self.at(.exclamationMark, .prefixAmpersand) || self.atRegexLiteralThatCouldBeAnOperator() {
+    if self.at(anyIn: Operator.self) != nil || self.at(.exclamationMark, .prefixAmpersand) {
       var name = self.currentToken.tokenText
       if name.count > 1 && name.hasSuffix("<") && self.peek().rawTokenKind == .identifier {
         name = SyntaxText(rebasing: name.dropLast())
@@ -1390,7 +1194,9 @@ extension Parser {
 
   @_spi(RawSyntax)
   public mutating func parseFunctionSignature(allowOutput: Bool = true) -> RawFunctionSignatureSyntax {
-    let input = self.parseParameterClause(for: .functionParameters)
+    let input = self.parseParameterClause(RawParameterClauseSyntax.self) { parser in
+      parser.parseFunctionParameter()
+    }
 
     var effectSpecifiers = self.parseDeclEffectSpecifiers()
 
@@ -1454,7 +1260,9 @@ extension Parser {
       genericParameterClause = nil
     }
 
-    let indices = self.parseParameterClause(for: .indices)
+    let indices = self.parseParameterClause(RawParameterClauseSyntax.self) { parser in
+      parser.parseFunctionParameter()
+    }
 
     var misplacedEffectSpecifiers: RawDeclEffectSpecifiersSyntax?
     let result = self.parseFunctionReturnClause(effectSpecifiers: &misplacedEffectSpecifiers, allowNamedOpaqueResultType: true)
@@ -1575,7 +1383,7 @@ extension Parser {
               typeAnnotationUnwrapped.unexpectedBetweenColonAndType,
               arena: self.arena
             ),
-            equal: missingToken(.equal, text: nil),
+            equal: missingToken(.equal),
             value: initExpr,
             arena: self.arena
           )
@@ -1742,7 +1550,7 @@ extension Parser {
     let lbrace: RawTokenSyntax
     if self.at(anyIn: AccessorKind.self) != nil {
       unexpectedBeforeLBrace = nil
-      lbrace = missingToken(.leftBrace, text: nil)
+      lbrace = missingToken(.leftBrace)
     } else {
       (unexpectedBeforeLBrace, lbrace) = self.expect(.leftBrace)
     }
@@ -1831,7 +1639,7 @@ extension Parser {
     let equal: RawTokenSyntax
     if let colon = self.consume(if: .colon) {
       unexpectedBeforeEqual = RawUnexpectedNodesSyntax(elements: [RawSyntax(colon)], arena: self.arena)
-      equal = missingToken(.equal, text: nil)
+      equal = missingToken(.equal)
     } else {
       (unexpectedBeforeEqual, equal) = self.expect(.equal)
     }
@@ -1895,7 +1703,7 @@ extension Parser {
       } else {
         unexpectedBeforeName = nil
       }
-      name = missingToken(.binaryOperator, text: nil)
+      name = missingToken(.binaryOperator)
     }
 
     // Eat any subsequent tokens that are not separated to the operator by trivia.
@@ -1916,7 +1724,7 @@ extension Parser {
     // checking.
     let precedenceAndTypes: RawOperatorPrecedenceAndTypesSyntax?
     if let colon = self.consume(if: .colon) {
-      let (unexpectedBeforeIdentifier, identifier) = self.expectIdentifier(keywordRecovery: true)
+      let (unexpectedBeforeIdentifier, identifier) = self.expectIdentifier(allowSelfOrCapitalSelfAsIdentifier: true)
       var types = [RawDesignatedTypeElementSyntax]()
       while let comma = self.consume(if: .comma) {
         // FIXME: The compiler accepts... anything here. This is a bug.
@@ -2001,7 +1809,7 @@ extension Parser {
     _ handle: RecoveryConsumptionHandle
   ) -> RawPrecedenceGroupDeclSyntax {
     let (unexpectedBeforeGroup, group) = self.eat(handle)
-    let (unexpectedBeforeIdentifier, identifier) = self.expectIdentifier(keywordRecovery: true)
+    let (unexpectedBeforeIdentifier, identifier) = self.expectIdentifier(allowSelfOrCapitalSelfAsIdentifier: true)
     let (unexpectedBeforeLBrace, lbrace) = self.expect(.leftBrace)
 
     let groupAttributes = self.parsePrecedenceGroupAttributeListSyntax()
