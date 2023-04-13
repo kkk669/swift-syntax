@@ -20,9 +20,9 @@ fileprivate extension TokenSyntax {
   var negatedAvailabilityKeyword: TokenSyntax {
     switch self.tokenKind {
     case .poundAvailableKeyword:
-      return self.withKind(.poundUnavailableKeyword)
+      return self.with(\.tokenKind, .poundUnavailableKeyword)
     case .poundUnavailableKeyword:
-      return self.withKind(.poundAvailableKeyword)
+      return self.with(\.tokenKind, .poundAvailableKeyword)
     default:
       preconditionFailure("The availability token of an AvailabilityConditionSyntax should always be #available or #unavailable")
     }
@@ -327,7 +327,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         FixIt(
           message: .joinIdentifiers,
           changes: [
-            FixIt.MultiNodeChange(.replace(oldNode: Syntax(previousToken), newNode: Syntax(TokenSyntax(.identifier(joined), presence: .present)))),
+            FixIt.MultiNodeChange(.replace(oldNode: Syntax(previousToken), newNode: Syntax(TokenSyntax(.identifier(joined), trailingTrivia: tokens.last?.trailingTrivia ?? [], presence: .present)))),
             .makeMissing(tokens),
           ]
         )
@@ -338,7 +338,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
           FixIt(
             message: .joinIdentifiersWithCamelCase,
             changes: [
-              FixIt.MultiNodeChange(.replace(oldNode: Syntax(previousToken), newNode: Syntax(TokenSyntax(.identifier(joinedUsingCamelCase), presence: .present)))),
+              FixIt.MultiNodeChange(.replace(oldNode: Syntax(previousToken), newNode: Syntax(TokenSyntax(.identifier(joinedUsingCamelCase), trailingTrivia: tokens.last?.trailingTrivia ?? [], presence: .present)))),
               .makeMissing(tokens),
             ]
           )
@@ -383,6 +383,10 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     handleMisplacedEffectSpecifiersAfterArrow(effectSpecifiers: node.effectSpecifiers, misplacedSpecifiers: node.unexpectedAfterArrowToken)
 
     return .visitChildren
+  }
+
+  public override func visit(_ node: AccessorEffectSpecifiersSyntax) -> SyntaxVisitorContinueKind {
+    return handleEffectSpecifiers(node)
   }
 
   public override func visit(_ node: AssociatedtypeDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -538,8 +542,40 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     return .visitChildren
   }
 
-  public override func visit(_ node: DeclEffectSpecifiersSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: FunctionEffectSpecifiersSyntax) -> SyntaxVisitorContinueKind {
     return handleEffectSpecifiers(node)
+  }
+
+  public override func visit(_ node: GenericRequirementSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    if let unexpected = node.unexpectedBetweenBodyAndTrailingComma,
+      let token = unexpected.tokens(satisfying: { $0.tokenKind == .binaryOperator("&&") }).first,
+      let trailingComma = node.trailingComma,
+      trailingComma.presence == .missing,
+      let previous = node.unexpectedBetweenBodyAndTrailingComma?.previousToken(viewMode: .sourceAccurate)
+    {
+
+      addDiagnostic(
+        unexpected,
+        .expectedCommaInWhereClause,
+        fixIts: [
+          FixIt(
+            message: ReplaceTokensFixIt(replaceTokens: [token], replacement: .commaToken()),
+            changes: [
+              .makeMissing(token),
+              .makePresent(trailingComma),
+              FixIt.MultiNodeChange(.replaceTrailingTrivia(token: previous, newTrivia: [])),
+            ]
+          )
+        ],
+        handledNodes: [unexpected.id, trailingComma.id]
+      )
+    }
+
+    return .visitChildren
   }
 
   public override func visit(_ node: DeinitializerDeclSyntax) -> SyntaxVisitorContinueKind {
@@ -1002,6 +1038,17 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
   public override func visit(_ node: StringLiteralExprSyntax) -> SyntaxVisitorContinueKind {
     if shouldSkip(node) {
       return .skipChildren
+    }
+    // recover from Objective-C style literals
+    if let atSign = node.unexpectedBetweenOpenDelimiterAndOpenQuote?.onlyToken(where: { $0.tokenKind == .atSign }) {
+      addDiagnostic(
+        node,
+        .stringLiteralAtSign,
+        fixIts: [
+          FixIt(message: RemoveNodesFixIt(atSign), changes: .makeMissing(atSign))
+        ],
+        handledNodes: [atSign.id]
+      )
     }
     if let singleQuote = node.unexpectedBetweenOpenDelimiterAndOpenQuote?.onlyToken(where: { $0.tokenKind == .singleQuote }) {
       let fixIt = FixIt(

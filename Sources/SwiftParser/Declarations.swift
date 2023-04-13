@@ -465,7 +465,7 @@ extension Parser {
     }
 
     precondition(self.currentToken.starts(with: "<"))
-    let langle = self.consumeAnyToken(remapping: .leftAngle)
+    let langle = self.consumePrefix("<", as: .leftAngle)
     var elements = [RawGenericParameterSyntax]()
     do {
       var keepGoing: RawTokenSyntax? = nil
@@ -477,7 +477,7 @@ extension Parser {
         var each = self.consume(if: .keyword(.each))
 
         let (unexpectedBetweenEachAndName, name) = self.expectIdentifier(allowSelfOrCapitalSelfAsIdentifier: true)
-        if attributes == nil && each == nil && unexpectedBetweenEachAndName == nil && name.isMissing && elements.isEmpty {
+        if attributes == nil && each == nil && unexpectedBetweenEachAndName == nil && name.isMissing && elements.isEmpty && !self.currentToken.starts(with: ">") {
           break
         }
 
@@ -759,9 +759,21 @@ extension Parser {
         }
 
         keepGoing = self.consume(if: .comma)
+        let unexpectedBetweenBodyAndTrailingComma: RawUnexpectedNodesSyntax?
+
+        // If there's a comma, keep parsing the list.
+        // If there's a "&&", diagnose replace with a comma and keep parsing
+        if let token = self.consumeIfContextualPunctuator("&&") {
+          keepGoing = self.missingToken(.comma)
+          unexpectedBetweenBodyAndTrailingComma = RawUnexpectedNodesSyntax([token], arena: self.arena)
+        } else {
+          unexpectedBetweenBodyAndTrailingComma = nil
+        }
+
         elements.append(
           RawGenericRequirementSyntax(
             body: requirement,
+            unexpectedBetweenBodyAndTrailingComma,
             trailingComma: keepGoing,
             arena: self.arena
           )
@@ -1198,7 +1210,7 @@ extension Parser {
       parser.parseFunctionParameter()
     }
 
-    var effectSpecifiers = self.parseDeclEffectSpecifiers()
+    var effectSpecifiers = self.parseFunctionEffectSpecifiers()
 
     var output: RawReturnClauseSyntax?
 
@@ -1264,7 +1276,7 @@ extension Parser {
       parser.parseFunctionParameter()
     }
 
-    var misplacedEffectSpecifiers: RawDeclEffectSpecifiersSyntax?
+    var misplacedEffectSpecifiers: RawFunctionEffectSpecifiersSyntax?
     let result = self.parseFunctionReturnClause(effectSpecifiers: &misplacedEffectSpecifiers, allowNamedOpaqueResultType: true)
 
     // Parse a 'where' clause if present.
@@ -1519,7 +1531,7 @@ extension Parser {
       parameter = nil
     }
 
-    let effectSpecifiers = self.parseDeclEffectSpecifiers()
+    let effectSpecifiers = self.parseAccessorEffectSpecifiers()
 
     let body = self.parseOptionalCodeBlock()
     return RawAccessorDeclSyntax(

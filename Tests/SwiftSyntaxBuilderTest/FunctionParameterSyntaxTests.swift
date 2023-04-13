@@ -10,14 +10,18 @@
 //
 //===----------------------------------------------------------------------===//
 
-/// An indicator of whether a Syntax node was found or written in the source.
-///
-/// A `missing` node does not mean, necessarily, that the source item is
-/// considered "implicit", but rather that it was not found in the source.
-public enum SourcePresence {
-  /// The syntax was authored by a human and found, or was generated.
-  case present
+import XCTest
+import SwiftSyntax
+import SwiftSyntaxBuilder
 
-  /// The syntax was expected or optional, but not found in the source.
-  case missing
+final class FunctionParameterSyntaxTests: XCTestCase {
+  func testFunctionParameterSyntaxSpacing() {
+    let builder = FunctionParameterSyntax(firstName: "on", secondName: "eventLoop", type: TypeSyntax("EventLoop"))
+    assertBuildResult(
+      builder,
+      """
+      on eventLoop: EventLoop
+      """
+    )
+  }
 }

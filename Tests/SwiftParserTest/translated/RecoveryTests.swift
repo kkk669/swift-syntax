@@ -742,14 +742,30 @@ final class RecoveryTests: XCTestCase {
 
   //===--- Recovery for multiple identifiers in decls
   func testRecovery58() {
-    assertParse(
-      """
-      protocol Multi 1️⃣ident {}
-      """,
-      diagnostics: [
-        DiagnosticSpec(message: "found an unexpected second identifier in protocol", highlight: "ident")
-      ]
-    )
+    let testCases: [UInt: (fixIt: String, fixedSource: String)] = [
+      #line: ("join the identifiers together", "protocol Multiident {}"),
+      #line: ("join the identifiers together with camel-case", "protocol MultiIdent {}"),
+    ]
+
+    for (line, testCase) in testCases {
+      assertParse(
+        """
+        protocol Multi 1️⃣ident {}
+        """,
+        diagnostics: [
+          DiagnosticSpec(
+            message: "found an unexpected second identifier in protocol; is there an accidental break?",
+            highlight: "ident",
+            fixIts: ["join the identifiers together", "join the identifiers together with camel-case"],
+            line: line
+          )
+        ],
+        applyFixIts: [testCase.fixIt],
+        fixedSource: testCase.fixedSource,
+        line: line
+      )
+    }
+
   }
 
   func testRecovery60() {
@@ -758,7 +774,11 @@ final class RecoveryTests: XCTestCase {
       class CCC 1️⃣CCC<T> {}
       """,
       diagnostics: [
-        DiagnosticSpec(message: "found an unexpected second identifier in class")
+        DiagnosticSpec(
+          message: "found an unexpected second identifier in class; is there an accidental break?",
+          highlight: "CCC<T>",
+          fixIts: ["join the identifiers together"]
+        )
       ],
       fixedSource: """
         class CCCCCC<T> {}
@@ -775,7 +795,7 @@ final class RecoveryTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(locationMarker: "1️⃣", message: "found an unexpected second identifier in enum"),
+        DiagnosticSpec(locationMarker: "1️⃣", message: "found an unexpected second identifier in enum; is there an accidental break?", fixIts: ["join the identifiers together"]),
         DiagnosticSpec(locationMarker: "2️⃣", message: "consecutive declarations on a line must be separated by ';'"),
         DiagnosticSpec(locationMarker: "3️⃣", message: "unexpected code 'a' before enum case"),
       ]
@@ -794,24 +814,39 @@ final class RecoveryTests: XCTestCase {
       }
       """#,
       diagnostics: [
-        DiagnosticSpec(locationMarker: "1️⃣", message: "found an unexpected second identifier in struct"),
+        DiagnosticSpec(locationMarker: "1️⃣", message: "found an unexpected second identifier in struct; is there an accidental break?", fixIts: ["join the identifiers together"]),
         DiagnosticSpec(locationMarker: "2️⃣", message: "expected ':' in type annotation"),
         DiagnosticSpec(locationMarker: "3️⃣", message: #"unexpected code ': Int = ""' before function"#),
-        // TODO: (good first issue) Old parser expected error on line 4: found an unexpected second identifier in variable declaration; is there an accidental break?
         DiagnosticSpec(locationMarker: "4️⃣", message: "expected ':' in type annotation"),
       ]
     )
   }
 
-  func testRecovery64() {
+  func testRecovery64a() {
     assertParse(
       """
       let (efg 1️⃣hij, foobar) = (5, 6)
       """,
       diagnostics: [
-        // TODO: (good first issue) Old parser expected error on line 1: found an unexpected second identifier in constant declaration; is there an accidental break?
-        DiagnosticSpec(message: "unexpected code 'hij, foobar' in tuple pattern")
-      ]
+        DiagnosticSpec(message: "expected ',' in tuple pattern", fixIts: ["insert ','"])
+      ],
+      fixedSource: """
+        let (efg, hij, foobar) = (5, 6)
+        """
+    )
+  }
+
+  func testRecovery64b() {
+    assertParse(
+      """
+      let (efg 1️⃣Hij, foobar) = (5, 6)
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "expected ':' in tuple pattern", fixIts: ["insert ':'"])
+      ],
+      fixedSource: """
+        let (efg: Hij, foobar) = (5, 6)
+        """
     )
   }
 
@@ -1031,7 +1066,7 @@ final class RecoveryTests: XCTestCase {
     assertParse(
       """
       // Note: Don't move braces to a different line here.
-      struct ErrorGenericParameterList4< 1️⃣
+      struct ErrorGenericParameterList4<1️⃣
       {
       }
       """,
@@ -1881,16 +1916,20 @@ final class RecoveryTests: XCTestCase {
   }
 
   func testRecovery157() {
+    // <rdar://problem/19833424> QoI: Bad error message when using Objective-C literals (@"Hello")
     assertParse(
       #"""
-      // <rdar://problem/19833424> QoI: Bad error message when using Objective-C literals (@"Hello") in Swift files
       let myString = 1️⃣@"foo"
       """#,
       diagnostics: [
-        // TODO: Old parser expected error on line 2: string literals in Swift are not preceded by an '@' sign, Fix-It replacements: 16 - 17 = ''
-        DiagnosticSpec(message: "expected expression in variable"),
-        DiagnosticSpec(message: #"extraneous code '@"foo"' at top level"#),
-      ]
+        DiagnosticSpec(
+          message: "string literals in Swift are not preceded by an '@' sign",
+          fixIts: ["remove '@'"]
+        )
+      ],
+      fixedSource: """
+        let myString = "foo"
+        """
     )
   }
 
@@ -2174,15 +2213,17 @@ final class RecoveryTests: XCTestCase {
   }
 
   func testRecovery177() {
+    // rdar://38225184
     assertParse(
       """
-      // rdar://38225184
       extension Collection where Element == Int 1️⃣&& Index == Int {}
       """,
       diagnostics: [
-        DiagnosticSpec(message: "unexpected code '&& Index == Int' in extension")
-        // TODO: Old parser expected error on line 1: expected ',' to separate the requirements of this 'where' clause, Fix-It replacements: 43 - 45 = ','
-      ]
+        DiagnosticSpec(message: "expected ',' to separate the requirements of this 'where' clause", fixIts: ["replace '&&' with ','"])
+      ],
+      fixedSource: """
+        extension Collection where Element == Int, Index == Int {}
+        """
     )
   }
 
@@ -2245,4 +2286,34 @@ final class RecoveryTests: XCTestCase {
     )
   }
 
+  // https://github.com/apple/swift-syntax/issues/1483
+  func testRecovery183() {
+    // Can be parsed and produces no diagnostics.
+    assertParse(
+      "func f< 1️⃣>() {}",
+      diagnostics: [
+        DiagnosticSpec(
+          message: "expected generic parameter in generic parameter clause",
+          fixIts: ["insert generic parameter"]
+        )
+      ],
+      fixedSource: """
+        func f<<#identifier#> >() {}
+        """
+    )
+
+    // Can be parsed. Printing the node or asking for the diagnostics leads to a crash.
+    assertParse(
+      "func f<1️⃣>() {}",
+      diagnostics: [
+        DiagnosticSpec(
+          message: "expected generic parameter in generic parameter clause",
+          fixIts: ["insert generic parameter"]
+        )
+      ],
+      fixedSource: """
+        func f<<#identifier#>>() {}
+        """
+    )
+  }
 }

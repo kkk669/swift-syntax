@@ -131,6 +131,9 @@ extension DiagnosticMessage where Self == StaticParserError {
   public static var expectedAssignmentInsteadOfComparisonOperator: Self {
     .init("expected '=' instead of '==' to assign default value for parameter")
   }
+  public static var expectedCommaInWhereClause: Self {
+    .init("expected ',' to separate the requirements of this 'where' clause")
+  }
   public static var expectedLeftBraceOrIfAfterElse: Self {
     .init("expected '{' or 'if' after 'else'")
   }
@@ -193,6 +196,9 @@ extension DiagnosticMessage where Self == StaticParserError {
   }
   public static var standaloneSemicolonStatement: Self {
     .init("standalone ';' statements are not allowed")
+  }
+  public static var stringLiteralAtSign: Self {
+    .init("string literals in Swift are not preceded by an '@' sign")
   }
   public static var subscriptsCannotHaveNames: Self {
     .init("subscripts cannot have a name")
@@ -383,9 +389,9 @@ public struct SpaceSeparatedIdentifiersError: ParserError {
     if let name = firstToken.parent?.ancestorOrSelf(mapping: {
       $0.nodeTypeNameForDiagnostics(allowBlockNames: false)
     }) {
-      return "found an unexpected second identifier in \(name)"
+      return "found an unexpected second identifier in \(name); is there an accidental break?"
     } else {
-      return "found an unexpected second identifier"
+      return "found an unexpected second identifier; is there an accidental break?"
     }
   }
 }
