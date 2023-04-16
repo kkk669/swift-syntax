@@ -14,6 +14,22 @@ import SwiftDiagnostics
 import SwiftParser
 @_spi(RawSyntax) import SwiftSyntax
 
+fileprivate func getTokens(between first: TokenSyntax, and second: TokenSyntax) -> [TokenSyntax] {
+  var tokens: [TokenSyntax] = []
+  var currentToken = first
+
+  while currentToken != second {
+    tokens.append(currentToken)
+    guard let nextToken = currentToken.nextToken(viewMode: .sourceAccurate) else {
+      assertionFailure("second Token must occur after first Token")
+      return tokens
+    }
+    currentToken = nextToken
+  }
+  tokens.append(second)
+  return tokens
+}
+
 fileprivate extension TokenSyntax {
   /// Assuming this token is a `poundAvailableKeyword` or `poundUnavailableKeyword`
   /// returns the opposite keyword.
@@ -239,7 +255,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
           unexpectedTokenCondition: isOfSameKind,
           correctTokens: [specifier],
           message: { _ in misspelledError },
-          moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: specifier) },
+          moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacements: [specifier]) },
           removeRedundantFixIt: { RemoveRedundantFixIt(removeTokens: $0) }
         )
       }
@@ -438,9 +454,44 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         unexpectedTokenCondition: { $0.text == "||" },
         correctTokens: [node.trailingComma],
         message: { _ in .joinPlatformsUsingComma },
-        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: trailingComma) }
+        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacements: [trailingComma]) }
       )
     }
+    return .visitChildren
+  }
+
+  public override func visit(_ node: AvailabilityConditionSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    if let unexpectedAfterRightParen = node.unexpectedAfterRightParen,
+      let (_, falseKeyword) = unexpectedAfterRightParen.twoTokens(
+        firstSatisfying: { $0.tokenKind == .binaryOperator("==") },
+        secondSatisfying: { $0.tokenKind == .keyword(.false) }
+      )
+    {
+      // Diagnose #available used as an expression
+      let negatedAvailabilityKeyword = node.availabilityKeyword.negatedAvailabilityKeyword
+      let negatedAvailability =
+        node
+        .with(\.availabilityKeyword, negatedAvailabilityKeyword)
+        .with(\.unexpectedAfterRightParen, nil)
+      addDiagnostic(
+        unexpectedAfterRightParen,
+        AvailabilityConditionAsExpression(availabilityToken: node.availabilityKeyword, negatedAvailabilityToken: negatedAvailabilityKeyword),
+        fixIts: [
+          FixIt(
+            message: ReplaceTokensFixIt(replaceTokens: getTokens(between: node.availabilityKeyword, and: falseKeyword), replacements: getTokens(between: negatedAvailability.availabilityKeyword, and: negatedAvailability.rightParen)),
+            changes: [
+              .replace(oldNode: Syntax(node), newNode: Syntax(negatedAvailability))
+            ]
+          )
+        ],
+        handledNodes: [unexpectedAfterRightParen.id]
+      )
+    }
+
     return .visitChildren
   }
 
@@ -473,7 +524,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         unexpectedTokenCondition: { $0.text == "&&" },
         correctTokens: [node.trailingComma],
         message: { _ in .joinConditionsUsingComma },
-        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: trailingComma) }
+        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacements: [trailingComma]) }
       )
     }
     return .visitChildren
@@ -563,7 +614,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         .expectedCommaInWhereClause,
         fixIts: [
           FixIt(
-            message: ReplaceTokensFixIt(replaceTokens: [token], replacement: .commaToken()),
+            message: ReplaceTokensFixIt(replaceTokens: [token], replacements: [.commaToken()]),
             changes: [
               .makeMissing(token),
               .makePresent(trailingComma),
@@ -698,7 +749,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         .typeParameterPackEllipsis,
         fixIts: [
           FixIt(
-            message: ReplaceTokensFixIt(replaceTokens: [unexpectedEllipsis], replacement: .keyword(.each)),
+            message: ReplaceTokensFixIt(replaceTokens: [unexpectedEllipsis], replacements: [.keyword(.each)]),
             changes: [
               .makeMissing(unexpected),
               .makePresent(each, trailingTrivia: .space),
@@ -714,7 +765,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         unexpectedTokenCondition: { $0.tokenKind == .keyword(.class) },
         correctTokens: [inheritedTypeName],
         message: { _ in StaticParserError.classConstraintCanOnlyBeUsedInProtocol },
-        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: inheritedTypeName) }
+        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacements: [inheritedTypeName]) }
       )
     }
     return .visitChildren
@@ -745,7 +796,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
             NegatedAvailabilityCondition(avaialabilityCondition: availability, negatedAvailabilityKeyword: negatedAvailabilityKeyword),
             fixIts: [
               FixIt(
-                message: ReplaceTokensFixIt(replaceTokens: [operatorToken, availability.availabilityKeyword], replacement: negatedAvailabilityKeyword),
+                message: ReplaceTokensFixIt(replaceTokens: [operatorToken, availability.availabilityKeyword], replacements: [negatedAvailabilityKeyword]),
                 changes: [
                   .replace(oldNode: Syntax(conditionElement), newNode: Syntax(negatedCoditionElement))
                 ]
@@ -777,7 +828,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
             StaticParserError.unexpectedPoundElseSpaceIf,
             fixIts: [
               FixIt(
-                message: ReplaceTokensFixIt(replaceTokens: unexpectedTokens, replacement: clause.poundKeyword),
+                message: ReplaceTokensFixIt(replaceTokens: unexpectedTokens, replacements: [clause.poundKeyword]),
                 changes: [
                   .makeMissing(unexpectedBeforePoundKeyword, transferTrivia: false),
                   .makePresent(clause.poundKeyword, leadingTrivia: unexpectedBeforePoundKeyword.leadingTrivia),
@@ -821,7 +872,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         .expectedAssignmentInsteadOfComparisonOperator,
         fixIts: [
           FixIt(
-            message: ReplaceTokensFixIt(replaceTokens: [.binaryOperator("==")], replacement: node.equal),
+            message: ReplaceTokensFixIt(replaceTokens: [.binaryOperator("==")], replacements: [node.equal]),
             changes: [.makeMissing(unexpected), .makePresent(node.equal, leadingTrivia: [])]
           )
         ],
@@ -835,7 +886,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         unexpectedTokenCondition: { $0.tokenKind == .colon },
         correctTokens: [node.equal],
         message: { _ in StaticParserError.initializerInPattern },
-        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: node.equal) }
+        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacements: [node.equal]) }
       )
     }
     return .visitChildren
@@ -1052,7 +1103,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
     if let singleQuote = node.unexpectedBetweenOpenDelimiterAndOpenQuote?.onlyToken(where: { $0.tokenKind == .singleQuote }) {
       let fixIt = FixIt(
-        message: ReplaceTokensFixIt(replaceTokens: [singleQuote], replacement: node.openQuote),
+        message: ReplaceTokensFixIt(replaceTokens: [singleQuote], replacements: [node.openQuote]),
         changes: [
           .makeMissing(singleQuote, transferTrivia: false),
           .makePresent(node.openQuote, leadingTrivia: singleQuote.leadingTrivia),
@@ -1228,7 +1279,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         unexpectedTokenCondition: { $0.tokenKind == .colon },
         correctTokens: [node.equal],
         message: { _ in MissingNodesError(missingNodes: [Syntax(node.equal)]) },
-        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacement: node.equal) }
+        moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacements: [node.equal]) }
       )
     }
     return .visitChildren

@@ -90,8 +90,12 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected '(', '@availability' arguments, and ')' in availability condition")
-      ]
+        DiagnosticSpec(message: "expected '(', '@availability' arguments, and ')' in availability condition", fixIts: ["insert '(', '@availability' arguments, and ')'"])
+      ],
+      fixedSource: """
+        if #unavailable( <#identifier#>){
+        }
+        """
     )
   }
 
@@ -102,9 +106,13 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected version restriction in availability argument"),
-        DiagnosticSpec(message: "expected ')' to end availability condition"),
-      ]
+        DiagnosticSpec(message: "expected version restriction in availability argument", fixIts: ["insert version restriction"]),
+        DiagnosticSpec(message: "expected ')' to end availability condition", fixIts: ["insert ')'"]),
+      ],
+      fixedSource: """
+        if #unavailable(<#identifier#> ){
+        }
+        """
     )
   }
 
@@ -115,8 +123,12 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected version restriction in availability argument")
-      ]
+        DiagnosticSpec(message: "expected version restriction in availability argument", fixIts: ["insert version restriction"])
+      ],
+      fixedSource: """
+        if #unavailable(<#identifier#>) {
+        }
+        """
     )
   }
 
@@ -131,7 +143,8 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
           message: "expected ')' to end availability condition",
           notes: [
             NoteSpec(message: "to match this opening '('")
-          ]
+          ],
+          fixIts: ["insert ')'"]
         )
       ]
     )
@@ -157,9 +170,14 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
           message: "expected ')' to end availability condition",
           notes: [
             NoteSpec(message: "to match this opening '('")
-          ]
+          ],
+          fixIts: ["insert ')'"]
         )
-      ]
+      ],
+      fixedSource: """
+        if #unavailable(OSX 10.51) {
+        }
+        """
     )
   }
 
@@ -253,8 +271,13 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected version restriction in availability argument")
-      ]
+        DiagnosticSpec(message: "expected version restriction in availability argument", fixIts: ["insert version restriction"])
+      ],
+      fixedSource: """
+        // Should this be a valid spelling since `#unvailable(*)` cannot be written?
+        if #unavailable(<#identifier#>) {
+        }
+        """
     )
   }
 
@@ -269,9 +292,14 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
           message: "expected ')' to end availability condition",
           notes: [
             NoteSpec(message: "to match this opening '('")
-          ]
+          ],
+          fixIts: ["insert ')'"]
         )
-      ]
+      ],
+      fixedSource: """
+        if #unavailable(OSX 10) {
+        }
+        """
     )
   }
 
@@ -292,9 +320,13 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected version restriction in availability argument"),
-        DiagnosticSpec(message: "expected ')' to end availability condition"),
-      ]
+        DiagnosticSpec(message: "expected version restriction in availability argument", fixIts: ["insert version restriction"]),
+        DiagnosticSpec(message: "expected ')' to end availability condition", fixIts: ["insert ')'"]),
+      ],
+      fixedSource: """
+        if #unavailable(OSX 10.51,<#identifier#> ){
+        }
+        """
     )
   }
 
@@ -305,8 +337,12 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected version restriction in availability argument")
-      ]
+        DiagnosticSpec(message: "expected version restriction in availability argument", fixIts: ["insert version restriction"])
+      ],
+      fixedSource: """
+        if #unavailable(OSX 10.51,<#identifier#>) {
+        }
+        """
     )
   }
 
@@ -321,9 +357,14 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
           message: "expected ')' to end availability condition",
           notes: [
             NoteSpec(message: "to match this opening '('")
-          ]
+          ],
+          fixIts: ["insert ')'"]
         )
-      ]
+      ],
+      fixedSource: """
+        if #unavailable(OSX 10.51, iOS) {
+        }
+        """
     )
   }
 
@@ -352,8 +393,12 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected ',' joining platforms in availability condition")
-      ]
+        DiagnosticSpec(message: "expected ',' joining platforms in availability condition", fixIts: ["replace '||' with ','"])
+      ],
+      fixedSource: """
+        if #unavailable(OSX 10.51 , iOS 8.0) {
+        }
+        """
     )
   }
 
@@ -436,18 +481,37 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
   func testAvailabilityQueryUnavailability34a() {
     assertParse(
       """
-      // Diagnose wrong spellings of unavailability
       if #available(*) 1️⃣== false {
       }
       """,
       diagnostics: [
-        // TODO: (good first issue) Old parser expected error on line 2: #available cannot be used as an expression, did you mean to use '#unavailable'?, Fix-It replacements: 4 - 14 = '#unavailable', 18 - 27 = ''
-        DiagnosticSpec(message: "unexpected code '== false' in 'if' statement")
-      ]
+        DiagnosticSpec(message: "#available cannot be used as an expression, did you mean to use '#unavailable'?", fixIts: ["replace '#available(*) == false' with '#unavailable(*)'"])
+      ],
+      fixedSource: """
+        if #unavailable(*) {
+        }
+        """
     )
   }
 
   func testAvailabilityQueryUnavailability34b() {
+    assertParse(
+      """
+      if #available(*) 1️⃣== false 2️⃣&& true {
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "#available cannot be used as an expression, did you mean to use '#unavailable'?", fixIts: ["replace '#available(*) == false' with '#unavailable(*)'"]),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected ',' joining parts of a multi-clause condition", fixIts: ["replace '&&' with ','"]),
+      ],
+      fixedSource: """
+        if #unavailable(*) , true {
+        }
+        """
+    )
+  }
+
+  func testAvailabilityQueryUnavailability34c() {
     assertParse(
       """
       if !1️⃣#available(*) {
@@ -455,6 +519,22 @@ final class AvailabilityQueryUnavailabilityTests: XCTestCase {
       """,
       diagnostics: [
         DiagnosticSpec(message: "availability condition cannot be used in an expression; did you mean '#unavailable'?", fixIts: ["replace '!#available' with '#unavailable'"])
+      ],
+      fixedSource: """
+        if #unavailable(*) {
+        }
+        """
+    )
+  }
+
+  func testAvailabilityQueryUnavailability34d() {
+    assertParse(
+      """
+      if #available(*) 1️⃣== {
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "unexpected code '==' in 'if' statement")
       ]
     )
   }

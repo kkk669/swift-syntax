@@ -187,13 +187,11 @@ extension Parser {
     var loopProgress = LoopProgressCondition()
     repeat {
       let condition = self.parseConditionElement(lastBindingKind: elements.last?.condition.as(RawOptionalBindingConditionSyntax.self)?.bindingKeyword)
-      let unexpectedBeforeKeepGoing: RawUnexpectedNodesSyntax?
+      var unexpectedBeforeKeepGoing: RawUnexpectedNodesSyntax? = nil
       keepGoing = self.consume(if: .comma)
       if keepGoing == nil, let andOperator = self.consumeIfContextualPunctuator("&&") {
-        unexpectedBeforeKeepGoing = RawUnexpectedNodesSyntax([andOperator], arena: self.arena)
+        unexpectedBeforeKeepGoing = RawUnexpectedNodesSyntax(combining: unexpectedBeforeKeepGoing, andOperator, arena: self.arena)
         keepGoing = missingToken(.comma)
-      } else {
-        unexpectedBeforeKeepGoing = nil
       }
       elements.append(
         RawConditionElementSyntax(
@@ -341,6 +339,12 @@ extension Parser {
     let (unexpectedBeforeLParen, lparen) = self.expect(.leftParen)
     let spec = self.parseAvailabilitySpecList()
     let (unexpectedBeforeRParen, rparen) = self.expect(.rightParen)
+    let unexpectedAfterRParen: RawUnexpectedNodesSyntax?
+    if let (equalOperator, falseKeyword) = self.consume(if: { $0.isContextualPunctuator("==") }, followedBy: { TokenSpec.keyword(.false) ~= $0 }) {
+      unexpectedAfterRParen = RawUnexpectedNodesSyntax([equalOperator, falseKeyword], arena: self.arena)
+    } else {
+      unexpectedAfterRParen = nil
+    }
     return .availability(
       RawAvailabilityConditionSyntax(
         availabilityKeyword: keyword,
@@ -349,6 +353,7 @@ extension Parser {
         availabilitySpec: spec,
         unexpectedBeforeRParen,
         rightParen: rparen,
+        unexpectedAfterRParen,
         arena: self.arena
       )
     )
@@ -614,7 +619,6 @@ extension Parser {
   public mutating func parseForEachStatement(forHandle: RecoveryConsumptionHandle) -> RawForInStmtSyntax {
     let (unexpectedBeforeForKeyword, forKeyword) = self.eat(forHandle)
     let tryKeyword = self.consume(if: .keyword(.try))
-
     let awaitKeyword = self.consume(if: .keyword(.await))
 
     // Parse the pattern.  This is either 'case <refutable pattern>' or just a
