@@ -56,7 +56,6 @@ let package = Package(
     .library(name: "SwiftSyntax", targets: ["SwiftSyntax"]),
     .library(name: "SwiftSyntaxBuilder", targets: ["SwiftSyntaxBuilder"]),
     .library(name: "SwiftSyntaxMacros", targets: ["SwiftSyntaxMacros"]),
-    .library(name: "SwiftSyntaxParser", targets: ["SwiftSyntaxParser"]),
   ],
   targets: [
     // MARK: - Internal helper targets
@@ -68,6 +67,11 @@ let package = Package(
 
     .target(
       name: "WASIHelpers"
+    ),
+
+    .testTarget(
+      name: "SwiftSyntaxTestSupportTest",
+      dependencies: ["_SwiftSyntaxTestSupport", "SwiftParser"]
     ),
 
     // MARK: - Library targets
@@ -239,7 +243,8 @@ let package = Package(
 
     .executableTarget(
       name: "lit-test-helper",
-      dependencies: ["IDEUtils", "SwiftSyntax", "SwiftSyntaxParser"]
+      dependencies: ["IDEUtils", "SwiftSyntax", "SwiftParser",
+                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))]
     ),
 
     // MARK: PerformanceTest
@@ -247,23 +252,7 @@ let package = Package(
 
     .testTarget(
       name: "PerformanceTest",
-      dependencies: ["IDEUtils", "SwiftParser", "SwiftSyntax", "SwiftSyntaxParser"],
-      exclude: ["Inputs"]
-    ),
-
-    // MARK: SwiftSyntaxParser
-    // TODO: All clients should use SwiftParser instead
-
-    .target(
-      name: "SwiftSyntaxParser",
-      dependencies: ["SwiftSyntax", "SwiftParser",
-                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))]
-    ),
-
-    .testTarget(
-      name: "SwiftSyntaxParserTest",
-      dependencies: ["_SwiftSyntaxTestSupport", "SwiftSyntaxParser",
-                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))],
+      dependencies: ["IDEUtils", "SwiftParser", "SwiftSyntax"],
       exclude: ["Inputs"]
     ),
   ]
