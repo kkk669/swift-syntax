@@ -158,7 +158,7 @@ public class AbsolutePositionTests: XCTestCase {
     XCTAssertEqual(startLoc.line, 8)
     XCTAssertEqual(startLoc.column, 1)
     XCTAssertEqual(
-      converter.position(ofLine: startLoc.line!, column: startLoc.column!),
+      converter.position(ofLine: startLoc.line, column: startLoc.column),
       secondReturnStmt.positionAfterSkippingLeadingTrivia
     )
 
@@ -170,7 +170,7 @@ public class AbsolutePositionTests: XCTestCase {
     XCTAssertEqual(startLocBeforeTrivia.line, 6)
     XCTAssertEqual(startLocBeforeTrivia.column, 1)
     XCTAssertEqual(
-      converter.position(ofLine: startLocBeforeTrivia.line!, column: startLocBeforeTrivia.column!),
+      converter.position(ofLine: startLocBeforeTrivia.line, column: startLocBeforeTrivia.column),
       secondReturnStmt.position
     )
 
@@ -186,9 +186,9 @@ public class AbsolutePositionTests: XCTestCase {
     XCTAssertEqual(endLocAfterTrivia.line, 11)
     XCTAssertEqual(endLocAfterTrivia.column, 1)
 
-    XCTAssertTrue(converter.isValid(line: startLoc.line!, column: startLoc.column!))
-    XCTAssertFalse(converter.isValid(line: startLoc.line!, column: startLoc.column! + 50))
-    XCTAssertFalse(converter.isValid(line: 0, column: startLoc.column!))
+    XCTAssertTrue(converter.isValid(line: startLoc.line, column: startLoc.column))
+    XCTAssertFalse(converter.isValid(line: startLoc.line, column: startLoc.column + 50))
+    XCTAssertFalse(converter.isValid(line: 0, column: startLoc.column))
     XCTAssertTrue(converter.isValid(position: secondReturnStmt.position))
     XCTAssertFalse(converter.isValid(position: secondReturnStmt.position + SourceLength(utf8Length: 100)))
   }
