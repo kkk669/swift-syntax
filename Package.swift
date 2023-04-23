@@ -45,10 +45,10 @@ let package = Package(
     .macCatalyst(.v13),
   ],
   products: [
-    .library(name: "IDEUtils", targets: ["IDEUtils"]),
     .library(name: "SwiftCompilerPlugin", targets: ["SwiftCompilerPlugin"]),
     .library(name: "SwiftCompilerPluginMessageHandling", targets: ["SwiftCompilerPluginMessageHandling"]),
     .library(name: "SwiftDiagnostics", targets: ["SwiftDiagnostics"]),
+    .library(name: "SwiftIDEUtils", targets: ["SwiftIDEUtils"]),
     .library(name: "SwiftOperators", targets: ["SwiftOperators"]),
     .library(name: "SwiftParser", targets: ["SwiftParser"]),
     .library(name: "SwiftParserDiagnostics", targets: ["SwiftParserDiagnostics"]),
@@ -82,25 +82,17 @@ let package = Package(
     //    In that case package and internal dependencies are on different lines.
     //  - All array elements are sorted alphabetically
 
-    // MARK: IDEUtils
-
-    .target(
-      name: "IDEUtils",
-      dependencies: ["SwiftSyntax"],
-      exclude: ["CMakeLists.txt"]
-    ),
-
-    .testTarget(
-      name: "IDEUtilsTest",
-      dependencies: ["_SwiftSyntaxTestSupport", "IDEUtils", "SwiftParser", "SwiftSyntax"]
-    ),
-
     // MARK: SwiftBasicFormat
 
     .target(
       name: "SwiftBasicFormat",
       dependencies: ["SwiftSyntax"],
       exclude: ["CMakeLists.txt"]
+    ),
+
+    .testTarget(
+      name: "SwiftBasicFormatTest",
+      dependencies: ["_SwiftSyntaxTestSupport", "SwiftBasicFormat", "SwiftSyntaxBuilder"]
     ),
 
     // MARK: SwiftCompilerPlugin
@@ -134,6 +126,19 @@ let package = Package(
     .testTarget(
       name: "SwiftDiagnosticsTest",
       dependencies: ["_SwiftSyntaxTestSupport", "SwiftDiagnostics", "SwiftParser", "SwiftParserDiagnostics"]
+    ),
+
+    // MARK: SwiftIDEUtils
+
+    .target(
+      name: "SwiftIDEUtils",
+      dependencies: ["SwiftSyntax"],
+      exclude: ["CMakeLists.txt"]
+    ),
+
+    .testTarget(
+      name: "SwiftIDEUtilsTest",
+      dependencies: ["_SwiftSyntaxTestSupport", "SwiftIDEUtils", "SwiftParser", "SwiftSyntax"]
     ),
 
     // MARK: SwiftSyntax
@@ -243,7 +248,7 @@ let package = Package(
 
     .executableTarget(
       name: "lit-test-helper",
-      dependencies: ["IDEUtils", "SwiftSyntax", "SwiftParser",
+      dependencies: ["SwiftIDEUtils", "SwiftSyntax", "SwiftParser",
                      .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))]
     ),
 
@@ -252,7 +257,7 @@ let package = Package(
 
     .testTarget(
       name: "PerformanceTest",
-      dependencies: ["IDEUtils", "SwiftParser", "SwiftSyntax"],
+      dependencies: ["SwiftIDEUtils", "SwiftParser", "SwiftSyntax"],
       exclude: ["Inputs"]
     ),
   ]
@@ -261,7 +266,7 @@ let package = Package(
 if ProcessInfo.processInfo.environment["SWIFTCI_USE_LOCAL_DEPS"] == nil {
   // Building standalone.
   package.dependencies += [
-    .package(url: "https://github.com/apple/swift-argument-parser.git", .upToNextMinor(from: "1.2.2"))
+    .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.2.2")
   ]
 } else {
   package.dependencies += [
