@@ -18,8 +18,8 @@ jobs:
     - uses: actions/checkout@v3
     - name: Select Xcode
       run: sudo xcode-select -s /Applications/Xcode_14.2.app
-    - name: Install Wasmer
-      run: brew install wasmer
+    - name: Install wasmtime
+      run: brew install wasmtime
     - name: Install Wasm Toolchain
       run: |
         VERSION=swift-wasm-DEVELOPMENT-SNAPSHOT-2023-02-28-a
@@ -28,6 +28,6 @@ jobs:
         installer -target CurrentUserHomeDirectory -pkg $VERSION-macos_x86_64.pkg
         echo "PATH=$HOME/Library/Developer/Toolchains/$VERSION.xctoolchain/usr/bin:${PATH}" >> $GITHUB_ENV
     - name: Build
-      run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=262144
+      run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
     - name: Run tests
-      run: wasmer --dir / .build/release/SwiftSyntaxPackageTests.wasm
+      run: wasmtime --dir=/ .build/release/SwiftSyntaxPackageTests.wasm
