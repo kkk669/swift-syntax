@@ -781,7 +781,7 @@ public let EXPR_NODES: [Node] = [
     children: [
       Child(
         name: "Identifier",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .token(tokenKind: "KeywordToken"), .token(tokenKind: "DollarIdentifierToken"), .token(tokenKind: "BinaryOperatorToken")])
+        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .keyword(text: "self"), .keyword(text: "Self"), .keyword(text: "init"), .token(tokenKind: "DollarIdentifierToken"), .token(tokenKind: "BinaryOperatorToken")])
       ),
       Child(
         name: "DeclNameArguments",
@@ -1005,7 +1005,7 @@ public let EXPR_NODES: [Node] = [
     children: [
       Child(
         name: "Identifier",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .token(tokenKind: "KeywordToken"), .token(tokenKind: "DollarIdentifierToken"), .token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "IntegerLiteralToken")])
+        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .keyword(text: "self"), .keyword(text: "Self"), .keyword(text: "init"), .token(tokenKind: "DollarIdentifierToken"), .token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "IntegerLiteralToken")])
       ),
       Child(
         name: "DeclNameArguments",
@@ -1481,8 +1481,7 @@ public let EXPR_NODES: [Node] = [
     kind: "SyntaxCollection",
     element: "Syntax",
     elementName: "SwitchCase",
-    elementChoices: ["SwitchCase", "IfConfigDecl"],
-    elementsSeparatedByNewline: true
+    elementChoices: ["SwitchCase", "IfConfigDecl"]
   ),
 
   // switch-case -> unknown-attr? switch-case-label stmt-list
