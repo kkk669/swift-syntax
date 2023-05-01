@@ -371,7 +371,6 @@ extension DoStmtSyntax {
   }
 }
 
-/// A `case` declaration of a Swift `enum`. It can have 1 or more `EnumCaseElement`s inside, each declaring a different case of the enum.
 extension EnumCaseDeclSyntax {
   /// A convenience initializer that allows initializing syntax collections using result builders
   public init(
@@ -403,7 +402,6 @@ extension EnumCaseDeclSyntax {
   }
 }
 
-/// A Swift `enum` declaration.
 extension EnumDeclSyntax {
   /// A convenience initializer that allows initializing syntax collections using result builders
   public init(
@@ -819,14 +817,6 @@ extension IfExprSyntax {
   }
 }
 
-/// An initializer declaration like the following.
-/// 
-/// ```swift
-/// init(someParameter: Int) {
-/// }
-/// ```
-/// 
-/// The body is optional because this node also represents initializer requirements inside protocols.
 extension InitializerDeclSyntax {
   /// A convenience initializer that allows initializing syntax collections using result builders
   public init(

@@ -130,8 +130,8 @@ public struct RawAccessPathSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .accessPath, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -450,8 +450,8 @@ public struct RawAccessorListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .accessorList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -724,8 +724,8 @@ public struct RawArrayElementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .arrayElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -1391,8 +1391,8 @@ public struct RawAttributeListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .attributeList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -2195,8 +2195,8 @@ public struct RawAvailabilitySpecListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .availabilitySpecList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -2315,8 +2315,8 @@ public struct RawAvailabilityVersionRestrictionListSyntax: RawSyntaxNodeProtocol
     let raw = RawSyntax.makeLayout(
       kind: .availabilityVersionRestrictionList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -2843,8 +2843,8 @@ public struct RawCaseItemListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .caseItemList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -2975,8 +2975,8 @@ public struct RawCatchClauseListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .catchClauseList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -3107,8 +3107,8 @@ public struct RawCatchItemListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .catchItemList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -3439,8 +3439,8 @@ public struct RawClosureCaptureItemListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .closureCaptureItemList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -3865,8 +3865,8 @@ public struct RawClosureParamListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .closureParamList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -4067,8 +4067,8 @@ public struct RawClosureParameterListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .closureParameterList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -4408,8 +4408,8 @@ public struct RawCodeBlockItemListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .codeBlockItemList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -4648,8 +4648,8 @@ public struct RawCompositionTypeElementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .compositionTypeElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -4826,8 +4826,8 @@ public struct RawConditionElementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .conditionElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -5553,8 +5553,8 @@ public struct RawDeclNameArgumentListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .declNameArgumentList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -6228,8 +6228,8 @@ public struct RawDesignatedTypeListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .designatedTypeList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -6278,8 +6278,8 @@ public struct RawDictionaryElementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .dictionaryElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -6641,8 +6641,8 @@ public struct RawDifferentiabilityParamListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .differentiabilityParamList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -7327,8 +7327,8 @@ public struct RawDocumentationAttributeArgumentsSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .documentationAttributeArguments, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -7575,8 +7575,8 @@ public struct RawEffectsArgumentsSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .effectsArguments, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -7719,8 +7719,8 @@ public struct RawEnumCaseElementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .enumCaseElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -7945,8 +7945,8 @@ public struct RawEnumCaseParameterListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .enumCaseParameterList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -8349,8 +8349,8 @@ public struct RawExprListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .exprList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -9542,8 +9542,8 @@ public struct RawFunctionParameterListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .functionParameterList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -10016,8 +10016,8 @@ public struct RawGenericArgumentListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .genericArgumentList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -10230,8 +10230,8 @@ public struct RawGenericParameterListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .genericParameterList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -10398,8 +10398,8 @@ public struct RawGenericRequirementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .genericRequirementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -10848,8 +10848,8 @@ public struct RawIfConfigClauseListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .ifConfigClauseList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -11661,8 +11661,8 @@ public struct RawInheritedTypeListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .inheritedTypeList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -11708,9 +11708,7 @@ public struct RawInheritedTypeSyntax: RawSyntaxNodeProtocol {
   }
   
   public init(
-      _ unexpectedBeforeWithoutTilde: RawUnexpectedNodesSyntax? = nil, 
-      withoutTilde: RawTokenSyntax?, 
-      _ unexpectedBetweenWithoutTildeAndTypeName: RawUnexpectedNodesSyntax? = nil, 
+      _ unexpectedBeforeTypeName: RawUnexpectedNodesSyntax? = nil, 
       typeName: RawTypeSyntax, 
       _ unexpectedBetweenTypeNameAndTrailingComma: RawUnexpectedNodesSyntax? = nil, 
       trailingComma: RawTokenSyntax?, 
@@ -11718,45 +11716,35 @@ public struct RawInheritedTypeSyntax: RawSyntaxNodeProtocol {
       arena: __shared SyntaxArena
     ) {
     let raw = RawSyntax.makeLayout(
-      kind: .inheritedType, uninitializedCount: 7, arena: arena) { layout in
+      kind: .inheritedType, uninitializedCount: 5, arena: arena) { layout in
       layout.initialize(repeating: nil)
-      layout[0] = unexpectedBeforeWithoutTilde?.raw
-      layout[1] = withoutTilde?.raw
-      layout[2] = unexpectedBetweenWithoutTildeAndTypeName?.raw
-      layout[3] = typeName.raw
-      layout[4] = unexpectedBetweenTypeNameAndTrailingComma?.raw
-      layout[5] = trailingComma?.raw
-      layout[6] = unexpectedAfterTrailingComma?.raw
+      layout[0] = unexpectedBeforeTypeName?.raw
+      layout[1] = typeName.raw
+      layout[2] = unexpectedBetweenTypeNameAndTrailingComma?.raw
+      layout[3] = trailingComma?.raw
+      layout[4] = unexpectedAfterTrailingComma?.raw
     }
     self.init(unchecked: raw)
   }
   
-  public var unexpectedBeforeWithoutTilde: RawUnexpectedNodesSyntax? {
+  public var unexpectedBeforeTypeName: RawUnexpectedNodesSyntax? {
     layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
   }
   
-  public var withoutTilde: RawTokenSyntax? {
-    layoutView.children[1].map(RawTokenSyntax.init(raw:))
-  }
-  
-  public var unexpectedBetweenWithoutTildeAndTypeName: RawUnexpectedNodesSyntax? {
-    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
-  }
-  
   public var typeName: RawTypeSyntax {
-    layoutView.children[3].map(RawTypeSyntax.init(raw:))!
+    layoutView.children[1].map(RawTypeSyntax.init(raw:))!
   }
   
   public var unexpectedBetweenTypeNameAndTrailingComma: RawUnexpectedNodesSyntax? {
-    layoutView.children[4].map(RawUnexpectedNodesSyntax.init(raw:))
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
   }
   
   public var trailingComma: RawTokenSyntax? {
-    layoutView.children[5].map(RawTokenSyntax.init(raw:))
+    layoutView.children[3].map(RawTokenSyntax.init(raw:))
   }
   
   public var unexpectedAfterTrailingComma: RawUnexpectedNodesSyntax? {
-    layoutView.children[6].map(RawUnexpectedNodesSyntax.init(raw:))
+    layoutView.children[4].map(RawUnexpectedNodesSyntax.init(raw:))
   }
 }
 
@@ -12215,8 +12203,8 @@ public struct RawKeyPathComponentListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .keyPathComponentList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -13761,8 +13749,8 @@ public struct RawMemberDeclListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .memberDeclList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -14359,8 +14347,8 @@ public struct RawModifierListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .modifierList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -14479,8 +14467,8 @@ public struct RawMultipleTrailingClosureElementListSyntax: RawSyntaxNodeProtocol
     let raw = RawSyntax.makeLayout(
       kind: .multipleTrailingClosureElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -14809,8 +14797,8 @@ public struct RawObjCSelectorSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .objCSelector, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -15831,8 +15819,8 @@ public struct RawPatternBindingListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .patternBindingList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -16623,8 +16611,8 @@ public struct RawPrecedenceGroupAttributeListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .precedenceGroupAttributeList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -16873,8 +16861,8 @@ public struct RawPrecedenceGroupNameListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .precedenceGroupNameList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -17157,8 +17145,8 @@ public struct RawPrimaryAssociatedTypeListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .primaryAssociatedTypeList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -18178,8 +18166,8 @@ public struct RawSpecializeAttributeSpecListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .specializeAttributeSpecList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -18474,8 +18462,8 @@ public struct RawStringLiteralSegmentsSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .stringLiteralSegments, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -19041,6 +19029,76 @@ public struct RawSuperRefExprSyntax: RawExprSyntaxNodeProtocol {
 }
 
 @_spi(RawSyntax)
+public struct RawSuppressedTypeSyntax: RawTypeSyntaxNodeProtocol {
+  @_spi(RawSyntax)
+  public var layoutView: RawSyntaxLayoutView {
+    return raw.layoutView!
+  }
+  
+  public static func isKindOf(_ raw: RawSyntax) -> Bool {
+    return raw.kind == .suppressedType
+  }
+  
+  public var raw: RawSyntax
+  
+  init(raw: RawSyntax) {
+    precondition(Self.isKindOf(raw))
+    self.raw = raw
+  }
+  
+  private init(unchecked raw: RawSyntax) {
+    self.raw = raw
+  }
+  
+  public init?<Node: RawSyntaxNodeProtocol>(_ other: Node) {
+    guard Self.isKindOf(other.raw) else {
+      return nil
+    }
+    self.init(unchecked: other.raw)
+  }
+  
+  public init(
+      _ unexpectedBeforeWithoutTilde: RawUnexpectedNodesSyntax? = nil, 
+      withoutTilde: RawTokenSyntax, 
+      _ unexpectedBetweenWithoutTildeAndPatternType: RawUnexpectedNodesSyntax? = nil, 
+      patternType: RawTypeSyntax, 
+      _ unexpectedAfterPatternType: RawUnexpectedNodesSyntax? = nil, 
+      arena: __shared SyntaxArena
+    ) {
+    let raw = RawSyntax.makeLayout(
+      kind: .suppressedType, uninitializedCount: 5, arena: arena) { layout in
+      layout.initialize(repeating: nil)
+      layout[0] = unexpectedBeforeWithoutTilde?.raw
+      layout[1] = withoutTilde.raw
+      layout[2] = unexpectedBetweenWithoutTildeAndPatternType?.raw
+      layout[3] = patternType.raw
+      layout[4] = unexpectedAfterPatternType?.raw
+    }
+    self.init(unchecked: raw)
+  }
+  
+  public var unexpectedBeforeWithoutTilde: RawUnexpectedNodesSyntax? {
+    layoutView.children[0].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  
+  public var withoutTilde: RawTokenSyntax {
+    layoutView.children[1].map(RawTokenSyntax.init(raw:))!
+  }
+  
+  public var unexpectedBetweenWithoutTildeAndPatternType: RawUnexpectedNodesSyntax? {
+    layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+  
+  public var patternType: RawTypeSyntax {
+    layoutView.children[3].map(RawTypeSyntax.init(raw:))!
+  }
+  
+  public var unexpectedAfterPatternType: RawUnexpectedNodesSyntax? {
+    layoutView.children[4].map(RawUnexpectedNodesSyntax.init(raw:))
+  }
+}
+
+@_spi(RawSyntax)
 public struct RawSwitchCaseLabelSyntax: RawSyntaxNodeProtocol {
   @_spi(RawSyntax)
   public var layoutView: RawSyntaxLayoutView {
@@ -19186,8 +19244,8 @@ public struct RawSwitchCaseListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .switchCaseList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -19877,8 +19935,8 @@ public struct RawTupleExprElementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .tupleExprElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -20103,8 +20161,8 @@ public struct RawTuplePatternElementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .tuplePatternElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -20329,8 +20387,8 @@ public struct RawTupleTypeElementListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .tupleTypeElementList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -20917,7 +20975,7 @@ public struct RawTypeSyntax: RawTypeSyntaxNodeProtocol {
   
   public static func isKindOf(_ raw: RawSyntax) -> Bool {
     switch raw.kind {
-    case .arrayType, .attributedType, .classRestrictionType, .compositionType, .constrainedSugarType, .dictionaryType, .functionType, .implicitlyUnwrappedOptionalType, .memberTypeIdentifier, .metatypeType, .missingType, .namedOpaqueReturnType, .optionalType, .packExpansionType, .packReferenceType, .simpleTypeIdentifier, .tupleType:
+    case .arrayType, .attributedType, .classRestrictionType, .compositionType, .constrainedSugarType, .dictionaryType, .functionType, .implicitlyUnwrappedOptionalType, .memberTypeIdentifier, .metatypeType, .missingType, .namedOpaqueReturnType, .optionalType, .packExpansionType, .packReferenceType, .simpleTypeIdentifier, .suppressedType, .tupleType:
       return true
     default:
       return false
@@ -21274,8 +21332,8 @@ public struct RawUnexpectedNodesSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .unexpectedNodes, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
@@ -22154,8 +22212,8 @@ public struct RawYieldExprListSyntax: RawSyntaxNodeProtocol {
     let raw = RawSyntax.makeLayout(
       kind: .yieldExprList, uninitializedCount: elements.count, arena: arena) { layout in
         guard var ptr = layout.baseAddress else {
-            return
-          }
+          return
+        }
         for elem in elements {
           ptr.initialize(to: elem.raw)
           ptr += 1
