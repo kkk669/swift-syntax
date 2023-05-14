@@ -172,7 +172,7 @@ extension Lexer.Cursor {
     mutating func perform(stateTransition: Lexer.StateTransition, stateAllocator: BumpPtrAllocator) {
       switch stateTransition {
       case .push(newState: let newState):
-        if let topState = topState {
+        if let topState {
           if let stateStack = stateStack {
             let newStateStack = stateAllocator.allocate(State.self, count: stateStack.count + 1)
             let (_, existingStateStackEndIndex) = newStateStack.initialize(from: stateStack)
@@ -190,7 +190,7 @@ extension Lexer.Cursor {
       case .replace(newState: let newState):
         topState = newState
       case .pop:
-        if let stateStack = stateStack {
+        if let stateStack {
           topState = stateStack.last!
           if stateStack.count == 1 {
             self.stateStack = nil
@@ -264,8 +264,7 @@ extension Lexer {
       self.stateStack.perform(stateTransition: stateTransition, stateAllocator: stateAllocator)
     }
 
-    public func starts<PossiblePrefix>(with possiblePrefix: PossiblePrefix) -> Bool
-    where PossiblePrefix: Sequence, PossiblePrefix.Element == UInt8 {
+    public func starts(with possiblePrefix: some Sequence<UInt8>) -> Bool {
       return self.input.starts(with: possiblePrefix)
     }
 
@@ -760,7 +759,7 @@ extension Lexer.Cursor {
     // Test for single-line string literals that resemble multiline delimiter.
     var sameLineCloseCheck = self
     _ = sameLineCloseCheck.advance()
-    if let openingRawStringDelimiters = openingRawStringDelimiters, openingRawStringDelimiters != 0 {
+    if let openingRawStringDelimiters, openingRawStringDelimiters != 0 {
       // Scan if the current line contains `"` followed by `openingRawStringDelimiters` `#` characters
       while sameLineCloseCheck.is(notAt: "\r", "\n") {
         if sameLineCloseCheck.advance(matching: #"""#) {

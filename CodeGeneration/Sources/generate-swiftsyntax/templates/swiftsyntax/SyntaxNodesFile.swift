@@ -58,7 +58,7 @@ func syntaxNode(emitKind: String) -> SourceFileSyntax {
 
         DeclSyntax(
           """
-          public init?<S: SyntaxProtocol>(_ node: S) {
+          public init?(_ node: some SyntaxProtocol) {
             guard node.raw.kind == .\(raw: node.swiftSyntaxKind) else { return nil }
             self._syntaxNode = node._syntaxNode
           }
@@ -77,7 +77,7 @@ func syntaxNode(emitKind: String) -> SourceFileSyntax {
           """
         )
 
-        try! InitializerDeclSyntax("\(node.generateInitializerDeclHeader(optionalBaseAsMissing: false))") {
+        try! InitializerDeclSyntax("\(node.generateInitializerDeclHeader())") {
           let parameters = ClosureParameterListSyntax {
             for child in node.children {
               ClosureParameterSyntax(firstName: .identifier(child.swiftName))
@@ -147,53 +147,6 @@ func syntaxNode(emitKind: String) -> SourceFileSyntax {
           )
 
           ExprSyntax("self.init(data)")
-        }
-
-        if node.hasOptionalBaseTypeChild {
-          // TODO: Remove when we no longer support compiling in Swift 5.6. Change the
-          // above constructor to use `Optional<BaseType>.none` instead.
-          try! InitializerDeclSyntax(
-            """
-            /// This initializer exists solely because Swift 5.6 does not support
-            /// `Optional<ConcreteType>.none` as a default value of a generic parameter.
-            /// The above initializer thus defaults to `nil` instead, but that means it
-            /// is not actually callable when either not passing the defaulted parameter,
-            /// or passing `nil`.
-            ///
-            /// Hack around that limitation using this initializer, which takes a
-            /// `Missing*` syntax node instead. `Missing*` is used over the base type as
-            /// the base type would allow implicit conversion from a string literal,
-            /// which the above initializer doesn't support.
-            \(node.generateInitializerDeclHeader(optionalBaseAsMissing: true))
-            """
-          ) {
-            FunctionCallExprSyntax(callee: ExprSyntax("self.init")) {
-              TupleExprElementSyntax(label: "leadingTrivia", expression: ExprSyntax("leadingTrivia"))
-              for child in node.children {
-                if child.hasOptionalBaseType {
-                  TupleExprElementSyntax(
-                    leadingTrivia: .newline,
-                    label: .identifier(child.swiftName),
-                    colon: .colonToken(),
-                    expression: ExprSyntax("Optional<\(raw: child.typeName)>.none")
-                  )
-                } else if child.isUnexpectedNodes {
-                  TupleExprElementSyntax(
-                    leadingTrivia: .newline,
-                    expression: ExprSyntax("\(raw: child.swiftName)")
-                  )
-                } else {
-                  TupleExprElementSyntax(
-                    leadingTrivia: .newline,
-                    label: .identifier(child.swiftName),
-                    colon: .colonToken(),
-                    expression: ExprSyntax("\(raw: child.swiftName)")
-                  )
-                }
-              }
-              TupleExprElementSyntax(label: "trailingTrivia", expression: ExprSyntax("trailingTrivia"))
-            }
-          }
         }
 
         for (index, child) in node.children.enumerated() {
@@ -306,7 +259,7 @@ private func generateSyntaxChildChoices(for child: Child) throws -> EnumDeclSynt
       if let choiceNode = SYNTAX_NODE_MAP[choice.syntaxKind], choiceNode.isBase {
         DeclSyntax(
           """
-          public init<Node: \(raw: choiceNode.name)Protocol>(_ node: Node) {
+          public init(_ node: some \(raw: choiceNode.name)Protocol) {
             self = .\(raw: choice.swiftName)(\(raw: choiceNode.name)(node))
           }
           """
@@ -323,7 +276,7 @@ private func generateSyntaxChildChoices(for child: Child) throws -> EnumDeclSynt
       }
     }
 
-    try! InitializerDeclSyntax("public init?<S: SyntaxProtocol>(_ node: S)") {
+    try! InitializerDeclSyntax("public init?(_ node: some SyntaxProtocol)") {
       for choice in choices {
         StmtSyntax(
           """
@@ -353,41 +306,27 @@ private func generateSyntaxChildChoices(for child: Child) throws -> EnumDeclSynt
 }
 
 fileprivate extension Node {
-  func generateInitializerDeclHeader(optionalBaseAsMissing: Bool) -> PartialSyntaxNodeString {
+  func generateInitializerDeclHeader() -> PartialSyntaxNodeString {
     if children.isEmpty {
       return "public init()"
     }
 
-    var genericParamNames: [String: Int] = [:]
-    var genericParams: [String] = []
-
     func createFunctionParameterSyntax(for child: Child) -> FunctionParameterSyntax {
-      var paramType: String
+      var paramType: TypeSyntax
       if !child.kind.isNodeChoicesEmpty {
-        paramType = child.name
+        paramType = "\(raw: child.name)"
       } else if child.hasBaseType {
-        if optionalBaseAsMissing {
-          paramType = "Missing\(child.typeName)"
-        } else {
-          // If we have a base type, make the initializer generic over its
-          // protocol instead.
-          let index = child.swiftName.index(child.swiftName.startIndex, offsetBy: 1)
-          paramType = child.swiftName[..<index].uppercased()
-
-          let paramCount = (genericParamNames[paramType] ?? 0) + 1
-          genericParamNames[paramType] = paramCount
-
-          if paramCount > 1 {
-            paramType += "\(paramCount)"
-          }
-          genericParams.append("\(paramType): \(child.typeName)Protocol")
-        }
+        paramType = "some \(raw: child.typeName)Protocol"
       } else {
-        paramType = child.typeName
+        paramType = "\(raw: child.typeName)"
       }
 
       if child.isOptional {
-        paramType += "?"
+        if paramType.is(ConstrainedSugarTypeSyntax.self) {
+          paramType = "(\(paramType))?"
+        } else {
+          paramType = "\(paramType)?"
+        }
       }
 
       return FunctionParameterSyntax(
@@ -395,7 +334,7 @@ fileprivate extension Node {
         firstName: child.isUnexpectedNodes ? .wildcardToken(trailingTrivia: .space) : .identifier(child.swiftName),
         secondName: child.isUnexpectedNodes ? .identifier(child.swiftName) : nil,
         colon: .colonToken(),
-        type: TypeSyntax(stringLiteral: paramType),
+        type: paramType,
         defaultArgument: child.defaultInitialization
       )
     }
@@ -411,26 +350,10 @@ fileprivate extension Node {
         .with(\.leadingTrivia, .newline)
     }
 
-    if genericParams.isEmpty {
-      return """
-        public init(
-        \(params)
-        )
-        """
-    } else {
-      let generics = GenericParameterClauseSyntax(
-        genericParameterList: GenericParameterListSyntax {
-          for param in genericParams {
-            GenericParameterSyntax(name: .identifier(param))
-          }
-        }
+    return """
+      public init(
+      \(params)
       )
-
-      return """
-        public init\(generics)(
-        \(params)
-        )
-        """
-    }
+      """
   }
 }

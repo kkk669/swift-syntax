@@ -69,6 +69,8 @@ extension SyntaxKind {
       return "'_borrow' expression"
     case .breakStmt:
       return "'break' statement"
+    case .canImportExpr:
+      return "'canImport' expression"
     case .catchClauseList:
       return "'catch' clause"
     case .catchClause:
@@ -133,6 +135,8 @@ extension SyntaxKind {
       return "differentiability parameters"
     case .differentiableAttributeArguments:
       return "'@differentiable' arguments"
+    case .discardStmt:
+      return "'discard' statement"
     case .doStmt:
       return "'do' statement"
     case .documentationAttributeArgument:
@@ -173,8 +177,6 @@ extension SyntaxKind {
       return "'for' statement"
     case .forcedValueExpr:
       return "force unwrap"
-    case .forgetStmt:
-      return "'forget' statement"
     case .functionCallExpr:
       return "function call"
     case .functionDecl:

@@ -56,7 +56,7 @@ extension Array: UnexpectedNodesCombinable where Element: UnexpectedNodesCombina
 
 extension Optional: UnexpectedNodesCombinable where Wrapped: UnexpectedNodesCombinable {
   var elements: [RawSyntax] {
-    if let self = self {
+    if let self {
       return self.elements
     } else {
       return []
@@ -73,11 +73,11 @@ extension RawTokenSyntax: UnexpectedNodesCombinable {
 extension RawUnexpectedNodesSyntax: UnexpectedNodesCombinable {}
 
 extension RawUnexpectedNodesSyntax {
-  init?<T1: UnexpectedNodesCombinable, T2: UnexpectedNodesCombinable>(combining syntax1: T1, _ syntax2: T2, arena: __shared SyntaxArena) {
+  init?(combining syntax1: some UnexpectedNodesCombinable, _ syntax2: some UnexpectedNodesCombinable, arena: __shared SyntaxArena) {
     self.init(syntax1.elements + syntax2.elements, arena: arena)
   }
 
-  init?<T1: UnexpectedNodesCombinable, T2: UnexpectedNodesCombinable, T3: UnexpectedNodesCombinable>(combining syntax1: T1, _ syntax2: T2, _ syntax3: T3, arena: __shared SyntaxArena) {
+  init?(combining syntax1: some UnexpectedNodesCombinable, _ syntax2: some UnexpectedNodesCombinable, _ syntax3: some UnexpectedNodesCombinable, arena: __shared SyntaxArena) {
     self.init(syntax1.elements + syntax2.elements + syntax3.elements, arena: arena)
   }
 }

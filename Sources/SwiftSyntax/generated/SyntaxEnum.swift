@@ -16,8 +16,6 @@
 @frozen // FIXME: Not actually stable, works around a miscompile
 public enum SyntaxEnum {
   case token(TokenSyntax)
-  case accessPathComponent(AccessPathComponentSyntax)
-  case accessPath(AccessPathSyntax)
   case accessorBlock(AccessorBlockSyntax)
   case accessorDecl(AccessorDeclSyntax)
   case accessorEffectSpecifiers(AccessorEffectSpecifiersSyntax)
@@ -49,6 +47,8 @@ public enum SyntaxEnum {
   case booleanLiteralExpr(BooleanLiteralExprSyntax)
   case borrowExpr(BorrowExprSyntax)
   case breakStmt(BreakStmtSyntax)
+  case canImportExpr(CanImportExprSyntax)
+  case canImportVersionInfo(CanImportVersionInfoSyntax)
   case caseItemList(CaseItemListSyntax)
   case caseItem(CaseItemSyntax)
   case catchClauseList(CatchClauseListSyntax)
@@ -102,6 +102,7 @@ public enum SyntaxEnum {
   case differentiabilityParams(DifferentiabilityParamsSyntax)
   case differentiableAttributeArguments(DifferentiableAttributeArgumentsSyntax)
   case discardAssignmentExpr(DiscardAssignmentExprSyntax)
+  case discardStmt(DiscardStmtSyntax)
   case doStmt(DoStmtSyntax)
   case documentationAttributeArgument(DocumentationAttributeArgumentSyntax)
   case documentationAttributeArguments(DocumentationAttributeArgumentsSyntax)
@@ -126,7 +127,6 @@ public enum SyntaxEnum {
   case floatLiteralExpr(FloatLiteralExprSyntax)
   case forInStmt(ForInStmtSyntax)
   case forcedValueExpr(ForcedValueExprSyntax)
-  case forgetStmt(ForgetStmtSyntax)
   case functionCallExpr(FunctionCallExprSyntax)
   case functionDecl(FunctionDeclSyntax)
   case functionEffectSpecifiers(FunctionEffectSpecifiersSyntax)
@@ -153,6 +153,8 @@ public enum SyntaxEnum {
   case implementsAttributeArguments(ImplementsAttributeArgumentsSyntax)
   case implicitlyUnwrappedOptionalType(ImplicitlyUnwrappedOptionalTypeSyntax)
   case importDecl(ImportDeclSyntax)
+  case importPathComponent(ImportPathComponentSyntax)
+  case importPath(ImportPathSyntax)
   case inOutExpr(InOutExprSyntax)
   case infixOperatorExpr(InfixOperatorExprSyntax)
   case inheritedTypeList(InheritedTypeListSyntax)
@@ -277,6 +279,8 @@ public enum SyntaxEnum {
   case unresolvedTernaryExpr(UnresolvedTernaryExprSyntax)
   case valueBindingPattern(ValueBindingPatternSyntax)
   case variableDecl(VariableDeclSyntax)
+  case versionComponentList(VersionComponentListSyntax)
+  case versionComponent(VersionComponentSyntax)
   case versionTuple(VersionTupleSyntax)
   case whereClause(WhereClauseSyntax)
   case whileStmt(WhileStmtSyntax)
@@ -293,10 +297,6 @@ public extension Syntax {
     switch raw.kind {
     case .token:
       return .token(TokenSyntax(self)!)
-    case .accessPathComponent:
-      return .accessPathComponent(AccessPathComponentSyntax(self)!)
-    case .accessPath:
-      return .accessPath(AccessPathSyntax(self)!)
     case .accessorBlock:
       return .accessorBlock(AccessorBlockSyntax(self)!)
     case .accessorDecl:
@@ -359,6 +359,10 @@ public extension Syntax {
       return .borrowExpr(BorrowExprSyntax(self)!)
     case .breakStmt:
       return .breakStmt(BreakStmtSyntax(self)!)
+    case .canImportExpr:
+      return .canImportExpr(CanImportExprSyntax(self)!)
+    case .canImportVersionInfo:
+      return .canImportVersionInfo(CanImportVersionInfoSyntax(self)!)
     case .caseItemList:
       return .caseItemList(CaseItemListSyntax(self)!)
     case .caseItem:
@@ -465,6 +469,8 @@ public extension Syntax {
       return .differentiableAttributeArguments(DifferentiableAttributeArgumentsSyntax(self)!)
     case .discardAssignmentExpr:
       return .discardAssignmentExpr(DiscardAssignmentExprSyntax(self)!)
+    case .discardStmt:
+      return .discardStmt(DiscardStmtSyntax(self)!)
     case .doStmt:
       return .doStmt(DoStmtSyntax(self)!)
     case .documentationAttributeArgument:
@@ -513,8 +519,6 @@ public extension Syntax {
       return .forInStmt(ForInStmtSyntax(self)!)
     case .forcedValueExpr:
       return .forcedValueExpr(ForcedValueExprSyntax(self)!)
-    case .forgetStmt:
-      return .forgetStmt(ForgetStmtSyntax(self)!)
     case .functionCallExpr:
       return .functionCallExpr(FunctionCallExprSyntax(self)!)
     case .functionDecl:
@@ -567,6 +571,10 @@ public extension Syntax {
       return .implicitlyUnwrappedOptionalType(ImplicitlyUnwrappedOptionalTypeSyntax(self)!)
     case .importDecl:
       return .importDecl(ImportDeclSyntax(self)!)
+    case .importPathComponent:
+      return .importPathComponent(ImportPathComponentSyntax(self)!)
+    case .importPath:
+      return .importPath(ImportPathSyntax(self)!)
     case .inOutExpr:
       return .inOutExpr(InOutExprSyntax(self)!)
     case .infixOperatorExpr:
@@ -815,6 +823,10 @@ public extension Syntax {
       return .valueBindingPattern(ValueBindingPatternSyntax(self)!)
     case .variableDecl:
       return .variableDecl(VariableDeclSyntax(self)!)
+    case .versionComponentList:
+      return .versionComponentList(VersionComponentListSyntax(self)!)
+    case .versionComponent:
+      return .versionComponent(VersionComponentSyntax(self)!)
     case .versionTuple:
       return .versionTuple(VersionTupleSyntax(self)!)
     case .whereClause:

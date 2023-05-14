@@ -42,21 +42,6 @@ extension FixIt {
   init(message: FixItMessage, changes: MultiNodeChange) {
     self.init(message: message, changes: changes.primitiveChanges)
   }
-
-  // These overloads shouldn't be needed, but are currently required for the
-  // Swift 5.5 compiler to handle non-trivial FixIt initializations using
-  // leading-dot syntax.
-  // TODO: These can be dropped once we require a minimum of Swift 5.6 to
-  // compile the library.
-  init(message: StaticParserFixIt, changes: MultiNodeChange) {
-    self.init(message: message as FixItMessage, changes: changes.primitiveChanges)
-  }
-  init(message: StaticParserFixIt, changes: [MultiNodeChange]) {
-    self.init(message: message as FixItMessage, changes: MultiNodeChange(combining: changes).primitiveChanges)
-  }
-  public init(message: StaticParserFixIt, changes: [Change]) {
-    self.init(message: message as FixItMessage, changes: changes)
-  }
 }
 
 // MARK: - Make missing
@@ -89,7 +74,7 @@ extension FixIt.MultiNodeChange {
 
   /// If `transferTrivia` is `true`, the leading and trailing trivia of the
   /// removed node will be transferred to the trailing trivia of the previous token.
-  static func makeMissing<SyntaxType: SyntaxProtocol>(_ node: SyntaxType?, transferTrivia: Bool = true) -> Self {
+  static func makeMissing(_ node: (some SyntaxProtocol)?, transferTrivia: Bool = true) -> Self {
     guard let node = node else {
       return FixIt.MultiNodeChange(primitiveChanges: [])
     }
@@ -104,7 +89,7 @@ extension FixIt.MultiNodeChange {
   /// While doing this, it tries to be smart, merging trivia where it makes sense
   /// and refusing to add e.g. a space after punctuation, where it usually
   /// doesn't make sense.
-  private static func transferTriviaAtSides<SyntaxType: SyntaxProtocol>(from nodes: [SyntaxType]) -> Self {
+  private static func transferTriviaAtSides(from nodes: [some SyntaxProtocol]) -> Self {
     let removedTriviaAtSides = (nodes.first?.leadingTrivia ?? []).merging(nodes.last?.trailingTrivia ?? [])
     if !removedTriviaAtSides.isEmpty, let previousToken = nodes.first?.previousToken(viewMode: .sourceAccurate) {
       let mergedTrivia = previousToken.trailingTrivia.merging(removedTriviaAtSides)
@@ -133,18 +118,18 @@ class MissingNodesBasicFormatter: BasicFormat {
 extension FixIt.MultiNodeChange {
   /// Make a node present. If `leadingTrivia` or `trailingTrivia` is specified,
   /// override the default leading/trailing trivia inferred from `BasicFormat`.
-  static func makePresent<T: SyntaxProtocol>(
-    _ node: T,
+  static func makePresent(
+    _ node: some SyntaxProtocol,
     leadingTrivia: Trivia? = nil,
     trailingTrivia: Trivia? = nil
   ) -> Self {
     var presentNode = MissingNodesBasicFormatter(viewMode: .fixedUp).visit(Syntax(node))
     presentNode = PresentMaker().rewrite(presentNode)
 
-    if let leadingTrivia = leadingTrivia {
+    if let leadingTrivia {
       presentNode = presentNode.with(\.leadingTrivia, leadingTrivia)
     }
-    if let trailingTrivia = trailingTrivia {
+    if let trailingTrivia {
       presentNode = presentNode.with(\.trailingTrivia, trailingTrivia)
     }
 

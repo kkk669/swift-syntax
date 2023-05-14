@@ -173,7 +173,7 @@ extension Parser {
       elements.append(lastElement)
       elements.append(operatorExpr)
 
-      if let rhsExpr = rhsExpr {
+      if let rhsExpr {
         // Operator parsing returned the RHS.
         lastElement = rhsExpr
       } else if forDirective && self.currentToken.isAtStartOfLine {
@@ -601,7 +601,7 @@ extension Parser {
     forDirective: Bool,
     pattern: PatternContext
   ) -> RawExprSyntax {
-    let head = self.parsePrimaryExpression(pattern: pattern, flavor: flavor)
+    let head = self.parsePrimaryExpression(pattern: pattern, forDirective: forDirective, flavor: flavor)
     guard !head.is(RawMissingExprSyntax.self) else {
       return head
     }
@@ -614,7 +614,7 @@ extension Parser {
   }
 
   @_spi(RawSyntax)
-  public mutating func parseDottedExpressionSuffix<R: RawSyntaxNodeProtocol>(previousNode: R?) -> (
+  public mutating func parseDottedExpressionSuffix(previousNode: (some RawSyntaxNodeProtocol)?) -> (
     unexpectedPeriod: RawUnexpectedNodesSyntax?,
     period: RawTokenSyntax,
     name: RawTokenSyntax,
@@ -1151,8 +1151,15 @@ extension Parser {
   @_spi(RawSyntax)
   public mutating func parsePrimaryExpression(
     pattern: PatternContext,
+    forDirective: Bool,
     flavor: ExprFlavor
   ) -> RawExprSyntax {
+    if forDirective == true,
+      let directiveExpr = self.parsePrimaryExprForDirective()
+    {
+      return RawExprSyntax(directiveExpr)
+    }
+
     switch self.at(anyIn: PrimaryExpressionStart.self) {
     case (.integerLiteral, let handle)?:
       let digits = self.eat(handle)
@@ -1316,6 +1323,18 @@ extension Parser {
       return RawExprSyntax(RawMissingExprSyntax(arena: self.arena))
     }
   }
+
+  // try to parse a primary expression for a directive
+  mutating func parsePrimaryExprForDirective() -> RawExprSyntax? {
+    switch self.at(anyIn: CompilationCondition.self) {
+    case (.canImportKeyword, let handle)?:
+      return RawExprSyntax(self.parseCanImportExpression(handle))
+
+    // TODO: add case `swift` and `compiler` here
+    default:
+      return nil
+    }
+  }
 }
 
 extension Parser {
@@ -1472,7 +1491,7 @@ extension Parser {
     let (unexpectedBeforeSlash, openSlash) = self.expect(.regexSlash)
 
     // If we had opening pounds, there should be no trivia for the slash.
-    if let openPounds = openPounds {
+    if let openPounds {
       precondition(openPounds.trailingTriviaByteLength == 0 && openSlash.leadingTriviaByteLength == 0)
     }
 
@@ -2566,6 +2585,44 @@ extension Parser {
       whereClause = nil
     }
     return (pattern, whereClause)
+  }
+}
+
+// MARK: Platform Condition
+extension Parser {
+  mutating func parseCanImportExpression(_ handle: TokenConsumptionHandle) -> RawExprSyntax {
+    let canImportKeyword = self.eat(handle)
+
+    let (unexpectedBeforeLeftParen, leftParen) = self.expect(.leftParen)
+
+    let (unexpectedBeforeImportPath, importPath) = self.expect(.identifier)
+
+    var versionInfo: RawCanImportVersionInfoSyntax?
+
+    if let comma = self.consume(if: .comma) {
+      let (unexpectedBeforeLabel, label) = self.expect(.keyword(._version), .keyword(._underlyingVersion), default: .keyword(._version))
+      let (unexpectedBeforeColon, colon) = self.expect(.colon)
+
+      let version = self.parseVersionTuple(maxComponentCount: 4)
+
+      versionInfo = RawCanImportVersionInfoSyntax(comma: comma, unexpectedBeforeLabel, label: label, unexpectedBeforeColon, colon: colon, versionTuple: version, arena: self.arena)
+    }
+
+    let (unexpectedBeforeRightParen, rightParen) = self.expect(.rightParen)
+
+    return RawExprSyntax(
+      RawCanImportExprSyntax(
+        canImportKeyword: canImportKeyword,
+        unexpectedBeforeLeftParen,
+        leftParen: leftParen,
+        unexpectedBeforeImportPath,
+        importPath: importPath,
+        versionInfo: versionInfo,
+        unexpectedBeforeRightParen,
+        rightParen: rightParen,
+        arena: self.arena
+      )
+    )
   }
 }
 

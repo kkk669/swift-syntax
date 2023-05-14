@@ -16,8 +16,6 @@
 @frozen // FIXME: Not actually stable, works around a miscompile
 public enum SyntaxKind {
   case token
-  case accessPathComponent
-  case accessPath
   case accessorBlock
   case accessorDecl
   case accessorEffectSpecifiers
@@ -49,6 +47,8 @@ public enum SyntaxKind {
   case booleanLiteralExpr
   case borrowExpr
   case breakStmt
+  case canImportExpr
+  case canImportVersionInfo
   case caseItemList
   case caseItem
   case catchClauseList
@@ -102,6 +102,7 @@ public enum SyntaxKind {
   case differentiabilityParams
   case differentiableAttributeArguments
   case discardAssignmentExpr
+  case discardStmt
   case doStmt
   case documentationAttributeArgument
   case documentationAttributeArguments
@@ -126,7 +127,6 @@ public enum SyntaxKind {
   case floatLiteralExpr
   case forInStmt
   case forcedValueExpr
-  case forgetStmt
   case functionCallExpr
   case functionDecl
   case functionEffectSpecifiers
@@ -153,6 +153,8 @@ public enum SyntaxKind {
   case implementsAttributeArguments
   case implicitlyUnwrappedOptionalType
   case importDecl
+  case importPathComponent
+  case importPath
   case inOutExpr
   case infixOperatorExpr
   case inheritedTypeList
@@ -277,6 +279,8 @@ public enum SyntaxKind {
   case unresolvedTernaryExpr
   case valueBindingPattern
   case variableDecl
+  case versionComponentList
+  case versionComponent
   case versionTuple
   case whereClause
   case whileStmt
@@ -288,8 +292,6 @@ public enum SyntaxKind {
   
   public var isSyntaxCollection: Bool {
     switch self {
-    case .accessPath:
-      return true
     case .accessorList:
       return true
     case .arrayElementList:
@@ -346,6 +348,8 @@ public enum SyntaxKind {
       return true
     case .ifConfigClauseList:
       return true
+    case .importPath:
+      return true
     case .inheritedTypeList:
       return true
     case .keyPathComponentList:
@@ -380,6 +384,8 @@ public enum SyntaxKind {
       return true
     case .unexpectedNodes:
       return true
+    case .versionComponentList:
+      return true
     case .yieldExprList:
       return true
     default:
@@ -408,10 +414,6 @@ public enum SyntaxKind {
     switch self {
     case .token:
       return TokenSyntax.self
-    case .accessPathComponent:
-      return AccessPathComponentSyntax.self
-    case .accessPath:
-      return AccessPathSyntax.self
     case .accessorBlock:
       return AccessorBlockSyntax.self
     case .accessorDecl:
@@ -474,6 +476,10 @@ public enum SyntaxKind {
       return BorrowExprSyntax.self
     case .breakStmt:
       return BreakStmtSyntax.self
+    case .canImportExpr:
+      return CanImportExprSyntax.self
+    case .canImportVersionInfo:
+      return CanImportVersionInfoSyntax.self
     case .caseItemList:
       return CaseItemListSyntax.self
     case .caseItem:
@@ -580,6 +586,8 @@ public enum SyntaxKind {
       return DifferentiableAttributeArgumentsSyntax.self
     case .discardAssignmentExpr:
       return DiscardAssignmentExprSyntax.self
+    case .discardStmt:
+      return DiscardStmtSyntax.self
     case .doStmt:
       return DoStmtSyntax.self
     case .documentationAttributeArgument:
@@ -628,8 +636,6 @@ public enum SyntaxKind {
       return ForInStmtSyntax.self
     case .forcedValueExpr:
       return ForcedValueExprSyntax.self
-    case .forgetStmt:
-      return ForgetStmtSyntax.self
     case .functionCallExpr:
       return FunctionCallExprSyntax.self
     case .functionDecl:
@@ -682,6 +688,10 @@ public enum SyntaxKind {
       return ImplicitlyUnwrappedOptionalTypeSyntax.self
     case .importDecl:
       return ImportDeclSyntax.self
+    case .importPathComponent:
+      return ImportPathComponentSyntax.self
+    case .importPath:
+      return ImportPathSyntax.self
     case .inOutExpr:
       return InOutExprSyntax.self
     case .infixOperatorExpr:
@@ -930,6 +940,10 @@ public enum SyntaxKind {
       return ValueBindingPatternSyntax.self
     case .variableDecl:
       return VariableDeclSyntax.self
+    case .versionComponentList:
+      return VersionComponentListSyntax.self
+    case .versionComponent:
+      return VersionComponentSyntax.self
     case .versionTuple:
       return VersionTupleSyntax.self
     case .whereClause:

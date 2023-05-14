@@ -55,7 +55,7 @@ open class BasicFormat: SyntaxRewriter {
   // MARK: - Updating indentation level
 
   public func increaseIndentationLevel(to userDefinedIndentation: Trivia? = nil) {
-    if let userDefinedIndentation = userDefinedIndentation {
+    if let userDefinedIndentation {
       indentationStack.append((indentation: userDefinedIndentation, isUserDefined: true))
     } else {
       indentationStack.append((indentation: currentIndentationLevel + indentationWidth, isUserDefined: false))
@@ -139,7 +139,7 @@ open class BasicFormat: SyntaxRewriter {
   // MARK: - Customization points
 
   /// Whether a leading newline on `token` should be added.
-  open func requiresIndent<T: SyntaxProtocol>(_ node: T) -> Bool {
+  open func requiresIndent(_ node: some SyntaxProtocol) -> Bool {
     return node.requiresIndent
   }
 
@@ -223,7 +223,6 @@ open class BasicFormat: SyntaxRewriter {
       (.singleQuote, .rawStringDelimiter),  // closing raw string delimiter should never be separate by a space
       (.stringQuote, .rawStringDelimiter),  // closing raw string delimiter should never be separate by a space
       (.stringSegment, _),
-      (_, .colon),
       (_, .comma),
       (_, .ellipsis),
       (_, .eof),
@@ -237,6 +236,12 @@ open class BasicFormat: SyntaxRewriter {
       (_, nil),
       (nil, _):
       return false
+    case (_, .colon):
+      if second?.keyPathInParent != \TernaryExprSyntax.colonMark
+        && second?.keyPathInParent != \UnresolvedTernaryExprSyntax.colonMark
+      {
+        return false
+      }
     case (.leftAngle, _) where second?.tokenKind != .rightAngle:  // `<` and `>` need to be separated by a space because otherwise they become an operator
       return false
     case (_, .rightAngle) where first?.tokenKind != .leftAngle:  // `<` and `>` need to be separated by a space because otherwise they become an operator

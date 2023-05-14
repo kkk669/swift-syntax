@@ -25,215 +25,6 @@ public extension SyntaxCollection {
   }
 }
 
-/// `AccessPathSyntax` represents a collection of one or more
-/// `AccessPathComponent` nodes. AccessPathSyntax behaves
-/// as a regular Swift collection, and has accessors that return new
-/// versions of the collection with different children.
-public struct AccessPathSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = AccessPathComponentSyntax
-  
-  public let _syntaxNode: Syntax
-  
-  private var layoutView: RawSyntaxLayoutView {
-    data.raw.layoutView!
-  }
-  
-  public init?<S: SyntaxProtocol>(_ node: S) {
-    guard node.raw.kind == .accessPath else {
-      return nil
-    }
-    self._syntaxNode = node._syntaxNode
-  }
-  
-  /// Creates a Syntax node from the provided root and data. This assumes
-  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
-  /// is undefined.
-  internal init(_ data: SyntaxData) {
-    precondition(data.raw.kind == .accessPath)
-    self._syntaxNode = Syntax(data)
-  }
-  
-  public init(_ children: [Element]) {
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeLayout(kind: SyntaxKind.accessPath,
-                                     from: children.map {
-          $0.raw
-        }, arena: arena)
-      return SyntaxData.forRoot(raw)
-    }
-    self.init(data)
-  }
-  
-  /// The number of elements, `present` or `missing`, in this collection.
-  public var count: Int {
-    return layoutView.children.count
-  }
-  
-  /// Creates a new `AccessPathSyntax` by replacing the underlying layout with
-  /// a different set of raw syntax nodes.
-  ///
-  /// - Parameter layout: The new list of raw syntax nodes underlying this
-  ///                     collection.
-  /// - Returns: A new `AccessPathSyntax` with the new layout underlying it.
-  internal func replacingLayout(_ layout: [RawSyntax?]) -> AccessPathSyntax {
-    let arena = SyntaxArena()
-    let newRaw = layoutView.replacingLayout(with: layout, arena: arena)
-    let newData = data.replacingSelf(newRaw, arena: arena)
-    return AccessPathSyntax(newData)
-  }
-  
-  /// Creates a new `AccessPathSyntax` by appending the provided syntax element
-  /// to the children.
-  ///
-  /// - Parameter syntax: The element to append.
-  /// - Returns: A new `AccessPathSyntax` with that element appended to the end.
-  public func appending(_ syntax: Element) -> AccessPathSyntax {
-    var newLayout = layoutView.formLayoutArray()
-    newLayout.append(syntax.raw)
-    return replacingLayout(newLayout)
-  }
-  
-  /// Creates a new `AccessPathSyntax` by prepending the provided syntax element
-  /// to the children.
-  ///
-  /// - Parameter syntax: The element to prepend.
-  /// - Returns: A new `AccessPathSyntax` with that element prepended to the
-  ///            beginning.
-  public func prepending(_ syntax: Element) -> AccessPathSyntax {
-    return inserting(syntax, at: 0)
-  }
-  
-  /// Creates a new `AccessPathSyntax` by inserting the provided syntax element
-  /// at the provided index in the children.
-  ///
-  /// - Parameters:
-  ///   - syntax: The element to insert.
-  ///   - index: The index at which to insert the element in the collection.
-  ///
-  /// - Returns: A new `AccessPathSyntax` with that element appended to the end.
-  public func inserting(_ syntax: Element, at index: Int) -> AccessPathSyntax {
-    var newLayout = layoutView.formLayoutArray()
-    /// Make sure the index is a valid insertion index (0 to 1 past the end)
-    precondition((newLayout.startIndex ... newLayout.endIndex).contains(index),
-                 "inserting node at invalid index \(index)")
-    newLayout.insert(syntax.raw, at: index)
-    return replacingLayout(newLayout)
-  }
-  
-  /// Creates a new `AccessPathSyntax` by replacing the syntax element
-  /// at the provided index.
-  ///
-  /// - Parameters:
-  ///   - index: The index at which to replace the element in the collection.
-  ///   - syntax: The element to replace with.
-  ///
-  /// - Returns: A new `AccessPathSyntax` with the new element at the provided index.
-  public func replacing(childAt index: Int, with syntax: Element) -> AccessPathSyntax {
-    var newLayout = layoutView.formLayoutArray()
-    /// Make sure the index is a valid index for replacing
-    precondition((newLayout.startIndex ..< newLayout.endIndex).contains(index),
-                 "replacing node at invalid index \(index)")
-    newLayout[index] = syntax.raw
-    return replacingLayout(newLayout)
-  }
-  
-  /// Creates a new `AccessPathSyntax` by removing the syntax element at the
-  /// provided index.
-  ///
-  /// - Parameter index: The index of the element to remove from the collection.
-  /// - Returns: A new `AccessPathSyntax` with the element at the provided index
-  ///            removed.
-  public func removing(childAt index: Int) -> AccessPathSyntax {
-    var newLayout = layoutView.formLayoutArray()
-    newLayout.remove(at: index)
-    return replacingLayout(newLayout)
-  }
-  
-  /// Creates a new `AccessPathSyntax` by removing the first element.
-  ///
-  /// - Returns: A new `AccessPathSyntax` with the first element removed.
-  public func removingFirst() -> AccessPathSyntax {
-    var newLayout = layoutView.formLayoutArray()
-    newLayout.removeFirst()
-    return replacingLayout(newLayout)
-  }
-  
-  /// Creates a new `AccessPathSyntax` by removing the last element.
-  ///
-  /// - Returns: A new `AccessPathSyntax` with the last element removed.
-  public func removingLast() -> AccessPathSyntax {
-    var newLayout = layoutView.formLayoutArray()
-    newLayout.removeLast()
-    return replacingLayout(newLayout)
-  }
-}
-
-/// Conformance for `AccessPathSyntax` to the `BidirectionalCollection` protocol.
-extension AccessPathSyntax: BidirectionalCollection {
-  public typealias Index = SyntaxChildrenIndex
-  
-  public struct Iterator: IteratorProtocol {
-    private let parent: Syntax
-    
-    private var iterator: RawSyntaxChildren.Iterator
-    
-
-    init(parent: Syntax, rawChildren: RawSyntaxChildren) {
-      self.parent = parent
-      self.iterator = rawChildren.makeIterator()
-    }
-    
-
-    public mutating func next() -> Element? {
-      guard let (raw, info) = self.iterator.next() else {
-        return nil
-      }
-      let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)
-      let data = SyntaxData(absoluteRaw, parent: parent)
-      return Element(data)
-    }
-  }
-  
-  public func makeIterator() -> Iterator {
-    return Iterator(parent: Syntax(self), rawChildren: rawChildren)
-  }
-  
-  private var rawChildren: RawSyntaxChildren {
-    // We know children in a syntax collection cannot be missing. So we can
-    // use the low-level and faster RawSyntaxChildren collection instead of
-    // NonNilRawSyntaxChildren.
-    return RawSyntaxChildren(self.data.absoluteRaw)
-  }
-  
-  public var startIndex: SyntaxChildrenIndex {
-    return rawChildren.startIndex
-  }
-  
-  public var endIndex: SyntaxChildrenIndex {
-    return rawChildren.endIndex
-  }
-  
-  public func index(after index: SyntaxChildrenIndex) -> SyntaxChildrenIndex {
-    return rawChildren.index(after: index)
-  }
-  
-  public func index(before index: SyntaxChildrenIndex) -> SyntaxChildrenIndex {
-    return rawChildren.index(before: index)
-  }
-  
-  public func distance(from start: SyntaxChildrenIndex, to end: SyntaxChildrenIndex)
-  -> Int {
-    return rawChildren.distance(from: start, to: end)
-  }
-  
-  public subscript(position: SyntaxChildrenIndex) -> Element {
-    let (raw, info) = rawChildren[position]
-    let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)
-    let data = SyntaxData(absoluteRaw, parent: Syntax(self))
-    return Element(data)
-  }
-}
-
 /// `AccessorListSyntax` represents a collection of one or more
 /// `AccessorDecl` nodes. AccessorListSyntax behaves
 /// as a regular Swift collection, and has accessors that return new
@@ -247,7 +38,7 @@ public struct AccessorListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .accessorList else {
       return nil
     }
@@ -456,7 +247,7 @@ public struct ArrayElementListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .arrayElementList else {
       return nil
     }
@@ -683,7 +474,7 @@ public struct AttributeListSyntax: SyntaxCollection, SyntaxHashable {
       self = .ifConfigDecl(node)
     }
     
-    public init?<S: SyntaxProtocol>(_ node: S) {
+    public init?(_ node: some SyntaxProtocol) {
       if let node = node.as(AttributeSyntax.self) {
         self = .attribute(node)
         return
@@ -708,7 +499,7 @@ public struct AttributeListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .attributeList else {
       return nil
     }
@@ -917,7 +708,7 @@ public struct AvailabilitySpecListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .availabilitySpecList else {
       return nil
     }
@@ -1126,7 +917,7 @@ public struct AvailabilityVersionRestrictionListSyntax: SyntaxCollection, Syntax
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .availabilityVersionRestrictionList else {
       return nil
     }
@@ -1335,7 +1126,7 @@ public struct CaseItemListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .caseItemList else {
       return nil
     }
@@ -1544,7 +1335,7 @@ public struct CatchClauseListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .catchClauseList else {
       return nil
     }
@@ -1753,7 +1544,7 @@ public struct CatchItemListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .catchItemList else {
       return nil
     }
@@ -1962,7 +1753,7 @@ public struct ClosureCaptureItemListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .closureCaptureItemList else {
       return nil
     }
@@ -2171,7 +1962,7 @@ public struct ClosureParamListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .closureParamList else {
       return nil
     }
@@ -2380,7 +2171,7 @@ public struct ClosureParameterListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .closureParameterList else {
       return nil
     }
@@ -2589,7 +2380,7 @@ public struct CodeBlockItemListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .codeBlockItemList else {
       return nil
     }
@@ -2798,7 +2589,7 @@ public struct CompositionTypeElementListSyntax: SyntaxCollection, SyntaxHashable
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .compositionTypeElementList else {
       return nil
     }
@@ -3007,7 +2798,7 @@ public struct ConditionElementListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .conditionElementList else {
       return nil
     }
@@ -3216,7 +3007,7 @@ public struct DeclNameArgumentListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .declNameArgumentList else {
       return nil
     }
@@ -3425,7 +3216,7 @@ public struct DesignatedTypeListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .designatedTypeList else {
       return nil
     }
@@ -3634,7 +3425,7 @@ public struct DictionaryElementListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .dictionaryElementList else {
       return nil
     }
@@ -3843,7 +3634,7 @@ public struct DifferentiabilityParamListSyntax: SyntaxCollection, SyntaxHashable
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .differentiabilityParamList else {
       return nil
     }
@@ -4049,7 +3840,7 @@ public struct DocumentationAttributeArgumentsSyntax: SyntaxCollection, SyntaxHas
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .documentationAttributeArguments else {
       return nil
     }
@@ -4255,7 +4046,7 @@ public struct EffectsArgumentsSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .effectsArguments else {
       return nil
     }
@@ -4461,7 +4252,7 @@ public struct EnumCaseElementListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .enumCaseElementList else {
       return nil
     }
@@ -4670,7 +4461,7 @@ public struct EnumCaseParameterListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .enumCaseParameterList else {
       return nil
     }
@@ -4876,7 +4667,7 @@ public struct ExprListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .exprList else {
       return nil
     }
@@ -5085,7 +4876,7 @@ public struct FunctionParameterListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .functionParameterList else {
       return nil
     }
@@ -5294,7 +5085,7 @@ public struct GenericArgumentListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .genericArgumentList else {
       return nil
     }
@@ -5503,7 +5294,7 @@ public struct GenericParameterListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .genericParameterList else {
       return nil
     }
@@ -5712,7 +5503,7 @@ public struct GenericRequirementListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .genericRequirementList else {
       return nil
     }
@@ -5921,7 +5712,7 @@ public struct IfConfigClauseListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .ifConfigClauseList else {
       return nil
     }
@@ -6117,6 +5908,215 @@ extension IfConfigClauseListSyntax: BidirectionalCollection {
   }
 }
 
+/// `ImportPathSyntax` represents a collection of one or more
+/// `ImportPathComponent` nodes. ImportPathSyntax behaves
+/// as a regular Swift collection, and has accessors that return new
+/// versions of the collection with different children.
+public struct ImportPathSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = ImportPathComponentSyntax
+  
+  public let _syntaxNode: Syntax
+  
+  private var layoutView: RawSyntaxLayoutView {
+    data.raw.layoutView!
+  }
+  
+  public init?(_ node: some SyntaxProtocol) {
+    guard node.raw.kind == .importPath else {
+      return nil
+    }
+    self._syntaxNode = node._syntaxNode
+  }
+  
+  /// Creates a Syntax node from the provided root and data. This assumes
+  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
+  /// is undefined.
+  internal init(_ data: SyntaxData) {
+    precondition(data.raw.kind == .importPath)
+    self._syntaxNode = Syntax(data)
+  }
+  
+  public init(_ children: [Element]) {
+    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.importPath,
+                                     from: children.map {
+          $0.raw
+        }, arena: arena)
+      return SyntaxData.forRoot(raw)
+    }
+    self.init(data)
+  }
+  
+  /// The number of elements, `present` or `missing`, in this collection.
+  public var count: Int {
+    return layoutView.children.count
+  }
+  
+  /// Creates a new `ImportPathSyntax` by replacing the underlying layout with
+  /// a different set of raw syntax nodes.
+  ///
+  /// - Parameter layout: The new list of raw syntax nodes underlying this
+  ///                     collection.
+  /// - Returns: A new `ImportPathSyntax` with the new layout underlying it.
+  internal func replacingLayout(_ layout: [RawSyntax?]) -> ImportPathSyntax {
+    let arena = SyntaxArena()
+    let newRaw = layoutView.replacingLayout(with: layout, arena: arena)
+    let newData = data.replacingSelf(newRaw, arena: arena)
+    return ImportPathSyntax(newData)
+  }
+  
+  /// Creates a new `ImportPathSyntax` by appending the provided syntax element
+  /// to the children.
+  ///
+  /// - Parameter syntax: The element to append.
+  /// - Returns: A new `ImportPathSyntax` with that element appended to the end.
+  public func appending(_ syntax: Element) -> ImportPathSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    newLayout.append(syntax.raw)
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `ImportPathSyntax` by prepending the provided syntax element
+  /// to the children.
+  ///
+  /// - Parameter syntax: The element to prepend.
+  /// - Returns: A new `ImportPathSyntax` with that element prepended to the
+  ///            beginning.
+  public func prepending(_ syntax: Element) -> ImportPathSyntax {
+    return inserting(syntax, at: 0)
+  }
+  
+  /// Creates a new `ImportPathSyntax` by inserting the provided syntax element
+  /// at the provided index in the children.
+  ///
+  /// - Parameters:
+  ///   - syntax: The element to insert.
+  ///   - index: The index at which to insert the element in the collection.
+  ///
+  /// - Returns: A new `ImportPathSyntax` with that element appended to the end.
+  public func inserting(_ syntax: Element, at index: Int) -> ImportPathSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    /// Make sure the index is a valid insertion index (0 to 1 past the end)
+    precondition((newLayout.startIndex ... newLayout.endIndex).contains(index),
+                 "inserting node at invalid index \(index)")
+    newLayout.insert(syntax.raw, at: index)
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `ImportPathSyntax` by replacing the syntax element
+  /// at the provided index.
+  ///
+  /// - Parameters:
+  ///   - index: The index at which to replace the element in the collection.
+  ///   - syntax: The element to replace with.
+  ///
+  /// - Returns: A new `ImportPathSyntax` with the new element at the provided index.
+  public func replacing(childAt index: Int, with syntax: Element) -> ImportPathSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    /// Make sure the index is a valid index for replacing
+    precondition((newLayout.startIndex ..< newLayout.endIndex).contains(index),
+                 "replacing node at invalid index \(index)")
+    newLayout[index] = syntax.raw
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `ImportPathSyntax` by removing the syntax element at the
+  /// provided index.
+  ///
+  /// - Parameter index: The index of the element to remove from the collection.
+  /// - Returns: A new `ImportPathSyntax` with the element at the provided index
+  ///            removed.
+  public func removing(childAt index: Int) -> ImportPathSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    newLayout.remove(at: index)
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `ImportPathSyntax` by removing the first element.
+  ///
+  /// - Returns: A new `ImportPathSyntax` with the first element removed.
+  public func removingFirst() -> ImportPathSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    newLayout.removeFirst()
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `ImportPathSyntax` by removing the last element.
+  ///
+  /// - Returns: A new `ImportPathSyntax` with the last element removed.
+  public func removingLast() -> ImportPathSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    newLayout.removeLast()
+    return replacingLayout(newLayout)
+  }
+}
+
+/// Conformance for `ImportPathSyntax` to the `BidirectionalCollection` protocol.
+extension ImportPathSyntax: BidirectionalCollection {
+  public typealias Index = SyntaxChildrenIndex
+  
+  public struct Iterator: IteratorProtocol {
+    private let parent: Syntax
+    
+    private var iterator: RawSyntaxChildren.Iterator
+    
+
+    init(parent: Syntax, rawChildren: RawSyntaxChildren) {
+      self.parent = parent
+      self.iterator = rawChildren.makeIterator()
+    }
+    
+
+    public mutating func next() -> Element? {
+      guard let (raw, info) = self.iterator.next() else {
+        return nil
+      }
+      let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)
+      let data = SyntaxData(absoluteRaw, parent: parent)
+      return Element(data)
+    }
+  }
+  
+  public func makeIterator() -> Iterator {
+    return Iterator(parent: Syntax(self), rawChildren: rawChildren)
+  }
+  
+  private var rawChildren: RawSyntaxChildren {
+    // We know children in a syntax collection cannot be missing. So we can
+    // use the low-level and faster RawSyntaxChildren collection instead of
+    // NonNilRawSyntaxChildren.
+    return RawSyntaxChildren(self.data.absoluteRaw)
+  }
+  
+  public var startIndex: SyntaxChildrenIndex {
+    return rawChildren.startIndex
+  }
+  
+  public var endIndex: SyntaxChildrenIndex {
+    return rawChildren.endIndex
+  }
+  
+  public func index(after index: SyntaxChildrenIndex) -> SyntaxChildrenIndex {
+    return rawChildren.index(after: index)
+  }
+  
+  public func index(before index: SyntaxChildrenIndex) -> SyntaxChildrenIndex {
+    return rawChildren.index(before: index)
+  }
+  
+  public func distance(from start: SyntaxChildrenIndex, to end: SyntaxChildrenIndex)
+  -> Int {
+    return rawChildren.distance(from: start, to: end)
+  }
+  
+  public subscript(position: SyntaxChildrenIndex) -> Element {
+    let (raw, info) = rawChildren[position]
+    let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)
+    let data = SyntaxData(absoluteRaw, parent: Syntax(self))
+    return Element(data)
+  }
+}
+
 /// `InheritedTypeListSyntax` represents a collection of one or more
 /// `InheritedType` nodes. InheritedTypeListSyntax behaves
 /// as a regular Swift collection, and has accessors that return new
@@ -6130,7 +6130,7 @@ public struct InheritedTypeListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .inheritedTypeList else {
       return nil
     }
@@ -6339,7 +6339,7 @@ public struct KeyPathComponentListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .keyPathComponentList else {
       return nil
     }
@@ -6548,7 +6548,7 @@ public struct MemberDeclListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .memberDeclList else {
       return nil
     }
@@ -6757,7 +6757,7 @@ public struct ModifierListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .modifierList else {
       return nil
     }
@@ -6966,7 +6966,7 @@ public struct MultipleTrailingClosureElementListSyntax: SyntaxCollection, Syntax
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .multipleTrailingClosureElementList else {
       return nil
     }
@@ -7175,7 +7175,7 @@ public struct ObjCSelectorSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .objCSelector else {
       return nil
     }
@@ -7384,7 +7384,7 @@ public struct PatternBindingListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .patternBindingList else {
       return nil
     }
@@ -7618,7 +7618,7 @@ public struct PrecedenceGroupAttributeListSyntax: SyntaxCollection, SyntaxHashab
       self = .precedenceGroupAssociativity(node)
     }
     
-    public init?<S: SyntaxProtocol>(_ node: S) {
+    public init?(_ node: some SyntaxProtocol) {
       if let node = node.as(PrecedenceGroupRelationSyntax.self) {
         self = .precedenceGroupRelation(node)
         return
@@ -7648,7 +7648,7 @@ public struct PrecedenceGroupAttributeListSyntax: SyntaxCollection, SyntaxHashab
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .precedenceGroupAttributeList else {
       return nil
     }
@@ -7857,7 +7857,7 @@ public struct PrecedenceGroupNameListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .precedenceGroupNameList else {
       return nil
     }
@@ -8066,7 +8066,7 @@ public struct PrimaryAssociatedTypeListSyntax: SyntaxCollection, SyntaxHashable 
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .primaryAssociatedTypeList else {
       return nil
     }
@@ -8304,7 +8304,7 @@ public struct SpecializeAttributeSpecListSyntax: SyntaxCollection, SyntaxHashabl
       self = .genericWhereClause(node)
     }
     
-    public init?<S: SyntaxProtocol>(_ node: S) {
+    public init?(_ node: some SyntaxProtocol) {
       if let node = node.as(LabeledSpecializeEntrySyntax.self) {
         self = .labeledSpecializeEntry(node)
         return
@@ -8340,7 +8340,7 @@ public struct SpecializeAttributeSpecListSyntax: SyntaxCollection, SyntaxHashabl
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .specializeAttributeSpecList else {
       return nil
     }
@@ -8567,7 +8567,7 @@ public struct StringLiteralSegmentsSyntax: SyntaxCollection, SyntaxHashable {
       self = .expressionSegment(node)
     }
     
-    public init?<S: SyntaxProtocol>(_ node: S) {
+    public init?(_ node: some SyntaxProtocol) {
       if let node = node.as(StringSegmentSyntax.self) {
         self = .stringSegment(node)
         return
@@ -8592,7 +8592,7 @@ public struct StringLiteralSegmentsSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .stringLiteralSegments else {
       return nil
     }
@@ -8819,7 +8819,7 @@ public struct SwitchCaseListSyntax: SyntaxCollection, SyntaxHashable {
       self = .ifConfigDecl(node)
     }
     
-    public init?<S: SyntaxProtocol>(_ node: S) {
+    public init?(_ node: some SyntaxProtocol) {
       if let node = node.as(SwitchCaseSyntax.self) {
         self = .switchCase(node)
         return
@@ -8844,7 +8844,7 @@ public struct SwitchCaseListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .switchCaseList else {
       return nil
     }
@@ -9053,7 +9053,7 @@ public struct TupleExprElementListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .tupleExprElementList else {
       return nil
     }
@@ -9262,7 +9262,7 @@ public struct TuplePatternElementListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .tuplePatternElementList else {
       return nil
     }
@@ -9471,7 +9471,7 @@ public struct TupleTypeElementListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .tupleTypeElementList else {
       return nil
     }
@@ -9677,7 +9677,7 @@ public struct UnexpectedNodesSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .unexpectedNodes else {
       return nil
     }
@@ -9873,6 +9873,215 @@ extension UnexpectedNodesSyntax: BidirectionalCollection {
   }
 }
 
+/// `VersionComponentListSyntax` represents a collection of one or more
+/// `VersionComponent` nodes. VersionComponentListSyntax behaves
+/// as a regular Swift collection, and has accessors that return new
+/// versions of the collection with different children.
+public struct VersionComponentListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = VersionComponentSyntax
+  
+  public let _syntaxNode: Syntax
+  
+  private var layoutView: RawSyntaxLayoutView {
+    data.raw.layoutView!
+  }
+  
+  public init?(_ node: some SyntaxProtocol) {
+    guard node.raw.kind == .versionComponentList else {
+      return nil
+    }
+    self._syntaxNode = node._syntaxNode
+  }
+  
+  /// Creates a Syntax node from the provided root and data. This assumes
+  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
+  /// is undefined.
+  internal init(_ data: SyntaxData) {
+    precondition(data.raw.kind == .versionComponentList)
+    self._syntaxNode = Syntax(data)
+  }
+  
+  public init(_ children: [Element]) {
+    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
+      let raw = RawSyntax.makeLayout(kind: SyntaxKind.versionComponentList,
+                                     from: children.map {
+          $0.raw
+        }, arena: arena)
+      return SyntaxData.forRoot(raw)
+    }
+    self.init(data)
+  }
+  
+  /// The number of elements, `present` or `missing`, in this collection.
+  public var count: Int {
+    return layoutView.children.count
+  }
+  
+  /// Creates a new `VersionComponentListSyntax` by replacing the underlying layout with
+  /// a different set of raw syntax nodes.
+  ///
+  /// - Parameter layout: The new list of raw syntax nodes underlying this
+  ///                     collection.
+  /// - Returns: A new `VersionComponentListSyntax` with the new layout underlying it.
+  internal func replacingLayout(_ layout: [RawSyntax?]) -> VersionComponentListSyntax {
+    let arena = SyntaxArena()
+    let newRaw = layoutView.replacingLayout(with: layout, arena: arena)
+    let newData = data.replacingSelf(newRaw, arena: arena)
+    return VersionComponentListSyntax(newData)
+  }
+  
+  /// Creates a new `VersionComponentListSyntax` by appending the provided syntax element
+  /// to the children.
+  ///
+  /// - Parameter syntax: The element to append.
+  /// - Returns: A new `VersionComponentListSyntax` with that element appended to the end.
+  public func appending(_ syntax: Element) -> VersionComponentListSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    newLayout.append(syntax.raw)
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `VersionComponentListSyntax` by prepending the provided syntax element
+  /// to the children.
+  ///
+  /// - Parameter syntax: The element to prepend.
+  /// - Returns: A new `VersionComponentListSyntax` with that element prepended to the
+  ///            beginning.
+  public func prepending(_ syntax: Element) -> VersionComponentListSyntax {
+    return inserting(syntax, at: 0)
+  }
+  
+  /// Creates a new `VersionComponentListSyntax` by inserting the provided syntax element
+  /// at the provided index in the children.
+  ///
+  /// - Parameters:
+  ///   - syntax: The element to insert.
+  ///   - index: The index at which to insert the element in the collection.
+  ///
+  /// - Returns: A new `VersionComponentListSyntax` with that element appended to the end.
+  public func inserting(_ syntax: Element, at index: Int) -> VersionComponentListSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    /// Make sure the index is a valid insertion index (0 to 1 past the end)
+    precondition((newLayout.startIndex ... newLayout.endIndex).contains(index),
+                 "inserting node at invalid index \(index)")
+    newLayout.insert(syntax.raw, at: index)
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `VersionComponentListSyntax` by replacing the syntax element
+  /// at the provided index.
+  ///
+  /// - Parameters:
+  ///   - index: The index at which to replace the element in the collection.
+  ///   - syntax: The element to replace with.
+  ///
+  /// - Returns: A new `VersionComponentListSyntax` with the new element at the provided index.
+  public func replacing(childAt index: Int, with syntax: Element) -> VersionComponentListSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    /// Make sure the index is a valid index for replacing
+    precondition((newLayout.startIndex ..< newLayout.endIndex).contains(index),
+                 "replacing node at invalid index \(index)")
+    newLayout[index] = syntax.raw
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `VersionComponentListSyntax` by removing the syntax element at the
+  /// provided index.
+  ///
+  /// - Parameter index: The index of the element to remove from the collection.
+  /// - Returns: A new `VersionComponentListSyntax` with the element at the provided index
+  ///            removed.
+  public func removing(childAt index: Int) -> VersionComponentListSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    newLayout.remove(at: index)
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `VersionComponentListSyntax` by removing the first element.
+  ///
+  /// - Returns: A new `VersionComponentListSyntax` with the first element removed.
+  public func removingFirst() -> VersionComponentListSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    newLayout.removeFirst()
+    return replacingLayout(newLayout)
+  }
+  
+  /// Creates a new `VersionComponentListSyntax` by removing the last element.
+  ///
+  /// - Returns: A new `VersionComponentListSyntax` with the last element removed.
+  public func removingLast() -> VersionComponentListSyntax {
+    var newLayout = layoutView.formLayoutArray()
+    newLayout.removeLast()
+    return replacingLayout(newLayout)
+  }
+}
+
+/// Conformance for `VersionComponentListSyntax` to the `BidirectionalCollection` protocol.
+extension VersionComponentListSyntax: BidirectionalCollection {
+  public typealias Index = SyntaxChildrenIndex
+  
+  public struct Iterator: IteratorProtocol {
+    private let parent: Syntax
+    
+    private var iterator: RawSyntaxChildren.Iterator
+    
+
+    init(parent: Syntax, rawChildren: RawSyntaxChildren) {
+      self.parent = parent
+      self.iterator = rawChildren.makeIterator()
+    }
+    
+
+    public mutating func next() -> Element? {
+      guard let (raw, info) = self.iterator.next() else {
+        return nil
+      }
+      let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)
+      let data = SyntaxData(absoluteRaw, parent: parent)
+      return Element(data)
+    }
+  }
+  
+  public func makeIterator() -> Iterator {
+    return Iterator(parent: Syntax(self), rawChildren: rawChildren)
+  }
+  
+  private var rawChildren: RawSyntaxChildren {
+    // We know children in a syntax collection cannot be missing. So we can
+    // use the low-level and faster RawSyntaxChildren collection instead of
+    // NonNilRawSyntaxChildren.
+    return RawSyntaxChildren(self.data.absoluteRaw)
+  }
+  
+  public var startIndex: SyntaxChildrenIndex {
+    return rawChildren.startIndex
+  }
+  
+  public var endIndex: SyntaxChildrenIndex {
+    return rawChildren.endIndex
+  }
+  
+  public func index(after index: SyntaxChildrenIndex) -> SyntaxChildrenIndex {
+    return rawChildren.index(after: index)
+  }
+  
+  public func index(before index: SyntaxChildrenIndex) -> SyntaxChildrenIndex {
+    return rawChildren.index(before: index)
+  }
+  
+  public func distance(from start: SyntaxChildrenIndex, to end: SyntaxChildrenIndex)
+  -> Int {
+    return rawChildren.distance(from: start, to: end)
+  }
+  
+  public subscript(position: SyntaxChildrenIndex) -> Element {
+    let (raw, info) = rawChildren[position]
+    let absoluteRaw = AbsoluteRawSyntax(raw: raw!, info: info)
+    let data = SyntaxData(absoluteRaw, parent: Syntax(self))
+    return Element(data)
+  }
+}
+
 /// `YieldExprListSyntax` represents a collection of one or more
 /// `YieldExprListElement` nodes. YieldExprListSyntax behaves
 /// as a regular Swift collection, and has accessors that return new
@@ -9886,7 +10095,7 @@ public struct YieldExprListSyntax: SyntaxCollection, SyntaxHashable {
     data.raw.layoutView!
   }
   
-  public init?<S: SyntaxProtocol>(_ node: S) {
+  public init?(_ node: some SyntaxProtocol) {
     guard node.raw.kind == .yieldExprList else {
       return nil
     }

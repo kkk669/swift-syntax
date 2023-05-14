@@ -17,16 +17,6 @@
 @_spi(RawSyntax)
 public func childName(_ keyPath: AnyKeyPath) -> String? {
   switch keyPath {
-  case \AccessPathComponentSyntax.unexpectedBeforeName:
-    return "unexpectedBeforeName"
-  case \AccessPathComponentSyntax.name:
-    return "name"
-  case \AccessPathComponentSyntax.unexpectedBetweenNameAndTrailingDot:
-    return "unexpectedBetweenNameAndTrailingDot"
-  case \AccessPathComponentSyntax.trailingDot:
-    return "trailingDot"
-  case \AccessPathComponentSyntax.unexpectedAfterTrailingDot:
-    return "unexpectedAfterTrailingDot"
   case \AccessorBlockSyntax.unexpectedBeforeLeftBrace:
     return "unexpectedBeforeLeftBrace"
   case \AccessorBlockSyntax.leftBrace:
@@ -399,6 +389,46 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "label"
   case \BreakStmtSyntax.unexpectedAfterLabel:
     return "unexpectedAfterLabel"
+  case \CanImportExprSyntax.unexpectedBeforeCanImportKeyword:
+    return "unexpectedBeforeCanImportKeyword"
+  case \CanImportExprSyntax.canImportKeyword:
+    return "canImportKeyword"
+  case \CanImportExprSyntax.unexpectedBetweenCanImportKeywordAndLeftParen:
+    return "unexpectedBetweenCanImportKeywordAndLeftParen"
+  case \CanImportExprSyntax.leftParen:
+    return "leftParen"
+  case \CanImportExprSyntax.unexpectedBetweenLeftParenAndImportPath:
+    return "unexpectedBetweenLeftParenAndImportPath"
+  case \CanImportExprSyntax.importPath:
+    return "importPath"
+  case \CanImportExprSyntax.unexpectedBetweenImportPathAndVersionInfo:
+    return "unexpectedBetweenImportPathAndVersionInfo"
+  case \CanImportExprSyntax.versionInfo:
+    return "versionInfo"
+  case \CanImportExprSyntax.unexpectedBetweenVersionInfoAndRightParen:
+    return "unexpectedBetweenVersionInfoAndRightParen"
+  case \CanImportExprSyntax.rightParen:
+    return "rightParen"
+  case \CanImportExprSyntax.unexpectedAfterRightParen:
+    return "unexpectedAfterRightParen"
+  case \CanImportVersionInfoSyntax.unexpectedBeforeComma:
+    return "unexpectedBeforeComma"
+  case \CanImportVersionInfoSyntax.comma:
+    return "comma"
+  case \CanImportVersionInfoSyntax.unexpectedBetweenCommaAndLabel:
+    return "unexpectedBetweenCommaAndLabel"
+  case \CanImportVersionInfoSyntax.label:
+    return "label"
+  case \CanImportVersionInfoSyntax.unexpectedBetweenLabelAndColon:
+    return "unexpectedBetweenLabelAndColon"
+  case \CanImportVersionInfoSyntax.colon:
+    return "colon"
+  case \CanImportVersionInfoSyntax.unexpectedBetweenColonAndVersionTuple:
+    return "unexpectedBetweenColonAndVersionTuple"
+  case \CanImportVersionInfoSyntax.versionTuple:
+    return "versionTuple"
+  case \CanImportVersionInfoSyntax.unexpectedAfterVersionTuple:
+    return "unexpectedAfterVersionTuple"
   case \CaseItemSyntax.unexpectedBeforePattern:
     return "unexpectedBeforePattern"
   case \CaseItemSyntax.pattern:
@@ -1003,6 +1033,16 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "wildcard"
   case \DiscardAssignmentExprSyntax.unexpectedAfterWildcard:
     return "unexpectedAfterWildcard"
+  case \DiscardStmtSyntax.unexpectedBeforeDiscardKeyword:
+    return "unexpectedBeforeDiscardKeyword"
+  case \DiscardStmtSyntax.discardKeyword:
+    return "discardKeyword"
+  case \DiscardStmtSyntax.unexpectedBetweenDiscardKeywordAndExpression:
+    return "unexpectedBetweenDiscardKeywordAndExpression"
+  case \DiscardStmtSyntax.expression:
+    return "expression"
+  case \DiscardStmtSyntax.unexpectedAfterExpression:
+    return "unexpectedAfterExpression"
   case \DoStmtSyntax.unexpectedBeforeDoKeyword:
     return "unexpectedBeforeDoKeyword"
   case \DoStmtSyntax.doKeyword:
@@ -1317,16 +1357,6 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "exclamationMark"
   case \ForcedValueExprSyntax.unexpectedAfterExclamationMark:
     return "unexpectedAfterExclamationMark"
-  case \ForgetStmtSyntax.unexpectedBeforeForgetKeyword:
-    return "unexpectedBeforeForgetKeyword"
-  case \ForgetStmtSyntax.forgetKeyword:
-    return "forgetKeyword"
-  case \ForgetStmtSyntax.unexpectedBetweenForgetKeywordAndExpression:
-    return "unexpectedBetweenForgetKeywordAndExpression"
-  case \ForgetStmtSyntax.expression:
-    return "expression"
-  case \ForgetStmtSyntax.unexpectedAfterExpression:
-    return "unexpectedAfterExpression"
   case \FunctionCallExprSyntax.unexpectedBeforeCalledExpression:
     return "unexpectedBeforeCalledExpression"
   case \FunctionCallExprSyntax.calledExpression:
@@ -1689,6 +1719,16 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "path"
   case \ImportDeclSyntax.unexpectedAfterPath:
     return "unexpectedAfterPath"
+  case \ImportPathComponentSyntax.unexpectedBeforeName:
+    return "unexpectedBeforeName"
+  case \ImportPathComponentSyntax.name:
+    return "name"
+  case \ImportPathComponentSyntax.unexpectedBetweenNameAndTrailingDot:
+    return "unexpectedBetweenNameAndTrailingDot"
+  case \ImportPathComponentSyntax.trailingDot:
+    return "trailingDot"
+  case \ImportPathComponentSyntax.unexpectedAfterTrailingDot:
+    return "unexpectedAfterTrailingDot"
   case \InOutExprSyntax.unexpectedBeforeAmpersand:
     return "unexpectedBeforeAmpersand"
   case \InOutExprSyntax.ampersand:
@@ -3283,28 +3323,26 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "bindings"
   case \VariableDeclSyntax.unexpectedAfterBindings:
     return "unexpectedAfterBindings"
+  case \VersionComponentSyntax.unexpectedBeforePeriod:
+    return "unexpectedBeforePeriod"
+  case \VersionComponentSyntax.period:
+    return "period"
+  case \VersionComponentSyntax.unexpectedBetweenPeriodAndNumber:
+    return "unexpectedBetweenPeriodAndNumber"
+  case \VersionComponentSyntax.number:
+    return "number"
+  case \VersionComponentSyntax.unexpectedAfterNumber:
+    return "unexpectedAfterNumber"
   case \VersionTupleSyntax.unexpectedBeforeMajor:
     return "unexpectedBeforeMajor"
   case \VersionTupleSyntax.major:
     return "major"
-  case \VersionTupleSyntax.unexpectedBetweenMajorAndMinorPeriod:
-    return "unexpectedBetweenMajorAndMinorPeriod"
-  case \VersionTupleSyntax.minorPeriod:
-    return "minorPeriod"
-  case \VersionTupleSyntax.unexpectedBetweenMinorPeriodAndMinor:
-    return "unexpectedBetweenMinorPeriodAndMinor"
-  case \VersionTupleSyntax.minor:
-    return "minor"
-  case \VersionTupleSyntax.unexpectedBetweenMinorAndPatchPeriod:
-    return "unexpectedBetweenMinorAndPatchPeriod"
-  case \VersionTupleSyntax.patchPeriod:
-    return "patchPeriod"
-  case \VersionTupleSyntax.unexpectedBetweenPatchPeriodAndPatch:
-    return "unexpectedBetweenPatchPeriodAndPatch"
-  case \VersionTupleSyntax.patch:
-    return "patch"
-  case \VersionTupleSyntax.unexpectedAfterPatch:
-    return "unexpectedAfterPatch"
+  case \VersionTupleSyntax.unexpectedBetweenMajorAndComponents:
+    return "unexpectedBetweenMajorAndComponents"
+  case \VersionTupleSyntax.components:
+    return "components"
+  case \VersionTupleSyntax.unexpectedAfterComponents:
+    return "unexpectedAfterComponents"
   case \WhereClauseSyntax.unexpectedBeforeWhereKeyword:
     return "unexpectedBeforeWhereKeyword"
   case \WhereClauseSyntax.whereKeyword:

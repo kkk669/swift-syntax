@@ -34,6 +34,7 @@ final class LinkageTest: XCTestCase {
         .library("-lswiftCompatibility51", condition: .mayBeAbsent("Starting in Xcode 14 this library is not always autolinked")),
         .library("-lswiftCompatibility56", condition: .mayBeAbsent("Starting in Xcode 14 this library is not always autolinked")),
         .library("-lswiftCompatibilityConcurrency"),
+        .library("-lswiftCompatibilityPacks", condition: .mayBeAbsent("Only in newer compilers")),
         .library("-lswiftCore"),
         .library("-lswiftDarwin", condition: .mayBeAbsent("Not present when building inside the compiler")),
         .library("-lswiftSwiftOnoneSupport", condition: .when(configuration: .debug)),
@@ -50,6 +51,7 @@ final class LinkageTest: XCTestCase {
         .library("-lswiftCompatibility51", condition: .mayBeAbsent("Starting in Xcode 14 this library is not always autolinked")),
         .library("-lswiftCompatibility56", condition: .mayBeAbsent("Starting in Xcode 14 this library is not always autolinked")),
         .library("-lswiftCompatibilityConcurrency"),
+        .library("-lswiftCompatibilityPacks", condition: .mayBeAbsent("Only in newer compilers")),
         .library("-lswiftCore"),
         .library("-lswiftSwiftOnoneSupport", condition: .when(configuration: .debug)),
         .library("-lswift_Concurrency"),
@@ -65,6 +67,7 @@ final class LinkageTest: XCTestCase {
         .library("-lswiftCompatibility51", condition: .mayBeAbsent("Starting in Xcode 14 this library is not always autolinked")),
         .library("-lswiftCompatibility56", condition: .mayBeAbsent("Starting in Xcode 14 this library is not always autolinked")),
         .library("-lswiftCompatibilityConcurrency"),
+        .library("-lswiftCompatibilityPacks", condition: .mayBeAbsent("Only in newer compilers")),
         .library("-lswiftCore"),
         .library("-lswiftSwiftOnoneSupport", condition: .when(configuration: .debug)),
         .library("-lswift_Concurrency"),
@@ -200,9 +203,9 @@ extension LinkageTest {
       let name = try XCTUnwrap(_dyld_get_image_name(i))
       let path = String(cString: name)
       // We can wind up in SwiftParserTest.xctest when built via the IDE or
-      // in SwiftSyntaxPackageTests.xctest when built at the command line
+      // in swift-syntaxPackageTests.xctest when built at the command line
       // via the package manager.
-      guard path.hasSuffix("SwiftParserTest") || path.hasSuffix("SwiftSyntaxPackageTests") else {
+      guard path.hasSuffix("SwiftParserTest") || path.hasSuffix("swift-syntaxPackageTests") else {
         continue
       }
 

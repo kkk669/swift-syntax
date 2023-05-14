@@ -14,13 +14,6 @@
 
 import SwiftSyntax
 
-/// `AccessPath` represents a collection of `AccessPathComponentSyntax`
-extension AccessPathSyntax: ExpressibleByArrayLiteral {
-  public init(arrayLiteral elements: Element...) {
-    self.init(elements)
-  }
-}
-
 /// `AccessorList` represents a collection of `AccessorDeclSyntax`
 extension AccessorListSyntax: ExpressibleByArrayLiteral {
   public init(arrayLiteral elements: Element...) {
@@ -223,6 +216,13 @@ extension IfConfigClauseListSyntax: ExpressibleByArrayLiteral {
   }
 }
 
+/// `ImportPath` represents a collection of `ImportPathComponentSyntax`
+extension ImportPathSyntax: ExpressibleByArrayLiteral {
+  public init(arrayLiteral elements: Element...) {
+    self.init(elements)
+  }
+}
+
 /// `InheritedTypeList` represents a collection of `InheritedTypeSyntax`
 extension InheritedTypeListSyntax: ExpressibleByArrayLiteral {
   public init(arrayLiteral elements: Element...) {
@@ -344,6 +344,13 @@ extension UnexpectedNodesSyntax: ExpressibleByArrayLiteral {
   }
   
   public init(arrayLiteral elements: SyntaxProtocol...) {
+    self.init(elements)
+  }
+}
+
+/// `VersionComponentList` represents a collection of `VersionComponentSyntax`
+extension VersionComponentListSyntax: ExpressibleByArrayLiteral {
+  public init(arrayLiteral elements: Element...) {
     self.init(elements)
   }
 }
