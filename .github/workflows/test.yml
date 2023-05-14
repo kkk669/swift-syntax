@@ -30,4 +30,4 @@ jobs:
     - name: Build
       run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
     - name: Run tests
-      run: wasmtime --dir=/ .build/release/SwiftSyntaxPackageTests.wasm
+      run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
