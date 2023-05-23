@@ -360,7 +360,9 @@ public let EXPR_NODES: [Node] = [
     nameForDiagnostics: "parameter",
     kind: "Syntax",
     traits: [
-      "WithTrailingComma"
+      "WithTrailingComma",
+      "WithAttributes",
+      "WithModifiers",
     ],
     parserFunction: "parseClosureParameter",
     children: [
@@ -515,7 +517,7 @@ public let EXPR_NODES: [Node] = [
     nameForDiagnostics: "closure signature",
     kind: "Syntax",
     traits: [
-      "Attributed"
+      "WithAttributes"
     ],
     children: [
       Child(
@@ -1190,12 +1192,28 @@ public let EXPR_NODES: [Node] = [
   // The move expr
   Node(
     name: "MoveExpr",
-    nameForDiagnostics: "'_move' expression",
+    nameForDiagnostics: "'consume' expression",
     kind: "Expr",
     children: [
       Child(
         name: "MoveKeyword",
         kind: .token(choices: [.keyword(text: "_move"), .keyword(text: "consume")])
+      ),
+      Child(
+        name: "Expression",
+        kind: .node(kind: "Expr")
+      ),
+    ]
+  ),
+
+  Node(
+    name: "CopyExpr",
+    nameForDiagnostics: "'copy' expression",
+    kind: "Expr",
+    children: [
+      Child(
+        name: "CopyKeyword",
+        kind: .token(choices: [.keyword(text: "copy")])
       ),
       Child(
         name: "Expression",

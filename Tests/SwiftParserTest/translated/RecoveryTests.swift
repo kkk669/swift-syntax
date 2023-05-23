@@ -604,10 +604,10 @@ final class RecoveryTests: XCTestCase {
       """,
       diagnostics: [
         DiagnosticSpec(locationMarker: "1️⃣", message: "keyword 'for' cannot be used as an identifier here", fixIts: ["if this name is unavoidable, use backticks to escape it"]),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected Sequence expression for for-each loop"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected Sequence expression for for-each loop", fixIts: ["insert expression"]),
       ],
       fixedSource: """
-        for `for` in {
+        for `for` in <#expression#> {
         }
         """
     )
@@ -620,8 +620,12 @@ final class RecoveryTests: XCTestCase {
       }
       """,
       diagnostics: [
-        DiagnosticSpec(message: "expected Sequence expression for for-each loop")
-      ]
+        DiagnosticSpec(message: "expected Sequence expression for for-each loop", fixIts: ["insert expression"])
+      ],
+      fixedSource: """
+        for i in <#expression#> {
+        }
+        """
     )
   }
 
@@ -2394,25 +2398,25 @@ final class RecoveryTests: XCTestCase {
   func testRecovery151() {
     // <rdar://problem/20489838> QoI: Nonsensical error and fixit if "let" is missing between 'if let ... where' clauses
     assertParse(
-      #"""
+      """
       if let y = x 1️⃣where y == 0, let z = x {
         _ = y
         _ = z
-      }2️⃣
-      """#,
+      }
+      """,
       diagnostics: [
-        // TODO: Old parser expected error on line 4: expected ',' joining parts of a multi-clause condition, Fix-It replacements: 15 - 21 = ','
-        DiagnosticSpec(locationMarker: "1️⃣", message: "expected '{' in 'if' statement", fixIts: ["insert '{'"]),
-        DiagnosticSpec(locationMarker: "1️⃣", message: "unexpected code 'where y == 0,' before variable"),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected '}' to end 'if' statement", fixIts: ["insert '}'"]),
+        DiagnosticSpec(
+          message: "expected ',' joining parts of a multi-clause condition",
+          fixIts: ["replace 'where' with ','"]
+        )
       ],
-      fixedSource: #"""
-        if let y = x {where y == 0, let z = x {
+      fixedSource: """
+        if let y = x, y == 0, let z = x {
           _ = y
           _ = z
         }
-        }
-        """#
+        """
+
     )
   }
 

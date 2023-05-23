@@ -11,7 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftDiagnostics
-import SwiftParser
+@_spi(Diagnostics) import SwiftParser
 @_spi(RawSyntax) import SwiftSyntax
 
 fileprivate func getTokens(between first: TokenSyntax, and second: TokenSyntax) -> [TokenSyntax] {
@@ -582,7 +582,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if let trailingComma = node.trailingComma {
       exchangeTokens(
         unexpected: node.unexpectedBetweenConditionAndTrailingComma,
-        unexpectedTokenCondition: { $0.text == "&&" },
+        unexpectedTokenCondition: { $0.text == "&&" || $0.tokenKind == .keyword(.where) },
         correctTokens: [node.trailingComma],
         message: { _ in .joinConditionsUsingComma },
         moveFixIt: { ReplaceTokensFixIt(replaceTokens: $0, replacements: [trailingComma]) }
@@ -778,7 +778,17 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       )
     } else {  // If it's not a C-style for loop
       if node.sequenceExpr.is(MissingExprSyntax.self) {
-        addDiagnostic(node.sequenceExpr, .expectedSequenceExpressionInForEachLoop, handledNodes: [node.sequenceExpr.id])
+        addDiagnostic(
+          node.sequenceExpr,
+          .expectedSequenceExpressionInForEachLoop,
+          fixIts: [
+            FixIt(
+              message: InsertTokenFixIt(missingNodes: [Syntax(node.sequenceExpr)]),
+              changes: [.makePresent(node.sequenceExpr)]
+            )
+          ],
+          handledNodes: [node.sequenceExpr.id]
+        )
       }
     }
 
@@ -1252,12 +1262,10 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
     if case .stringSegment(let segment) = node.segments.last {
       if let invalidContent = segment.unexpectedBeforeContent?.onlyToken(where: { $0.trailingTrivia.contains(where: { $0.isBackslash }) }) {
-        let leadingTrivia = segment.content.leadingTrivia
-        let trailingTrivia = segment.content.trailingTrivia
         let fixIt = FixIt(
           message: .removeBackslash,
           changes: [
-            .makePresent(segment.content, leadingTrivia: leadingTrivia, trailingTrivia: trailingTrivia),
+            .makePresent(segment.content),
             .makeMissing(invalidContent, transferTrivia: false),
           ]
         )
@@ -1525,6 +1533,47 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if shouldSkip(node) {
       return .skipChildren
     }
+
+    if let modifiers = node.modifiers, modifiers.hasError {
+      for modifier in modifiers {
+        guard let detail = modifier.detail else {
+          continue
+        }
+
+        let unexpectedTokens: [TokenSyntax] = [detail.unexpectedBetweenLeftParenAndDetail, detail.unexpectedBetweenDetailAndRightParen]
+          .compactMap { $0?.tokens(viewMode: .all) }
+          .flatMap { $0 }
+
+        // If there is no unexpected tokens it means we miss a paren or set keyword.
+        // So we just skip the handling here
+        guard let firstUnexpected = unexpectedTokens.first else {
+          continue
+        }
+
+        let fixItMessage: ParserFixIt
+
+        if detail.detail.presence == .missing {
+          fixItMessage = ReplaceTokensFixIt(replaceTokens: unexpectedTokens, replacements: [detail.detail])
+        } else {
+          fixItMessage = RemoveNodesFixIt(unexpectedTokens)
+        }
+
+        addDiagnostic(
+          firstUnexpected,
+          MissingNodesError(missingNodes: [Syntax(detail.detail)]),
+          fixIts: [
+            FixIt(
+              message: fixItMessage,
+              changes: [
+                FixIt.MultiNodeChange.makePresent(detail.detail)
+              ] + unexpectedTokens.map { FixIt.MultiNodeChange.makeMissing($0) }
+            )
+          ],
+          handledNodes: [detail.id] + unexpectedTokens.map(\.id)
+        )
+      }
+    }
+
     let missingTries = node.bindings.compactMap({
       return $0.initializer?.value.as(TryExprSyntax.self)?.tryKeyword
     })
