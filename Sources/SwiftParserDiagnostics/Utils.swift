@@ -11,6 +11,9 @@
 //===----------------------------------------------------------------------===//
 
 extension String {
+  /// Returns this string with the first letter uppercased.
+  ///
+  /// If the string does not start with a letter, no change is made to it.
   func withFirstLetterUppercased() -> String {
     if let firstLetter = self.first {
       return firstLetter.uppercased() + self.dropFirst()
@@ -19,14 +22,20 @@ extension String {
     }
   }
 
-  func replacingFirstOccurence(of character: Character, with replacement: Character) -> String {
+  /// Replace the first occurrence of `character` with `replacement`.
+  ///
+  /// If `character` does not occur in this string, no change is made.
+  func replacingFirstOccurrence(of character: Character, with replacement: Character) -> String {
     guard let match = self.firstIndex(of: character) else {
       return self
     }
     return self[startIndex..<match] + String(replacement) + self[index(after: match)...]
   }
 
-  func replacingLastOccurence(of character: Character, with replacement: Character) -> String {
+  /// Replace the last occurrence of `character` with `replacement`.
+  ///
+  /// If `character` does not occur in this string, no change is made.
+  func replacingLastOccurrence(of character: Character, with replacement: Character) -> String {
     guard let match = self.lastIndex(of: character) else {
       return self
     }
