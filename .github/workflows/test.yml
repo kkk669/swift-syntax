@@ -22,7 +22,7 @@ jobs:
       run: brew install wasmtime
     - name: Install Wasm Toolchain
       run: |
-        VERSION=swift-wasm-DEVELOPMENT-SNAPSHOT-2023-05-22-a
+        VERSION=swift-wasm-DEVELOPMENT-SNAPSHOT-2023-05-24-a
         TOOLCHAIN_URL="https://github.com/swiftwasm/swift/releases/download/$VERSION/$VERSION-macos_x86_64.pkg"
         curl -LO $TOOLCHAIN_URL
         installer -target CurrentUserHomeDirectory -pkg $VERSION-macos_x86_64.pkg
