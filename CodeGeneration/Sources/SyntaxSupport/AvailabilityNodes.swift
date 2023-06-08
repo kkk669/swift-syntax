@@ -27,7 +27,11 @@ public let AVAILABILITY_NODES: [Node] = [
         kind: .nodeChoices(choices: [
           Child(
             name: "Token",
-            kind: .token(choices: [.token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false)
+            kind: .token(
+              choices: [.token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "IdentifierToken")],
+              requiresLeadingSpace: false,
+              requiresTrailingSpace: false
+            )
           ),
           Child(
             name: "AvailabilityVersionRestriction",
@@ -38,12 +42,12 @@ public let AVAILABILITY_NODES: [Node] = [
             kind: .node(kind: .availabilityLabeledArgument)
           ),
         ]),
-        description: "The actual argument"
+        documentation: "The actual argument"
       ),
       Child(
         name: "TrailingComma",
         kind: .token(choices: [.token(tokenKind: "CommaToken")]),
-        description: "A trailing comma if the argument is followed by another argument",
+        documentation: "A trailing comma if the argument is followed by another argument",
         isOptional: true
       ),
     ]
@@ -59,14 +63,20 @@ public let AVAILABILITY_NODES: [Node] = [
     children: [
       Child(
         name: "Label",
-        kind: .token(choices: [.keyword(text: "message"), .keyword(text: "renamed"), .keyword(text: "introduced"), .keyword(text: "obsoleted"), .keyword(text: "deprecated")]),
+        kind: .token(choices: [
+          .keyword(text: "message"),
+          .keyword(text: "renamed"),
+          .keyword(text: "introduced"),
+          .keyword(text: "obsoleted"),
+          .keyword(text: "deprecated"),
+        ]),
         nameForDiagnostics: "label",
-        description: "The label of the argument"
+        documentation: "The label of the argument"
       ),
       Child(
         name: "Colon",
         kind: .token(choices: [.token(tokenKind: "ColonToken")]),
-        description: "The colon separating label and value"
+        documentation: "The colon separating label and value"
       ),
       Child(
         name: "Value",
@@ -81,7 +91,7 @@ public let AVAILABILITY_NODES: [Node] = [
           ),
         ]),
         nameForDiagnostics: "value",
-        description: "The value of this labeled argument"
+        documentation: "The value of this labeled argument"
       ),
     ]
   ),
@@ -106,7 +116,8 @@ public let AVAILABILITY_NODES: [Node] = [
         name: "Platform",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         nameForDiagnostics: "platform",
-        description: "The name of the OS on which the availability should be restricted or 'swift' if the availability should be restricted based on a Swift version.",
+        documentation:
+          "The name of the OS on which the availability should be restricted or 'swift' if the availability should be restricted based on a Swift version.",
         classification: "Keyword"
       ),
       Child(
@@ -128,12 +139,12 @@ public let AVAILABILITY_NODES: [Node] = [
       Child(
         name: "Period",
         kind: .token(choices: [.token(tokenKind: "PeriodToken")]),
-        description: "The period of this version component"
+        documentation: "The period of this version component"
       ),
       Child(
         name: "Number",
         kind: .token(choices: [.token(tokenKind: "IntegerLiteralToken")]),
-        description: "The version number of this component"
+        documentation: "The version number of this component"
       ),
     ]
   ),
@@ -156,12 +167,12 @@ public let AVAILABILITY_NODES: [Node] = [
       Child(
         name: "Major",
         kind: .token(choices: [.token(tokenKind: "IntegerLiteralToken")]),
-        description: "The major version."
+        documentation: "The major version."
       ),
       Child(
         name: "Components",
         kind: .collection(kind: .versionComponentList, collectionElementName: "VersionComponent"),
-        description: "Any version components that are not the major version . For example, for `1.2.0`, this will contain `.2.0`",
+        documentation: "Any version components that are not the major version . For example, for `1.2.0`, this will contain `.2.0`",
         isOptional: true
       ),
     ]

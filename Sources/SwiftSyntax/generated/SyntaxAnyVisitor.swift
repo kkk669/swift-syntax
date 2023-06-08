@@ -12,7 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-/// A `SyntaxVisitor` that can visit the nodes as generic `Syntax` values.
+/// A `SyntaxVisitor` that can visit the nodes as generic ``Syntax`` values.
 ///
 /// This subclass of `SyntaxVisitor` is slower than the type-specific visitation
 /// of `SyntaxVisitor`. Use `SyntaxAnyVisitor` if the `visitAny(_)` function
@@ -53,6 +53,14 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
     visitAnyPost(node._syntaxNode)
   }
   
+  override open func visit(_ node: AccessesEffectSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+  
+  override open func visitPost(_ node: AccessesEffectSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
+  
   override open func visit(_ node: AccessorBlockSyntax) -> SyntaxVisitorContinueKind {
     return visitAny(node._syntaxNode)
   }
@@ -74,6 +82,14 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
   }
   
   override open func visitPost(_ node: AccessorEffectSpecifiersSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
+  
+  override open func visit(_ node: AccessorInitEffectsSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+  
+  override open func visitPost(_ node: AccessorInitEffectsSyntax) {
     visitAnyPost(node._syntaxNode)
   }
   
@@ -1218,6 +1234,14 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
   }
   
   override open func visitPost(_ node: InitializerDeclSyntax) {
+    visitAnyPost(node._syntaxNode)
+  }
+  
+  override open func visit(_ node: InitializesEffectSyntax) -> SyntaxVisitorContinueKind {
+    return visitAny(node._syntaxNode)
+  }
+  
+  override open func visitPost(_ node: InitializesEffectSyntax) {
     visitAnyPost(node._syntaxNode)
   }
   

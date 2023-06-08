@@ -16,6 +16,8 @@ import SwiftSyntax
 
 private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
   switch keyPath {
+  case \AccessesEffectSyntax.propertyList:
+    return "properties"
   case \AccessorDeclSyntax.attributes:
     return "attributes"
   case \AccessorDeclSyntax.modifier:
@@ -208,6 +210,8 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "function signature"
   case \InitializerDeclSyntax.genericWhereClause:
     return "generic where clause"
+  case \InitializesEffectSyntax.propertyList:
+    return "properties"
   case \KeyPathExprSyntax.root:
     return "root"
   case \KeyPathSubscriptComponentSyntax.argumentList:
@@ -254,10 +258,8 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "label"
   case \ObjCSelectorPieceSyntax.name:
     return "name"
-  case \OperatorDeclSyntax.attributes:
-    return "attributes"
-  case \OperatorDeclSyntax.modifiers:
-    return "modifiers"
+  case \OperatorDeclSyntax.fixity:
+    return "fixity"
   case \OperatorPrecedenceAndTypesSyntax.precedenceGroup:
     return "precedence group"
   case \ParameterClauseSyntax.parameterList:

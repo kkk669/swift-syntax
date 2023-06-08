@@ -30,16 +30,22 @@ extension DeclarationModifier {
 
 extension TokenConsumer {
   mutating func atStartOfFreestandingMacroExpansion() -> Bool {
+    // Check if "'#' <identifier>" where the identifier is on the sameline.
     if !self.at(.pound) {
       return false
     }
-    if self.peek().rawTokenKind != .identifier && !self.peek().isLexerClassifiedKeyword {
+    if self.peek().isAtStartOfLine {
       return false
     }
-    if self.currentToken.trailingTriviaByteLength != 0 || self.peek().leadingTriviaByteLength != 0 {
+    switch self.peek().rawTokenKind {
+    case .identifier:
+      return true
+    case .keyword:
+      // allow keywords right after '#' so we can diagnose it when parsing.
+      return (self.currentToken.trailingTriviaByteLength == 0 && self.peek().leadingTriviaByteLength == 0)
+    default:
       return false
     }
-    return true
   }
 
   mutating func atStartOfDeclaration(
@@ -47,7 +53,7 @@ extension TokenConsumer {
     allowInitDecl: Bool = true,
     allowRecovery: Bool = false
   ) -> Bool {
-    if self.at(anyIn: PoundDeclarationStart.self) != nil {
+    if self.at(.poundIfKeyword) {
       return true
     }
 
@@ -89,15 +95,15 @@ extension TokenConsumer {
       return attrLookahead.consumeIfConfigOfAttributes()
     }
 
-    let declStartKeyword: DeclarationStart?
+    let declStartKeyword: DeclarationKeyword?
     if allowRecovery {
       declStartKeyword =
         subparser.canRecoverTo(
-          anyIn: DeclarationStart.self,
+          anyIn: DeclarationKeyword.self,
           overrideRecoveryPrecedence: isAtTopLevel ? nil : .closingBrace
         )?.0
     } else {
-      declStartKeyword = subparser.at(anyIn: DeclarationStart.self)?.0
+      declStartKeyword = subparser.at(anyIn: DeclarationKeyword.self)?.0
     }
     switch declStartKeyword {
     case .actor:
@@ -188,13 +194,9 @@ extension Parser {
   /// If `inMemberDeclList` is `true`, we know that the next item must be a
   /// declaration and thus start with a keyword. This allows futher recovery.
   mutating func parseDeclaration(inMemberDeclList: Bool = false) -> RawDeclSyntax {
-    switch self.at(anyIn: PoundDeclarationStart.self) {
-    case (.poundIfKeyword, _)?:
-      if self.withLookahead({ $0.consumeIfConfigOfAttributes() }) {
-        // If we are at a `#if` of attributes, the `#if` directive should be
-        // parsed when we're parsing the attributes.
-        break
-      }
+    // If we are at a `#if` of attributes, the `#if` directive should be
+    // parsed when we're parsing the attributes.
+    if self.at(.poundIfKeyword) && !self.withLookahead({ $0.consumeIfConfigOfAttributes() }) {
       let directive = self.parsePoundIfDirective { (parser, _) in
         let parsedDecl = parser.parseDeclaration()
         let semicolon = parser.consume(if: .semicolon)
@@ -220,8 +222,6 @@ extension Parser {
         return .decls(RawMemberDeclListSyntax(elements: elements, arena: parser.arena))
       }
       return RawDeclSyntax(directive)
-    case nil:
-      break
     }
 
     let attrs = DeclAttributes(
@@ -233,7 +233,7 @@ extension Parser {
     // while recoverying to the declaration start.
     let recoveryPrecedence = inMemberDeclList ? TokenPrecedence.closingBrace : nil
 
-    switch self.canRecoverTo(anyIn: DeclarationStart.self, overrideRecoveryPrecedence: recoveryPrecedence) {
+    switch self.canRecoverTo(anyIn: DeclarationKeyword.self, overrideRecoveryPrecedence: recoveryPrecedence) {
     case (.import, let handle)?:
       return RawDeclSyntax(self.parseImportDeclaration(attrs, handle))
     case (.class, let handle)?:
@@ -286,7 +286,9 @@ extension Parser {
           let placeholder = self.consumeAnyToken()
           return RawDeclSyntax(
             RawEditorPlaceholderDeclSyntax(
-              identifier: placeholder,
+              attributes: attrs.attributes,
+              modifiers: attrs.modifiers,
+              placeholder: placeholder,
               arena: self.arena
             )
           )
@@ -329,7 +331,7 @@ extension Parser {
       attributes: attrs.attributes,
       modifiers: attrs.modifiers,
       unexpectedBeforeImportKeyword,
-      importTok: importKeyword,
+      importKeyword: importKeyword,
       importKind: kind,
       path: path,
       arena: self.arena
@@ -474,8 +476,12 @@ extension Parser {
       )
     }
 
-    precondition(self.currentToken.starts(with: "<"))
-    let langle = self.consumePrefix("<", as: .leftAngle)
+    let langle: RawTokenSyntax
+    if self.currentToken.starts(with: "<") {
+      langle = self.consumePrefix("<", as: .leftAngle)
+    } else {
+      langle = missingToken(.leftAngle)
+    }
     var elements = [RawGenericParameterSyntax]()
     do {
       var keepGoing: RawTokenSyntax? = nil
@@ -487,7 +493,8 @@ extension Parser {
         var each = self.consume(if: .keyword(.each))
 
         let (unexpectedBetweenEachAndName, name) = self.expectIdentifier(allowSelfOrCapitalSelfAsIdentifier: true)
-        if attributes == nil && each == nil && unexpectedBetweenEachAndName == nil && name.isMissing && elements.isEmpty && !self.currentToken.starts(with: ">") {
+        if attributes == nil && each == nil && unexpectedBetweenEachAndName == nil && name.isMissing && elements.isEmpty && !self.currentToken.starts(with: ">")
+        {
           break
         }
 
@@ -911,7 +918,7 @@ extension Parser {
         let (unexpectedBeforeName, name) = self.expectIdentifier(keywordRecovery: true)
 
         let associatedValue: RawEnumCaseParameterClauseSyntax?
-        if self.at(TokenSpec(.leftParen, allowAtStartOfLine: false)) {
+        if self.at(TokenSpec(.leftParen)) {
           associatedValue = self.parseParameterClause(RawEnumCaseParameterClauseSyntax.self) { parser in
             parser.parseEnumCaseParameter()
           }
@@ -1403,7 +1410,7 @@ extension Parser {
         }
 
         let accessor: RawPatternBindingSyntax.Accessor?
-        if self.at(.leftBrace) || (inMemberDeclList && self.at(anyIn: AccessorKind.self) != nil) {
+        if self.at(.leftBrace) || (inMemberDeclList && self.at(anyIn: AccessorKind.self) != nil && !self.at(.keyword(.`init`))) {
           switch self.parseGetSet() {
           case .accessors(let accessors):
             accessor = .accessors(accessors)
@@ -1515,7 +1522,7 @@ extension Parser {
     //
     //     set-name    ::= '(' identifier ')'
     let parameter: RawAccessorParameterSyntax?
-    if [AccessorKind.set, .willSet, .didSet].contains(introducer.kind), let lparen = self.consume(if: .leftParen) {
+    if [AccessorKind.set, .willSet, .didSet, .`init`].contains(introducer.kind), let lparen = self.consume(if: .leftParen) {
       let (unexpectedBeforeName, name) = self.expectIdentifier()
       let (unexpectedBeforeRParen, rparen) = self.expect(.rightParen)
       parameter = RawAccessorParameterSyntax(
@@ -1531,6 +1538,7 @@ extension Parser {
     }
 
     let effectSpecifiers = self.parseAccessorEffectSpecifiers()
+    let initEffects = self.parseInitAccessorEffects()
 
     let body = self.parseOptionalCodeBlock()
     return RawAccessorDeclSyntax(
@@ -1540,6 +1548,7 @@ extension Parser {
       accessorKind: introducer.token,
       parameter: parameter,
       effectSpecifiers: effectSpecifiers,
+      initEffects: initEffects,
       body: body,
       arena: self.arena
     )
@@ -1694,11 +1703,78 @@ extension Parser {
   ///     postfix-operator-declaration → 'postfix' 'operator' operator
   ///     infix-operator-declaration → 'infix' 'operator' operator infix-operator-group?
   ///     infix-operator-group → ':' precedence-group-name
+
+  struct OperatorDeclIntroducer {
+    var unexpectedBeforeFixity: RawUnexpectedNodesSyntax?
+    var fixity: RawTokenSyntax
+    var unexpectedBeforeOperatorKeyword: RawUnexpectedNodesSyntax?
+    var operatorKeyword: RawTokenSyntax
+  }
+
+  mutating func parseOperatorDeclIntroducer(_ attrs: DeclAttributes, _ handle: RecoveryConsumptionHandle) -> OperatorDeclIntroducer {
+    func isFixity(_ modifier: RawDeclModifierSyntax) -> Bool {
+      switch modifier.name {
+      case .keyword(.prefix),
+        .keyword(.infix),
+        .keyword(.postfix):
+        return true
+      default:
+        return false
+      }
+    }
+
+    var unexpectedBeforeFixity = RawUnexpectedNodesSyntax(attrs.attributes?.elements ?? [], arena: self.arena)
+
+    var fixity: RawTokenSyntax?
+    var unexpectedAfterFixity: RawUnexpectedNodesSyntax?
+
+    if let modifiers = attrs.modifiers?.elements {
+      if let firstFixityIndex = modifiers.firstIndex(where: { isFixity($0) }) {
+        let fixityModifier = modifiers[firstFixityIndex]
+        fixity = fixityModifier.name
+
+        unexpectedBeforeFixity = RawUnexpectedNodesSyntax(
+          combining: unexpectedBeforeFixity,
+          RawUnexpectedNodesSyntax(Array(modifiers[0..<firstFixityIndex]), arena: self.arena),
+          fixityModifier.unexpectedBeforeName,
+          arena: self.arena
+        )
+
+        unexpectedAfterFixity = RawUnexpectedNodesSyntax(
+          combining: fixityModifier.unexpectedBetweenNameAndDetail,
+          RawUnexpectedNodesSyntax([fixityModifier.detail], arena: self.arena),
+          fixityModifier.unexpectedAfterDetail,
+          RawUnexpectedNodesSyntax(Array(modifiers[modifiers.index(after: firstFixityIndex)...]), arena: self.arena),
+          arena: self.arena
+        )
+
+      } else {
+        unexpectedBeforeFixity = RawUnexpectedNodesSyntax(
+          combining: unexpectedBeforeFixity,
+          RawUnexpectedNodesSyntax(modifiers, arena: self.arena),
+          arena: self.arena
+        )
+      }
+    }
+
+    var (unexpectedBeforeOperatorKeyword, operatorKeyword) = self.expect(.keyword(.operator))
+
+    unexpectedBeforeOperatorKeyword = RawUnexpectedNodesSyntax(combining: unexpectedAfterFixity, unexpectedBeforeOperatorKeyword, arena: self.arena)
+
+    return OperatorDeclIntroducer(
+      unexpectedBeforeFixity: unexpectedBeforeFixity,
+      fixity: fixity ?? self.missingToken(.prefix),
+      unexpectedBeforeOperatorKeyword: unexpectedBeforeOperatorKeyword,
+      operatorKeyword: operatorKeyword
+    )
+  }
+
   mutating func parseOperatorDeclaration(
     _ attrs: DeclAttributes,
     _ handle: RecoveryConsumptionHandle
   ) -> RawOperatorDeclSyntax {
-    let (unexpectedBeforeOperatorKeyword, operatorKeyword) = self.eat(handle)
+    let introducer = parseOperatorDeclIntroducer(attrs, handle)
+
     let unexpectedBeforeName: RawUnexpectedNodesSyntax?
     let name: RawTokenSyntax
     switch self.canRecoverTo(anyIn: OperatorLike.self) {
@@ -1775,10 +1851,10 @@ extension Parser {
       unexpectedAtEnd = nil
     }
     return RawOperatorDeclSyntax(
-      attributes: attrs.attributes,
-      modifiers: attrs.modifiers,
-      unexpectedBeforeOperatorKeyword,
-      operatorKeyword: operatorKeyword,
+      introducer.unexpectedBeforeFixity,
+      fixity: introducer.fixity,
+      introducer.unexpectedBeforeOperatorKeyword,
+      operatorKeyword: introducer.operatorKeyword,
       unexpectedBeforeName,
       identifier: name,
       RawUnexpectedNodesSyntax(identifiersAfterOperatorName, arena: self.arena),
@@ -2022,25 +2098,24 @@ extension Parser {
     _ handle: RecoveryConsumptionHandle
   ) -> RawMacroExpansionDeclSyntax {
 
-    let (unexpectedBeforePound, poundKeyword) = self.eat(handle)
-    // Don't allow space between '#' and the macro name.
-    if poundKeyword.trailingTriviaByteLength != 0 || self.currentToken.leadingTriviaByteLength != 0 {
-      return RawMacroExpansionDeclSyntax(
-        attributes: attrs.attributes,
-        modifiers: attrs.modifiers,
-        unexpectedBeforePound,
-        poundToken: poundKeyword,
-        macro: self.missingToken(.identifier),
-        genericArguments: nil,
-        leftParen: nil,
-        argumentList: .init(elements: [], arena: self.arena),
-        rightParen: nil,
-        trailingClosure: nil,
-        additionalTrailingClosures: nil,
-        arena: self.arena
-      )
+    var (unexpectedBeforePound, pound) = self.eat(handle)
+    if pound.trailingTriviaByteLength != 0 {
+      // `#` and the macro name must not be separated by a newline.
+      unexpectedBeforePound = RawUnexpectedNodesSyntax(combining: unexpectedBeforePound, pound, arena: self.arena)
+      pound = RawTokenSyntax(missing: .pound, text: "#", leadingTriviaPieces: pound.leadingTriviaPieces, arena: self.arena)
     }
-    let (unexpectedBeforeMacro, macro) = self.expectIdentifier(keywordRecovery: true)
+    var unexpectedBeforeMacro: RawUnexpectedNodesSyntax?
+    var macro: RawTokenSyntax
+    if !self.currentToken.isAtStartOfLine {
+      (unexpectedBeforeMacro, macro) = self.expectIdentifier(keywordRecovery: true)
+      if macro.leadingTriviaByteLength != 0 {
+        unexpectedBeforeMacro = RawUnexpectedNodesSyntax(combining: unexpectedBeforeMacro, macro, arena: self.arena)
+        pound = self.missingToken(.identifier, text: macro.tokenText)
+      }
+    } else {
+      unexpectedBeforeMacro = nil
+      macro = self.missingToken(.identifier)
+    }
 
     // Parse the optional generic argument list.
     let generics: RawGenericArgumentClauseSyntax?
@@ -2081,7 +2156,7 @@ extension Parser {
       attributes: attrs.attributes,
       modifiers: attrs.modifiers,
       unexpectedBeforePound,
-      poundToken: poundKeyword,
+      poundToken: pound,
       unexpectedBeforeMacro,
       macro: macro,
       genericArguments: generics,

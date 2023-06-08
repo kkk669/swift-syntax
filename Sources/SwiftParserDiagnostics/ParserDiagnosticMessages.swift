@@ -168,9 +168,6 @@ extension DiagnosticMessage where Self == StaticParserError {
   public static var invalidPrecedenceGroupAssociativity: Self {
     .init("Expected 'none', 'left', or 'right' after 'associativity'")
   }
-  public static var invalidWhitespaceAfterPeriod: Self {
-    .init("extraneous whitespace after '.' is not permitted")
-  }
   public static var joinConditionsUsingComma: Self {
     .init("expected ',' joining parts of a multi-clause condition")
   }
@@ -194,6 +191,9 @@ extension DiagnosticMessage where Self == StaticParserError {
   }
   public static var misspelledThrows: Self {
     .init("expected throwing specifier; did you mean 'throws'?")
+  }
+  public static var missingFixityInOperatorDeclaration: Self {
+    .init("operator must be declared as 'prefix', 'postfix', or 'infix'")
   }
   public static var multiLineStringLiteralMustBeginOnNewLine: Self {
     .init("multi-line string literal content must begin on a new line")
@@ -313,6 +313,14 @@ public struct ExtaneousCodeAtTopLevel: ParserError {
   }
 }
 
+public struct ExtraneousWhitespace: ParserError {
+  public let tokenWithWhitespace: TokenSyntax
+
+  public var message: String {
+    return "extraneous whitespace after '\(tokenWithWhitespace.text)' is not permitted"
+  }
+}
+
 public struct IdentifierNotAllowedInOperatorName: ParserError {
   public let identifier: TokenSyntax
 
@@ -386,6 +394,14 @@ public struct MissingAttributeArgument: ParserError {
   }
 }
 
+public struct MissingBothStringQuotesOfStringSegments: ParserError {
+  public let stringSegments: StringLiteralSegmentsSyntax
+
+  public var message: String {
+    return #"expected \#(stringSegments.shortSingleLineContentDescription) to be surrounded by '"'"#
+  }
+}
+
 public struct MissingConditionInStatement: ParserError {
   let node: SyntaxProtocol
 
@@ -415,7 +431,8 @@ public struct NegatedAvailabilityCondition: ParserError {
   public let negatedAvailabilityKeyword: TokenSyntax
 
   public var message: String {
-    return "\(nodesDescription([avaialabilityCondition], format: false)) cannot be used in an expression; did you mean \(nodesDescription([negatedAvailabilityKeyword], format: false))?"
+    return
+      "\(nodesDescription([avaialabilityCondition], format: false)) cannot be used in an expression; did you mean \(nodesDescription([negatedAvailabilityKeyword], format: false))?"
   }
 }
 
@@ -475,7 +492,9 @@ public struct UnexpectedNodesError: ParserError {
   public var message: String {
     var message = "unexpected \(unexpectedNodes.shortSingleLineContentDescription)"
     if let parent = unexpectedNodes.parent {
-      if let parentTypeName = parent.nodeTypeNameForDiagnostics(allowBlockNames: false), parent.children(viewMode: .sourceAccurate).first?.id == unexpectedNodes.id {
+      if let parentTypeName = parent.nodeTypeNameForDiagnostics(allowBlockNames: false),
+        parent.children(viewMode: .sourceAccurate).first?.id == unexpectedNodes.id
+      {
         message += " before \(parentTypeName)"
       } else if let parentTypeName = parent.ancestorOrSelf(mapping: { $0.nodeTypeNameForDiagnostics(allowBlockNames: false) }) {
         message += " in \(parentTypeName)"

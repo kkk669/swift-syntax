@@ -43,12 +43,12 @@ public let COMMON_NODES: [Node] = [
             kind: .node(kind: .expr)
           ),
         ]),
-        description: "The underlying node inside the code block."
+        documentation: "The underlying node inside the code block."
       ),
       Child(
         name: "Semicolon",
         kind: .token(choices: [.token(tokenKind: "SemicolonToken")]),
-        description: "If present, the trailing semicolon at the end of the item.",
+        documentation: "If present, the trailing semicolon at the end of the item.",
         isOptional: true
       ),
     ]
@@ -76,8 +76,7 @@ public let COMMON_NODES: [Node] = [
       ),
       Child(
         name: "RightBrace",
-        kind: .token(choices: [.token(tokenKind: "RightBraceToken")]),
-        requiresLeadingNewline: true
+        kind: .token(choices: [.token(tokenKind: "RightBraceToken")])
       ),
     ]
   ),
@@ -153,19 +152,19 @@ public let COMMON_NODES: [Node] = [
       Child(
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
-        description: "If there were standalone attributes without a declaration to attach them to, the `MissingDeclSyntax` will contain these.",
+        documentation: "If there were standalone attributes without a declaration to attach them to, the ``MissingDeclSyntax`` will contain these.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
-        description: "If there were standalone modifiers without a declaration to attach them to, the `MissingDeclSyntax` will contain these.",
+        documentation: "If there were standalone modifiers without a declaration to attach them to, the ``MissingDeclSyntax`` will contain these.",
         isOptional: true
       ),
       Child(
         name: "Placeholder",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false),
-        description: """
+        documentation: """
           A placeholder, i.e. `<#decl#>` that can be inserted into the source code to represent the missing declaration.
           This token should always have `presence = .missing`.
           """
@@ -182,7 +181,7 @@ public let COMMON_NODES: [Node] = [
       Child(
         name: "Placeholder",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false),
-        description: """
+        documentation: """
           A placeholder, i.e. `<#expression#>` that can be inserted into the source code to represent the missing expression.
           This token should always have `presence = .missing`.
           """
@@ -199,7 +198,7 @@ public let COMMON_NODES: [Node] = [
       Child(
         name: "Placeholder",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false),
-        description: """
+        documentation: """
           A placeholder, i.e. `<#pattern#>` that can be inserted into the source code to represent the missing pattern.
           This token should always have `presence = .missing`.
           """
@@ -216,7 +215,7 @@ public let COMMON_NODES: [Node] = [
       Child(
         name: "Placeholder",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false),
-        description: """
+        documentation: """
           A placeholder, i.e. `<#statement#>` that can be inserted into the source code to represent the missing pattern.
           This token should always have `presence = .missing`.
           """
@@ -233,7 +232,7 @@ public let COMMON_NODES: [Node] = [
       Child(
         name: "Placeholder",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false),
-        description: """
+        documentation: """
           A placeholder, i.e. `<#syntax#>` that can be inserted into the source code to represent the missing pattern.
           This token should always have `presence = .missing`
           """
@@ -250,7 +249,7 @@ public let COMMON_NODES: [Node] = [
       Child(
         name: "Placeholder",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")], requiresLeadingSpace: false, requiresTrailingSpace: false),
-        description: """
+        documentation: """
           A placeholder, i.e. `<#type#>` that can be inserted into the source code to represent the missing type. This token should always have `presence = .missing`.
           """
       )

@@ -61,6 +61,7 @@ public enum Keyword: UInt8, Hashable {
   case _underlyingVersion
   case _UnknownLayout
   case _version
+  case accesses
   case actor
   case addressWithNativeOwner
   case addressWithOwner
@@ -128,6 +129,7 @@ public enum Keyword: UInt8, Hashable {
   case indirect
   case infix
   case `init`
+  case initializes
   case inline
   case `inout`
   case `internal`
@@ -475,6 +477,8 @@ public enum Keyword: UInt8, Hashable {
         self = ._Trivial
       case "_version":
         self = ._version
+      case "accesses":
+        self = .accesses
       case "compiler":
         self = .compiler
       case "continue":
@@ -596,6 +600,8 @@ public enum Keyword: UInt8, Hashable {
         self = .`fallthrough`
       case "fileprivate":
         self = .`fileprivate`
+      case "initializes":
+        self = .initializes
       case "nonisolated":
         self = .nonisolated
       case "nonmutating":
@@ -753,7 +759,7 @@ public enum Keyword: UInt8, Hashable {
   /// This is really unfortunate. Really, we should have a `switch` in
   /// `Keyword.defaultText` to return the keyword's kind but the constant lookup
   /// table is significantly faster. Ideally, we could also get the compiler to
-  /// constant-evaluate `Keyword.spi.defaultText` to a `SyntaxText` but I don't
+  /// constant-evaluate `Keyword.spi.defaultText` to a ``SyntaxText`` but I don't
   /// see how that's possible right now.
   private static let keywordTextLookupTable: [SyntaxText] = [
       "__consuming", 
@@ -804,6 +810,7 @@ public enum Keyword: UInt8, Hashable {
       "_underlyingVersion", 
       "_UnknownLayout", 
       "_version", 
+      "accesses", 
       "actor", 
       "addressWithNativeOwner", 
       "addressWithOwner", 
@@ -871,6 +878,7 @@ public enum Keyword: UInt8, Hashable {
       "indirect", 
       "infix", 
       "init", 
+      "initializes", 
       "inline", 
       "inout", 
       "internal", 

@@ -65,7 +65,7 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
   var context: Context
   var skipNodes: Set<Syntax> = []
 
-  /// A stack of member attribute macos to expand when iterating over a `MemberDeclListSyntax`.
+  /// A stack of member attribute macos to expand when iterating over a ``MemberDeclListSyntax``.
   var memberAttributeMacros: [([(AttributeSyntax, MemberAttributeMacro.Type)], DeclSyntax)] = []
 
   init(
@@ -109,7 +109,12 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
           return true
         }
 
-        return !(macro is PeerMacro.Type || macro is MemberMacro.Type || macro is AccessorMacro.Type || macro is MemberAttributeMacro.Type || macro is ConformanceMacro.Type)
+        return
+          !(macro is PeerMacro.Type
+          || macro is MemberMacro.Type
+          || macro is AccessorMacro.Type
+          || macro is MemberAttributeMacro.Type
+          || macro is ConformanceMacro.Type)
       }
 
       if newAttributes.isEmpty {
@@ -141,8 +146,10 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
               in: context
             )
             if let declExpansion = expansion.as(MacroExpansionDeclSyntax.self) {
+              let attributes = macro.propagateFreestandingMacroAttributes ? declExpansion.attributes : nil
+              let modifiers = macro.propagateFreestandingMacroModifiers ? declExpansion.modifiers : nil
               expandedItemList = expandedItemList.map {
-                $0.applying(attributes: declExpansion.attributes, modifiers: declExpansion.modifiers)
+                $0.applying(attributes: attributes, modifiers: modifiers)
               }
             }
             newItems.append(
@@ -198,8 +205,10 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
             of: declExpansion,
             in: context
           )
+          let attributes = freestandingMacro.propagateFreestandingMacroAttributes ? declExpansion.attributes : nil
+          let modifiers = freestandingMacro.propagateFreestandingMacroModifiers ? declExpansion.modifiers : nil
           expandedList = expandedList.map {
-            $0.applying(attributes: declExpansion.attributes, modifiers: declExpansion.modifiers)
+            $0.applying(attributes: attributes, modifiers: modifiers)
           }
 
           newItems.append(

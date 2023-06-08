@@ -539,6 +539,8 @@ extension DoStmtSyntax: WithCodeBlockSyntax {}
 
 extension DocumentationAttributeArgumentSyntax: WithTrailingCommaSyntax {}
 
+extension EditorPlaceholderDeclSyntax: WithAttributesSyntax, WithModifiersSyntax {}
+
 extension EnumCaseDeclSyntax: WithAttributesSyntax, WithModifiersSyntax {}
 
 extension EnumCaseElementSyntax: WithTrailingCommaSyntax {}
@@ -591,7 +593,7 @@ extension MemberDeclBlockSyntax: BracedSyntax {}
 
 extension MissingDeclSyntax: WithAttributesSyntax, WithModifiersSyntax {}
 
-extension OperatorDeclSyntax: IdentifiedDeclSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+extension OperatorDeclSyntax: IdentifiedDeclSyntax {}
 
 extension ParameterClauseSyntax: ParenthesizedSyntax {}
 

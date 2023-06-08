@@ -18,7 +18,12 @@ public let DECL_NODES: [Node] = [
     children: [
       Child(
         name: "Name",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "PrefixOperatorToken"), .token(tokenKind: "PostfixOperatorToken")]),
+        kind: .token(choices: [
+          .token(tokenKind: "IdentifierToken"),
+          .token(tokenKind: "BinaryOperatorToken"),
+          .token(tokenKind: "PrefixOperatorToken"),
+          .token(tokenKind: "PostfixOperatorToken"),
+        ]),
         nameForDiagnostics: "name"
       ),
       Child(
@@ -55,8 +60,75 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "RightBrace",
-        kind: .token(choices: [.token(tokenKind: "RightBraceToken")]),
-        requiresLeadingNewline: true
+        kind: .token(choices: [.token(tokenKind: "RightBraceToken")])
+      ),
+    ]
+  ),
+
+  Node(
+    kind: .accessesEffect,
+    base: .syntax,
+    nameForDiagnostics: "accesses effect",
+    children: [
+      Child(
+        name: "AccessesKeyword",
+        kind: .token(choices: [.keyword(text: "accesses")])
+      ),
+      Child(
+        name: "LeftParen",
+        kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
+      ),
+      Child(
+        name: "PropertyList",
+        kind: .collection(kind: .tupleExprElementList, collectionElementName: "Property"),
+        nameForDiagnostics: "properties"
+      ),
+      Child(
+        name: "RightParen",
+        kind: .token(choices: [.token(tokenKind: "RightParenToken")])
+      ),
+    ]
+  ),
+
+  Node(
+    kind: .initializesEffect,
+    base: .syntax,
+    nameForDiagnostics: "initializes effect",
+    children: [
+      Child(
+        name: "InitializesKeyword",
+        kind: .token(choices: [.keyword(text: "initializes")])
+      ),
+      Child(
+        name: "LeftParen",
+        kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
+      ),
+      Child(
+        name: "PropertyList",
+        kind: .collection(kind: .tupleExprElementList, collectionElementName: "Property"),
+        nameForDiagnostics: "properties"
+      ),
+      Child(
+        name: "RightParen",
+        kind: .token(choices: [.token(tokenKind: "RightParenToken")])
+      ),
+    ]
+  ),
+
+  Node(
+    kind: .accessorInitEffects,
+    base: .syntax,
+    nameForDiagnostics: "init accessor effects",
+    children: [
+      Child(
+        name: "InitializesEffect",
+        kind: .node(kind: .initializesEffect),
+        isOptional: true
+      ),
+      Child(
+        name: "AccessesEffect",
+        kind: .node(kind: .accessesEffect),
+        isOptional: true
       ),
     ]
   ),
@@ -82,7 +154,21 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "AccessorKind",
-        kind: .token(choices: [.keyword(text: "get"), .keyword(text: "set"), .keyword(text: "didSet"), .keyword(text: "willSet"), .keyword(text: "unsafeAddress"), .keyword(text: "addressWithOwner"), .keyword(text: "addressWithNativeOwner"), .keyword(text: "unsafeMutableAddress"), .keyword(text: "mutableAddressWithOwner"), .keyword(text: "mutableAddressWithNativeOwner"), .keyword(text: "_read"), .keyword(text: "_modify")])
+        kind: .token(choices: [
+          .keyword(text: "get"),
+          .keyword(text: "set"),
+          .keyword(text: "didSet"),
+          .keyword(text: "willSet"),
+          .keyword(text: "unsafeAddress"),
+          .keyword(text: "addressWithOwner"),
+          .keyword(text: "addressWithNativeOwner"),
+          .keyword(text: "unsafeMutableAddress"),
+          .keyword(text: "mutableAddressWithOwner"),
+          .keyword(text: "mutableAddressWithNativeOwner"),
+          .keyword(text: "_read"),
+          .keyword(text: "_modify"),
+          .keyword(text: "init"),
+        ])
       ),
       Child(
         name: "Parameter",
@@ -93,6 +179,11 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "EffectSpecifiers",
         kind: .node(kind: .accessorEffectSpecifiers),
+        isOptional: true
+      ),
+      Child(
+        name: "InitEffects",
+        kind: .node(kind: .accessorInitEffects),
         isOptional: true
       ),
       Child(
@@ -242,44 +333,44 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "Attributes attached to the associated type declaration.",
+        documentation: "Attributes attached to the associated type declaration.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "Modifiers attached to the associated type declaration.",
+        documentation: "Modifiers attached to the associated type declaration.",
         isOptional: true
       ),
       Child(
         name: "AssociatedtypeKeyword",
         kind: .token(choices: [.keyword(text: "associatedtype")]),
-        description: "The `associatedtype` keyword for this declaration."
+        documentation: "The `associatedtype` keyword for this declaration."
       ),
       Child(
         name: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
-        description: "The name of this associated type."
+        documentation: "The name of this associated type."
       ),
       Child(
         name: "InheritanceClause",
         kind: .node(kind: .typeInheritanceClause),
         nameForDiagnostics: "inheritance clause",
-        description: "The inheritance clause describing conformances for this associated type declaration.",
+        documentation: "The inheritance clause describing conformances for this associated type declaration.",
         isOptional: true
       ),
       Child(
         name: "Initializer",
         kind: .node(kind: .typeInitializerClause),
-        description: "The type initializer clause for this associated type declaration which represents a default type assignment for the associated type.",
+        documentation: "The type initializer clause for this associated type declaration which represents a default type assignment for the associated type.",
         isOptional: true
       ),
       Child(
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
-        description: "The `where` clause that applies to the generic parameters of this associated type declaration.",
+        documentation: "The `where` clause that applies to the generic parameters of this associated type declaration.",
         isOptional: true
       ),
     ]
@@ -330,51 +421,52 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "Attributes attached to the class declaration, such as an `@available` attribute.",
+        documentation: "Attributes attached to the class declaration, such as an `@available` attribute.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "Modifiers attached to the class declaration, such as `public`.",
+        documentation: "Modifiers attached to the class declaration, such as `public`.",
         isOptional: true
       ),
       Child(
         name: "ClassKeyword",
         kind: .token(choices: [.keyword(text: "class")]),
-        description: "The `class` keyword for this declaration."
+        documentation: "The `class` keyword for this declaration."
       ),
       Child(
         name: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
-        description: "The name of the class."
+        documentation: "The name of the class."
       ),
       Child(
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
-        description: "The generic parameters, if any, of the class declaration.",
+        documentation: "The generic parameters, if any, of the class declaration.",
         isOptional: true
       ),
       Child(
         name: "InheritanceClause",
         kind: .node(kind: .typeInheritanceClause),
         nameForDiagnostics: "inheritance clause",
-        description: "The inheritance clause describing one or more conformances for this class declaration.",
+        documentation: "The inheritance clause describing one or more conformances for this class declaration.",
         isOptional: true
       ),
       Child(
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
-        description: "The `where` clause that applies to the generic parameters of this class declaration.",
+        documentation: "The `where` clause that applies to the generic parameters of this class declaration.",
         isOptional: true
       ),
       Child(
         name: "MemberBlock",
         kind: .node(kind: .memberDeclBlock),
-        description: "The members of the class declaration. As class extension declarations may declare additional members, the contents of this member block isn't guaranteed to be a complete list of members for this type."
+        documentation:
+          "The members of the class declaration. As class extension declarations may declare additional members, the contents of this member block isn't guaranteed to be a complete list of members for this type."
       ),
     ]
   ),
@@ -478,25 +570,25 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "Attributes that are attached to the deinitializer.",
+        documentation: "Attributes that are attached to the deinitializer.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "Modifiers that are attached to the deinitializer.",
+        documentation: "Modifiers that are attached to the deinitializer.",
         isOptional: true
       ),
       Child(
         name: "DeinitKeyword",
         kind: .token(choices: [.keyword(text: "deinit")]),
-        description: "The deinit keyword."
+        documentation: "The deinit keyword."
       ),
       Child(
         name: "Body",
         kind: .node(kind: .codeBlock),
-        description: "The deinitializer's body.",
+        documentation: "The deinitializer's body.",
         isOptional: true
       ),
     ]
@@ -531,11 +623,33 @@ public let DECL_NODES: [Node] = [
     kind: .editorPlaceholderDecl,
     base: .decl,
     nameForDiagnostics: "editor placeholder",
+    documentation: """
+      An editor placeholder, e.g. `<#declaration#>` that is used in a position that expects a declaration.
+      """,
+    traits: [
+      "WithAttributes",
+      "WithModifiers",
+    ],
     children: [
       Child(
-        name: "Identifier",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken")])
-      )
+        name: "Attributes",
+        kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
+        documentation: "If there were attributes before the editor placeholder, the ``EditorPlaceholderDecl`` will contain these.",
+        isOptional: true
+      ),
+      Child(
+        name: "Modifiers",
+        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        documentation: "If there were modifiers before the editor placeholder, the `EditorPlaceholderDecl` will contain these.",
+        isOptional: true
+      ),
+      Child(
+        name: "Placeholder",
+        kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
+        documentation: """
+          The actual editor placeholder that starts with `<#` and ends with `#>`.
+          """
+      ),
     ]
   ),
 
@@ -550,19 +664,19 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "LeftParen",
         kind: .token(choices: [.token(tokenKind: "LeftParenToken")]),
-        description: "The '(' to open the parameter clause."
+        documentation: "The '(' to open the parameter clause."
       ),
       Child(
         name: "ParameterList",
         kind: .collection(kind: .enumCaseParameterList, collectionElementName: "Parameter"),
         nameForDiagnostics: "parameters",
-        description: "The actual parameters.",
+        documentation: "The actual parameters.",
         isIndented: true
       ),
       Child(
         name: "RightParen",
         kind: .token(choices: [.token(tokenKind: "RightParenToken")]),
-        description: "The ')' to close the parameter clause."
+        documentation: "The ')' to close the parameter clause."
       ),
     ]
   ),
@@ -600,26 +714,26 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "Colon",
         kind: .token(choices: [.token(tokenKind: "ColonToken")]),
-        description: "If the parameter has a label, the colon separating the label from the type.",
+        documentation: "If the parameter has a label, the colon separating the label from the type.",
         isOptional: true
       ),
       Child(
         name: "Type",
         kind: .node(kind: .type),
         nameForDiagnostics: "type",
-        description: "The parameter's type."
+        documentation: "The parameter's type."
       ),
       Child(
         name: "DefaultArgument",
         kind: .node(kind: .initializerClause),
         nameForDiagnostics: "default argument",
-        description: "If the parameter has a default value, the initializer clause describing the default value.",
+        documentation: "If the parameter has a default value, the initializer clause describing the default value.",
         isOptional: true
       ),
       Child(
         name: "TrailingComma",
         kind: .token(choices: [.token(tokenKind: "CommaToken")]),
-        description: "If the parameter is followed by another parameter, the comma separating them.",
+        documentation: "If the parameter is followed by another parameter, the comma separating them.",
         isOptional: true
       ),
     ]
@@ -639,26 +753,26 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "The attributes applied to the case declaration.",
+        documentation: "The attributes applied to the case declaration.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "The declaration modifiers applied to the case declaration.",
+        documentation: "The declaration modifiers applied to the case declaration.",
         isOptional: true
       ),
       Child(
         name: "CaseKeyword",
         kind: .token(choices: [.keyword(text: "case")]),
-        description: "The `case` keyword for this case."
+        documentation: "The `case` keyword for this case."
       ),
       Child(
         name: "Elements",
         kind: .collection(kind: .enumCaseElementList, collectionElementName: "Element"),
         nameForDiagnostics: "elements",
-        description: "The elements this case declares."
+        documentation: "The elements this case declares."
       ),
     ]
   ),
@@ -683,25 +797,25 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
-        description: "The name of this case."
+        documentation: "The name of this case."
       ),
       Child(
         name: "AssociatedValue",
         kind: .node(kind: .enumCaseParameterClause),
         nameForDiagnostics: "associated values",
-        description: "The set of associated values of the case.",
+        documentation: "The set of associated values of the case.",
         isOptional: true
       ),
       Child(
         name: "RawValue",
         kind: .node(kind: .initializerClause),
-        description: "The raw value of this enum element, if present.",
+        documentation: "The raw value of this enum element, if present.",
         isOptional: true
       ),
       Child(
         name: "TrailingComma",
         kind: .token(choices: [.token(tokenKind: "CommaToken")]),
-        description: "The trailing comma of this element, if the case has multiple elements.",
+        documentation: "The trailing comma of this element, if the case has multiple elements.",
         isOptional: true
       ),
     ]
@@ -723,51 +837,52 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "The attributes applied to the enum declaration.",
+        documentation: "The attributes applied to the enum declaration.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "The declaration modifiers applied to the enum declaration.",
+        documentation: "The declaration modifiers applied to the enum declaration.",
         isOptional: true
       ),
       Child(
         name: "EnumKeyword",
         kind: .token(choices: [.keyword(text: "enum")]),
-        description: "The `enum` keyword for this declaration."
+        documentation: "The `enum` keyword for this declaration."
       ),
       Child(
         name: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
-        description: "Declares the name of this enum. If the name matches a reserved keyword use backticks to escape it."
+        documentation: "Declares the name of this enum. If the name matches a reserved keyword use backticks to escape it."
       ),
       Child(
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
-        description: "The generic parameters, if any, for this enum declaration.",
+        documentation: "The generic parameters, if any, for this enum declaration.",
         isOptional: true
       ),
       Child(
         name: "InheritanceClause",
         kind: .node(kind: .typeInheritanceClause),
         nameForDiagnostics: "inheritance clause",
-        description: "The inheritance clause describing conformances or raw values for this enum declaration.",
+        documentation: "The inheritance clause describing conformances or raw values for this enum declaration.",
         isOptional: true
       ),
       Child(
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
-        description: "The `where` clause that applies to the generic parameters of this enum declaration.",
+        documentation: "The `where` clause that applies to the generic parameters of this enum declaration.",
         isOptional: true
       ),
       Child(
         name: "MemberBlock",
         kind: .node(kind: .memberDeclBlock),
-        description: "The cases and other members associated with this enum declaration. Because enum extension declarations may declare additional members the contents of this member block isn't guaranteed to be a complete list of members for this type."
+        documentation:
+          "The cases and other members associated with this enum declaration. Because enum extension declarations may declare additional members the contents of this member block isn't guaranteed to be a complete list of members for this type."
       ),
     ]
   ),
@@ -855,7 +970,12 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Identifier",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "PrefixOperatorToken"), .token(tokenKind: "PostfixOperatorToken")])
+        kind: .token(choices: [
+          .token(tokenKind: "IdentifierToken"),
+          .token(tokenKind: "BinaryOperatorToken"),
+          .token(tokenKind: "PrefixOperatorToken"),
+          .token(tokenKind: "PostfixOperatorToken"),
+        ])
       ),
       Child(
         name: "GenericParameterClause",
@@ -992,8 +1112,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "PoundKeyword",
         kind: .token(choices: [.token(tokenKind: "PoundIfToken"), .token(tokenKind: "PoundElseifToken"), .token(tokenKind: "PoundElseToken")]),
-        classification: "BuildConfigId",
-        requiresLeadingNewline: true
+        classification: "BuildConfigId"
       ),
       Child(
         name: "Condition",
@@ -1045,8 +1164,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "PoundEndif",
         kind: .token(choices: [.token(tokenKind: "PoundEndifToken")]),
-        classification: "BuildConfigId",
-        requiresLeadingNewline: true
+        classification: "BuildConfigId"
       ),
     ]
   ),
@@ -1071,31 +1189,41 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "Attributes attached to the import declaration, for example `@testable`.",
+        documentation: "Attributes attached to the import declaration, for example `@testable`.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "Modifiers attached to the import declaration. Currently, no modifiers are supported by Swift.",
+        documentation: "Modifiers attached to the import declaration. Currently, no modifiers are supported by Swift.",
         isOptional: true
       ),
       Child(
-        name: "ImportTok",
+        name: "ImportKeyword",
         kind: .token(choices: [.keyword(text: "import")]),
-        description: "The `import` keyword for this declaration."
+        documentation: "The `import` keyword for this declaration."
       ),
       Child(
         name: "ImportKind",
-        kind: .token(choices: [.keyword(text: "typealias"), .keyword(text: "struct"), .keyword(text: "class"), .keyword(text: "enum"), .keyword(text: "protocol"), .keyword(text: "var"), .keyword(text: "let"), .keyword(text: "func"), .keyword(text: "inout")]),
-        description: "The kind of declaration being imported. For example, a struct can be imported from a specific module.",
+        kind: .token(choices: [
+          .keyword(text: "typealias"),
+          .keyword(text: "struct"),
+          .keyword(text: "class"),
+          .keyword(text: "enum"),
+          .keyword(text: "protocol"),
+          .keyword(text: "var"),
+          .keyword(text: "let"),
+          .keyword(text: "func"),
+          .keyword(text: "inout"),
+        ]),
+        documentation: "The kind of declaration being imported. For example, a struct can be imported from a specific module.",
         isOptional: true
       ),
       Child(
         name: "Path",
         kind: .collection(kind: .importPath, collectionElementName: "PathComponent"),
-        description: "The path to the module, submodule or symbol being imported."
+        documentation: "The path to the module, submodule or symbol being imported."
       ),
     ]
   ),
@@ -1167,51 +1295,55 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "Attributes that are attached to the initializer.",
+        documentation: "Attributes that are attached to the initializer.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "Modifiers attached to the initializer",
+        documentation: "Modifiers attached to the initializer",
         isOptional: true
       ),
       Child(
         name: "InitKeyword",
         kind: .token(choices: [.keyword(text: "init")]),
-        description: "The init keyword"
+        documentation: "The init keyword"
       ),
       Child(
         name: "OptionalMark",
-        kind: .token(choices: [.token(tokenKind: "PostfixQuestionMarkToken"), .token(tokenKind: "InfixQuestionMarkToken"), .token(tokenKind: "ExclamationMarkToken")]),
-        description: "If the initializer is failable, a question mark to indicate that.",
+        kind: .token(choices: [
+          .token(tokenKind: "PostfixQuestionMarkToken"),
+          .token(tokenKind: "InfixQuestionMarkToken"),
+          .token(tokenKind: "ExclamationMarkToken"),
+        ]),
+        documentation: "If the initializer is failable, a question mark to indicate that.",
         isOptional: true
       ),
       Child(
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
-        description: "Generic parameters of the initializer.",
+        documentation: "Generic parameters of the initializer.",
         isOptional: true
       ),
       Child(
         name: "Signature",
         kind: .node(kind: .functionSignature),
         nameForDiagnostics: "function signature",
-        description: "The arguments of the initializer. While the function signature allows specifying an return clause, doing so is not semantically valid."
+        documentation: "The arguments of the initializer. While the function signature allows specifying an return clause, doing so is not semantically valid."
       ),
       Child(
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
-        description: "If the initializer had generic parameters, a where clause that can restrict those",
+        documentation: "If the initializer had generic parameters, a where clause that can restrict those",
         isOptional: true
       ),
       Child(
         name: "Body",
         kind: .node(kind: .codeBlock),
-        description: "The initializer’s body. Missing if the initialier is a requirement of a protocol declaration.",
+        documentation: "The initializer’s body. Missing if the initialier is a requirement of a protocol declaration.",
         isOptional: true
       ),
     ]
@@ -1299,7 +1431,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "PoundToken",
         kind: .token(choices: [.token(tokenKind: "PoundToken")]),
-        description: "The `#` sign."
+        documentation: "The `#` sign."
       ),
       Child(
         name: "Macro",
@@ -1355,8 +1487,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "RightBrace",
-        kind: .token(choices: [.token(tokenKind: "RightBraceToken")]),
-        requiresLeadingNewline: true
+        kind: .token(choices: [.token(tokenKind: "RightBraceToken")])
       ),
     ]
   ),
@@ -1371,12 +1502,12 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "Decl",
         kind: .node(kind: .decl),
-        description: "The declaration of the type member."
+        documentation: "The declaration of the type member."
       ),
       Child(
         name: "Semicolon",
         kind: .token(choices: [.token(tokenKind: "SemicolonToken")]),
-        description: "An optional trailing semicolon.",
+        documentation: "An optional trailing semicolon.",
         isOptional: true
       ),
     ]
@@ -1426,25 +1557,14 @@ public let DECL_NODES: [Node] = [
     nameForDiagnostics: "operator declaration",
     documentation: "A Swift `operator` declaration.",
     traits: [
-      "IdentifiedDecl",
-      "WithAttributes",
-      "WithModifiers",
+      "IdentifiedDecl"
     ],
     children: [
       Child(
-        name: "Attributes",
-        kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
-        nameForDiagnostics: "attributes",
-        description: "The attributes applied to the 'operator' declaration.",
-        isOptional: true
-      ),
-      Child(
-        name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
-        nameForDiagnostics: "modifiers",
-        description: "The declaration modifiers applied to the 'operator' declaration.",
-        isOptional: true,
-        classification: "Attribute"
+        name: "Fixity",
+        kind: .token(choices: [.keyword(text: "prefix"), .keyword(text: "postfix"), .keyword(text: "infix")]),
+        nameForDiagnostics: "fixity",
+        documentation: "The fixity applied to the 'operator' declaration."
       ),
       Child(
         name: "OperatorKeyword",
@@ -1458,7 +1578,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "OperatorPrecedenceAndTypes",
         kind: .node(kind: .operatorPrecedenceAndTypes),
-        description: "Optionally specify a precedence group and designated types.",
+        documentation: "Optionally specify a precedence group and designated types.",
         isOptional: true
       ),
     ]
@@ -1479,12 +1599,12 @@ public let DECL_NODES: [Node] = [
         name: "PrecedenceGroup",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         nameForDiagnostics: "precedence group",
-        description: "The precedence group for this operator"
+        documentation: "The precedence group for this operator"
       ),
       Child(
         name: "DesignatedTypes",
         kind: .collection(kind: .designatedTypeList, collectionElementName: "DesignatedTypeElement"),
-        description: "The designated types associated with this operator."
+        documentation: "The designated types associated with this operator."
       ),
     ]
   ),
@@ -1653,7 +1773,8 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "Flag",
         kind: .token(choices: [.keyword(text: "true"), .keyword(text: "false")]),
-        description: "When true, an operator in the corresponding precedence group uses the same grouping rules during optional chaining as the assignment operators from the standard library. Otherwise, operators in the precedence group follows the same optional chaining rules as operators that don't perform assignment."
+        documentation:
+          "When true, an operator in the corresponding precedence group uses the same grouping rules during optional chaining as the assignment operators from the standard library. Otherwise, operators in the precedence group follows the same optional chaining rules as operators that don't perform assignment."
       ),
     ]
   ),
@@ -1678,7 +1799,8 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "Value",
         kind: .token(choices: [.keyword(text: "left"), .keyword(text: "right"), .keyword(text: "none")]),
-        description: "Operators that are `left`-associative group left-to-right. Operators that are `right`-associative group right-to-left. Operators that are specified with an associativity of `none` don't associate at all"
+        documentation:
+          "Operators that are `left`-associative group left-to-right. Operators that are `right`-associative group right-to-left. Operators that are specified with an associativity of `none` don't associate at all"
       ),
     ]
   ),
@@ -1710,14 +1832,14 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "The attributes applied to the 'precedencegroup' declaration.",
+        documentation: "The attributes applied to the 'precedencegroup' declaration.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "The declaration modifiers applied to the 'precedencegroup' declaration.",
+        documentation: "The declaration modifiers applied to the 'precedencegroup' declaration.",
         isOptional: true
       ),
       Child(
@@ -1727,7 +1849,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
-        description: "The name of this precedence group."
+        documentation: "The name of this precedence group."
       ),
       Child(
         name: "LeftBrace",
@@ -1736,7 +1858,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "GroupAttributes",
         kind: .collection(kind: .precedenceGroupAttributeList, collectionElementName: "GroupAttribute"),
-        description: "The characteristics of this precedence group."
+        documentation: "The characteristics of this precedence group."
       ),
       Child(
         name: "RightBrace",
@@ -1783,7 +1905,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "HigherThanOrLowerThan",
         kind: .token(choices: [.keyword(text: "higherThan"), .keyword(text: "lowerThan")]),
-        description: "The relation to specified other precedence groups.",
+        documentation: "The relation to specified other precedence groups.",
         classification: "Keyword"
       ),
       Child(
@@ -1793,7 +1915,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "OtherNames",
         kind: .collection(kind: .precedenceGroupNameList, collectionElementName: "OtherName"),
-        description: "The name of other precedence group to which this precedence group relates."
+        documentation: "The name of other precedence group to which this precedence group relates."
       ),
     ]
   ),
@@ -1822,51 +1944,51 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "Attributes attached to the protocol declaration, such as an `@available` attribute.",
+        documentation: "Attributes attached to the protocol declaration, such as an `@available` attribute.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "Modifiers attached to the protocol declaration, such as `public`.",
+        documentation: "Modifiers attached to the protocol declaration, such as `public`.",
         isOptional: true
       ),
       Child(
         name: "ProtocolKeyword",
         kind: .token(choices: [.keyword(text: "protocol")]),
-        description: "The `protocol` keyword for this declaration."
+        documentation: "The `protocol` keyword for this declaration."
       ),
       Child(
         name: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
-        description: "The name of the protocol."
+        documentation: "The name of the protocol."
       ),
       Child(
         name: "PrimaryAssociatedTypeClause",
         kind: .node(kind: .primaryAssociatedTypeClause),
         nameForDiagnostics: "primary associated type clause",
-        description: "The primary associated type for the protocol.",
+        documentation: "The primary associated type for the protocol.",
         isOptional: true
       ),
       Child(
         name: "InheritanceClause",
         kind: .node(kind: .typeInheritanceClause),
         nameForDiagnostics: "inheritance clause",
-        description: "The inheritance clause describing one or more conformances for this protocol declaration.",
+        documentation: "The inheritance clause describing one or more conformances for this protocol declaration.",
         isOptional: true
       ),
       Child(
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
-        description: "The `where` clause that applies to the generic parameters of this protocol declaration.",
+        documentation: "The `where` clause that applies to the generic parameters of this protocol declaration.",
         isOptional: true
       ),
       Child(
         name: "MemberBlock",
         kind: .node(kind: .memberDeclBlock),
-        description: "The members of the protocol declaration."
+        documentation: "The members of the protocol declaration."
       ),
     ]
   ),
@@ -1988,51 +2110,52 @@ public let DECL_NODES: [Node] = [
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
         nameForDiagnostics: "attributes",
-        description: "Attributes that are attached to the struct declaration.",
+        documentation: "Attributes that are attached to the struct declaration.",
         isOptional: true
       ),
       Child(
         name: "Modifiers",
         kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
-        description: "Modifiers that are attached to the struct declaration.",
+        documentation: "Modifiers that are attached to the struct declaration.",
         isOptional: true
       ),
       Child(
         name: "StructKeyword",
         kind: .token(choices: [.keyword(text: "struct")]),
-        description: "The `struct` keyword for this declaration."
+        documentation: "The `struct` keyword for this declaration."
       ),
       Child(
         name: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
-        description: "Declares the name of this struct. If the name matches a reserved keyword use backticks to escape it."
+        documentation: "Declares the name of this struct. If the name matches a reserved keyword use backticks to escape it."
       ),
       Child(
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
-        description: "The generic parameters, if any, of the struct declaration.",
+        documentation: "The generic parameters, if any, of the struct declaration.",
         isOptional: true
       ),
       Child(
         name: "InheritanceClause",
         kind: .node(kind: .typeInheritanceClause),
         nameForDiagnostics: "type inheritance clause",
-        description: "The struct declaration inheritance clause describing one or more conformances for this struct declaration.",
+        documentation: "The struct declaration inheritance clause describing one or more conformances for this struct declaration.",
         isOptional: true
       ),
       Child(
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
-        description: "The `where` clause that applies to the generic parameters of this struct declaration.",
+        documentation: "The `where` clause that applies to the generic parameters of this struct declaration.",
         isOptional: true
       ),
       Child(
         name: "MemberBlock",
         kind: .node(kind: .memberDeclBlock),
-        description: "The members of the struct declaration. Because struct extension declarations may declare additional members the contents of this member block isn't guaranteed to be a complete list of members for this type."
+        documentation:
+          "The members of the struct declaration. Because struct extension declarations may declare additional members the contents of this member block isn't guaranteed to be a complete list of members for this type."
       ),
     ]
   ),

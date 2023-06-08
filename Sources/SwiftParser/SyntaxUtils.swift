@@ -26,7 +26,7 @@ extension RawUnexpectedNodesSyntax {
     })
   }
 
-  /// If `nodes` is not empty, construct a `RawUnexpectedNodesSyntax`
+  /// If `nodes` is not empty, construct a ``RawUnexpectedNodesSyntax``
   /// containing those tokens, otherwise return `nil`.
   init?<SyntaxType: RawSyntaxNodeProtocol>(_ nodes: [SyntaxType], arena: __shared SyntaxArena) {
     if nodes.isEmpty {
@@ -36,7 +36,7 @@ extension RawUnexpectedNodesSyntax {
     }
   }
 
-  /// If `nodes` contains non-`nil` values, construct a `RawUnexpectedNodesSyntax`
+  /// If `nodes` contains non-`nil` values, construct a ``RawUnexpectedNodesSyntax``
   /// containing those tokens, otherwise return `nil`.
   init?<SyntaxType: RawSyntaxNodeProtocol>(_ nodes: [SyntaxType?], arena: __shared SyntaxArena) {
     self.init(nodes.compactMap({ $0 }), arena: arena)
@@ -77,8 +77,23 @@ extension RawUnexpectedNodesSyntax {
     self.init(syntax1.elements + syntax2.elements, arena: arena)
   }
 
-  init?(combining syntax1: some UnexpectedNodesCombinable, _ syntax2: some UnexpectedNodesCombinable, _ syntax3: some UnexpectedNodesCombinable, arena: __shared SyntaxArena) {
+  init?(
+    combining syntax1: some UnexpectedNodesCombinable,
+    _ syntax2: some UnexpectedNodesCombinable,
+    _ syntax3: some UnexpectedNodesCombinable,
+    arena: __shared SyntaxArena
+  ) {
     self.init(syntax1.elements + syntax2.elements + syntax3.elements, arena: arena)
+  }
+
+  init?(
+    combining syntax1: some UnexpectedNodesCombinable,
+    _ syntax2: some UnexpectedNodesCombinable,
+    _ syntax3: some UnexpectedNodesCombinable,
+    _ syntax4: some UnexpectedNodesCombinable,
+    arena: __shared SyntaxArena
+  ) {
+    self.init(syntax1.elements + syntax2.elements + syntax3.elements + syntax4.elements, arena: arena)
   }
 }
 

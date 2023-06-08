@@ -17,6 +17,7 @@ import SwiftDiagnostics
 extension ParseDiagnosticsGenerator {
   func handleMissingToken(_ missingToken: TokenSyntax) {
     guard let invalidToken = missingToken.previousToken(viewMode: .all),
+      invalidToken.presence == .present,
       let invalidTokenContainer = invalidToken.parent?.as(UnexpectedNodesSyntax.self),
       invalidTokenContainer.count == 1
     else {
@@ -56,7 +57,9 @@ extension ParseDiagnosticsGenerator {
           changes: [
             .replace(
               oldNode: Syntax(invalidToken),
-              newNode: Syntax(TokenSyntax.identifier("`\(invalidToken.text)`", leadingTrivia: invalidToken.leadingTrivia, trailingTrivia: invalidToken.trailingTrivia))
+              newNode: Syntax(
+                TokenSyntax.identifier("`\(invalidToken.text)`", leadingTrivia: invalidToken.leadingTrivia, trailingTrivia: invalidToken.trailingTrivia)
+              )
             )
           ]
         )
@@ -105,7 +108,7 @@ extension ParseDiagnosticsGenerator {
 
     if let identifier = missingToken.nextToken(viewMode: .all),
       identifier.tokenView.rawKind == .identifier,
-      identifier.presence == .missing
+      identifier.isMissing
     {
       // The extraneous whitespace caused a missing identifier, output a
       // diagnostic inserting it instead of a diagnostic to fix the trivia
@@ -123,7 +126,7 @@ extension ParseDiagnosticsGenerator {
       )
     } else {
       let fixIt = FixIt(message: .removeExtraneousWhitespace, changes: changes)
-      addDiagnostic(invalidToken, .invalidWhitespaceAfterPeriod, fixIts: [fixIt], handledNodes: [invalidTokenContainer.id])
+      addDiagnostic(invalidToken, ExtraneousWhitespace(tokenWithWhitespace: invalidToken), fixIts: [fixIt], handledNodes: [invalidTokenContainer.id])
     }
     return true
   }

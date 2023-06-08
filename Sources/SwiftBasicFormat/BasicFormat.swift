@@ -145,7 +145,7 @@ open class BasicFormat: SyntaxRewriter {
 
   open func requiresNewline(between first: TokenSyntax?, and second: TokenSyntax?) -> Bool {
     // We don't want to add newlines inside string interpolation.
-    // When first or second `TokenSyntax` is a multiline quote we want special handling
+    // When first or second ``TokenSyntax`` is a multiline quote we want special handling
     // even if it's inside a string interpolation, because it still requires newline
     // after open quote and before close quote.
     if let first,
@@ -155,10 +155,6 @@ open class BasicFormat: SyntaxRewriter {
     {
       return false
     } else if let second {
-      if second.requiresLeadingNewline {
-        return true
-      }
-
       var ancestor: Syntax = Syntax(second)
       while let parent = ancestor.parent {
         ancestor = parent
@@ -178,11 +174,16 @@ open class BasicFormat: SyntaxRewriter {
     }
 
     switch (first?.tokenKind, second?.tokenKind) {
+
     case (.multilineStringQuote, .backslash),  // string interpolation segment inside a multi-line string literal
       (.multilineStringQuote, .multilineStringQuote),  // empty multi-line string literal
       (.multilineStringQuote, .stringSegment),  // segment starting a multi-line string literal
       (.stringSegment, .multilineStringQuote),  // ending a multi-line string literal that has a string interpolation segment at its end
-      (.rightParen, .multilineStringQuote):  // ending a multi-line string literal that has a string interpolation segment at its end
+      (.rightParen, .multilineStringQuote),  // ending a multi-line string literal that has a string interpolation segment at its end
+      (_, .poundElseKeyword),
+      (_, .poundElseifKeyword),
+      (_, .poundEndifKeyword),
+      (_, .rightBrace):
       return true
     default:
       return false
@@ -351,8 +352,17 @@ open class BasicFormat: SyntaxRewriter {
       guard let nextToken = nextToken else {
         return false
       }
-      return nextToken.leadingTrivia.startsWithNewline
-        || (requiresNewline(between: token, and: nextToken) && isMutable(nextToken) && !token.trailingTrivia.endsWithNewline && !token.isStringSegmentWithLastCharacterBeingNewline)
+      if nextToken.leadingTrivia.startsWithNewline {
+        return true
+      }
+      if requiresNewline(between: token, and: nextToken),
+        isMutable(nextToken),
+        !token.trailingTrivia.endsWithNewline,
+        !token.isStringSegmentWithLastCharacterBeingNewline
+      {
+        return true
+      }
+      return false
     }()
 
     /// This token's trailing trivia + any spaces or tabs at the start of the

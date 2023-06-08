@@ -44,7 +44,15 @@ public let TYPE_NODES: [Node] = [
     children: [
       Child(
         name: "Specifier",
-        kind: .token(choices: [.keyword(text: "inout"), .keyword(text: "__shared"), .keyword(text: "__owned"), .keyword(text: "isolated"), .keyword(text: "_const"), .keyword(text: "borrowing"), .keyword(text: "consuming")]),
+        kind: .token(choices: [
+          .keyword(text: "inout"),
+          .keyword(text: "__shared"),
+          .keyword(text: "__owned"),
+          .keyword(text: "isolated"),
+          .keyword(text: "_const"),
+          .keyword(text: "borrowing"),
+          .keyword(text: "consuming"),
+        ]),
         isOptional: true
       ),
       Child(
@@ -175,8 +183,8 @@ public let TYPE_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
       ),
       Child(
-        name: "Arguments",
-        kind: .collection(kind: .tupleTypeElementList, collectionElementName: "Argument"),
+        name: "Parameters",
+        kind: .collection(kind: .tupleTypeElementList, collectionElementName: "Parameter"),
         isIndented: true
       ),
       Child(
@@ -408,7 +416,14 @@ public let TYPE_NODES: [Node] = [
     children: [
       Child(
         name: "Name",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .keyword(text: "self"), .keyword(text: "Self"), .keyword(text: "Any"), .token(tokenKind: "KeywordToken"), .token(tokenKind: "WildcardToken")]),
+        kind: .token(choices: [
+          .token(tokenKind: "IdentifierToken"),
+          .keyword(text: "self"),
+          .keyword(text: "Self"),
+          .keyword(text: "Any"),
+          .token(tokenKind: "KeywordToken"),
+          .token(tokenKind: "WildcardToken"),
+        ]),
         classification: "TypeIdentifier"
       ),
       Child(

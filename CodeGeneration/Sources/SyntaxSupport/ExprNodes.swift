@@ -377,37 +377,38 @@ public let EXPR_NODES: [Node] = [
       Child(
         name: "FirstName",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .token(tokenKind: "WildcardToken")]),
-        description: "The label of this parameter that will be used when the closure is called."
+        documentation: "The label of this parameter that will be used when the closure is called."
       ),
       Child(
         name: "SecondName",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .token(tokenKind: "WildcardToken")]),
-        description: "If this is specified, it is the name by which the parameter can be referenced inside the closure body. If it is `nil`, the closure parameter is referenced by the first name.",
+        documentation:
+          "If this is specified, it is the name by which the parameter can be referenced inside the closure body. If it is `nil`, the closure parameter is referenced by the first name.",
         isOptional: true
       ),
       Child(
         name: "Colon",
         kind: .token(choices: [.token(tokenKind: "ColonToken")]),
-        description: "The colon separating the parameter's name and type.",
+        documentation: "The colon separating the parameter's name and type.",
         isOptional: true
       ),
       Child(
         name: "Type",
         kind: .node(kind: .type),
         nameForDiagnostics: "type",
-        description: "The type of the parameter.",
+        documentation: "The type of the parameter.",
         isOptional: true
       ),
       Child(
         name: "Ellipsis",
         kind: .token(choices: [.token(tokenKind: "EllipsisToken")]),
-        description: "If the parameter is variadic, `...` to indicate that.",
+        documentation: "If the parameter is variadic, `...` to indicate that.",
         isOptional: true
       ),
       Child(
         name: "TrailingComma",
         kind: .token(choices: [.token(tokenKind: "CommaToken")]),
-        description: "If the parameter is followed by another parameter, the comma separating them.",
+        documentation: "If the parameter is followed by another parameter, the comma separating them.",
         isOptional: true
       ),
     ]
@@ -431,19 +432,19 @@ public let EXPR_NODES: [Node] = [
       Child(
         name: "LeftParen",
         kind: .token(choices: [.token(tokenKind: "LeftParenToken")]),
-        description: "The '(' to open the parameter clause."
+        documentation: "The '(' to open the parameter clause."
       ),
       Child(
         name: "ParameterList",
         kind: .collection(kind: .closureParameterList, collectionElementName: "Parameter"),
         nameForDiagnostics: "parameters",
-        description: "The actual parameters.",
+        documentation: "The actual parameters.",
         isIndented: true
       ),
       Child(
         name: "RightParen",
         kind: .token(choices: [.token(tokenKind: "RightParenToken")]),
-        description: "The ')' to close the parameter clause."
+        documentation: "The ')' to close the parameter clause."
       ),
     ]
   ),
@@ -473,8 +474,7 @@ public let EXPR_NODES: [Node] = [
       ),
       Child(
         name: "RightBrace",
-        kind: .token(choices: [.token(tokenKind: "RightBraceToken")]),
-        requiresLeadingNewline: true
+        kind: .token(choices: [.token(tokenKind: "RightBraceToken")])
       ),
     ]
   ),
@@ -707,7 +707,7 @@ public let EXPR_NODES: [Node] = [
     kind: .exprList,
     base: .syntaxCollection,
     nameForDiagnostics: nil,
-    documentation: "A list of expressions connected by operators. This list is contained by a `SequenceExprSyntax`.",
+    documentation: "A list of expressions connected by operators. This list is contained by a ``SequenceExprSyntax``.",
     elementChoices: [.expr]
   ),
 
@@ -832,7 +832,14 @@ public let EXPR_NODES: [Node] = [
     children: [
       Child(
         name: "Identifier",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .keyword(text: "self"), .keyword(text: "Self"), .keyword(text: "init"), .token(tokenKind: "DollarIdentifierToken"), .token(tokenKind: "BinaryOperatorToken")])
+        kind: .token(choices: [
+          .token(tokenKind: "IdentifierToken"),
+          .keyword(text: "self"),
+          .keyword(text: "Self"),
+          .keyword(text: "init"),
+          .token(tokenKind: "DollarIdentifierToken"),
+          .token(tokenKind: "BinaryOperatorToken"),
+        ])
       ),
       Child(
         name: "DeclNameArguments",
@@ -970,17 +977,17 @@ public let EXPR_NODES: [Node] = [
       Child(
         name: "Expression",
         kind: .node(kind: .expr),
-        description: "The expression which will be checked to determine whether it can be cast to a specific type."
+        documentation: "The expression which will be checked to determine whether it can be cast to a specific type."
       ),
       Child(
         name: "IsTok",
         kind: .token(choices: [.keyword(text: "is")]),
-        description: "The `is` keyword for this expression."
+        documentation: "The `is` keyword for this expression."
       ),
       Child(
         name: "TypeName",
         kind: .node(kind: .type),
-        description: "The type against which the expression will be checked to see if the expression can be cast to it."
+        documentation: "The type against which the expression will be checked to see if the expression can be cast to it."
       ),
     ]
   ),
@@ -1068,7 +1075,15 @@ public let EXPR_NODES: [Node] = [
     children: [
       Child(
         name: "Identifier",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .keyword(text: "self"), .keyword(text: "Self"), .keyword(text: "init"), .token(tokenKind: "DollarIdentifierToken"), .token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "IntegerLiteralToken")])
+        kind: .token(choices: [
+          .token(tokenKind: "IdentifierToken"),
+          .keyword(text: "self"),
+          .keyword(text: "Self"),
+          .keyword(text: "init"),
+          .token(tokenKind: "DollarIdentifierToken"),
+          .token(tokenKind: "BinaryOperatorToken"),
+          .token(tokenKind: "IntegerLiteralToken"),
+        ])
       ),
       Child(
         name: "DeclNameArguments",
@@ -1117,7 +1132,7 @@ public let EXPR_NODES: [Node] = [
       Child(
         name: "PoundToken",
         kind: .token(choices: [.token(tokenKind: "PoundToken")]),
-        description: "The `#` sign."
+        documentation: "The `#` sign."
       ),
       Child(
         name: "Macro",
@@ -1643,8 +1658,7 @@ public let EXPR_NODES: [Node] = [
       ),
       Child(
         name: "RightBrace",
-        kind: .token(choices: [.token(tokenKind: "RightBraceToken")]),
-        requiresLeadingNewline: true
+        kind: .token(choices: [.token(tokenKind: "RightBraceToken")])
       ),
     ]
   ),
@@ -1762,7 +1776,7 @@ public let EXPR_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
       ),
       Child(
-        name: "ElementList",
+        name: "Elements",
         kind: .collection(kind: .tupleExprElementList, collectionElementName: "Element"),
         isIndented: true
       ),

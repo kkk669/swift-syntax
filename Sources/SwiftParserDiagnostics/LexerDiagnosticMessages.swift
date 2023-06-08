@@ -51,7 +51,8 @@ public enum StaticTokenError: String, DiagnosticMessage {
   case invalidIdentifierStartCharacter = "an identifier cannot begin with this character"
   case invalidNumberOfHexDigitsInUnicodeEscape = #"\u{...} escape sequence expects between 1 and 8 hex digits"#
   case invalidUtf8 = "invalid UTF-8 found in source file"
-  case tokenDiagnosticOffsetOverflow = "the lexer dicovered an error in this token but was not able to represent its offset due to overflow; please split the token"
+  case tokenDiagnosticOffsetOverflow =
+    "the lexer dicovered an error in this token but was not able to represent its offset due to overflow; please split the token"
   case sourceConflictMarker = "source control conflict marker in source file"
   case unexpectedBlockCommentEnd = "unexpected end of block comment"
   case unicodeCurlyQuote = #"unicode curly quote found; use '"' instead"#
@@ -128,7 +129,7 @@ public struct InvalidDigitInIntegerLiteral: TokenError {
 // MARK: - Convert TokenDiagnostic from SwiftSyntax to error messages
 
 public extension SwiftSyntax.TokenDiagnostic {
-  /// `tokenText` is the entire text of the token in which the `TokenDiagnostic`
+  /// `tokenText` is the entire text of the token in which the ``TokenDiagnostic``
   /// occurred, including trivia.
   @_spi(RawSyntax)
   func diagnosticMessage(wholeTextBytes: [UInt8]) -> DiagnosticMessage {

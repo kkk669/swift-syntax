@@ -13,7 +13,7 @@
 // MARK: - Index
 
 /// The data for an index in a syntax children collection that is not the end
-/// index. See `SyntaxChildrenIndex` for the representation of the end index.
+/// index. See ``SyntaxChildrenIndex`` for the representation of the end index.
 struct SyntaxChildrenIndexData: Comparable {
   /// The UTF-8 offset of the item at this index in the source file
   /// See `AbsoluteSyntaxPosition.offset`
@@ -86,9 +86,7 @@ public struct SyntaxChildrenIndex: Comparable, ExpressibleByNilLiteral {
   }
 
   /// Returns `true` if `lhs` occurs before `rhs`.
-  public static func < (lhs: SyntaxChildrenIndex, rhs: SyntaxChildrenIndex)
-    -> Bool
-  {
+  public static func < (lhs: SyntaxChildrenIndex, rhs: SyntaxChildrenIndex) -> Bool {
     switch (lhs.data, rhs.data) {
     case (.some(let lhsData), .some(let rhsData)):
       return lhsData < rhsData
@@ -169,7 +167,7 @@ struct RawSyntaxChildren: BidirectionalCollection {
     return Iterator(collection: self)
   }
 
-  /// Advance the given index by the given `RawSyntax` node.
+  /// Advance the given index by the given ``RawSyntax`` node.
   func index(_ index: Index, advancedBy node: RawSyntax?) -> Index {
     // We can assume a non-end index since advancing the end index is undefined
     // behaviour.
@@ -233,9 +231,7 @@ struct RawSyntaxChildren: BidirectionalCollection {
     }
   }
 
-  func distance(from start: SyntaxChildrenIndex, to end: SyntaxChildrenIndex)
-    -> Int
-  {
+  func distance(from start: SyntaxChildrenIndex, to end: SyntaxChildrenIndex) -> Int {
     switch (start.data, end.data) {
     case (.some(let start), .some(let end)):
       return Int(end.indexInParent - start.indexInParent)
@@ -248,9 +244,7 @@ struct RawSyntaxChildren: BidirectionalCollection {
     }
   }
 
-  subscript(index: SyntaxChildrenIndex)
-    -> (raw: RawSyntax?, syntaxInfo: AbsoluteSyntaxInfo)
-  {
+  subscript(index: SyntaxChildrenIndex) -> (raw: RawSyntax?, syntaxInfo: AbsoluteSyntaxInfo) {
     // Accessing the end index is undefined. So we can assume a non-end index.
     let index = index.data!
 
@@ -334,9 +328,7 @@ struct NonNilRawSyntaxChildren: BidirectionalCollection {
     after index: SyntaxChildrenIndex,
     in children: RawSyntaxChildren,
     viewMode: SyntaxTreeViewMode
-  )
-    -> SyntaxChildrenIndex
-  {
+  ) -> SyntaxChildrenIndex {
     var advancedIndex = index
     while true {
       if advancedIndex != children.endIndex {
@@ -361,9 +353,7 @@ struct NonNilRawSyntaxChildren: BidirectionalCollection {
     before index: SyntaxChildrenIndex,
     in children: RawSyntaxChildren,
     viewMode: SyntaxTreeViewMode
-  )
-    -> SyntaxChildrenIndex
-  {
+  ) -> SyntaxChildrenIndex {
     var reversedIndex = index
     while true {
       if reversedIndex < children.endIndex,
@@ -423,7 +413,7 @@ struct NonNilRawSyntaxChildren: BidirectionalCollection {
   }
 }
 
-/// Collection that contains the present child `Syntax` nodes of the given node.
+/// Collection that contains the present child ``Syntax`` nodes of the given node.
 public struct SyntaxChildren: BidirectionalCollection {
   /// ``SyntaxChildren`` is indexed by ``SyntaxChildrenIndex``.
   public typealias Index = SyntaxChildrenIndex
@@ -431,11 +421,11 @@ public struct SyntaxChildren: BidirectionalCollection {
   /// ``SyntaxChildren`` contains ``Syntax`` nodes.
   public typealias Element = Syntax
 
-  /// The collection that contains the raw child nodes. `Syntax` nodes are
+  /// The collection that contains the raw child nodes. ``Syntax`` nodes are
   /// generated from these.
   private let rawChildren: NonNilRawSyntaxChildren
 
-  /// The parent node of the children. Used to build the `Syntax` nodes.
+  /// The parent node of the children. Used to build the ``Syntax`` nodes.
   private let parent: Syntax
 
   /// The index of the first child in this collection.

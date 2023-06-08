@@ -61,21 +61,21 @@ extension Parser {
       let unexpectedBeforeLeftParen: RawUnexpectedNodesSyntax?
       let leftParen: RawTokenSyntax
       let unexpectedBetweenLeftParenAndElements: RawUnexpectedNodesSyntax?
-      let arguments: RawTupleTypeElementListSyntax
+      let parameters: RawTupleTypeElementListSyntax
       let unexpectedBetweenElementsAndRightParen: RawUnexpectedNodesSyntax?
       let rightParen: RawTokenSyntax
       if let input = base.as(RawTupleTypeSyntax.self) {
         unexpectedBeforeLeftParen = input.unexpectedBeforeLeftParen
         leftParen = input.leftParen
         unexpectedBetweenLeftParenAndElements = input.unexpectedBetweenLeftParenAndElements
-        arguments = input.elements
+        parameters = input.elements
         unexpectedBetweenElementsAndRightParen = input.unexpectedBetweenElementsAndRightParen
         rightParen = input.rightParen
       } else {
         unexpectedBeforeLeftParen = nil
         leftParen = RawTokenSyntax(missing: .leftParen, arena: self.arena)
         unexpectedBetweenLeftParenAndElements = nil
-        arguments = RawTupleTypeElementListSyntax(
+        parameters = RawTupleTypeElementListSyntax(
           elements: [
             RawTupleTypeElementSyntax(
               inOut: nil,
@@ -100,7 +100,7 @@ extension Parser {
           unexpectedBeforeLeftParen,
           leftParen: leftParen,
           unexpectedBetweenLeftParenAndElements,
-          arguments: arguments,
+          parameters: parameters,
           unexpectedBetweenElementsAndRightParen,
           rightParen: rightParen,
           effectSpecifiers: effectSpecifiers,
@@ -546,7 +546,7 @@ extension Parser {
               inOut: nil,
               name: nil,
               secondName: nil,
-              unexpectedBeforeColon,
+              RawUnexpectedNodesSyntax(combining: misplacedSpecifiers, unexpectedBeforeColon, arena: self.arena),
               colon: nil,
               type: RawTypeSyntax(RawSimpleTypeIdentifierSyntax(name: first, genericArgumentClause: nil, arena: self.arena)),
               ellipsis: nil,
@@ -1011,7 +1011,7 @@ extension Parser {
   }
 
   mutating func parseTypeAttribute() -> RawAttributeListSyntax.Element {
-    let typeAttr = Parser.TypeAttribute(lexeme: self.peek())
+    let typeAttr = TypeAttribute(lexeme: self.peek())
 
     switch typeAttr {
     case ._local, ._noMetadata, .async, .escaping, .noDerivative, .noescape, .Sendable, .unchecked, .autoclosure:

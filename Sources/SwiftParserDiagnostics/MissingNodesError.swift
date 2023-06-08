@@ -67,20 +67,27 @@ fileprivate enum NodesDescriptionPart {
   }
 
   static func descriptionParts(for nodes: some Sequence<Syntax>) -> [NodesDescriptionPart] {
+    // For each token that we modified (e.g. made it present), map to the original token in `nodes`
+    var originalTokens: [TokenSyntax: TokenSyntax] = [:]
+
+    // Accumulates the result
     var parts: [NodesDescriptionPart] = []
+
     for missingNode in nodes {
       if let token = missingNode.as(TokenSyntax.self) {
         let newPart: NodesDescriptionPart
-        if token.presence == .present {
+        if token.isPresent {
           newPart = .tokensWithDefaultText([token])
         } else {
           let (rawKind, text) = token.tokenKind.decomposeToRaw()
           if let text = text, !text.isEmpty {
             let presentToken = token.with(\.presence, .present)
+            originalTokens[presentToken] = token
             newPart = .tokensWithDefaultText([presentToken])
           } else if let defaultText = rawKind.defaultText {
             let newKind = TokenKind.fromRaw(kind: rawKind, text: String(syntaxText: defaultText))
             let presentToken = token.with(\.tokenKind, newKind).with(\.presence, .present)
+            originalTokens[presentToken] = token
             newPart = .tokensWithDefaultText([presentToken])
           } else {
             newPart = .tokenWithoutDefaultText(token)
@@ -89,7 +96,15 @@ fileprivate enum NodesDescriptionPart {
 
         switch (parts.last, newPart) {
         case (.tokensWithDefaultText(let previousTokens), .tokensWithDefaultText(let newTokens)):
-          parts[parts.count - 1] = .tokensWithDefaultText(previousTokens + newTokens)
+          // Merge `tokensWithDefaultText` if they occur consecutively in the tree
+          if let lastPrevious = previousTokens.last,
+            let firstNew = newTokens.first,
+            originalTokens[lastPrevious, default: lastPrevious].nextToken(viewMode: .all) == originalTokens[firstNew, default: firstNew]
+          {
+            parts[parts.count - 1] = .tokensWithDefaultText(previousTokens + newTokens)
+          } else {
+            parts.append(newPart)
+          }
         default:
           parts.append(newPart)
         }
@@ -356,7 +371,7 @@ extension ParseDiagnosticsGenerator {
       let siblings = parentWithTokens.children(viewMode: .all)
       let siblingsAfter = siblings[siblings.index(after: index)...]
       for sibling in siblingsAfter {
-        if sibling.as(TokenSyntax.self)?.presence == .missing {
+        if sibling.as(TokenSyntax.self)?.isMissing ?? false {
           // Handle missing sibling tokens
           missingNodes += [sibling]
         } else if sibling.raw.kind.isMissing {
@@ -383,7 +398,10 @@ extension ParseDiagnosticsGenerator {
     if missingNodes.count == 1,
       let token = missingNodes.last?.as(TokenSyntax.self),
       let matchingStartMarkerKind = token.tokenKind.matchingStartMarkerKind,
-      let startToken = token.parent?.children(viewMode: .sourceAccurate).lazy.compactMap({ $0.as(TokenSyntax.self) }).first(where: { $0.tokenKind == matchingStartMarkerKind })
+      let startToken = token.parent?.children(viewMode: .sourceAccurate)
+        .lazy
+        .compactMap({ $0.as(TokenSyntax.self) })
+        .first(where: { $0.tokenKind == matchingStartMarkerKind })
     {
       notes.append(Note(node: Syntax(startToken), message: MatchingOpeningTokenNote(openingToken: startToken)))
     }

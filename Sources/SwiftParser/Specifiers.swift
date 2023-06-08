@@ -136,19 +136,19 @@ public enum EffectSpecifier: TokenSpecSet {
 /// Specify the effect specifiers trait manually as a one off.
 protocol RawEffectSpecifiersTrait {
   /// The token kinds that should be consumed as misspelled `asyncSpecifier`.
-  /// Should be a subset of `AsyncEffectSpecifier`.
+  /// Should be a subset of ``AsyncEffectSpecifier``.
   associatedtype MisspelledAsyncSpecifiers: TokenSpecSet
 
   /// The token kinds that we can consume as a correct `asyncSpecifier`.
-  /// Should be a subset of `AsyncEffectSpecifier`.
+  /// Should be a subset of ``AsyncEffectSpecifier``.
   associatedtype CorrectAsyncTokenKinds: TokenSpecSet
 
   /// The token kinds that should be consumed as misspelled `throwsSpecifier`.
-  /// Should be a subset of `ThrowsEffectSpecifier`.
+  /// Should be a subset of ``ThrowsEffectSpecifier``.
   associatedtype MisspelledThrowsTokenKinds: TokenSpecSet
 
   /// The token kinds that we can consume as a correct `throwsSpecifier`.
-  /// Should be a subset of `ThrowsEffectSpecifier`.
+  /// Should be a subset of ``ThrowsEffectSpecifier``.
   associatedtype CorrectThrowsTokenKinds: TokenSpecSet
 
   var unexpectedBeforeAsyncSpecifier: RawUnexpectedNodesSyntax? { get }
@@ -419,7 +419,10 @@ extension RawAccessorEffectSpecifiersSyntax: RawEffectSpecifiersTrait {
 }
 
 extension TokenConsumer {
-  mutating func at<SpecSet1: TokenSpecSet, SpecSet2: TokenSpecSet>(anyIn specSet1: SpecSet1.Type, or specSet2: SpecSet2.Type) -> (spec: TokenSpec, handle: TokenConsumptionHandle, matchedSubset: Any.Type)? {
+  mutating func at<SpecSet1: TokenSpecSet, SpecSet2: TokenSpecSet>(
+    anyIn specSet1: SpecSet1.Type,
+    or specSet2: SpecSet2.Type
+  ) -> (spec: TokenSpec, handle: TokenConsumptionHandle, matchedSubset: Any.Type)? {
     if let (spec, handle) = self.at(anyIn: specSet1) {
       return (spec.spec, handle, SpecSet1.self)
     } else if let (spec, handle) = self.at(anyIn: specSet2) {
@@ -567,5 +570,76 @@ extension Parser {
       }
     }
     return RawUnexpectedNodesSyntax(unexpected, arena: self.arena)
+  }
+}
+
+// MARK: - Parsing `initializes` and `accesses` specifiers in init accessors
+
+extension Parser {
+  mutating func parseInitAccessorEffects() -> RawAccessorInitEffectsSyntax? {
+    let initializes = self.parseInitializesSpecifier()
+    let accesses = self.parseAccessesSpecifier()
+
+    if initializes == nil, accesses == nil {
+      return nil
+    }
+
+    return RawAccessorInitEffectsSyntax(
+      initializesEffect: initializes,
+      accessesEffect: accesses,
+      arena: self.arena
+    )
+  }
+
+  mutating func parseInitializesSpecifier() -> RawInitializesEffectSyntax? {
+    guard let keyword = self.consume(if: .keyword(.initializes)) else {
+      return nil
+    }
+
+    let (unexpectedBeforeLeftParen, leftParen) = self.expect(.leftParen)
+
+    let args = parseArgumentListElements(pattern: .none)
+    let argumentList = RawTupleExprElementListSyntax(
+      elements: args,
+      arena: self.arena
+    )
+
+    let (unexpectedBeforeRightParen, rightParen) = self.expect(.rightParen)
+
+    return RawInitializesEffectSyntax(
+      initializesKeyword: keyword,
+      unexpectedBeforeLeftParen,
+      leftParen: leftParen,
+      propertyList: argumentList,
+      unexpectedBeforeRightParen,
+      rightParen: rightParen,
+      arena: self.arena
+    )
+  }
+
+  mutating func parseAccessesSpecifier() -> RawAccessesEffectSyntax? {
+    guard let keyword = self.consume(if: .keyword(.accesses)) else {
+      return nil
+    }
+
+    let (unexpectedBeforeLeftParen, leftParen) = self.expect(.leftParen)
+
+    let args = parseArgumentListElements(pattern: .none)
+    let argumentList = RawTupleExprElementListSyntax(
+      elements: args,
+      arena: self.arena
+    )
+
+    let (unexpectedBeforeRightParen, rightParen) = self.expect(.rightParen)
+
+    return RawAccessesEffectSyntax(
+      accessesKeyword: keyword,
+      unexpectedBeforeLeftParen,
+      leftParen: leftParen,
+      propertyList: argumentList,
+      unexpectedBeforeRightParen,
+      rightParen: rightParen,
+      arena: self.arena
+    )
   }
 }

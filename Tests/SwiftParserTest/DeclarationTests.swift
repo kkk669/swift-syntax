@@ -26,6 +26,7 @@ final class DeclarationTests: XCTestCase {
 
     assertParse(#"@_private(sourceFile: "YetAnotherFile.swift") import Foundation"#)
   }
+
   func testStructParsing() {
     assertParse("struct Foo {}")
   }
@@ -53,7 +54,11 @@ final class DeclarationTests: XCTestCase {
       r3️⃣
       """,
       diagnostics: [
-        DiagnosticSpec(locationMarker: "1️⃣", message: "keyword 'where' cannot be used as an identifier here", fixIts: ["if this name is unavoidable, use backticks to escape it"]),
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "keyword 'where' cannot be used as an identifier here",
+          fixIts: ["if this name is unavoidable, use backticks to escape it"]
+        ),
         DiagnosticSpec(locationMarker: "2️⃣", message: "expected '(' to start parameter clause", fixIts: ["insert '('"]),
         DiagnosticSpec(locationMarker: "3️⃣", message: "expected ':' and type in parameter", fixIts: ["insert ':' and type"]),
         DiagnosticSpec(locationMarker: "3️⃣", message: "expected ')' to end parameter clause", fixIts: ["insert ')'"]),
@@ -426,7 +431,7 @@ final class DeclarationTests: XCTestCase {
       diagnostics: [
         DiagnosticSpec(
           message: "expected 'set' in modifier",
-          fixIts: ["remove 'get, , didSet'"]
+          fixIts: ["remove 'get,' and ', didSet'"]
         )
       ],
       fixedSource: """
@@ -686,6 +691,19 @@ final class DeclarationTests: XCTestCase {
     )
   }
 
+  func testEditorPlaceholderWithModifier() {
+    assertParse(
+      """
+      struct a {
+        public1️⃣<#declaration#>
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "editor placeholder in source file")
+      ]
+    )
+  }
+
   func testMissingColonInFunctionSignature() {
     assertParse(
       "func test(first second 1️⃣Int)",
@@ -849,6 +867,97 @@ final class DeclarationTests: XCTestCase {
           get async { 0 }
         }
         """
+    )
+  }
+
+  func testInitAccessor() {
+    assertParse(
+      """
+      struct S {
+        var value: Int {
+          init {}
+          get {}
+          set {}
+        }
+      }
+      """
+    )
+
+    assertParse(
+      """
+      struct S {
+        let _value: Int
+
+        init() {
+        }
+      }
+      """
+    )
+
+    assertParse(
+      """
+      struct S {
+        var value: Int {
+          init(newValue) {}
+          get {}
+          set(newValue) {}
+        }
+      }
+      """
+    )
+
+    assertParse(
+      """
+      struct S {
+        var value: Int {
+          init(newValue) {}
+          get {}
+          set(newValue) {}
+        }
+      }
+      """
+    )
+  }
+
+  func testInitAccessorEffects() {
+    assertParse(
+      """
+      struct S {
+        var value: Int {
+          init initializes(x) {}
+        }
+      }
+      """
+    )
+
+    assertParse(
+      """
+      struct S {
+        var value: Int {
+          init accesses(x) {}
+        }
+      }
+      """
+    )
+
+    assertParse(
+      """
+      struct S {
+        var value: Int {
+          init initializes(x) accesses(y) {}
+        }
+      }
+      """
+    )
+
+    assertParse(
+      """
+      struct S {
+        var value: Int {
+          init initializes(x, y, z) accesses(x, y, z) {}
+        }
+      }
+      """
     )
   }
 
@@ -1447,44 +1556,38 @@ final class DeclarationTests: XCTestCase {
     assertParse(
       """
       @attribute #topLevelWithAttr
+      """,
+      substructure: Syntax(
+        MacroExpansionDeclSyntax(
+          attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attribute")))],
+          macro: "topLevelWithAttr",
+          argumentList: []
+        )
+      )
+    )
+
+    assertParse(
+      """
       public #topLevelWithModifier
+      """,
+      substructure: Syntax(
+        MacroExpansionDeclSyntax(
+          modifiers: [DeclModifierSyntax(name: .keyword(.public))],
+          macro: "topLevelWithModifier",
+          argumentList: []
+        )
+      )
+    )
+
+    assertParse(
+      """
       #topLevelBare
       """,
       substructure: Syntax(
-        CodeBlockItemListSyntax([
-          CodeBlockItemSyntax(
-            item: .decl(
-              DeclSyntax(
-                MacroExpansionDeclSyntax(
-                  attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attribute")))],
-                  macro: "topLevelWithAttr",
-                  argumentList: []
-                )
-              )
-            )
-          ),
-          CodeBlockItemSyntax(
-            item: .decl(
-              DeclSyntax(
-                MacroExpansionDeclSyntax(
-                  modifiers: [DeclModifierSyntax(name: .keyword(.public))],
-                  macro: "topLevelWithModifier",
-                  argumentList: []
-                )
-              )
-            )
-          ),
-          CodeBlockItemSyntax(
-            item: .expr(
-              ExprSyntax(
-                MacroExpansionExprSyntax(
-                  macro: "topLevelBare",
-                  argumentList: []
-                )
-              )
-            )
-          ),
-        ])
+        MacroExpansionExprSyntax(
+          macro: "topLevelBare",
+          argumentList: []
+        )
       )
     )
 
@@ -1492,33 +1595,43 @@ final class DeclarationTests: XCTestCase {
       """
       struct S {
         @attribute #memberWithAttr
+      }
+      """,
+      substructure: Syntax(
+        MacroExpansionDeclSyntax(
+          attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attribute")))],
+          macro: "memberWithAttr",
+          argumentList: []
+        )
+      )
+    )
+
+    assertParse(
+      """
+      struct S {
         public #memberWithModifier
+      }
+      """,
+      substructure: Syntax(
+        MacroExpansionDeclSyntax(
+          modifiers: [DeclModifierSyntax(name: .keyword(.public))],
+          macro: "memberWithModifier",
+          argumentList: []
+        )
+      )
+    )
+
+    assertParse(
+      """
+      struct S {
         #memberBare
       }
       """,
       substructure: Syntax(
-        MemberDeclListSyntax([
-          MemberDeclListItemSyntax(
-            decl: MacroExpansionDeclSyntax(
-              attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attribute")))],
-              macro: "memberWithAttr",
-              argumentList: []
-            )
-          ),
-          MemberDeclListItemSyntax(
-            decl: MacroExpansionDeclSyntax(
-              modifiers: [DeclModifierSyntax(name: .keyword(.public))],
-              macro: "memberWithModifier",
-              argumentList: []
-            )
-          ),
-          MemberDeclListItemSyntax(
-            decl: MacroExpansionDeclSyntax(
-              macro: "memberBare",
-              argumentList: []
-            )
-          ),
-        ])
+        MacroExpansionDeclSyntax(
+          macro: "memberBare",
+          argumentList: []
+        )
       )
     )
 
@@ -1526,38 +1639,44 @@ final class DeclarationTests: XCTestCase {
       """
       func test() {
         @attribute #bodyWithAttr
+      }
+      """,
+      substructure: Syntax(
+        MacroExpansionDeclSyntax(
+          attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attribute")))],
+          macro: "bodyWithAttr",
+          argumentList: []
+        )
+      )
+    )
+
+    assertParse(
+      """
+      func test() {
         public #bodyWithModifier
+      }
+      """,
+      substructure: Syntax(
+        MacroExpansionDeclSyntax(
+          modifiers: [DeclModifierSyntax(name: .keyword(.public))],
+          macro: "bodyWithModifier",
+          argumentList: []
+        )
+
+      )
+    )
+
+    assertParse(
+      """
+      func test() {
         #bodyBare
       }
       """,
       substructure: Syntax(
-        FunctionDeclSyntax(
-          identifier: .identifier("test"),
-          signature: FunctionSignatureSyntax(
-            input: ParameterClauseSyntax(parameterList: [])
-          )
-        ) {
-          DeclSyntax(
-            MacroExpansionDeclSyntax(
-              attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attribute")))],
-              macro: "bodyWithAttr",
-              argumentList: []
-            )
-          )
-          DeclSyntax(
-            MacroExpansionDeclSyntax(
-              modifiers: [DeclModifierSyntax(name: .keyword(.public))],
-              macro: "bodyWithModifier",
-              argumentList: []
-            )
-          )
-          ExprSyntax(
-            MacroExpansionExprSyntax(
-              macro: "bodyBare",
-              argumentList: []
-            )
-          )
-        }
+        MacroExpansionExprSyntax(
+          macro: "bodyBare",
+          argumentList: []
+        )
       )
     )
 
@@ -1571,24 +1690,15 @@ final class DeclarationTests: XCTestCase {
       }
       """,
       substructure: Syntax(
-        FunctionDeclSyntax(
-          identifier: .identifier("test"),
-          signature: FunctionSignatureSyntax(
-            input: ParameterClauseSyntax(parameterList: [])
-          )
-        ) {
-          DeclSyntax(
-            MacroExpansionDeclSyntax(
-              attributes: [
-                .attribute(AttributeSyntax(attributeName: TypeSyntax("attrib1"))),
-                .attribute(AttributeSyntax(attributeName: TypeSyntax("attrib2"))),
-              ],
-              modifiers: [DeclModifierSyntax(name: .keyword(.public))],
-              macro: "declMacro",
-              argumentList: []
-            )
-          )
-        }
+        MacroExpansionDeclSyntax(
+          attributes: [
+            .attribute(AttributeSyntax(attributeName: TypeSyntax("attrib1"))),
+            .attribute(AttributeSyntax(attributeName: TypeSyntax("attrib2"))),
+          ],
+          modifiers: [DeclModifierSyntax(name: .keyword(.public))],
+          macro: "declMacro",
+          argumentList: []
+        )
       )
     )
 
@@ -1596,50 +1706,134 @@ final class DeclarationTests: XCTestCase {
       """
       struct S {
         @attrib #1️⃣class
-        #2️⃣struct
       }
       """,
       substructure: Syntax(
-        MemberDeclListSyntax([
-          MemberDeclListItemSyntax(
-            decl: MacroExpansionDeclSyntax(
-              attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attrib")))],
-              poundToken: .poundToken(),
-              /*unexpectedBetweenPoundTokenAndMacro:*/ [
-                TokenSyntax.keyword(.class)
-              ],
-              macro: .identifier("", presence: .missing),
-              argumentList: []
-            )
-          ),
-          MemberDeclListItemSyntax(
-            decl: MacroExpansionDeclSyntax(
-              poundToken: .poundToken(),
-              /*unexpectedBetweenPoundTokenAndMacro:*/ [
-                TokenSyntax.keyword(.struct)
-              ],
-              macro: .identifier("", presence: .missing),
-              argumentList: []
-            )
-          ),
-        ])
+        MacroExpansionDeclSyntax(
+          attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attrib")))],
+          poundToken: .poundToken(),
+          /*unexpectedBetweenPoundTokenAndMacro:*/ [
+            TokenSyntax.keyword(.class)
+          ],
+          macro: .identifier("", presence: .missing),
+          argumentList: []
+        )
       ),
       diagnostics: [
         DiagnosticSpec(
-          locationMarker: "1️⃣",
           message: "keyword 'class' cannot be used as an identifier here",
           fixIts: ["if this name is unavoidable, use backticks to escape it"]
-        ),
-        DiagnosticSpec(
-          locationMarker: "2️⃣",
-          message: "keyword 'struct' cannot be used as an identifier here",
-          fixIts: ["if this name is unavoidable, use backticks to escape it"]
-        ),
+        )
       ],
       fixedSource: """
         struct S {
           @attrib #`class`
+        }
+        """
+    )
+
+    assertParse(
+      """
+      struct S {
+        #1️⃣struct
+      }
+      """,
+      substructure: Syntax(
+        MacroExpansionDeclSyntax(
+          poundToken: .poundToken(),
+          /*unexpectedBetweenPoundTokenAndMacro:*/ [
+            TokenSyntax.keyword(.struct)
+          ],
+          macro: .identifier("", presence: .missing),
+          argumentList: []
+        )
+      ),
+      diagnostics: [
+        DiagnosticSpec(
+          message: "keyword 'struct' cannot be used as an identifier here",
+          fixIts: ["if this name is unavoidable, use backticks to escape it"]
+        )
+      ],
+      fixedSource: """
+        struct S {
           #`struct`
+        }
+        """
+    )
+  }
+
+  func testWhitespaceBetweenPoundAndMacroName() {
+    assertParse(
+      """
+      #1️⃣ myMacroName
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "extraneous whitespace after '#' is not permitted", fixIts: ["remove whitespace"])
+      ],
+      fixedSource: """
+        #myMacroName
+        """
+    )
+
+    assertParse(
+      """
+      #1️⃣ /*comment*/ myMacroName
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "extraneous whitespace after '#' is not permitted", fixIts: ["remove whitespace"])
+      ],
+      fixedSource: """
+        #myMacroName
+        """
+    )
+
+    assertParse(
+      """
+      #1️⃣
+      myMacroName
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "expected identifier in macro expansion", fixIts: ["insert identifier"])
+      ],
+      fixedSource: """
+        #<#identifier#>
+        myMacroName
+        """
+    )
+
+    assertParse(
+      """
+      struct Foo {
+        #1️⃣ myMacroName
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(message: "extraneous whitespace after '#' is not permitted", fixIts: ["remove whitespace"])
+      ],
+      fixedSource: """
+        struct Foo {
+          #myMacroName
+        }
+        """
+    )
+
+    assertParse(
+      """
+      struct Foo {
+        #1️⃣
+        2️⃣myMacroName3️⃣
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected identifier in macro expansion", fixIts: ["insert identifier"]),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected 'func' in function", fixIts: ["insert 'func'"]),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected parameter clause in function signature", fixIts: ["insert parameter clause"]),
+      ],
+      fixedSource: """
+        struct Foo {
+          #<#identifier#>
+          func
+          myMacroName()
         }
         """
     )
@@ -1916,7 +2110,7 @@ final class DeclarationTests: XCTestCase {
       }
       """,
       substructure: Syntax(
-        MemberDeclListItemSyntax(decl: EditorPlaceholderDeclSyntax(identifier: .identifier("<#code#>")))
+        MemberDeclListItemSyntax(decl: EditorPlaceholderDeclSyntax(placeholder: .identifier("<#code#>")))
       ),
       diagnostics: [
         DiagnosticSpec(message: "editor placeholder in source file")
@@ -2023,48 +2217,55 @@ final class DeclarationTests: XCTestCase {
   }
 
   func testBorrowingConsumingParameterSpecifiers() {
+    assertParse("struct borrowing {}")
+    assertParse("struct consuming {}")
+
+    assertParse("struct Foo {}")
+
+    assertParse("func foo(x: borrowing Foo) {}")
+    assertParse("func bar(x: consuming Foo) {}")
+    assertParse("func baz(x: (borrowing Foo, consuming Foo) -> ()) {}")
+
+    // `borrowing` and `consuming` are contextual keywords, so they should also
+    // continue working as type and/or parameter names
+
+    assertParse("func zim(x: borrowing) {}")
+    assertParse("func zang(x: consuming) {}")
+    assertParse("func zung(x: borrowing consuming) {}")
+    assertParse("func zip(x: consuming borrowing) {}")
+    assertParse("func zap(x: (borrowing, consuming) -> ()) {}")
+    assertParse("func zoop(x: (borrowing consuming, consuming borrowing) -> ()) {}")
+
+    // Parameter specifier names are regular identifiers in other positions,
+    // including argument labels.
+
+    assertParse("func argumentLabelOnly(borrowing: Int) {}")
+    assertParse("func argumentLabelOnly(consuming: Int) {}")
+    assertParse("func argumentLabelOnly(__shared: Int) {}")
+    assertParse("func argumentLabelOnly(__owned: Int) {}")
+
+    assertParse("func argumentLabel(borrowing consuming: Int) {}")
+    assertParse("func argumentLabel(consuming borrowing: Int) {}")
+    assertParse("func argumentLabel(__shared __owned: Int) {}")
+    assertParse("func argumentLabel(__owned __shared: Int) {}")
+
+    // We should parse them as argument labels in function types, even though that
+    // isn't currently supported.
+
+    assertParse("func argumentLabel(anonBorrowingInClosure: (_ borrowing: Int) -> ()) {}")
+    assertParse("func argumentLabel(anonConsumingInClosure: (_ consuming: Int) -> ()) {}")
+    assertParse("func argumentLabel(anonSharedInClosure: (_ __shared: Int) -> ()) {}")
+    assertParse("func argumentLabel(anonOwnedInClosure: (_ __owned: Int) -> ()) {}")
+  }
+
+  func testMisplaceSpecifierInTupleTypeBody() {
     assertParse(
-      """
-      struct borrowing {}
-      struct consuming {}
-
-      struct Foo {}
-
-      func foo(x: borrowing Foo) {}
-      func bar(x: consuming Foo) {}
-      func baz(x: (borrowing Foo, consuming Foo) -> ()) {}
-
-      // `borrowing` and `consuming` are contextual keywords, so they should also
-      // continue working as type and/or parameter names
-
-      func zim(x: borrowing) {}
-      func zang(x: consuming) {}
-      func zung(x: borrowing consuming) {}
-      func zip(x: consuming borrowing) {}
-      func zap(x: (borrowing, consuming) -> ()) {}
-      func zoop(x: (borrowing consuming, consuming borrowing) -> ()) {}
-
-      // Parameter specifier names are regular identifiers in other positions,
-      // including argument labels.
-
-      func argumentLabelOnly(borrowing: Int) {}
-      func argumentLabelOnly(consuming: Int) {}
-      func argumentLabelOnly(__shared: Int) {}
-      func argumentLabelOnly(__owned: Int) {}
-
-      func argumentLabel(borrowing consuming: Int) {}
-      func argumentLabel(consuming borrowing: Int) {}
-      func argumentLabel(__shared __owned: Int) {}
-      func argumentLabel(__owned __shared: Int) {}
-
-      // We should parse them as argument labels in function types, even though that
-      // isn't currently supported.
-
-      func argumentLabel(anonBorrowingInClosure: (_ borrowing: Int) -> ()) {}
-      func argumentLabel(anonConsumingInClosure: (_ consuming: Int) -> ()) {}
-      func argumentLabel(anonSharedInClosure: (_ __shared: Int) -> ()) {}
-      func argumentLabel(anonOwnedInClosure: (_ __owned: Int) -> ()) {}
-      """
+      "func test(a: (1️⃣borrowing F 2️⃣o))",
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "unexpected code 'borrowing' in tuple type"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected ',' in tuple type", fixIts: ["insert ','"]),
+      ],
+      fixedSource: "func test(a: (borrowing F, o))"
     )
   }
 
@@ -2149,7 +2350,10 @@ final class DeclarationTests: XCTestCase {
         Syntax(
           SuppressedTypeSyntax(
             withoutTilde: .prefixOperator("~"),
-            patternType: FunctionTypeSyntax(arguments: [TupleTypeElementSyntax(type: TypeSyntax("Int"))], output: ReturnClauseSyntax(returnType: TypeSyntax("Bool")))
+            patternType: FunctionTypeSyntax(
+              parameters: [TupleTypeElementSyntax(type: TypeSyntax("Int"))],
+              output: ReturnClauseSyntax(returnType: TypeSyntax("Bool"))
+            )
           )
         )
     )
@@ -2161,6 +2365,48 @@ final class DeclarationTests: XCTestCase {
       diagnostics: [
         DiagnosticSpec(message: "unexpected code '> test' before parameter clause")
       ]
+    )
+  }
+
+  func testUnexpectedTokenInClassFollowedByUnownedModifier() {
+    assertParse(
+      """
+      class A ℹ️{
+        1️⃣^
+      }
+      unowned 2️⃣B 3️⃣{
+      }4️⃣
+      """,
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "unexpected code before modifier"),
+        DiagnosticSpec(locationMarker: "2️⃣", message: "expected 'func' in function", fixIts: ["insert 'func'"]),
+        DiagnosticSpec(locationMarker: "3️⃣", message: "expected parameter clause in function signature", fixIts: ["insert parameter clause"]),
+        DiagnosticSpec(
+          locationMarker: "4️⃣",
+          message: "expected '}' to end class",
+          notes: [NoteSpec(message: "to match this opening '{'")],
+          fixIts: ["insert '}'"]
+        ),
+      ],
+      fixedSource:
+        """
+        class A {
+          ^
+        }
+        unowned func B() {
+        }
+        }
+        """
+    )
+  }
+
+  func testEmptyPrimaryAssociatedType() {
+    assertParse(
+      "protocol X<1️⃣> {}",
+      diagnostics: [
+        DiagnosticSpec(message: "expected name in primary associated type clause", fixIts: ["insert name"])
+      ],
+      fixedSource: "protocol X<<#identifier#>> {}"
     )
   }
 }

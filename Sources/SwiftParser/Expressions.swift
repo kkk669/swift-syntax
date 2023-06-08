@@ -1112,7 +1112,9 @@ extension Parser {
 
       // Check for a .name or .1 suffix.
       if self.at(.period) {
-        let (unexpectedPeriod, period, name, declNameArgs, generics) = parseDottedExpressionSuffix(previousNode: components.last?.raw ?? rootType?.raw ?? backslash.raw)
+        let (unexpectedPeriod, period, name, declNameArgs, generics) = parseDottedExpressionSuffix(
+          previousNode: components.last?.raw ?? rootType?.raw ?? backslash.raw
+        )
         components.append(
           RawKeyPathComponentSyntax(
             unexpectedPeriod,
@@ -1409,21 +1411,25 @@ extension Parser {
     pattern: PatternContext,
     flavor: ExprFlavor
   ) -> RawMacroExpansionExprSyntax {
-    if !atStartOfFreestandingMacroExpansion() {
-      return RawMacroExpansionExprSyntax(
-        poundToken: self.consumeAnyToken(),
-        macro: self.missingToken(.identifier),
-        genericArguments: nil,
-        leftParen: nil,
-        argumentList: .init(elements: [], arena: self.arena),
-        rightParen: nil,
-        trailingClosure: nil,
-        additionalTrailingClosures: nil,
-        arena: self.arena
-      )
+    var (unexpectedBeforePound, pound) = self.expect(.pound)
+    if pound.trailingTriviaByteLength != 0 {
+      // If there are whitespaces after '#' diagnose.
+      unexpectedBeforePound = RawUnexpectedNodesSyntax(combining: unexpectedBeforePound, pound, arena: self.arena)
+      pound = self.missingToken(.pound)
     }
-    let poundKeyword = self.consumeAnyToken()
-    let (unexpectedBeforeMacro, macro) = self.expectIdentifier(keywordRecovery: true)
+    var unexpectedBeforeMacro: RawUnexpectedNodesSyntax?
+    var macro: RawTokenSyntax
+    if !self.currentToken.isAtStartOfLine {
+      (unexpectedBeforeMacro, macro) = self.expectIdentifier(keywordRecovery: true)
+      if macro.leadingTriviaByteLength != 0 {
+        // If there're whitespaces after '#' diagnose.
+        unexpectedBeforeMacro = RawUnexpectedNodesSyntax(combining: unexpectedBeforeMacro, macro, arena: self.arena)
+        pound = self.missingToken(.identifier, text: macro.tokenText)
+      }
+    } else {
+      unexpectedBeforeMacro = nil
+      macro = self.missingToken(.identifier)
+    }
 
     // Parse the optional generic argument list.
     let generics: RawGenericArgumentClauseSyntax?
@@ -1458,7 +1464,8 @@ extension Parser {
     }
 
     return RawMacroExpansionExprSyntax(
-      poundToken: poundKeyword,
+      unexpectedBeforePound,
+      poundToken: pound,
       unexpectedBeforeMacro,
       macro: macro,
       genericArguments: generics,
@@ -1576,7 +1583,7 @@ extension Parser {
     return RawTupleExprSyntax(
       unexpectedBeforeLParen,
       leftParen: lparen,
-      elementList: RawTupleExprElementListSyntax(elements: elements, arena: self.arena),
+      elements: RawTupleExprElementListSyntax(elements: elements, arena: self.arena),
       unexpectedBeforeRParen,
       rightParen: rparen,
       arena: self.arena
@@ -2223,7 +2230,10 @@ extension Parser.Lookahead {
     var backtrack = self.lookahead()
     backtrack.eat(.leftBrace)
     var loopProgress = LoopProgressCondition()
-    while !backtrack.at(.eof, .rightBrace) && !backtrack.at(.poundEndifKeyword, .poundElseKeyword, .poundElseifKeyword) && loopProgress.evaluate(backtrack.currentToken) {
+    while !backtrack.at(.eof, .rightBrace)
+      && !backtrack.at(.poundEndifKeyword, .poundElseKeyword, .poundElseifKeyword)
+      && loopProgress.evaluate(backtrack.currentToken)
+    {
       backtrack.skipSingle()
     }
 
@@ -2332,7 +2342,7 @@ extension Parser {
     let (unexpectedBeforeSwitchKeyword, switchKeyword) = self.eat(switchHandle)
 
     // If there is no expression, like `switch { default: return false }` then left brace would parsed as
-    // a `RawClosureExprSyntax` in the condition, which is most likely not what the user meant.
+    // a ``RawClosureExprSyntax`` in the condition, which is most likely not what the user meant.
     // Create a missing condition instead and use the `{` for the start of the body.
     let subject: RawExprSyntax
     if self.at(.leftBrace) {
@@ -2615,7 +2625,15 @@ extension Parser {
 
       let version = self.parseVersionTuple(maxComponentCount: 4)
 
-      versionInfo = RawCanImportVersionInfoSyntax(comma: comma, unexpectedBeforeLabel, label: label, unexpectedBeforeColon, colon: colon, versionTuple: version, arena: self.arena)
+      versionInfo = RawCanImportVersionInfoSyntax(
+        comma: comma,
+        unexpectedBeforeLabel,
+        label: label,
+        unexpectedBeforeColon,
+        colon: colon,
+        versionTuple: version,
+        arena: self.arena
+      )
     }
 
     let (unexpectedBeforeRightParen, rightParen) = self.expect(.rightParen)

@@ -25,7 +25,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `AccessorDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``AccessorDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -45,7 +45,9 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       parameter: AccessorParameterSyntax? = nil,
       _ unexpectedBetweenParameterAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
       effectSpecifiers: AccessorEffectSpecifiersSyntax? = nil,
-      _ unexpectedBetweenEffectSpecifiersAndBody: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenEffectSpecifiersAndInitEffects: UnexpectedNodesSyntax? = nil,
+      initEffects: AccessorInitEffectsSyntax? = nil,
+      _ unexpectedBetweenInitEffectsAndBody: UnexpectedNodesSyntax? = nil,
       body: CodeBlockSyntax? = nil,
       _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
@@ -64,7 +66,9 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             parameter, 
             unexpectedBetweenParameterAndEffectSpecifiers, 
             effectSpecifiers, 
-            unexpectedBetweenEffectSpecifiersAndBody, 
+            unexpectedBetweenEffectSpecifiersAndInitEffects, 
+            initEffects, 
+            unexpectedBetweenInitEffectsAndBody, 
             body, 
             unexpectedAfterBody
           ))) {(arena, _) in
@@ -79,7 +83,9 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           parameter?.raw, 
           unexpectedBetweenParameterAndEffectSpecifiers?.raw, 
           effectSpecifiers?.raw, 
-          unexpectedBetweenEffectSpecifiersAndBody?.raw, 
+          unexpectedBetweenEffectSpecifiersAndInitEffects?.raw, 
+          initEffects?.raw, 
+          unexpectedBetweenInitEffectsAndBody?.raw, 
           body?.raw, 
           unexpectedAfterBody?.raw
         ]
@@ -114,7 +120,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -205,7 +211,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenEffectSpecifiersAndBody: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenEffectSpecifiersAndInitEffects: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -214,21 +220,39 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var body: CodeBlockSyntax? {
+  public var initEffects: AccessorInitEffectsSyntax? {
     get {
-      return data.child(at: 11, parent: Syntax(self)).map(CodeBlockSyntax.init)
+      return data.child(at: 11, parent: Syntax(self)).map(AccessorInitEffectsSyntax.init)
     }
     set(value) {
       self = AccessorDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
     }
   }
   
-  public var unexpectedAfterBody: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenInitEffectsAndBody: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
       self = AccessorDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+  
+  public var body: CodeBlockSyntax? {
+    get {
+      return data.child(at: 13, parent: Syntax(self)).map(CodeBlockSyntax.init)
+    }
+    set(value) {
+      self = AccessorDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+  
+  public var unexpectedAfterBody: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = AccessorDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
     }
   }
   
@@ -244,7 +268,9 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           \Self.parameter, 
           \Self.unexpectedBetweenParameterAndEffectSpecifiers, 
           \Self.effectSpecifiers, 
-          \Self.unexpectedBetweenEffectSpecifiersAndBody, 
+          \Self.unexpectedBetweenEffectSpecifiersAndInitEffects, 
+          \Self.initEffects, 
+          \Self.unexpectedBetweenInitEffectsAndBody, 
           \Self.body, 
           \Self.unexpectedAfterBody
         ])
@@ -264,7 +290,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `ActorDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``ActorDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -365,7 +391,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -402,7 +428,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -596,7 +622,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `AssociatedtypeDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``AssociatedtypeDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -692,7 +718,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -730,7 +756,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -907,7 +933,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `ClassDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``ClassDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -1009,7 +1035,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -1047,7 +1073,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -1230,7 +1256,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `DeinitializerDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``DeinitializerDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -1308,7 +1334,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -1346,7 +1372,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -1429,7 +1455,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 
 // MARK: - EditorPlaceholderDeclSyntax
 
-
+/// An editor placeholder, e.g. `<#declaration#>` that is used in a position that expects a declaration.
 public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1440,7 +1466,7 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `EditorPlaceholderDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``EditorPlaceholderDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -1450,16 +1476,36 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   public init(
       leadingTrivia: Trivia? = nil,
-      _ unexpectedBeforeIdentifier: UnexpectedNodesSyntax? = nil,
-      identifier: TokenSyntax,
-      _ unexpectedAfterIdentifier: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
+      attributes: AttributeListSyntax? = nil,
+      _ unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? = nil,
+      modifiers: ModifierListSyntax? = nil,
+      _ unexpectedBetweenModifiersAndPlaceholder: UnexpectedNodesSyntax? = nil,
+      placeholder: TokenSyntax,
+      _ unexpectedAfterPlaceholder: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
     
   ) {
     // Extend the lifetime of all parameters so their arenas don't get destroyed
     // before they can be added as children of the new arena.
-    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (unexpectedBeforeIdentifier, identifier, unexpectedAfterIdentifier))) {(arena, _) in
-      let layout: [RawSyntax?] = [unexpectedBeforeIdentifier?.raw, identifier.raw, unexpectedAfterIdentifier?.raw]
+    let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (
+            unexpectedBeforeAttributes, 
+            attributes, 
+            unexpectedBetweenAttributesAndModifiers, 
+            modifiers, 
+            unexpectedBetweenModifiersAndPlaceholder, 
+            placeholder, 
+            unexpectedAfterPlaceholder
+          ))) {(arena, _) in
+      let layout: [RawSyntax?] = [
+          unexpectedBeforeAttributes?.raw, 
+          attributes?.raw, 
+          unexpectedBetweenAttributesAndModifiers?.raw, 
+          modifiers?.raw, 
+          unexpectedBetweenModifiersAndPlaceholder?.raw, 
+          placeholder.raw, 
+          unexpectedAfterPlaceholder?.raw
+        ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.editorPlaceholderDecl,
         from: layout,
@@ -1473,7 +1519,7 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self.init(data)
   }
   
-  public var unexpectedBeforeIdentifier: UnexpectedNodesSyntax? {
+  public var unexpectedBeforeAttributes: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -1482,16 +1528,36 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var identifier: TokenSyntax {
+  /// If there were attributes before the editor placeholder, the ``EditorPlaceholderDecl`` will contain these.
+  public var attributes: AttributeListSyntax? {
     get {
-      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
+      return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
     }
   }
   
-  public var unexpectedAfterIdentifier: UnexpectedNodesSyntax? {
+  /// Adds the provided `element` to the node's `attributes`
+  /// collection.
+  /// - param element: The new `Attribute` to add to the node's
+  ///                  `attributes` collection.
+  /// - returns: A copy of the receiver with the provided `Attribute`
+  ///            appended to its `attributes` collection.
+  public func addAttribute(_ element: Syntax) -> EditorPlaceholderDeclSyntax {
+    var collection: RawSyntax
+    let arena = SyntaxArena()
+    if let col = raw.layoutView!.children[1] {
+      collection = col.layoutView!.appending(element.raw, arena: arena)
+    } else {
+      collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
+                                        from: [element.raw], arena: arena)
+    }
+    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    return EditorPlaceholderDeclSyntax(newData)
+  }
+  
+  public var unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -1500,8 +1566,73 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// If there were modifiers before the editor placeholder, the `EditorPlaceholderDecl` will contain these.
+  public var modifiers: ModifierListSyntax? {
+    get {
+      return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
+    }
+    set(value) {
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+  
+  /// Adds the provided `element` to the node's `modifiers`
+  /// collection.
+  /// - param element: The new `Modifier` to add to the node's
+  ///                  `modifiers` collection.
+  /// - returns: A copy of the receiver with the provided `Modifier`
+  ///            appended to its `modifiers` collection.
+  public func addModifier(_ element: DeclModifierSyntax) -> EditorPlaceholderDeclSyntax {
+    var collection: RawSyntax
+    let arena = SyntaxArena()
+    if let col = raw.layoutView!.children[3] {
+      collection = col.layoutView!.appending(element.raw, arena: arena)
+    } else {
+      collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
+                                        from: [element.raw], arena: arena)
+    }
+    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    return EditorPlaceholderDeclSyntax(newData)
+  }
+  
+  public var unexpectedBetweenModifiersAndPlaceholder: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+  
+  /// The actual editor placeholder that starts with `<#` and ends with `#>`.
+  public var placeholder: TokenSyntax {
+    get {
+      return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
+    }
+    set(value) {
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+    }
+  }
+  
+  public var unexpectedAfterPlaceholder: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+    }
+  }
+  
   public static var structure: SyntaxNodeStructure {
-    return .layout([\Self.unexpectedBeforeIdentifier, \Self.identifier, \Self.unexpectedAfterIdentifier])
+    return .layout([
+          \Self.unexpectedBeforeAttributes, 
+          \Self.attributes, 
+          \Self.unexpectedBetweenAttributesAndModifiers, 
+          \Self.modifiers, 
+          \Self.unexpectedBetweenModifiersAndPlaceholder, 
+          \Self.placeholder, 
+          \Self.unexpectedAfterPlaceholder
+        ])
   }
 }
 
@@ -1518,7 +1649,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `EnumCaseDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``EnumCaseDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -1596,7 +1727,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -1634,7 +1765,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -1691,7 +1822,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Element` to the node's `elements`
+  /// Adds the provided `element` to the node's `elements`
   /// collection.
   /// - param element: The new `Element` to add to the node's
   ///                  `elements` collection.
@@ -1747,7 +1878,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `EnumDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``EnumDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -1849,7 +1980,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -1887,7 +2018,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -2065,7 +2196,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `ExtensionDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``ExtensionDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -2160,7 +2291,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -2197,7 +2328,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -2349,7 +2480,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `FunctionDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``FunctionDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -2450,7 +2581,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -2487,7 +2618,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -2659,7 +2790,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `IfConfigDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``IfConfigDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -2724,7 +2855,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Clause` to the node's `clauses`
+  /// Adds the provided `element` to the node's `clauses`
   /// collection.
   /// - param element: The new `Clause` to add to the node's
   ///                  `clauses` collection.
@@ -2798,7 +2929,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `ImportDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``ImportDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -2812,9 +2943,9 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       attributes: AttributeListSyntax? = nil,
       _ unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? = nil,
       modifiers: ModifierListSyntax? = nil,
-      _ unexpectedBetweenModifiersAndImportTok: UnexpectedNodesSyntax? = nil,
-      importTok: TokenSyntax = .keyword(.import),
-      _ unexpectedBetweenImportTokAndImportKind: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenModifiersAndImportKeyword: UnexpectedNodesSyntax? = nil,
+      importKeyword: TokenSyntax = .keyword(.import),
+      _ unexpectedBetweenImportKeywordAndImportKind: UnexpectedNodesSyntax? = nil,
       importKind: TokenSyntax? = nil,
       _ unexpectedBetweenImportKindAndPath: UnexpectedNodesSyntax? = nil,
       path: ImportPathSyntax,
@@ -2829,9 +2960,9 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             attributes, 
             unexpectedBetweenAttributesAndModifiers, 
             modifiers, 
-            unexpectedBetweenModifiersAndImportTok, 
-            importTok, 
-            unexpectedBetweenImportTokAndImportKind, 
+            unexpectedBetweenModifiersAndImportKeyword, 
+            importKeyword, 
+            unexpectedBetweenImportKeywordAndImportKind, 
             importKind, 
             unexpectedBetweenImportKindAndPath, 
             path, 
@@ -2842,9 +2973,9 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           attributes?.raw, 
           unexpectedBetweenAttributesAndModifiers?.raw, 
           modifiers?.raw, 
-          unexpectedBetweenModifiersAndImportTok?.raw, 
-          importTok.raw, 
-          unexpectedBetweenImportTokAndImportKind?.raw, 
+          unexpectedBetweenModifiersAndImportKeyword?.raw, 
+          importKeyword.raw, 
+          unexpectedBetweenImportKeywordAndImportKind?.raw, 
           importKind?.raw, 
           unexpectedBetweenImportKindAndPath?.raw, 
           path.raw, 
@@ -2882,7 +3013,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -2920,7 +3051,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -2939,7 +3070,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     return ImportDeclSyntax(newData)
   }
   
-  public var unexpectedBetweenModifiersAndImportTok: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenModifiersAndImportKeyword: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -2949,7 +3080,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   }
   
   /// The `import` keyword for this declaration.
-  public var importTok: TokenSyntax {
+  public var importKeyword: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
@@ -2958,7 +3089,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenImportTokAndImportKind: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenImportKeywordAndImportKind: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -2996,7 +3127,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `PathComponent` to the node's `path`
+  /// Adds the provided `element` to the node's `path`
   /// collection.
   /// - param element: The new `PathComponent` to add to the node's
   ///                  `path` collection.
@@ -3030,9 +3161,9 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           \Self.attributes, 
           \Self.unexpectedBetweenAttributesAndModifiers, 
           \Self.modifiers, 
-          \Self.unexpectedBetweenModifiersAndImportTok, 
-          \Self.importTok, 
-          \Self.unexpectedBetweenImportTokAndImportKind, 
+          \Self.unexpectedBetweenModifiersAndImportKeyword, 
+          \Self.importKeyword, 
+          \Self.unexpectedBetweenImportKeywordAndImportKind, 
           \Self.importKind, 
           \Self.unexpectedBetweenImportKindAndPath, 
           \Self.path, 
@@ -3061,7 +3192,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `InitializerDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``InitializerDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -3163,7 +3294,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -3201,7 +3332,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -3379,7 +3510,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `MacroDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``MacroDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -3480,7 +3611,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -3517,7 +3648,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -3689,7 +3820,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `MacroExpansionDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``MacroExpansionDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -3802,7 +3933,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -3839,7 +3970,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -3949,7 +4080,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Argument` to the node's `argumentList`
+  /// Adds the provided `element` to the node's `argumentList`
   /// collection.
   /// - param element: The new `Argument` to add to the node's
   ///                  `argumentList` collection.
@@ -4022,7 +4153,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `AdditionalTrailingClosure` to the node's `additionalTrailingClosures`
+  /// Adds the provided `element` to the node's `additionalTrailingClosures`
   /// collection.
   /// - param element: The new `AdditionalTrailingClosure` to add to the node's
   ///                  `additionalTrailingClosures` collection.
@@ -4090,7 +4221,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `MissingDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``MissingDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -4152,7 +4283,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// If there were standalone attributes without a declaration to attach them to, the `MissingDeclSyntax` will contain these.
+  /// If there were standalone attributes without a declaration to attach them to, the ``MissingDeclSyntax`` will contain these.
   public var attributes: AttributeListSyntax? {
     get {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
@@ -4162,7 +4293,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -4190,7 +4321,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// If there were standalone modifiers without a declaration to attach them to, the `MissingDeclSyntax` will contain these.
+  /// If there were standalone modifiers without a declaration to attach them to, the ``MissingDeclSyntax`` will contain these.
   public var modifiers: ModifierListSyntax? {
     get {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
@@ -4200,7 +4331,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -4273,7 +4404,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `OperatorDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``OperatorDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -4283,11 +4414,9 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   public init(
       leadingTrivia: Trivia? = nil,
-      _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
-      attributes: AttributeListSyntax? = nil,
-      _ unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? = nil,
-      modifiers: ModifierListSyntax? = nil,
-      _ unexpectedBetweenModifiersAndOperatorKeyword: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBeforeFixity: UnexpectedNodesSyntax? = nil,
+      fixity: TokenSyntax,
+      _ unexpectedBetweenFixityAndOperatorKeyword: UnexpectedNodesSyntax? = nil,
       operatorKeyword: TokenSyntax = .keyword(.operator),
       _ unexpectedBetweenOperatorKeywordAndIdentifier: UnexpectedNodesSyntax? = nil,
       identifier: TokenSyntax,
@@ -4300,11 +4429,9 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     // Extend the lifetime of all parameters so their arenas don't get destroyed
     // before they can be added as children of the new arena.
     let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (
-            unexpectedBeforeAttributes, 
-            attributes, 
-            unexpectedBetweenAttributesAndModifiers, 
-            modifiers, 
-            unexpectedBetweenModifiersAndOperatorKeyword, 
+            unexpectedBeforeFixity, 
+            fixity, 
+            unexpectedBetweenFixityAndOperatorKeyword, 
             operatorKeyword, 
             unexpectedBetweenOperatorKeywordAndIdentifier, 
             identifier, 
@@ -4313,11 +4440,9 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             unexpectedAfterOperatorPrecedenceAndTypes
           ))) {(arena, _) in
       let layout: [RawSyntax?] = [
-          unexpectedBeforeAttributes?.raw, 
-          attributes?.raw, 
-          unexpectedBetweenAttributesAndModifiers?.raw, 
-          modifiers?.raw, 
-          unexpectedBetweenModifiersAndOperatorKeyword?.raw, 
+          unexpectedBeforeFixity?.raw, 
+          fixity.raw, 
+          unexpectedBetweenFixityAndOperatorKeyword?.raw, 
           operatorKeyword.raw, 
           unexpectedBetweenOperatorKeywordAndIdentifier?.raw, 
           identifier.raw, 
@@ -4338,7 +4463,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self.init(data)
   }
   
-  public var unexpectedBeforeAttributes: UnexpectedNodesSyntax? {
+  public var unexpectedBeforeFixity: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4347,36 +4472,17 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// The attributes applied to the 'operator' declaration.
-  public var attributes: AttributeListSyntax? {
+  /// The fixity applied to the 'operator' declaration.
+  public var fixity: TokenSyntax {
     get {
-      return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
+      return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
-  /// collection.
-  /// - param element: The new `Attribute` to add to the node's
-  ///                  `attributes` collection.
-  /// - returns: A copy of the receiver with the provided `Attribute`
-  ///            appended to its `attributes` collection.
-  public func addAttribute(_ element: Syntax) -> OperatorDeclSyntax {
-    var collection: RawSyntax
-    let arena = SyntaxArena()
-    if let col = raw.layoutView!.children[1] {
-      collection = col.layoutView!.appending(element.raw, arena: arena)
-    } else {
-      collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
-                                        from: [element.raw], arena: arena)
-    }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
-    return OperatorDeclSyntax(newData)
-  }
-  
-  public var unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenFixityAndOperatorKeyword: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4385,36 +4491,16 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// The declaration modifiers applied to the 'operator' declaration.
-  public var modifiers: ModifierListSyntax? {
+  public var operatorKeyword: TokenSyntax {
     get {
-      return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
+      return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
-  /// collection.
-  /// - param element: The new `Modifier` to add to the node's
-  ///                  `modifiers` collection.
-  /// - returns: A copy of the receiver with the provided `Modifier`
-  ///            appended to its `modifiers` collection.
-  public func addModifier(_ element: DeclModifierSyntax) -> OperatorDeclSyntax {
-    var collection: RawSyntax
-    let arena = SyntaxArena()
-    if let col = raw.layoutView!.children[3] {
-      collection = col.layoutView!.appending(element.raw, arena: arena)
-    } else {
-      collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
-                                        from: [element.raw], arena: arena)
-    }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
-    return OperatorDeclSyntax(newData)
-  }
-  
-  public var unexpectedBetweenModifiersAndOperatorKeyword: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenOperatorKeywordAndIdentifier: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4423,7 +4509,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var operatorKeyword: TokenSyntax {
+  public var identifier: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
@@ -4432,7 +4518,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenOperatorKeywordAndIdentifier: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenIdentifierAndOperatorPrecedenceAndTypes: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4441,16 +4527,17 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var identifier: TokenSyntax {
+  /// Optionally specify a precedence group and designated types.
+  public var operatorPrecedenceAndTypes: OperatorPrecedenceAndTypesSyntax? {
     get {
-      return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
+      return data.child(at: 7, parent: Syntax(self)).map(OperatorPrecedenceAndTypesSyntax.init)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
     }
   }
   
-  public var unexpectedBetweenIdentifierAndOperatorPrecedenceAndTypes: UnexpectedNodesSyntax? {
+  public var unexpectedAfterOperatorPrecedenceAndTypes: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4459,32 +4546,11 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Optionally specify a precedence group and designated types.
-  public var operatorPrecedenceAndTypes: OperatorPrecedenceAndTypesSyntax? {
-    get {
-      return data.child(at: 9, parent: Syntax(self)).map(OperatorPrecedenceAndTypesSyntax.init)
-    }
-    set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
-    }
-  }
-  
-  public var unexpectedAfterOperatorPrecedenceAndTypes: UnexpectedNodesSyntax? {
-    get {
-      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
-    }
-    set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
-    }
-  }
-  
   public static var structure: SyntaxNodeStructure {
     return .layout([
-          \Self.unexpectedBeforeAttributes, 
-          \Self.attributes, 
-          \Self.unexpectedBetweenAttributesAndModifiers, 
-          \Self.modifiers, 
-          \Self.unexpectedBetweenModifiersAndOperatorKeyword, 
+          \Self.unexpectedBeforeFixity, 
+          \Self.fixity, 
+          \Self.unexpectedBetweenFixityAndOperatorKeyword, 
           \Self.operatorKeyword, 
           \Self.unexpectedBetweenOperatorKeywordAndIdentifier, 
           \Self.identifier, 
@@ -4508,7 +4574,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `PoundSourceLocationSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``PoundSourceLocationSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -4676,7 +4742,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `PrecedenceGroupDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``PrecedenceGroupDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -4772,7 +4838,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -4810,7 +4876,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -4903,7 +4969,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `GroupAttribute` to the node's `groupAttributes`
+  /// Adds the provided `element` to the node's `groupAttributes`
   /// collection.
   /// - param element: The new `GroupAttribute` to add to the node's
   ///                  `groupAttributes` collection.
@@ -4989,7 +5055,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `ProtocolDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``ProtocolDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -5091,7 +5157,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -5129,7 +5195,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -5361,7 +5427,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `StructDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``StructDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -5463,7 +5529,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -5501,7 +5567,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -5721,7 +5787,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `SubscriptDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``SubscriptDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -5822,7 +5888,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -5859,7 +5925,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -6031,7 +6097,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `TypealiasDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``TypealiasDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -6126,7 +6192,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -6163,7 +6229,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -6315,7 +6381,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = node._syntaxNode
   }
   
-  /// Creates a `VariableDeclSyntax` node from the given `SyntaxData`. This assumes
+  /// Creates a ``VariableDeclSyntax`` node from the given ``SyntaxData``. This assumes
   /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
   /// is undefined.
   internal init(_ data: SyntaxData) {
@@ -6392,7 +6458,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Attribute` to the node's `attributes`
+  /// Adds the provided `element` to the node's `attributes`
   /// collection.
   /// - param element: The new `Attribute` to add to the node's
   ///                  `attributes` collection.
@@ -6429,7 +6495,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Modifier` to the node's `modifiers`
+  /// Adds the provided `element` to the node's `modifiers`
   /// collection.
   /// - param element: The new `Modifier` to add to the node's
   ///                  `modifiers` collection.
@@ -6484,7 +6550,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// Adds the provided `Binding` to the node's `bindings`
+  /// Adds the provided `element` to the node's `bindings`
   /// collection.
   /// - param element: The new `Binding` to add to the node's
   ///                  `bindings` collection.
