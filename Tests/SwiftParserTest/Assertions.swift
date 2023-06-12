@@ -701,21 +701,37 @@ func assertParse<S: SyntaxProtocol>(
   }
 
   if enableLongTests {
+    #if !os(WASI)
     DispatchQueue.concurrentPerform(iterations: Array(tree.tokens(viewMode: .all)).count) { tokenIndex in
       let flippedTokenTree = TokenPresenceFlipper(flipTokenAtIndex: tokenIndex).rewrite(Syntax(tree))
       _ = ParseDiagnosticsGenerator.diagnostics(for: flippedTokenTree)
       assertRoundTrip(source: flippedTokenTree.syntaxTextBytes, parse, file: file, line: line)
     }
+    #else
+    for tokenIndex in 0..<Array(tree.tokens(viewMode: .all)).count {
+      let flippedTokenTree = TokenPresenceFlipper(flipTokenAtIndex: tokenIndex).rewrite(Syntax(tree))
+      _ = ParseDiagnosticsGenerator.diagnostics(for: flippedTokenTree)
+      assertRoundTrip(source: flippedTokenTree.syntaxTextBytes, parse, file: file, line: line)
+    }
+    #endif
 
     #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
     let mutations: [(offset: Int, replacement: TokenSpec)] = parser.alternativeTokenChoices.flatMap { offset, replacements in
       return replacements.map { (offset, $0) }
     }
+    #if !os(WASI)
     DispatchQueue.concurrentPerform(iterations: mutations.count) { index in
       let mutation = mutations[index]
       let alternateSource = MutatedTreePrinter.print(tree: Syntax(tree), mutations: [mutation.offset: mutation.replacement])
       assertRoundTrip(source: alternateSource, parse, file: file, line: line)
     }
+    #else
+    for index in 0..<mutations.count {
+      let mutation = mutations[index]
+      let alternateSource = MutatedTreePrinter.print(tree: Syntax(tree), mutations: [mutation.offset: mutation.replacement])
+      assertRoundTrip(source: alternateSource, parse, file: file, line: line)
+    }
+    #endif
     #endif
   }
 }
