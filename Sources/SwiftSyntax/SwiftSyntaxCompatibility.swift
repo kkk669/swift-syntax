@@ -22,6 +22,254 @@ public typealias AccessPathComponentSyntax = ImportPathComponentSyntax
 @available(*, deprecated, renamed: "WithAttributesSyntax")
 public typealias AttributedSyntax = WithAttributesSyntax
 
+public extension ArrayTypeSyntax {
+  @available(*, deprecated, renamed: "unexpectedBeforeLeftSquare")
+  var unexpectedBeforeLeftSquareBracket: UnexpectedNodesSyntax? {
+    return unexpectedBeforeLeftSquare
+  }
+
+  @available(*, deprecated, renamed: "leftSquare")
+  var leftSquareBracket: TokenSyntax {
+    get {
+      return leftSquare
+    }
+    set(value) {
+      leftSquare = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedBetweenLeftSquareAndElementType")
+  var unexpectedBetweenLeftSquareBracketAndElementType: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedBetweenLeftSquareAndElementType
+    }
+    set(value) {
+      unexpectedBetweenLeftSquareAndElementType = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedBetweenElementTypeAndRightSquare")
+  var unexpectedBetweenElementTypeAndRightSquareBracket: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedBetweenElementTypeAndRightSquare
+    }
+    set(value) {
+      unexpectedBetweenElementTypeAndRightSquare = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "rightSquare")
+  var rightSquareBracket: TokenSyntax {
+    get {
+      return rightSquare
+    }
+    set(value) {
+      rightSquare = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedAfterRightSquare")
+  var unexpectedAfterRightSquareBracket: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedAfterRightSquare
+    }
+    set(value) {
+      unexpectedAfterRightSquare = value
+    }
+  }
+
+  @available(*, deprecated, message: "Use an initializer with leftSquare and rightSquare arguments")
+  @_disfavoredOverload
+  init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeLeftSquareBracket: UnexpectedNodesSyntax? = nil,
+    leftSquareBracket: TokenSyntax = .leftSquareToken(),
+    _ unexpectedBetweenLeftSquareBracketAndElementType: UnexpectedNodesSyntax? = nil,
+    elementType: some TypeSyntaxProtocol,
+    _ unexpectedBetweenElementTypeAndRightSquareBracket: UnexpectedNodesSyntax? = nil,
+    rightSquareBracket: TokenSyntax = .rightSquareToken(),
+    _ unexpectedAfterRightSquareBracket: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    self.init(
+      leadingTrivia: leadingTrivia,
+      unexpectedBeforeLeftSquareBracket,
+      leftSquare: leftSquareBracket,
+      unexpectedBetweenLeftSquareBracketAndElementType,
+      elementType: elementType,
+      unexpectedBetweenElementTypeAndRightSquareBracket,
+      rightSquare: rightSquareBracket,
+      unexpectedAfterRightSquareBracket,
+      trailingTrivia: trailingTrivia
+    )
+  }
+}
+
+public extension AvailabilityConditionSyntax {
+  @available(*, deprecated, renamed: "unexpectedBetweenLeftParenAndAvailabilityArguments")
+  var unexpectedBetweenLeftParenAndAvailabilitySpec: UnexpectedNodesSyntax? {
+    get { unexpectedBetweenLeftParenAndAvailabilityArguments }
+    set { unexpectedBetweenLeftParenAndAvailabilityArguments = newValue }
+  }
+
+  @available(*, deprecated, renamed: "availabilityArguments")
+  var availabilitySpec: AvailabilitySpecListSyntax {
+    get { availabilityArguments }
+    set { availabilityArguments = newValue }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedBetweenAvailabilityArgumentsAndRightParen")
+  var unexpectedBetweenAvailabilitySpecAndRightParen: UnexpectedNodesSyntax? {
+    get { unexpectedBetweenAvailabilityArgumentsAndRightParen }
+    set { unexpectedBetweenAvailabilityArgumentsAndRightParen = newValue }
+  }
+
+  @available(*, deprecated, message: "Use an initializer with an availabilityArguments argument")
+  init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeAvailabilityKeyword: UnexpectedNodesSyntax? = nil,
+    availabilityKeyword: TokenSyntax,
+    _ unexpectedBetweenAvailabilityKeywordAndLeftParen: UnexpectedNodesSyntax? = nil,
+    leftParen: TokenSyntax = .leftParenToken(),
+    _ unexpectedBetweenLeftParenAndAvailabilitySpec: UnexpectedNodesSyntax? = nil,
+    availabilitySpec: AvailabilitySpecListSyntax,
+    _ unexpectedBetweenAvailabilitySpecAndRightParen: UnexpectedNodesSyntax? = nil,
+    rightParen: TokenSyntax = .rightParenToken(),
+    _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    self.init(
+      leadingTrivia: leadingTrivia,
+      unexpectedBeforeAvailabilityKeyword,
+      availabilityKeyword: availabilityKeyword,
+      unexpectedBetweenAvailabilityKeywordAndLeftParen,
+      leftParen: leftParen,
+      unexpectedBetweenLeftParenAndAvailabilitySpec,
+      availabilityArguments: availabilitySpec,
+      unexpectedBetweenAvailabilitySpecAndRightParen,
+      rightParen: rightParen,
+      unexpectedAfterRightParen,
+      trailingTrivia: trailingTrivia
+    )
+  }
+}
+
+public extension AvailabilityEntrySyntax {
+  @available(*, deprecated, renamed: "unexpectedBetweenColonAndAvailabilityArguments")
+  var unexpectedBetweenColonAndAvailabilityList: UnexpectedNodesSyntax? {
+    get { unexpectedBetweenColonAndAvailabilityArguments }
+    set { unexpectedBetweenColonAndAvailabilityArguments = newValue }
+  }
+
+  @available(*, deprecated, renamed: "availabilityArguments")
+  var availabilityList: AvailabilitySpecListSyntax {
+    get { availabilityArguments }
+    set { availabilityArguments = newValue }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedBetweenAvailabilityArgumentsAndSemicolon")
+  var unexpectedBetweenAvailabilityListAndSemicolon: UnexpectedNodesSyntax? {
+    get { unexpectedBetweenAvailabilityArgumentsAndSemicolon }
+    set { unexpectedBetweenAvailabilityArgumentsAndSemicolon = newValue }
+  }
+
+  /// Adds the provided `element` to the node's `availabilityList`
+  /// collection.
+  /// - param element: The new `Availability` to add to the node's
+  ///                  `availabilityList` collection.
+  /// - returns: A copy of the receiver with the provided `Availability`
+  ///            appended to its `availabilityList` collection.
+  @available(*, deprecated, renamed: "addAvailabilityArgument")
+  func addAvailability(_ element: AvailabilityArgumentSyntax) -> AvailabilityEntrySyntax {
+    addAvailabilityArgument(element)
+  }
+
+  @available(*, deprecated, message: "Use an initializer with an availabilityArguments argument")
+  init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeLabel: UnexpectedNodesSyntax? = nil,
+    label: TokenSyntax = .keyword(.availability),
+    _ unexpectedBetweenLabelAndColon: UnexpectedNodesSyntax? = nil,
+    colon: TokenSyntax = .colonToken(),
+    _ unexpectedBetweenColonAndAvailabilityList: UnexpectedNodesSyntax? = nil,
+    availabilityList: AvailabilitySpecListSyntax,
+    _ unexpectedBetweenAvailabilityListAndSemicolon: UnexpectedNodesSyntax? = nil,
+    semicolon: TokenSyntax = .semicolonToken(),
+    _ unexpectedAfterSemicolon: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    self.init(
+      leadingTrivia: leadingTrivia,
+      unexpectedBeforeLabel,
+      label: label,
+      unexpectedBetweenLabelAndColon,
+      colon: colon,
+      unexpectedBetweenColonAndAvailabilityList,
+      availabilityArguments: availabilityList,
+      unexpectedBetweenAvailabilityListAndSemicolon,
+      semicolon: semicolon,
+      unexpectedAfterSemicolon,
+      trailingTrivia: trailingTrivia
+    )
+  }
+}
+
+public extension BackDeployedAttributeSpecListSyntax {
+  @available(*, deprecated, renamed: "unexpectedBetweenColonAndPlatforms")
+  var unexpectedBetweenColonAndVersionList: UnexpectedNodesSyntax? {
+    get { unexpectedBetweenColonAndPlatforms }
+    set { unexpectedBetweenColonAndPlatforms = newValue }
+  }
+
+  @available(*, deprecated, renamed: "platforms")
+  var versionList: AvailabilityVersionRestrictionListSyntax {
+    get { platforms }
+    set { platforms = newValue }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedAfterPlatforms")
+  var unexpectedAfterVersionList: UnexpectedNodesSyntax? {
+    get { unexpectedAfterPlatforms }
+    set { unexpectedAfterPlatforms = newValue }
+  }
+
+  /// Adds the provided `element` to the node's `versionList`
+  /// collection.
+  /// - param element: The new `Availability` to add to the node's
+  ///                  `versionList` collection.
+  /// - returns: A copy of the receiver with the provided `Availability`
+  ///            appended to its `versionList` collection.
+  @available(*, deprecated, renamed: "addPlatform")
+  func addAvailability(_ element: AvailabilityVersionRestrictionListEntrySyntax) -> BackDeployedAttributeSpecListSyntax {
+    addPlatform(element)
+  }
+
+  @available(*, deprecated, message: "Use an initializer with a platforms argument")
+  init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeBeforeLabel: UnexpectedNodesSyntax? = nil,
+    beforeLabel: TokenSyntax = .keyword(.before),
+    _ unexpectedBetweenBeforeLabelAndColon: UnexpectedNodesSyntax? = nil,
+    colon: TokenSyntax = .colonToken(),
+    _ unexpectedBetweenColonAndVersionList: UnexpectedNodesSyntax? = nil,
+    versionList: AvailabilityVersionRestrictionListSyntax,
+    _ unexpectedAfterVersionList: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    self.init(
+      leadingTrivia: leadingTrivia,
+      unexpectedBeforeBeforeLabel,
+      beforeLabel: beforeLabel,
+      unexpectedBetweenBeforeLabelAndColon,
+      colon: colon,
+      unexpectedBetweenColonAndVersionList,
+      platforms: versionList,
+      unexpectedAfterVersionList,
+      trailingTrivia: trailingTrivia
+    )
+  }
+}
+
 public extension DeclGroupSyntax {
   @available(*, deprecated, renamed: "memberBlock")
   var members: MemberDeclBlockSyntax {
@@ -51,6 +299,103 @@ public extension EditorPlaceholderDeclSyntax {
       unexpectedBeforeIdentifier,
       placeholder: identifier,
       unexpectedAfterIdentifier
+    )
+  }
+}
+
+public extension DictionaryTypeSyntax {
+  @available(*, deprecated, renamed: "unexpectedBeforeLeftSquare")
+  var unexpectedBeforeLeftSquareBracket: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedBeforeLeftSquare
+    }
+    set(value) {
+      unexpectedBeforeLeftSquare = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "leftSquare")
+  var leftSquareBracket: TokenSyntax {
+    get {
+      return leftSquare
+    }
+    set(value) {
+      leftSquare = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedBetweenLeftSquareAndKeyType")
+  var unexpectedBetweenLeftSquareBracketAndKeyType: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedBetweenLeftSquareAndKeyType
+    }
+    set(value) {
+      unexpectedBetweenLeftSquareAndKeyType = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedBetweenValueTypeAndRightSquare")
+  var unexpectedBetweenValueTypeAndRightSquareBracket: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedBetweenValueTypeAndRightSquare
+    }
+    set(value) {
+      unexpectedBetweenValueTypeAndRightSquare = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "rightSquare")
+  var rightSquareBracket: TokenSyntax {
+    get {
+      return rightSquare
+    }
+    set(value) {
+      rightSquare = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedAfterRightSquare")
+  var unexpectedAfterRightSquareBracket: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedAfterRightSquare
+    }
+    set(value) {
+      unexpectedAfterRightSquare = value
+    }
+  }
+
+  @available(*, deprecated, message: "Use an initializer with leftSquare and rightSquare arguments")
+  @_disfavoredOverload
+  init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeLeftSquareBracket: UnexpectedNodesSyntax? = nil,
+    leftSquareBracket: TokenSyntax = .leftSquareToken(),
+    _ unexpectedBetweenLeftSquareBracketAndKeyType: UnexpectedNodesSyntax? = nil,
+    keyType: some TypeSyntaxProtocol,
+    _ unexpectedBetweenKeyTypeAndColon: UnexpectedNodesSyntax? = nil,
+    colon: TokenSyntax = .colonToken(),
+    _ unexpectedBetweenColonAndValueType: UnexpectedNodesSyntax? = nil,
+    valueType: some TypeSyntaxProtocol,
+    _ unexpectedBetweenValueTypeAndRightSquareBracket: UnexpectedNodesSyntax? = nil,
+    rightSquareBracket: TokenSyntax = .rightSquareToken(),
+    _ unexpectedAfterRightSquareBracket: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+
+  ) {
+    self.init(
+      leadingTrivia: leadingTrivia,
+      unexpectedBeforeLeftSquareBracket,
+      leftSquare: leftSquareBracket,
+      unexpectedBetweenLeftSquareBracketAndKeyType,
+      keyType: keyType,
+      unexpectedBetweenKeyTypeAndColon,
+      colon: colon,
+      unexpectedBetweenColonAndValueType,
+      valueType: valueType,
+      unexpectedBetweenValueTypeAndRightSquareBracket,
+      rightSquare: rightSquareBracket,
+      unexpectedAfterRightSquareBracket,
+      trailingTrivia: trailingTrivia
     )
   }
 }
@@ -209,6 +554,66 @@ public extension FunctionTypeSyntax {
   }
 }
 
+public extension GenericParameterClauseSyntax {
+  @available(*, deprecated, renamed: "unexpectedBetweenLeftAngleBracketAndParameters")
+  var unexpectedBetweenLeftAngleBracketAndGenericParameterList: UnexpectedNodesSyntax? {
+    get { unexpectedBetweenLeftAngleBracketAndParameters }
+    set { unexpectedBetweenLeftAngleBracketAndParameters = newValue }
+  }
+
+  @available(*, deprecated, renamed: "parameters")
+  var genericParameterList: GenericParameterListSyntax {
+    get { parameters }
+    set { parameters = newValue }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedBetweenParametersAndGenericWhereClause")
+  var unexpectedBetweenGenericParameterListAndGenericWhereClause: UnexpectedNodesSyntax? {
+    get { unexpectedBetweenParametersAndGenericWhereClause }
+    set { unexpectedBetweenParametersAndGenericWhereClause = newValue }
+  }
+
+  /// Adds the provided `element` to the node's `genericParameterList`
+  /// collection.
+  /// - param element: The new `GenericParameter` to add to the node's
+  ///                  `genericParameterList` collection.
+  /// - returns: A copy of the receiver with the provided `GenericParameter`
+  ///            appended to its `genericParameterList` collection.
+  @available(*, deprecated, renamed: "addParameter")
+  func addGenericParameter(_ element: GenericParameterSyntax) -> GenericParameterClauseSyntax {
+    addParameter(element)
+  }
+
+  @available(*, deprecated, message: "Use an initializer with a parameters argument")
+  init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeLeftAngleBracket: UnexpectedNodesSyntax? = nil,
+    leftAngleBracket: TokenSyntax = .leftAngleToken(),
+    _ unexpectedBetweenLeftAngleBracketAndGenericParameterList: UnexpectedNodesSyntax? = nil,
+    genericParameterList: GenericParameterListSyntax,
+    _ unexpectedBetweenGenericParameterListAndGenericWhereClause: UnexpectedNodesSyntax? = nil,
+    genericWhereClause: GenericWhereClauseSyntax? = nil,
+    _ unexpectedBetweenGenericWhereClauseAndRightAngleBracket: UnexpectedNodesSyntax? = nil,
+    rightAngleBracket: TokenSyntax = .rightAngleToken(),
+    _ unexpectedAfterRightAngleBracket: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    self.init(
+      leadingTrivia: leadingTrivia,
+      unexpectedBeforeLeftAngleBracket,
+      leftAngleBracket: leftAngleBracket,
+      unexpectedBetweenLeftAngleBracketAndGenericParameterList,
+      parameters: genericParameterList,
+      unexpectedBetweenGenericParameterListAndGenericWhereClause,
+      genericWhereClause: genericWhereClause,
+      unexpectedBetweenGenericWhereClauseAndRightAngleBracket,
+      rightAngleBracket: rightAngleBracket,
+      unexpectedAfterRightAngleBracket,
+      trailingTrivia: trailingTrivia
+    )
+  }
+}
+
 public extension ImportDeclSyntax {
   @available(*, deprecated, renamed: "unexpectedBetweenModifiersAndImportKeyword")
   var unexpectedBetweenModifiersAndImportTok: UnexpectedNodesSyntax? {
@@ -329,6 +734,111 @@ public extension NamedOpaqueReturnTypeSyntax {
   }
 }
 
+public extension PrecedenceGroupRelationSyntax {
+  @available(*, deprecated, renamed: "unexpectedBeforeHigherThanOrLowerThanKeyword")
+  var unexpectedBeforeHigherThanOrLowerThan: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedBeforeHigherThanOrLowerThanKeyword
+    }
+    set(value) {
+      unexpectedBeforeHigherThanOrLowerThanKeyword = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "higherThanOrLowerThanKeyword")
+  var higherThanOrLowerThan: TokenSyntax {
+    get {
+      return higherThanOrLowerThanKeyword
+    }
+    set(value) {
+      higherThanOrLowerThanKeyword = value
+    }
+  }
+
+  @available(*, deprecated, renamed: "unexpectedBetweenHigherThanOrLowerThanKeywordAndColon")
+  var unexpectedBetweenHigherThanOrLowerThanAndColon: UnexpectedNodesSyntax? {
+    get {
+      return unexpectedBetweenHigherThanOrLowerThanKeywordAndColon
+    }
+    set(value) {
+      unexpectedBetweenHigherThanOrLowerThanKeywordAndColon = value
+    }
+  }
+
+  @available(*, deprecated, message: "Use an initializer with a genericParameterClause argument.")
+  @_disfavoredOverload
+  init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeHigherThanOrLowerThan: UnexpectedNodesSyntax? = nil,
+    higherThanOrLowerThan: TokenSyntax,
+    _ unexpectedBetweenHigherThanOrLowerThanAndColon: UnexpectedNodesSyntax? = nil,
+    colon: TokenSyntax = .colonToken(),
+    _ unexpectedBetweenColonAndOtherNames: UnexpectedNodesSyntax? = nil,
+    otherNames: PrecedenceGroupNameListSyntax,
+    _ unexpectedAfterOtherNames: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    self.init(
+      leadingTrivia: leadingTrivia,
+      unexpectedBeforeHigherThanOrLowerThan,
+      higherThanOrLowerThanKeyword: higherThanOrLowerThan,
+      unexpectedBetweenHigherThanOrLowerThanAndColon,
+      colon: colon,
+      unexpectedBetweenColonAndOtherNames,
+      otherNames: otherNames,
+      unexpectedAfterOtherNames,
+      trailingTrivia: trailingTrivia
+    )
+  }
+}
+
+public extension SyntaxProtocol {
+  @available(*, deprecated, message: "Use detached computed property instead.")
+  func detach() -> Self {
+    return detached
+  }
+}
+
+public extension TokenKind {
+  @available(*, deprecated, renamed: "leftSquare")
+  static var leftSquareBracket: TokenKind {
+    return .leftSquare
+  }
+
+  @available(*, deprecated, renamed: "rightSquare")
+  static var rightSquareBracket: TokenKind {
+    return .rightSquare
+  }
+}
+
+public extension TokenSyntax {
+  @available(*, deprecated, renamed: "leftSquareToken")
+  static func leftSquareBracketToken(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return .leftSquareToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "rightSquareToken")
+  static func rightSquareBracketToken(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return .rightSquareToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+}
+
 public extension TupleExprSyntax {
   @available(*, deprecated, renamed: "unexpectedBetweenLeftParenAndElements")
   var unexpectedBetweenLeftParenAndElementList: UnexpectedNodesSyntax? {
@@ -386,3 +896,8 @@ public extension TupleExprSyntax {
     )
   }
 }
+
+//==========================================================================//
+// IMPORTANT: If you are tempted to add a compatiblity layer code here      //
+// please insert it in alphabetical order above                             //
+//==========================================================================//

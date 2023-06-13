@@ -115,7 +115,7 @@ fileprivate class SomeParameterRewriter: SyntaxRewriter {
 /// ```swift
 /// func someFunction<T1: Value>(_ input: T1) {}
 /// ```
-public struct OpaqueParameterToGeneric: RefactoringProvider {
+public struct OpaqueParameterToGeneric: SyntaxRefactoringProvider {
   /// Replace all of the "some" parameters in the given parameter clause with
   /// freshly-created generic parameters.
   ///
@@ -134,7 +134,7 @@ public struct OpaqueParameterToGeneric: RefactoringProvider {
 
     var newGenericParams: [GenericParameterSyntax] = []
     if let genericParams {
-      newGenericParams.append(contentsOf: genericParams.genericParameterList)
+      newGenericParams.append(contentsOf: genericParams.parameters)
     }
 
     for rewritten in rewriter.rewrittenSomeParameters {
@@ -154,13 +154,13 @@ public struct OpaqueParameterToGeneric: RefactoringProvider {
     let newGenericParamClause: GenericParameterClauseSyntax
     if let genericParams {
       newGenericParamClause = genericParams.with(
-        \.genericParameterList,
+        \.parameters,
         newGenericParamSyntax
       )
     } else {
       newGenericParamClause = GenericParameterClauseSyntax(
         leftAngleBracket: .leftAngleToken(),
-        genericParameterList: newGenericParamSyntax,
+        parameters: newGenericParamSyntax,
         genericWhereClause: nil,
         rightAngleBracket: .rightAngleToken()
       )

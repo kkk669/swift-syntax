@@ -553,7 +553,7 @@ extension Parser {
 
   mutating func parseTransposeAttribute() -> RawAttributeSyntax {
     let (unexpectedBeforeAtSign, atSign) = self.expect(.atSign)
-    let (unexpectedBeforeTranspose, transpose) = self.expect(.keyword(.transpose))
+    let (unexpectedBeforeTranspose, transpose) = self.expect(TokenSpec(.transpose, remapping: .identifier))
 
     let (unexpectedBeforeLeftParen, leftParen) = self.expect(.leftParen)
     let argument = self.parseDerivativeAttributeArguments()
@@ -729,7 +729,7 @@ extension Parser {
               label: ident,
               unexpectedBeforeColon,
               colon: colon,
-              availabilityList: availability,
+              availabilityArguments: availability,
               unexpectedBeforeSemi,
               semicolon: semi,
               arena: self.arena
@@ -949,7 +949,7 @@ extension Parser {
       beforeLabel: label,
       unexpectedBeforeColon,
       colon: colon,
-      versionList: RawAvailabilityVersionRestrictionListSyntax(elements: elements, arena: self.arena),
+      platforms: RawAvailabilityVersionRestrictionListSyntax(elements: elements, arena: self.arena),
       arena: self.arena
     )
   }
@@ -1065,12 +1065,21 @@ extension Parser {
   mutating func parseUnavailableFromAsyncArguments() -> RawUnavailableFromAsyncArgumentsSyntax {
     let (unexpectedBeforeLabel, label) = self.expect(.keyword(.message))
     let (unexpectedBeforeColon, colon) = self.expect(.colon)
+
+    let unexpectedBetweenColonAndMessage: RawUnexpectedNodesSyntax?
+    if let equalToken = self.consume(if: .equal) {
+      unexpectedBetweenColonAndMessage = RawUnexpectedNodesSyntax([equalToken], arena: self.arena)
+    } else {
+      unexpectedBetweenColonAndMessage = nil
+    }
+
     let message = self.parseStringLiteral()
     return RawUnavailableFromAsyncArgumentsSyntax(
       unexpectedBeforeLabel,
       messageLabel: label,
       unexpectedBeforeColon,
       colon: colon,
+      unexpectedBetweenColonAndMessage,
       message: message,
       arena: self.arena
     )
@@ -1170,7 +1179,7 @@ extension Parser.Lookahead {
       TokenSpec(.rethrows),
       TokenSpec(.rightParen),
       TokenSpec(.rightBrace),
-      TokenSpec(.rightSquareBracket),
+      TokenSpec(.rightSquare),
       TokenSpec(.rightAngle):
       return false
     case _ where lookahead.at(.keyword(.async)):

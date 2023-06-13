@@ -51,6 +51,31 @@ fileprivate func getTokens(between first: TokenSyntax, and second: TokenSyntax) 
 }
 
 fileprivate extension TokenSyntax {
+  /// The indentation of this token
+  ///
+  /// In contrast to `indentation`, this does not walk to previous tokens to
+  /// find the indentation of the line this token occurs on.
+  private var indentation: Trivia? {
+    let previous = self.previousToken(viewMode: .sourceAccurate)
+    return ((previous?.trailingTrivia ?? []) + leadingTrivia).indentation(isOnNewline: false)
+  }
+
+  /// Returns the indentation of the line this token occurs on
+  var indentationOfLine: Trivia {
+    var token: TokenSyntax = self
+    if let indentation = token.indentation {
+      return indentation
+    }
+    while let previous = token.previousToken(viewMode: .sourceAccurate) {
+      token = previous
+      if let indentation = token.indentation {
+        return indentation
+      }
+    }
+
+    return []
+  }
+
   /// Assuming this token is a `poundAvailableKeyword` or `poundUnavailableKeyword`
   /// returns the opposite keyword.
   var negatedAvailabilityKeyword: TokenSyntax {
@@ -510,12 +535,12 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
 
-    if node.leftSquareBracket.isMissing && node.rightSquareBracket.isPresent {
+    if node.leftSquare.isMissing && node.rightSquare.isPresent {
       addDiagnostic(
-        node.rightSquareBracket,
+        node.rightSquare,
         .extraRightBracket,
-        fixIts: [.init(message: InsertFixIt(tokenToBeInserted: node.leftSquareBracket), changes: .makePresent(node.leftSquareBracket))],
-        handledNodes: [node.leftSquareBracket.id]
+        fixIts: [.init(message: InsertFixIt(tokenToBeInserted: node.leftSquare), changes: .makePresent(node.leftSquare))],
+        handledNodes: [node.leftSquare.id]
       )
     }
 
@@ -702,13 +727,28 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         // Only diagnose the missing semicolon if the item doesn't contain any errors.
         // If the item contains errors, the root cause is most likely something different and not the missing semicolon.
         let position = semicolon.previousToken(viewMode: .sourceAccurate)?.endPositionBeforeTrailingTrivia
+        var fixIts: [FixIt] = [
+          FixIt(message: .insertSemicolon, changes: .makePresent(semicolon))
+        ]
+        if let firstToken = node.firstToken(viewMode: .sourceAccurate),
+          let lastToken = node.lastToken(viewMode: .sourceAccurate)
+        {
+          fixIts.insert(
+            FixIt(
+              message: .insertNewline,
+              changes: [
+                .replaceTrailingTrivia(token: lastToken, newTrivia: lastToken.trailingTrivia + .newlines(1) + firstToken.indentationOfLine)
+              ]
+            ),
+            at: 0
+          )
+        }
+
         addDiagnostic(
           semicolon,
           position: position,
           .consecutiveStatementsOnSameLine,
-          fixIts: [
-            FixIt(message: .insertSemicolon, changes: .makePresent(semicolon))
-          ],
+          fixIts: fixIts,
           handledNodes: [semicolon.id]
         )
       } else {
@@ -1155,13 +1195,28 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         // Only diagnose the missing semicolon if the decl doesn't contain any errors.
         // If the decl contains errors, the root cause is most likely something different and not the missing semicolon.
         let position = semicolon.previousToken(viewMode: .sourceAccurate)?.endPositionBeforeTrailingTrivia
+        var fixIts: [FixIt] = [
+          FixIt(message: .insertSemicolon, changes: .makePresent(semicolon))
+        ]
+        if let firstToken = node.firstToken(viewMode: .sourceAccurate),
+          let lastToken = node.lastToken(viewMode: .sourceAccurate)
+        {
+          fixIts.insert(
+            FixIt(
+              message: .insertNewline,
+              changes: [
+                .replaceTrailingTrivia(token: lastToken, newTrivia: lastToken.trailingTrivia + .newlines(1) + firstToken.indentationOfLine)
+              ]
+            ),
+            at: 0
+          )
+        }
+
         addDiagnostic(
           semicolon,
           position: position,
           .consecutiveDeclarationsOnSameLine,
-          fixIts: [
-            FixIt(message: .insertSemicolon, changes: .makePresent(semicolon))
-          ],
+          fixIts: fixIts,
           handledNodes: [semicolon.id]
         )
       } else {
@@ -1623,6 +1678,26 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
   public override func visit(_ node: UnavailableFromAsyncArgumentsSyntax) -> SyntaxVisitorContinueKind {
     if shouldSkip(node) {
       return .skipChildren
+    }
+
+    if let equalToken = node.unexpectedBetweenColonAndMessage?.onlyPresentToken(where: { $0.tokenKind == .equal }) {
+      addDiagnostic(
+        equalToken,
+        MissingNodesError(missingNodes: [Syntax(node.colon)]),
+        fixIts: [
+          FixIt(
+            message: ReplaceTokensFixIt(
+              replaceTokens: [equalToken],
+              replacements: [node.colon]
+            ),
+            changes: [
+              FixIt.MultiNodeChange.makeMissing(equalToken),
+              FixIt.MultiNodeChange.makePresent(node.colon),
+            ]
+          )
+        ],
+        handledNodes: [equalToken.id, node.colon.id]
+      )
     }
 
     if let token = node.unexpectedBetweenMessageLabelAndColon?.onlyPresentToken(where: { $0.tokenKind.isIdentifier }),

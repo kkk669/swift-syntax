@@ -251,12 +251,12 @@ let package = Package(
 
     .target(
       name: "SwiftRefactor",
-      dependencies: ["SwiftParser", "SwiftSyntax"]
+      dependencies: ["SwiftBasicFormat", "SwiftParser", "SwiftSyntax", "SwiftSyntaxBuilder"]
     ),
 
     .testTarget(
       name: "SwiftRefactorTest",
-      dependencies: ["_SwiftSyntaxTestSupport", "SwiftRefactor", "SwiftSyntaxBuilder"]
+      dependencies: ["_SwiftSyntaxTestSupport", "SwiftRefactor"]
     ),
 
     // MARK: - Executable targets

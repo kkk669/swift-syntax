@@ -171,20 +171,20 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "rightSquare"
   case \ArrayExprSyntax.unexpectedAfterRightSquare:
     return "unexpectedAfterRightSquare"
-  case \ArrayTypeSyntax.unexpectedBeforeLeftSquareBracket:
-    return "unexpectedBeforeLeftSquareBracket"
-  case \ArrayTypeSyntax.leftSquareBracket:
-    return "leftSquareBracket"
-  case \ArrayTypeSyntax.unexpectedBetweenLeftSquareBracketAndElementType:
-    return "unexpectedBetweenLeftSquareBracketAndElementType"
+  case \ArrayTypeSyntax.unexpectedBeforeLeftSquare:
+    return "unexpectedBeforeLeftSquare"
+  case \ArrayTypeSyntax.leftSquare:
+    return "leftSquare"
+  case \ArrayTypeSyntax.unexpectedBetweenLeftSquareAndElementType:
+    return "unexpectedBetweenLeftSquareAndElementType"
   case \ArrayTypeSyntax.elementType:
     return "elementType"
-  case \ArrayTypeSyntax.unexpectedBetweenElementTypeAndRightSquareBracket:
-    return "unexpectedBetweenElementTypeAndRightSquareBracket"
-  case \ArrayTypeSyntax.rightSquareBracket:
-    return "rightSquareBracket"
-  case \ArrayTypeSyntax.unexpectedAfterRightSquareBracket:
-    return "unexpectedAfterRightSquareBracket"
+  case \ArrayTypeSyntax.unexpectedBetweenElementTypeAndRightSquare:
+    return "unexpectedBetweenElementTypeAndRightSquare"
+  case \ArrayTypeSyntax.rightSquare:
+    return "rightSquare"
+  case \ArrayTypeSyntax.unexpectedAfterRightSquare:
+    return "unexpectedAfterRightSquare"
   case \ArrowExprSyntax.unexpectedBeforeEffectSpecifiers:
     return "unexpectedBeforeEffectSpecifiers"
   case \ArrowExprSyntax.effectSpecifiers:
@@ -303,12 +303,12 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "unexpectedBetweenAvailabilityKeywordAndLeftParen"
   case \AvailabilityConditionSyntax.leftParen:
     return "leftParen"
-  case \AvailabilityConditionSyntax.unexpectedBetweenLeftParenAndAvailabilitySpec:
-    return "unexpectedBetweenLeftParenAndAvailabilitySpec"
-  case \AvailabilityConditionSyntax.availabilitySpec:
-    return "availabilitySpec"
-  case \AvailabilityConditionSyntax.unexpectedBetweenAvailabilitySpecAndRightParen:
-    return "unexpectedBetweenAvailabilitySpecAndRightParen"
+  case \AvailabilityConditionSyntax.unexpectedBetweenLeftParenAndAvailabilityArguments:
+    return "unexpectedBetweenLeftParenAndAvailabilityArguments"
+  case \AvailabilityConditionSyntax.availabilityArguments:
+    return "availabilityArguments"
+  case \AvailabilityConditionSyntax.unexpectedBetweenAvailabilityArgumentsAndRightParen:
+    return "unexpectedBetweenAvailabilityArgumentsAndRightParen"
   case \AvailabilityConditionSyntax.rightParen:
     return "rightParen"
   case \AvailabilityConditionSyntax.unexpectedAfterRightParen:
@@ -321,12 +321,12 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "unexpectedBetweenLabelAndColon"
   case \AvailabilityEntrySyntax.colon:
     return "colon"
-  case \AvailabilityEntrySyntax.unexpectedBetweenColonAndAvailabilityList:
-    return "unexpectedBetweenColonAndAvailabilityList"
-  case \AvailabilityEntrySyntax.availabilityList:
-    return "availabilityList"
-  case \AvailabilityEntrySyntax.unexpectedBetweenAvailabilityListAndSemicolon:
-    return "unexpectedBetweenAvailabilityListAndSemicolon"
+  case \AvailabilityEntrySyntax.unexpectedBetweenColonAndAvailabilityArguments:
+    return "unexpectedBetweenColonAndAvailabilityArguments"
+  case \AvailabilityEntrySyntax.availabilityArguments:
+    return "availabilityArguments"
+  case \AvailabilityEntrySyntax.unexpectedBetweenAvailabilityArgumentsAndSemicolon:
+    return "unexpectedBetweenAvailabilityArgumentsAndSemicolon"
   case \AvailabilityEntrySyntax.semicolon:
     return "semicolon"
   case \AvailabilityEntrySyntax.unexpectedAfterSemicolon:
@@ -383,12 +383,12 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "unexpectedBetweenBeforeLabelAndColon"
   case \BackDeployedAttributeSpecListSyntax.colon:
     return "colon"
-  case \BackDeployedAttributeSpecListSyntax.unexpectedBetweenColonAndVersionList:
-    return "unexpectedBetweenColonAndVersionList"
-  case \BackDeployedAttributeSpecListSyntax.versionList:
-    return "versionList"
-  case \BackDeployedAttributeSpecListSyntax.unexpectedAfterVersionList:
-    return "unexpectedAfterVersionList"
+  case \BackDeployedAttributeSpecListSyntax.unexpectedBetweenColonAndPlatforms:
+    return "unexpectedBetweenColonAndPlatforms"
+  case \BackDeployedAttributeSpecListSyntax.platforms:
+    return "platforms"
+  case \BackDeployedAttributeSpecListSyntax.unexpectedAfterPlatforms:
+    return "unexpectedAfterPlatforms"
   case \BinaryOperatorExprSyntax.unexpectedBeforeOperatorToken:
     return "unexpectedBeforeOperatorToken"
   case \BinaryOperatorExprSyntax.operatorToken:
@@ -987,12 +987,12 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "rightSquare"
   case \DictionaryExprSyntax.unexpectedAfterRightSquare:
     return "unexpectedAfterRightSquare"
-  case \DictionaryTypeSyntax.unexpectedBeforeLeftSquareBracket:
-    return "unexpectedBeforeLeftSquareBracket"
-  case \DictionaryTypeSyntax.leftSquareBracket:
-    return "leftSquareBracket"
-  case \DictionaryTypeSyntax.unexpectedBetweenLeftSquareBracketAndKeyType:
-    return "unexpectedBetweenLeftSquareBracketAndKeyType"
+  case \DictionaryTypeSyntax.unexpectedBeforeLeftSquare:
+    return "unexpectedBeforeLeftSquare"
+  case \DictionaryTypeSyntax.leftSquare:
+    return "leftSquare"
+  case \DictionaryTypeSyntax.unexpectedBetweenLeftSquareAndKeyType:
+    return "unexpectedBetweenLeftSquareAndKeyType"
   case \DictionaryTypeSyntax.keyType:
     return "keyType"
   case \DictionaryTypeSyntax.unexpectedBetweenKeyTypeAndColon:
@@ -1003,12 +1003,12 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "unexpectedBetweenColonAndValueType"
   case \DictionaryTypeSyntax.valueType:
     return "valueType"
-  case \DictionaryTypeSyntax.unexpectedBetweenValueTypeAndRightSquareBracket:
-    return "unexpectedBetweenValueTypeAndRightSquareBracket"
-  case \DictionaryTypeSyntax.rightSquareBracket:
-    return "rightSquareBracket"
-  case \DictionaryTypeSyntax.unexpectedAfterRightSquareBracket:
-    return "unexpectedAfterRightSquareBracket"
+  case \DictionaryTypeSyntax.unexpectedBetweenValueTypeAndRightSquare:
+    return "unexpectedBetweenValueTypeAndRightSquare"
+  case \DictionaryTypeSyntax.rightSquare:
+    return "rightSquare"
+  case \DictionaryTypeSyntax.unexpectedAfterRightSquare:
+    return "unexpectedAfterRightSquare"
   case \DifferentiabilityParamSyntax.unexpectedBeforeParameter:
     return "unexpectedBeforeParameter"
   case \DifferentiabilityParamSyntax.parameter:
@@ -1579,12 +1579,12 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "unexpectedBeforeLeftAngleBracket"
   case \GenericParameterClauseSyntax.leftAngleBracket:
     return "leftAngleBracket"
-  case \GenericParameterClauseSyntax.unexpectedBetweenLeftAngleBracketAndGenericParameterList:
-    return "unexpectedBetweenLeftAngleBracketAndGenericParameterList"
-  case \GenericParameterClauseSyntax.genericParameterList:
-    return "genericParameterList"
-  case \GenericParameterClauseSyntax.unexpectedBetweenGenericParameterListAndGenericWhereClause:
-    return "unexpectedBetweenGenericParameterListAndGenericWhereClause"
+  case \GenericParameterClauseSyntax.unexpectedBetweenLeftAngleBracketAndParameters:
+    return "unexpectedBetweenLeftAngleBracketAndParameters"
+  case \GenericParameterClauseSyntax.parameters:
+    return "parameters"
+  case \GenericParameterClauseSyntax.unexpectedBetweenParametersAndGenericWhereClause:
+    return "unexpectedBetweenParametersAndGenericWhereClause"
   case \GenericParameterClauseSyntax.genericWhereClause:
     return "genericWhereClause"
   case \GenericParameterClauseSyntax.unexpectedBetweenGenericWhereClauseAndRightAngleBracket:
@@ -2643,12 +2643,12 @@ public func childName(_ keyPath: AnyKeyPath) -> String? {
     return "trailingComma"
   case \PrecedenceGroupNameElementSyntax.unexpectedAfterTrailingComma:
     return "unexpectedAfterTrailingComma"
-  case \PrecedenceGroupRelationSyntax.unexpectedBeforeHigherThanOrLowerThan:
-    return "unexpectedBeforeHigherThanOrLowerThan"
-  case \PrecedenceGroupRelationSyntax.higherThanOrLowerThan:
-    return "higherThanOrLowerThan"
-  case \PrecedenceGroupRelationSyntax.unexpectedBetweenHigherThanOrLowerThanAndColon:
-    return "unexpectedBetweenHigherThanOrLowerThanAndColon"
+  case \PrecedenceGroupRelationSyntax.unexpectedBeforeHigherThanOrLowerThanKeyword:
+    return "unexpectedBeforeHigherThanOrLowerThanKeyword"
+  case \PrecedenceGroupRelationSyntax.higherThanOrLowerThanKeyword:
+    return "higherThanOrLowerThanKeyword"
+  case \PrecedenceGroupRelationSyntax.unexpectedBetweenHigherThanOrLowerThanKeywordAndColon:
+    return "unexpectedBetweenHigherThanOrLowerThanKeywordAndColon"
   case \PrecedenceGroupRelationSyntax.colon:
     return "colon"
   case \PrecedenceGroupRelationSyntax.unexpectedBetweenColonAndOtherNames:
