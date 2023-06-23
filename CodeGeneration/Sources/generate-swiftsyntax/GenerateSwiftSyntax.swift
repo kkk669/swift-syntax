@@ -89,6 +89,7 @@ struct GenerateSwiftSyntax: ParsableCommand {
         // SwiftParser
         GeneratedFileSpec(swiftParserGeneratedDir + ["IsLexerClassified.swift"], isLexerClassifiedFile),
         GeneratedFileSpec(swiftParserGeneratedDir + ["Parser+Entry.swift"], parserEntryFile),
+        GeneratedFileSpec(swiftParserGeneratedDir + ["Parser+TokenSpecSet.swift"], parserTokenSpecSetFile),
         GeneratedFileSpec(swiftParserGeneratedDir + ["TokenSpecStaticMembers.swift"], tokenSpecStaticMembersFile),
 
         // SwiftParserDiagnostics
@@ -101,6 +102,7 @@ struct GenerateSwiftSyntax: ParsableCommand {
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["Keyword.swift"], keywordFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["raw", "RawSyntaxNodes.swift"], rawSyntaxNodesFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["raw", "RawSyntaxValidation.swift"], rawSyntaxValidationFile),
+        GeneratedFileSpec(swiftSyntaxGeneratedDir + ["RenamedChildrenCompatibility.swift"], renamedChildrenCompatibilityFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxAnyVisitor.swift"], syntaxAnyVisitorFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxBaseNodes.swift"], syntaxBaseNodesFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxCollections.swift"], syntaxCollectionsFile),
@@ -122,6 +124,7 @@ struct GenerateSwiftSyntax: ParsableCommand {
           swiftSyntaxBuilderGeneratedDir + ["SyntaxExpressibleByStringInterpolationConformances.swift"],
           syntaxExpressibleByStringInterpolationConformancesFile
         ),
+        GeneratedFileSpec(swiftSyntaxBuilderGeneratedDir + ["RenamedChildrenBuilderCompatibility.swift"], renamedChildrenBuilderCompatibilityFile),
       ]
       + BASE_KIND_FILES.map { baseKind in
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["syntaxNodes", baseKind.value], syntaxNode(emitKind: baseKind.key))

@@ -284,6 +284,8 @@ class FixItApplier: SyntaxRewriter {
         return messages.contains($0.message.message)
       }
       .flatMap { $0.changes }
+
+    super.init(viewMode: .all)
   }
 
   public override func visitAny(_ node: Syntax) -> Syntax? {
@@ -317,7 +319,7 @@ class FixItApplier: SyntaxRewriter {
   /// If `messages` is not `nil`, applies only Fix-Its whose message is in `messages`.
   public static func applyFixes<T: SyntaxProtocol>(in diagnostics: [Diagnostic], withMessages messages: [String]?, to tree: T) -> Syntax {
     let applier = FixItApplier(diagnostics: diagnostics, withMessages: messages)
-    return applier.visit(Syntax(tree))
+    return applier.rewrite(tree)
   }
 }
 
@@ -331,7 +333,7 @@ func assertLocation<T: SyntaxProtocol>(
   line: UInt = #line
 ) {
   if let markerLoc = markerLocations[locationMarker] {
-    let locationConverter = SourceLocationConverter(file: "", source: tree.description)
+    let locationConverter = SourceLocationConverter(file: "", tree: tree)
     let actualLocation = location
     let expectedLocation = locationConverter.location(for: AbsolutePosition(utf8Offset: markerLoc))
     if actualLocation.line != expectedLocation.line || actualLocation.column != expectedLocation.column {
@@ -355,7 +357,7 @@ func assertNote<T: SyntaxProtocol>(
   expected spec: NoteSpec
 ) {
   XCTAssertEqual(note.message, spec.message, file: spec.file, line: spec.line)
-  let locationConverter = SourceLocationConverter(file: "", source: tree.description)
+  let locationConverter = SourceLocationConverter(file: "", tree: tree)
   assertLocation(
     note.location(converter: locationConverter),
     in: tree,
@@ -374,7 +376,7 @@ func assertDiagnostic<T: SyntaxProtocol>(
   markerLocations: [String: Int],
   expected spec: DiagnosticSpec
 ) {
-  let locationConverter = SourceLocationConverter(file: "", source: tree.description)
+  let locationConverter = SourceLocationConverter(file: "", tree: tree)
   assertLocation(
     diag.location(converter: locationConverter),
     in: tree,
@@ -485,6 +487,8 @@ class TokenPresenceFlipper: SyntaxRewriter {
 
   init(flipTokenAtIndex: Int) {
     self.flipTokenAtIndex = flipTokenAtIndex
+
+    super.init(viewMode: .all)
   }
 
   override func visit(_ token: TokenSyntax) -> TokenSyntax {
@@ -759,8 +763,8 @@ func assertBasicFormat<S: SyntaxProtocol>(
   line: UInt = #line
 ) {
   var parser = Parser(source)
-  let sourceTree = Syntax(parse(&parser))
-  let withoutTrivia = TriviaRemover().visit(sourceTree)
+  let sourceTree = parse(&parser)
+  let withoutTrivia = TriviaRemover(viewMode: .sourceAccurate).rewrite(sourceTree)
   let formatted = withoutTrivia.formatted()
 
   var formattedParser = Parser(formatted.description)

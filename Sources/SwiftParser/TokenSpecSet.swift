@@ -23,59 +23,6 @@ protocol TokenSpecSet: CaseIterable {
 
 // MARK: - Subsets
 
-enum AccessorKind: TokenSpecSet {
-  case `get`
-  case `set`
-  case `didSet`
-  case `willSet`
-  case `init`
-  case unsafeAddress
-  case addressWithOwner
-  case addressWithNativeOwner
-  case unsafeMutableAddress
-  case mutableAddressWithOwner
-  case mutableAddressWithNativeOwner
-  case _read
-  case _modify
-
-  init?(lexeme: Lexer.Lexeme) {
-    switch PrepareForKeywordMatch(lexeme) {
-    case TokenSpec(.get): self = .get
-    case TokenSpec(.set): self = .set
-    case TokenSpec(.didSet): self = .didSet
-    case TokenSpec(.willSet): self = .willSet
-    case TokenSpec(.`init`): self = .`init`
-    case TokenSpec(.unsafeAddress): self = .unsafeAddress
-    case TokenSpec(.addressWithOwner): self = .addressWithOwner
-    case TokenSpec(.addressWithNativeOwner): self = .addressWithNativeOwner
-    case TokenSpec(.unsafeMutableAddress): self = .unsafeMutableAddress
-    case TokenSpec(.mutableAddressWithOwner): self = .mutableAddressWithOwner
-    case TokenSpec(.mutableAddressWithNativeOwner): self = .mutableAddressWithNativeOwner
-    case TokenSpec(._read): self = ._read
-    case TokenSpec(._modify): self = ._modify
-    default: return nil
-    }
-  }
-
-  var spec: TokenSpec {
-    switch self {
-    case .get: return .keyword(.get)
-    case .set: return .keyword(.set)
-    case .didSet: return .keyword(.didSet)
-    case .willSet: return .keyword(.willSet)
-    case .`init`: return .keyword(.`init`)
-    case .unsafeAddress: return .keyword(.unsafeAddress)
-    case .addressWithOwner: return .keyword(.addressWithOwner)
-    case .addressWithNativeOwner: return .keyword(.addressWithNativeOwner)
-    case .unsafeMutableAddress: return .keyword(.unsafeMutableAddress)
-    case .mutableAddressWithOwner: return .keyword(.mutableAddressWithOwner)
-    case .mutableAddressWithNativeOwner: return .keyword(.mutableAddressWithNativeOwner)
-    case ._read: return .keyword(._read)
-    case ._modify: return .keyword(._modify)
-    }
-  }
-}
-
 enum CanBeStatementStart: TokenSpecSet {
   case _forget  // NOTE: support for deprecated _forget
   case `break`
@@ -916,6 +863,41 @@ enum ExpressionStart: TokenSpecSet {
     case .expressionPrefixOperator(let underlyingKind): return underlyingKind.spec
     case .primaryExpressionStart(let underlyingKind): return underlyingKind.spec
     case .ifOrSwitch(let underlyingKind): return underlyingKind.spec
+    }
+  }
+}
+
+enum EffectSpecifiers: TokenSpecSet {
+  case async
+  case await
+  case reasync
+  case `rethrows`
+  case `throw`
+  case `throws`
+  case `try`
+
+  init?(lexeme: Lexer.Lexeme) {
+    switch PrepareForKeywordMatch(lexeme) {
+    case TokenSpec(.async): self = .async
+    case TokenSpec(.await, allowAtStartOfLine: false): self = .await
+    case TokenSpec(.reasync): self = .reasync
+    case TokenSpec(.rethrows): self = .rethrows
+    case TokenSpec(.throw, allowAtStartOfLine: false): self = .throw
+    case TokenSpec(.throws): self = .throws
+    case TokenSpec(.try, allowAtStartOfLine: false): self = .try
+    default: return nil
+    }
+  }
+
+  var spec: TokenSpec {
+    switch self {
+    case .async: return .keyword(.async)
+    case .await: return TokenSpec(.await, allowAtStartOfLine: false)
+    case .reasync: return .keyword(.reasync)
+    case .rethrows: return .keyword(.rethrows)
+    case .throw: return TokenSpec(.throw, allowAtStartOfLine: false)
+    case .throws: return .keyword(.throws)
+    case .try: return TokenSpec(.try, allowAtStartOfLine: false)
     }
   }
 }

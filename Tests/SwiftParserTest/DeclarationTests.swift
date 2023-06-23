@@ -1653,6 +1653,23 @@ final class DeclarationTests: XCTestCase {
     )
   }
 
+  func testMacroExpansionDeclarationWithKeywordName() {
+    assertParse(
+      """
+      struct X {
+        #case
+      }
+      """,
+      substructure: Syntax(
+        MacroExpansionDeclSyntax(
+          poundToken: .poundToken(),
+          macro: .identifier("case"),
+          argumentList: TupleExprElementListSyntax([])
+        )
+      )
+    )
+  }
+
   func testAttributedMacroExpansionDeclaration() {
     assertParse(
       """
@@ -1806,60 +1823,32 @@ final class DeclarationTests: XCTestCase {
     assertParse(
       """
       struct S {
-        @attrib #1️⃣class
+        @attrib #class
       }
       """,
       substructure: Syntax(
         MacroExpansionDeclSyntax(
           attributes: [.attribute(AttributeSyntax(attributeName: TypeSyntax("attrib")))],
           poundToken: .poundToken(),
-          /*unexpectedBetweenPoundTokenAndMacro:*/ [
-            TokenSyntax.keyword(.class)
-          ],
-          macro: .identifier("", presence: .missing),
+          macro: .identifier("class"),
           argumentList: []
         )
-      ),
-      diagnostics: [
-        DiagnosticSpec(
-          message: "keyword 'class' cannot be used as an identifier here",
-          fixIts: ["if this name is unavoidable, use backticks to escape it"]
-        )
-      ],
-      fixedSource: """
-        struct S {
-          @attrib #`class`
-        }
-        """
+      )
     )
 
     assertParse(
       """
       struct S {
-        #1️⃣struct
+        #struct
       }
       """,
       substructure: Syntax(
         MacroExpansionDeclSyntax(
           poundToken: .poundToken(),
-          /*unexpectedBetweenPoundTokenAndMacro:*/ [
-            TokenSyntax.keyword(.struct)
-          ],
-          macro: .identifier("", presence: .missing),
+          macro: .identifier("struct"),
           argumentList: []
         )
-      ),
-      diagnostics: [
-        DiagnosticSpec(
-          message: "keyword 'struct' cannot be used as an identifier here",
-          fixIts: ["if this name is unavoidable, use backticks to escape it"]
-        )
-      ],
-      fixedSource: """
-        struct S {
-          #`struct`
-        }
-        """
+      )
     )
   }
 
@@ -2527,6 +2516,94 @@ final class DeclarationTests: XCTestCase {
         func
           test() {}
         var other: Int
+        """
+    )
+  }
+
+  func testMissingEqualInVariableDeclaration() {
+    assertParse(
+      "let foo: [Int] 1️⃣[]",
+      diagnostics: [
+        DiagnosticSpec(locationMarker: "1️⃣", message: "expected '=' in variable", fixIts: ["insert '='"])
+      ],
+      fixedSource: "let foo: [Int] = []"
+    )
+  }
+
+  func testInitAccessorsWithDefaultValues() {
+    assertParse(
+      """
+      struct Test {
+        var pair: (Int, Int) = (42, 0) {
+          init(initialValue) {}
+
+          get { (0, 42) }
+          set { }
+        }
+      }
+      """
+    )
+
+    assertParse(
+      """
+      struct Test {
+        var pair: (Int, Int) = (42, 0) {
+          init initializes(a) {}
+
+          get { (0, 42) }
+          set { }
+        }
+      }
+      """
+    )
+
+    assertParse(
+      """
+      struct Test {
+        var pair: (Int, Int) = (42, 0) {
+          get { (0, 42) }
+          set { }
+
+          init(initialValue1️⃣) {}
+        }
+      }
+      """,
+      substructure: Syntax(
+        InitializerDeclSyntax(
+          initKeyword: .keyword(.`init`),
+          signature: FunctionSignatureSyntax(
+            input: ParameterClauseSyntax(
+              leftParen: .leftParenToken(),
+              parameterList: FunctionParameterListSyntax([
+                FunctionParameterSyntax(
+                  firstName: .identifier("initialValue"),
+                  colon: .colonToken(presence: .missing),
+                  type: TypeSyntax(MissingTypeSyntax(placeholder: .identifier("<#type#>", presence: .missing)))
+                )
+              ]),
+              rightParen: .rightParenToken(trailingTrivia: .space)
+            )
+          ),
+          body: CodeBlockSyntax(
+            leftBrace: .leftBraceToken(),
+            statements: CodeBlockItemListSyntax([]),
+            rightBrace: .rightBraceToken()
+          )
+        )
+      ),
+      diagnostics: [
+        DiagnosticSpec(message: "expected ':' and type in parameter", fixIts: ["insert ':' and type"])
+      ],
+      fixedSource:
+        """
+        struct Test {
+          var pair: (Int, Int) = (42, 0) {
+            get { (0, 42) }
+            set { }
+
+            init(initialValue: <#type#>) {}
+          }
+        }
         """
     )
   }

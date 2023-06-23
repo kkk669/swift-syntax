@@ -17,6 +17,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 ### Articles
 
 - <doc:Working-with-SwiftSyntax>
+- <doc:Glossary>
 
 ### Tutorials
 
@@ -82,4 +83,3 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/SyntaxEnum>
 - <doc:SwiftSyntax/SyntaxHashable>
 - <doc:SwiftSyntax/SyntaxIdentifier>
-- <doc:SwiftSyntax/RawTokenKind>

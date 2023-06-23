@@ -17,14 +17,6 @@ import XCTest
 import WASIHelpers
 #endif
 
-fileprivate class FuncRenamer: SyntaxRewriter {
-  override func visit(_ node: FunctionDeclSyntax) -> DeclSyntax {
-    let rewritten = super.visit(node).as(FunctionDeclSyntax.self)!
-    let modifiedFunctionDecl = rewritten.with(\.identifier, .identifier("anotherName"))
-    return DeclSyntax(modifiedFunctionDecl)
-  }
-}
-
 public class AbsolutePositionTests: XCTestCase {
   public func testRecursion() {
     var l = [CodeBlockItemSyntax]()

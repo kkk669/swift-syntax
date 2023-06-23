@@ -40,6 +40,8 @@ func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
         // MARK: - \(raw: node.kind.syntaxType)
 
         \(raw: node.documentation)
+        \(raw: node.documentation.isEmpty ? "" : "///")
+        \(raw: node.grammar)
         public struct \(raw: node.kind.syntaxType): \(raw: node.baseType.syntaxBaseName)Protocol, SyntaxHashable
         """
       ) {
@@ -129,7 +131,7 @@ func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
                   """
                 )
               }
-              StmtSyntax("return SyntaxData.forRoot(raw)")
+              StmtSyntax("return SyntaxData.forRoot(raw, rawNodeArena: arena)")
             }
           )
 
@@ -173,7 +175,7 @@ func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
             AccessorDeclSyntax(
               """
               set(value) {
-                self = \(node.kind.syntaxType)(data.replacingChild(at: \(raw: index), with: value\(raw: child.isOptional ? "?" : "").raw, arena: SyntaxArena()))
+                self = \(node.kind.syntaxType)(data.replacingChild(at: \(raw: index), with: value\(raw: child.isOptional ? "?" : "").data, arena: SyntaxArena()))
               }
               """
             )
@@ -186,7 +188,7 @@ func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
           // If needed, this could be added in the future, but for now withUnexpected should be sufficient.
           if let childNode = SYNTAX_NODE_MAP[child.syntaxNodeKind]?.collectionNode,
             !child.isUnexpectedNodes,
-            case .collection(_, let childElt) = child.kind
+            case .collection(_, let childElt, _) = child.kind
           {
             let childEltType = childNode.collectionElementType.syntaxBaseName
 
@@ -207,7 +209,7 @@ func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
                   collection = RawSyntax.makeLayout(kind: SyntaxKind.\(raw: childNode.varOrCaseName),
                                                     from: [element.raw], arena: arena)
                 }
-                let newData = data.replacingChild(at: \(raw: index), with: collection, arena: arena)
+                let newData = data.replacingChild(at: \(raw: index), with: collection, rawNodeArena: arena, allocationArena: arena)
                 return \(node.kind.syntaxType)(newData)
               }
               """
@@ -300,58 +302,5 @@ private func generateSyntaxChildChoices(for child: Child) throws -> EnumDeclSynt
 
       StmtSyntax("return .choices(\(choices))")
     }
-  }
-}
-
-fileprivate extension LayoutNode {
-  func generateInitializerDeclHeader() -> PartialSyntaxNodeString {
-    if children.isEmpty {
-      return "public init()"
-    }
-
-    func createFunctionParameterSyntax(for child: Child) -> FunctionParameterSyntax {
-      var paramType: TypeSyntax
-      if !child.kind.isNodeChoicesEmpty {
-        paramType = "\(raw: child.name)"
-      } else if child.hasBaseType {
-        paramType = "some \(raw: child.syntaxNodeKind.protocolType)"
-      } else {
-        paramType = child.syntaxNodeKind.syntaxType
-      }
-
-      if child.isOptional {
-        if paramType.is(ConstrainedSugarTypeSyntax.self) {
-          paramType = "(\(paramType))?"
-        } else {
-          paramType = "\(paramType)?"
-        }
-      }
-
-      return FunctionParameterSyntax(
-        leadingTrivia: .newline,
-        firstName: child.isUnexpectedNodes ? .wildcardToken(trailingTrivia: .space) : .identifier(child.varName),
-        secondName: child.isUnexpectedNodes ? .identifier(child.varName) : nil,
-        colon: .colonToken(),
-        type: paramType,
-        defaultArgument: child.defaultInitialization
-      )
-    }
-
-    let params = FunctionParameterListSyntax {
-      FunctionParameterSyntax("leadingTrivia: Trivia? = nil")
-
-      for child in children {
-        createFunctionParameterSyntax(for: child)
-      }
-
-      FunctionParameterSyntax("trailingTrivia: Trivia? = nil")
-        .with(\.leadingTrivia, .newline)
-    }
-
-    return """
-      public init(
-      \(params)
-      )
-      """
   }
 }

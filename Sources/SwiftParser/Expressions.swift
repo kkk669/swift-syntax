@@ -1220,10 +1220,10 @@ extension Parser {
         )
       )
     case (.identifier, let handle)?, (.self, let handle)?, (.`init`, let handle)?:
-      // If we have "case let x." or "case let x(", we parse x as a normal
-      // name, not a binding, because it is the start of an enum pattern or
-      // call pattern.
-      if pattern.admitsBinding && !self.lookahead().isNextTokenCallPattern() {
+      // If we have "case let x" followed by ".", "(", "[", or a generic
+      // argument list, we parse x as a normal name, not a binding, because it
+      // is the start of an enum or expr pattern.
+      if pattern.admitsBinding && self.lookahead().isInBindingPatternPosition() {
         let identifier = self.eat(handle)
         let pattern = RawPatternSyntax(
           RawIdentifierPatternSyntax(
@@ -1420,7 +1420,7 @@ extension Parser {
     var unexpectedBeforeMacro: RawUnexpectedNodesSyntax?
     var macro: RawTokenSyntax
     if !self.currentToken.isAtStartOfLine {
-      (unexpectedBeforeMacro, macro) = self.expectIdentifier(keywordRecovery: true)
+      (unexpectedBeforeMacro, macro) = self.expectIdentifier(allowKeywordsAsIdentifier: true)
       if macro.leadingTriviaByteLength != 0 {
         // If there're whitespaces after '#' diagnose.
         unexpectedBeforeMacro = RawUnexpectedNodesSyntax(combining: unexpectedBeforeMacro, macro, arena: self.arena)
@@ -2620,7 +2620,7 @@ extension Parser {
     var versionInfo: RawCanImportVersionInfoSyntax?
 
     if let comma = self.consume(if: .comma) {
-      let (unexpectedBeforeLabel, label) = self.expect(.keyword(._version), .keyword(._underlyingVersion), default: .keyword(._version))
+      let (unexpectedBeforeLabel, label) = self.expect(anyIn: CanImportVersionInfoSyntax.LabelOptions.self, default: ._version)
       let (unexpectedBeforeColon, colon) = self.expect(.colon)
 
       let version = self.parseVersionTuple(maxComponentCount: 4)
@@ -2759,13 +2759,21 @@ extension Parser.Lookahead {
     return self.peek().isLexerClassifiedKeyword || TokenSpec(.identifier) ~= self.peek()
   }
 
-  fileprivate func isNextTokenCallPattern() -> Bool {
+  fileprivate func isInBindingPatternPosition() -> Bool {
+    // Cannot form a binding pattern if a generic argument list follows, this
+    // is something like 'case let E<Int>.foo(x)'.
+    if self.peek().isContextualPunctuator("<") {
+      var lookahead = self.lookahead()
+      lookahead.consumeAnyToken()
+      return !lookahead.canParseAsGenericArgumentList()
+    }
     switch self.peek().rawTokenKind {
-    case .period,
-      .leftParen:
-      return true
-    default:
+    // A '.' indicates a member access, '(' and '[' indicate a function call or
+    // subscript. We can't form a binding pattern as the base of these.
+    case .period, .leftParen, .leftSquare:
       return false
+    default:
+      return true
     }
   }
 }

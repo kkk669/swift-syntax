@@ -534,7 +534,6 @@ public let DECL_NODES: [Node] = [
           .keyword(text: "public"),
           .keyword(text: "reasync"),
           .keyword(text: "required"),
-          .keyword(text: "setter_access"),
           .keyword(text: "static"),
           .keyword(text: "unowned"),
           .keyword(text: "weak"),
@@ -586,6 +585,11 @@ public let DECL_NODES: [Node] = [
         documentation: "The deinit keyword."
       ),
       Child(
+        name: "EffectSpecifiers",
+        kind: .node(kind: .deinitEffectSpecifiers),
+        isOptional: true
+      ),
+      Child(
         name: "Body",
         kind: .node(kind: .codeBlock),
         documentation: "The deinitializer's body.",
@@ -634,7 +638,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "Attributes",
         kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
-        documentation: "If there were attributes before the editor placeholder, the ``EditorPlaceholderDecl`` will contain these.",
+        documentation: "If there were attributes before the editor placeholder, the ``EditorPlaceholderDeclSyntax`` will contain these.",
         isOptional: true
       ),
       Child(
@@ -645,6 +649,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Placeholder",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         documentation: """
           The actual editor placeholder that starts with `<#` and ends with `#>`.
@@ -859,6 +864,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "GenericParameterClause",
+        deprecatedName: "GenericParameters",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
         documentation: "The generic parameters, if any, for this enum declaration.",
@@ -1201,6 +1207,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "ImportKeyword",
+        deprecatedName: "ImportTok",
         kind: .token(choices: [.keyword(text: "import")]),
         documentation: "The `import` keyword for this declaration."
       ),
@@ -1871,6 +1878,7 @@ public let DECL_NODES: [Node] = [
     kind: .precedenceGroupNameElement,
     base: .syntax,
     nameForDiagnostics: nil,
+    traits: ["WithTrailingComma"],
     children: [
       Child(
         name: "Name",
@@ -1904,6 +1912,7 @@ public let DECL_NODES: [Node] = [
     children: [
       Child(
         name: "HigherThanOrLowerThanKeyword",
+        deprecatedName: "HigherThanOrLowerThan",
         kind: .token(choices: [.keyword(text: "higherThan"), .keyword(text: "lowerThan")]),
         documentation: "The relation to specified other precedence groups.",
         classification: "Keyword"
@@ -2268,6 +2277,7 @@ public let DECL_NODES: [Node] = [
     traits: [
       "IdentifiedDecl",
       "WithAttributes",
+      "WithModifiers",
     ],
     children: [
       Child(

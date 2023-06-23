@@ -7,19 +7,8 @@ import Foundation
 /// to speed up the build or improve it.
 var swiftSyntaxSwiftSettings: [SwiftSetting] = []
 if ProcessInfo.processInfo.environment["SWIFT_BUILD_SCRIPT_ENVIRONMENT"] != nil {
-  let groupFile = URL(fileURLWithPath: #file)
-    .deletingLastPathComponent()
-    .appendingPathComponent("utils")
-    .appendingPathComponent("group.json")
   swiftSyntaxSwiftSettings += [
-    .define("SWIFTSYNTAX_ENABLE_ASSERTIONS"),
-    .unsafeFlags([
-      "-Xfrontend", "-group-info-path",
-      "-Xfrontend", groupFile.path,
-      // Enforcing exclusivity increases compile time of release builds by 2 minutes.
-      // Disable it when we're in a controlled CI environment.
-      "-enforce-exclusivity=unchecked",
-    ]),
+    .define("SWIFTSYNTAX_ENABLE_ASSERTIONS")
   ]
 }
 if ProcessInfo.processInfo.environment["SWIFTSYNTAX_ENABLE_RAWSYNTAX_VALIDATION"] != nil {
@@ -155,7 +144,7 @@ let package = Package(
 
     .testTarget(
       name: "SwiftSyntaxTest",
-      dependencies: ["_SwiftSyntaxTestSupport", "SwiftSyntax"]
+      dependencies: ["_SwiftSyntaxTestSupport", "SwiftSyntax", "SwiftSyntaxBuilder"]
     ),
 
     // MARK: SwiftSyntaxBuilder

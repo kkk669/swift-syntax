@@ -13,6 +13,13 @@
 // MARK: TokenSyntax
 
 /// A Syntax node representing a single token.
+///
+/// All source code of a syntax tree is represented by tokens – layout nodes
+/// never contain any source code by themselves.
+///
+/// A token consists of leading ``Trivia``, i.e. whitespaces before the actual
+/// token contents, the token’s `text` and trailing ``Trivia`` after the token’s
+/// content.
 public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
   /// The ``Syntax`` node that provides the underlying data.
   ///
@@ -49,18 +56,16 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
     trailingTrivia: Trivia = [],
     presence: SourcePresence
   ) {
-    let data: SyntaxData = withExtendedLifetime(SyntaxArena()) { arena in
-      let raw = RawSyntax.makeMaterializedToken(
-        kind: kind,
-        leadingTrivia: leadingTrivia,
-        trailingTrivia: trailingTrivia,
-        presence: presence,
-        tokenDiagnostic: nil,
-        arena: arena
-      )
-      return SyntaxData.forRoot(raw)
-    }
-    self.init(data)
+    let arena = SyntaxArena()
+    let raw = RawSyntax.makeMaterializedToken(
+      kind: kind,
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence,
+      tokenDiagnostic: nil,
+      arena: arena
+    )
+    self.init(SyntaxData.forRoot(raw, rawNodeArena: arena))
   }
 
   /// Whether the token is present or missing.
@@ -109,7 +114,7 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
       }
       let arena = SyntaxArena()
       let newRaw = tokenView.withKind(newValue, arena: arena)
-      let newData = data.replacingSelf(newRaw, arena: arena)
+      let newData = data.replacingSelf(newRaw, rawNodeArena: arena, allocationArena: arena)
       self = TokenSyntax(newData)
     }
   }
@@ -139,7 +144,7 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
   /// empty layout node.
   ///
   /// Every syntax node that contains a token will have a
-  /// ``SyntaxNodeStructure.SyntaxChoices.choices`` case for the token and those
+  /// ``SyntaxNodeStructure/SyntaxChoice/token(_:)`` case for the token and those
   /// choices represent the token kinds the token might have.
   public static var structure: SyntaxNodeStructure {
     return .layout([])

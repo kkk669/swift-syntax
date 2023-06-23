@@ -15,6 +15,12 @@
 // MARK: - ArrayTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `leftSquare`: `'['`
+///  - `elementType`: ``TypeSyntax``
+///  - `rightSquare`: `']'`
 public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -73,7 +79,7 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -83,7 +89,7 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ArrayTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ArrayTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -92,7 +98,7 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = ArrayTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = ArrayTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -101,7 +107,7 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ArrayTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ArrayTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -110,7 +116,7 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = ArrayTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = ArrayTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -119,7 +125,7 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ArrayTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = ArrayTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -128,7 +134,7 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = ArrayTypeSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = ArrayTypeSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -137,7 +143,7 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ArrayTypeSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = ArrayTypeSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -157,6 +163,12 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - AttributedTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `specifier`: (`'inout'` | `'__shared'` | `'__owned'` | `'isolated'` | `'_const'` | `'borrowing'` | `'consuming'`)?
+///  - `attributes`: ``AttributeListSyntax``
+///  - `baseType`: ``TypeSyntax``
 public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -215,7 +227,7 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -225,7 +237,7 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AttributedTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = AttributedTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -234,7 +246,7 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = AttributedTypeSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = AttributedTypeSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -243,7 +255,7 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AttributedTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = AttributedTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -252,7 +264,7 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = AttributedTypeSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = AttributedTypeSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -271,7 +283,12 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return AttributedTypeSyntax(newData)
   }
   
@@ -280,7 +297,7 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AttributedTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = AttributedTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -289,7 +306,7 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = AttributedTypeSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = AttributedTypeSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -298,7 +315,7 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AttributedTypeSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = AttributedTypeSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -318,6 +335,10 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - ClassRestrictionTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `classKeyword`: `'class'`
 public struct ClassRestrictionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -356,7 +377,7 @@ public struct ClassRestrictionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -366,7 +387,7 @@ public struct ClassRestrictionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassRestrictionTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ClassRestrictionTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -375,7 +396,7 @@ public struct ClassRestrictionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = ClassRestrictionTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = ClassRestrictionTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -384,7 +405,7 @@ public struct ClassRestrictionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassRestrictionTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ClassRestrictionTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -396,6 +417,10 @@ public struct ClassRestrictionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - CompositionTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `elements`: ``CompositionTypeElementListSyntax``
 public struct CompositionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -434,7 +459,7 @@ public struct CompositionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -444,7 +469,7 @@ public struct CompositionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = CompositionTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = CompositionTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -453,7 +478,7 @@ public struct CompositionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return CompositionTypeElementListSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = CompositionTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = CompositionTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -472,7 +497,12 @@ public struct CompositionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.compositionTypeElementList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return CompositionTypeSyntax(newData)
   }
   
@@ -481,7 +511,7 @@ public struct CompositionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = CompositionTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = CompositionTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -493,6 +523,11 @@ public struct CompositionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - ConstrainedSugarTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `someOrAnySpecifier`: (`'some'` | `'any'`)
+///  - `baseType`: ``TypeSyntax``
 public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -545,7 +580,7 @@ public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -555,7 +590,7 @@ public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -564,7 +599,7 @@ public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -573,7 +608,7 @@ public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -582,7 +617,7 @@ public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -591,7 +626,7 @@ public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = ConstrainedSugarTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -609,6 +644,14 @@ public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - DictionaryTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `leftSquare`: `'['`
+///  - `keyType`: ``TypeSyntax``
+///  - `colon`: `':'`
+///  - `valueType`: ``TypeSyntax``
+///  - `rightSquare`: `']'`
 public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -679,7 +722,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -689,7 +732,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -698,7 +741,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -707,7 +750,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -716,7 +759,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -725,7 +768,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -734,7 +777,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -743,7 +786,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -752,7 +795,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -761,7 +804,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -770,7 +813,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 9, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -779,7 +822,7 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DictionaryTypeSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = DictionaryTypeSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -803,6 +846,14 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - FunctionTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `leftParen`: `'('`
+///  - `parameters`: ``TupleTypeElementListSyntax``
+///  - `rightParen`: `')'`
+///  - `effectSpecifiers`: ``TypeEffectSpecifiersSyntax``?
+///  - `output`: ``ReturnClauseSyntax``
 public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -873,7 +924,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -883,7 +934,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -892,7 +943,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -901,7 +952,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -910,7 +961,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TupleTypeElementListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -929,7 +980,12 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.tupleTypeElementList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return FunctionTypeSyntax(newData)
   }
   
@@ -938,7 +994,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -947,7 +1003,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -956,7 +1012,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -965,7 +1021,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 7, parent: Syntax(self)).map(TypeEffectSpecifiersSyntax.init)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 7, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -974,7 +1030,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -983,7 +1039,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return ReturnClauseSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 9, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -992,7 +1048,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionTypeSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionTypeSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1016,6 +1072,11 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - ImplicitlyUnwrappedOptionalTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `wrappedType`: ``TypeSyntax``
+///  - `exclamationMark`: `'!'`
 public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1068,7 +1129,7 @@ public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxH
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1078,7 +1139,7 @@ public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxH
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1087,7 +1148,7 @@ public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxH
       return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1096,7 +1157,7 @@ public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxH
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1105,7 +1166,7 @@ public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxH
       return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1114,7 +1175,7 @@ public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxH
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = ImplicitlyUnwrappedOptionalTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1132,6 +1193,13 @@ public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxH
 // MARK: - MemberTypeIdentifierSyntax
 
 
+
+/// ### Children
+/// 
+///  - `baseType`: ``TypeSyntax``
+///  - `period`: `'.'`
+///  - `name`: (`<identifier>` | `'self'` | `'Self'`)
+///  - `genericArgumentClause`: ``GenericArgumentClauseSyntax``?
 public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1196,7 +1264,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1206,7 +1274,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1215,7 +1283,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1224,7 +1292,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1233,7 +1301,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1242,7 +1310,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1251,7 +1319,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1260,7 +1328,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1269,7 +1337,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 7, parent: Syntax(self)).map(GenericArgumentClauseSyntax.init)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 7, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1278,7 +1346,7 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = MemberTypeIdentifierSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1300,6 +1368,12 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - MetatypeTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `baseType`: ``TypeSyntax``
+///  - `period`: `'.'`
+///  - `typeOrProtocol`: (`'Type'` | `'Protocol'`)
 public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1358,7 +1432,7 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1368,7 +1442,7 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MetatypeTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = MetatypeTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1377,7 +1451,7 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = MetatypeTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = MetatypeTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1386,7 +1460,7 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MetatypeTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = MetatypeTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1395,7 +1469,7 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = MetatypeTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = MetatypeTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1404,7 +1478,7 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MetatypeTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = MetatypeTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1413,7 +1487,7 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = MetatypeTypeSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = MetatypeTypeSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1422,7 +1496,7 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MetatypeTypeSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = MetatypeTypeSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1442,6 +1516,10 @@ public struct MetatypeTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - MissingTypeSyntax
 
 /// In case the source code is missing a type, this node stands in place of the missing type.
+///
+/// ### Children
+/// 
+///  - `placeholder`: `<identifier>`
 public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1480,7 +1558,7 @@ public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1490,7 +1568,7 @@ public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MissingTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = MissingTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1500,7 +1578,7 @@ public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = MissingTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = MissingTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1509,7 +1587,7 @@ public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MissingTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = MissingTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1521,6 +1599,11 @@ public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - NamedOpaqueReturnTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``
+///  - `baseType`: ``TypeSyntax``
 public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1573,7 +1656,7 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1583,7 +1666,7 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1592,7 +1675,7 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return GenericParameterClauseSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1601,7 +1684,7 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1610,7 +1693,7 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1619,7 +1702,7 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = NamedOpaqueReturnTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1637,6 +1720,11 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - OptionalTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `wrappedType`: ``TypeSyntax``
+///  - `questionMark`: `'?'`
 public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1689,7 +1777,7 @@ public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1699,7 +1787,7 @@ public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = OptionalTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = OptionalTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1708,7 +1796,7 @@ public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = OptionalTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = OptionalTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1717,7 +1805,7 @@ public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = OptionalTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = OptionalTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1726,7 +1814,7 @@ public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = OptionalTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = OptionalTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1735,7 +1823,7 @@ public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = OptionalTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = OptionalTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1753,6 +1841,11 @@ public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - PackExpansionTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `repeatKeyword`: `'repeat'`
+///  - `patternType`: ``TypeSyntax``
 public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1805,7 +1898,7 @@ public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1815,7 +1908,7 @@ public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PackExpansionTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = PackExpansionTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1824,7 +1917,7 @@ public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = PackExpansionTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = PackExpansionTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1833,7 +1926,7 @@ public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PackExpansionTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = PackExpansionTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1842,7 +1935,7 @@ public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = PackExpansionTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = PackExpansionTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1851,7 +1944,7 @@ public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PackExpansionTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = PackExpansionTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1869,6 +1962,11 @@ public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - PackReferenceTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `eachKeyword`: `'each'`
+///  - `packType`: ``TypeSyntax``
 public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1921,7 +2019,7 @@ public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1931,7 +2029,7 @@ public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PackReferenceTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = PackReferenceTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1940,7 +2038,7 @@ public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = PackReferenceTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = PackReferenceTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1949,7 +2047,7 @@ public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PackReferenceTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = PackReferenceTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1958,7 +2056,7 @@ public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = PackReferenceTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = PackReferenceTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1967,7 +2065,7 @@ public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PackReferenceTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = PackReferenceTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1985,6 +2083,11 @@ public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - SimpleTypeIdentifierSyntax
 
 
+
+/// ### Children
+/// 
+///  - `name`: (`<identifier>` | `'self'` | `'Self'` | `'Any'` | `'_'`)
+///  - `genericArgumentClause`: ``GenericArgumentClauseSyntax``?
 public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -2037,7 +2140,7 @@ public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -2047,7 +2150,7 @@ public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2056,7 +2159,7 @@ public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2065,7 +2168,7 @@ public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2074,7 +2177,7 @@ public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(GenericArgumentClauseSyntax.init)
     }
     set(value) {
-      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2083,7 +2186,7 @@ public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = SimpleTypeIdentifierSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2101,6 +2204,11 @@ public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - SuppressedTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `withoutTilde`: `<prefixOperator>`
+///  - `patternType`: ``TypeSyntax``
 public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -2153,7 +2261,7 @@ public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -2163,7 +2271,7 @@ public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SuppressedTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = SuppressedTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2172,7 +2280,7 @@ public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = SuppressedTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = SuppressedTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2181,7 +2289,7 @@ public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SuppressedTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = SuppressedTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2190,7 +2298,7 @@ public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = SuppressedTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = SuppressedTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2199,7 +2307,7 @@ public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SuppressedTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = SuppressedTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2217,6 +2325,12 @@ public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 // MARK: - TupleTypeSyntax
 
 
+
+/// ### Children
+/// 
+///  - `leftParen`: `'('`
+///  - `elements`: ``TupleTypeElementListSyntax``
+///  - `rightParen`: `')'`
 public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -2275,7 +2389,7 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -2285,7 +2399,7 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TupleTypeSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = TupleTypeSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2294,7 +2408,7 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = TupleTypeSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = TupleTypeSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2303,7 +2417,7 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TupleTypeSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = TupleTypeSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2312,7 +2426,7 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TupleTypeElementListSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = TupleTypeSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = TupleTypeSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2331,7 +2445,12 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.tupleTypeElementList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return TupleTypeSyntax(newData)
   }
   
@@ -2340,7 +2459,7 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TupleTypeSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = TupleTypeSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2349,7 +2468,7 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = TupleTypeSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = TupleTypeSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2358,7 +2477,7 @@ public struct TupleTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TupleTypeSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = TupleTypeSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   

@@ -169,7 +169,8 @@ public let ATTRIBUTE_NODES: [Node] = [
       ),
       Child(
         name: "AvailabilityArguments",
-        kind: .collection(kind: .availabilitySpecList, collectionElementName: "AvailabilityArgument")
+        deprecatedName: "AvailabilityList",
+        kind: .collection(kind: .availabilitySpecList, collectionElementName: "AvailabilityArgument", deprecatedCollectionElementName: "Availability")
       ),
       Child(
         name: "Semicolon",
@@ -184,6 +185,7 @@ public let ATTRIBUTE_NODES: [Node] = [
     base: .syntax,
     nameForDiagnostics: "version",
     documentation: "A single platform/version pair in an attribute, e.g. `iOS 10.1`.",
+    traits: ["WithTrailingComma"],
     children: [
       Child(
         name: "AvailabilityVersionRestriction",
@@ -228,7 +230,8 @@ public let ATTRIBUTE_NODES: [Node] = [
       ),
       Child(
         name: "Platforms",
-        kind: .collection(kind: .availabilityVersionRestrictionList, collectionElementName: "Platform"),
+        deprecatedName: "VersionList",
+        kind: .collection(kind: .availabilityVersionRestrictionList, collectionElementName: "Platform", deprecatedCollectionElementName: "Availability"),
         documentation: "The list of OS versions in which the declaration became ABI stable."
       ),
     ]

@@ -22,7 +22,59 @@
 //===----------------------------------------------------------------------===//
 
 open class SyntaxRewriter {
-  public init() {
+  public let viewMode: SyntaxTreeViewMode
+  
+  public init(viewMode: SyntaxTreeViewMode = .sourceAccurate) {
+    self.viewMode = viewMode
+  }
+  
+  /// Rewrite `node` and anchor, making sure that the rewritten node also has
+  /// a parent if `node` had one.
+  public func rewrite(_ node: some SyntaxProtocol) -> Syntax {
+    let rewritten = self.visit(node.data)
+    return withExtendedLifetime(rewritten) {
+      return Syntax(node.data.replacingSelf(rewritten.raw, rawNodeArena: rewritten.raw.arena, allocationArena: SyntaxArena()))
+    }
+  }
+  
+  /// Visit a ``TokenSyntax``.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  open func visit(_ token: TokenSyntax) -> TokenSyntax {
+    return token
+  }
+  
+  /// The function called before visiting the node and its descendents.
+  ///   - node: the node we are about to visit.
+  open func visitPre(_ node: Syntax) {
+  }
+  
+  /// Override point to choose custom visitation dispatch instead of the
+  /// specialized `visit(_:)` methods. Use this instead of those methods if
+  /// you intend to dynamically dispatch rewriting behavior.
+  /// - note: If this method returns a non-nil result, the specialized
+  ///         `visit(_:)` methods will not be called for this node and the
+  ///         visited node will be replaced by the returned node in the
+  ///         rewritten tree.
+  open func visitAny(_ node: Syntax) -> Syntax? {
+    return nil
+  }
+  
+  /// The function called after visiting the node and its descendents.
+  ///   - node: the node we just finished visiting.
+  open func visitPost(_ node: Syntax) {
+  }
+  
+  /// Visit any Syntax node.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  @available(*, deprecated, renamed: "rewrite(_:)")
+  public func visit(_ node: Syntax) -> Syntax {
+    return visit(node.data)
+  }
+  
+  public func visit<T: SyntaxChildChoices>(_ node: T) -> T {
+    return visit(node.data).cast(T.self)
   }
   
   /// Visit a ``AccessesEffectSyntax``.
@@ -548,6 +600,13 @@ open class SyntaxRewriter {
   ///   - Returns: the rewritten node
   open func visit(_ node: DeferStmtSyntax) -> StmtSyntax {
     return StmtSyntax(visitChildren(node))
+  }
+  
+  /// Visit a ``DeinitEffectSpecifiersSyntax``.
+  ///   - Parameter node: the node that is being visited
+  ///   - Returns: the rewritten node
+  open func visit(_ node: DeinitEffectSpecifiersSyntax) -> DeinitEffectSpecifiersSyntax {
+    return Syntax(visitChildren(node)).cast(DeinitEffectSpecifiersSyntax.self)
   }
   
   /// Visit a ``DeinitializerDeclSyntax``.
@@ -1964,45 +2023,6 @@ open class SyntaxRewriter {
     return StmtSyntax(visitChildren(node))
   }
   
-  /// Visit a ``TokenSyntax``.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  open func visit(_ token: TokenSyntax) -> TokenSyntax {
-    return token
-  }
-  
-  /// The function called before visiting the node and its descendents.
-  ///   - node: the node we are about to visit.
-  open func visitPre(_ node: Syntax) {
-  }
-  
-  /// Override point to choose custom visitation dispatch instead of the
-  /// specialized `visit(_:)` methods. Use this instead of those methods if
-  /// you intend to dynamically dispatch rewriting behavior.
-  /// - note: If this method returns a non-nil result, the specialized
-  ///         `visit(_:)` methods will not be called for this node and the
-  ///         visited node will be replaced by the returned node in the
-  ///         rewritten tree.
-  open func visitAny(_ node: Syntax) -> Syntax? {
-    return nil
-  }
-  
-  /// The function called after visiting the node and its descendents.
-  ///   - node: the node we just finished visiting.
-  open func visitPost(_ node: Syntax) {
-  }
-  
-  /// Visit any Syntax node.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  public func visit(_ node: Syntax) -> Syntax {
-    return visit(node.data)
-  }
-  
-  public func visit<T: SyntaxChildChoices>(_ node: T) -> T {
-    return visit(Syntax(node)).cast(T.self)
-  }
-  
   /// Visit any DeclSyntax node.
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
@@ -3077,6 +3097,20 @@ open class SyntaxRewriter {
   /// Implementation detail of visit(_:). Do not call directly.
   private func visitImplDeferStmtSyntax(_ data: SyntaxData) -> Syntax {
     let node = DeferStmtSyntax(data)
+    // Accessing _syntaxNode directly is faster than calling Syntax(node)
+    visitPre(node._syntaxNode)
+    defer {
+      visitPost(node._syntaxNode)
+    }
+    if let newNode = visitAny(node._syntaxNode) {
+      return newNode
+    }
+    return Syntax(visit(node))
+  }
+  
+  /// Implementation detail of visit(_:). Do not call directly.
+  private func visitImplDeinitEffectSpecifiersSyntax(_ data: SyntaxData) -> Syntax {
+    let node = DeinitEffectSpecifiersSyntax(data)
     // Accessing _syntaxNode directly is faster than calling Syntax(node)
     visitPre(node._syntaxNode)
     defer {
@@ -6108,6 +6142,8 @@ open class SyntaxRewriter {
       return visitImplDeclNameSyntax
     case .deferStmt:
       return visitImplDeferStmtSyntax
+    case .deinitEffectSpecifiers:
+      return visitImplDeinitEffectSpecifiersSyntax
     case .deinitializerDecl:
       return visitImplDeinitializerDeclSyntax
     case .derivativeRegistrationAttributeArguments:
@@ -6672,6 +6708,8 @@ open class SyntaxRewriter {
       return visitImplDeclNameSyntax(data)
     case .deferStmt:
       return visitImplDeferStmtSyntax(data)
+    case .deinitEffectSpecifiers:
+      return visitImplDeinitEffectSpecifiersSyntax(data)
     case .deinitializerDecl:
       return visitImplDeinitializerDeclSyntax(data)
     case .derivativeRegistrationAttributeArguments:
@@ -7106,11 +7144,13 @@ open class SyntaxRewriter {
       defer {
         childIndex += 1
       }
-      guard let child = raw else {
-        // Node does not exist. If we are collecting rewritten nodes, we need to
-        // collect this one as well, otherwise we can ignore it.
+
+      guard let child = raw, viewMode.shouldTraverse(node: child) else {
+        // Node does not exist or should not be visited. If we are collecting
+        // rewritten nodes, we need to collect this one as well, otherwise we
+        // can ignore it.
         if newLayout != nil {
-          newLayout!.append(nil)
+          newLayout!.append(raw)
         }
         continue
       }
@@ -7158,20 +7198,12 @@ open class SyntaxRewriter {
       let arena = SyntaxArena()
       let newRaw = node.raw.layoutView!.replacingLayout(with: Array(newLayout), arena: arena)
       // 'withExtendedLifetime' to keep 'SyntaxArena's of them alive until here.
-      return withExtendedLifetime((arena, rewrittens)) {
-        Syntax(raw: newRaw).cast(SyntaxType.self)
+      return withExtendedLifetime(rewrittens) {
+        Syntax(raw: newRaw, rawNodeArena: arena).cast(SyntaxType.self)
       }
     } else {
       // No child node was rewritten. So no need to change this node as well.
       return node
     }
-  }
-  
-  /// Rewrite `node` and anchor, making sure that the rewritten node also has
-  /// a parent if `node` had one.
-  public func rewrite(_ node: Syntax) -> Syntax {
-    let rewritten = self.visit(node)
-    let arena = SyntaxArena()
-    return Syntax(node.data.replacingSelf(rewritten.raw, arena: arena))
   }
 }

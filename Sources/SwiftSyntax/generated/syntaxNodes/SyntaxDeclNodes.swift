@@ -15,6 +15,16 @@
 // MARK: - AccessorDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifier`: ``DeclModifierSyntax``?
+///  - `accessorKind`: (`'get'` | `'set'` | `'didSet'` | `'willSet'` | `'unsafeAddress'` | `'addressWithOwner'` | `'addressWithNativeOwner'` | `'unsafeMutableAddress'` | `'mutableAddressWithOwner'` | `'mutableAddressWithNativeOwner'` | `'_read'` | `'_modify'` | `'init'`)
+///  - `parameter`: ``AccessorParameterSyntax``?
+///  - `effectSpecifiers`: ``AccessorEffectSpecifiersSyntax``?
+///  - `initEffects`: ``AccessorInitEffectsSyntax``?
+///  - `body`: ``CodeBlockSyntax``?
 public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -97,7 +107,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -107,7 +117,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -116,7 +126,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -135,7 +145,12 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return AccessorDeclSyntax(newData)
   }
   
@@ -144,7 +159,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -153,7 +168,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(DeclModifierSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -162,7 +177,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -171,7 +186,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -180,7 +195,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -189,7 +204,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 7, parent: Syntax(self)).map(AccessorParameterSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 7, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -198,7 +213,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -207,7 +222,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(AccessorEffectSpecifiersSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -216,7 +231,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -225,7 +240,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(AccessorInitEffectsSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -234,7 +249,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -243,7 +258,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(CodeBlockSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -252,7 +267,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AccessorDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = AccessorDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -280,6 +295,17 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - ActorDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `actorKeyword`: `'actor'`
+///  - `identifier`: `<identifier>`
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `inheritanceClause`: ``TypeInheritanceClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `memberBlock`: ``MemberDeclBlockSyntax``
 public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -368,7 +394,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -378,7 +404,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -387,7 +413,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -406,7 +432,12 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ActorDeclSyntax(newData)
   }
   
@@ -415,7 +446,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -424,7 +455,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -443,7 +474,12 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ActorDeclSyntax(newData)
   }
   
@@ -452,7 +488,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -461,7 +497,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -470,7 +506,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -479,7 +515,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -488,7 +524,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -497,7 +533,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -506,7 +542,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -515,7 +551,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(TypeInheritanceClauseSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -524,7 +560,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -533,7 +569,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -542,7 +578,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -551,7 +587,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return MemberDeclBlockSyntax(data.child(at: 15, parent: Syntax(self))!)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 15, with: value.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 15, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -560,7 +596,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ActorDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = ActorDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -612,6 +648,16 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 /// ```swift
 /// associatedtype Iterator: IteratorProtocol where Iterator.Element == Item
 /// ```
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `associatedtypeKeyword`: `'associatedtype'`
+///  - `identifier`: `<identifier>`
+///  - `inheritanceClause`: ``TypeInheritanceClauseSyntax``?
+///  - `initializer`: ``TypeInitializerClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
 public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -694,7 +740,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -704,7 +750,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -714,7 +760,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -733,7 +779,12 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return AssociatedtypeDeclSyntax(newData)
   }
   
@@ -742,7 +793,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -752,7 +803,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -771,7 +822,12 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return AssociatedtypeDeclSyntax(newData)
   }
   
@@ -780,7 +836,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -790,7 +846,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -799,7 +855,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -809,7 +865,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -818,7 +874,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -828,7 +884,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(TypeInheritanceClauseSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -837,7 +893,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -847,7 +903,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(TypeInitializerClauseSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -856,7 +912,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -866,7 +922,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -875,7 +931,7 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = AssociatedtypeDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -923,6 +979,17 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 /// ```
 /// 
 /// A class declaration may be declared without any members.
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `classKeyword`: `'class'`
+///  - `identifier`: `<identifier>`
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `inheritanceClause`: ``TypeInheritanceClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `memberBlock`: ``MemberDeclBlockSyntax``
 public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1011,7 +1078,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1021,7 +1088,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1031,7 +1098,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1050,7 +1117,12 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ClassDeclSyntax(newData)
   }
   
@@ -1059,7 +1131,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1069,7 +1141,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1088,7 +1160,12 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ClassDeclSyntax(newData)
   }
   
@@ -1097,7 +1174,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1107,7 +1184,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1116,7 +1193,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1126,7 +1203,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1135,7 +1212,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1145,7 +1222,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1154,7 +1231,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1164,7 +1241,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(TypeInheritanceClauseSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1173,7 +1250,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1183,7 +1260,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1192,7 +1269,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1202,7 +1279,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return MemberDeclBlockSyntax(data.child(at: 15, parent: Syntax(self))!)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 15, with: value.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 15, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1211,7 +1288,7 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ClassDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = ClassDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1246,6 +1323,14 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 /// deinit {
 /// }
 /// ```
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `deinitKeyword`: `'deinit'`
+///  - `effectSpecifiers`: ``DeinitEffectSpecifiersSyntax``?
+///  - `body`: ``CodeBlockSyntax``?
 public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1272,7 +1357,9 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       modifiers: ModifierListSyntax? = nil,
       _ unexpectedBetweenModifiersAndDeinitKeyword: UnexpectedNodesSyntax? = nil,
       deinitKeyword: TokenSyntax = .keyword(.deinit),
-      _ unexpectedBetweenDeinitKeywordAndBody: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenDeinitKeywordAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
+      effectSpecifiers: DeinitEffectSpecifiersSyntax? = nil,
+      _ unexpectedBetweenEffectSpecifiersAndBody: UnexpectedNodesSyntax? = nil,
       body: CodeBlockSyntax? = nil,
       _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
@@ -1287,7 +1374,9 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             modifiers, 
             unexpectedBetweenModifiersAndDeinitKeyword, 
             deinitKeyword, 
-            unexpectedBetweenDeinitKeywordAndBody, 
+            unexpectedBetweenDeinitKeywordAndEffectSpecifiers, 
+            effectSpecifiers, 
+            unexpectedBetweenEffectSpecifiersAndBody, 
             body, 
             unexpectedAfterBody
           ))) { (arena, _) in
@@ -1298,7 +1387,9 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           modifiers?.raw, 
           unexpectedBetweenModifiersAndDeinitKeyword?.raw, 
           deinitKeyword.raw, 
-          unexpectedBetweenDeinitKeywordAndBody?.raw, 
+          unexpectedBetweenDeinitKeywordAndEffectSpecifiers?.raw, 
+          effectSpecifiers?.raw, 
+          unexpectedBetweenEffectSpecifiersAndBody?.raw, 
           body?.raw, 
           unexpectedAfterBody?.raw
         ]
@@ -1310,7 +1401,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1320,7 +1411,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1330,7 +1421,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1349,7 +1440,12 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return DeinitializerDeclSyntax(newData)
   }
   
@@ -1358,7 +1454,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1368,7 +1464,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1387,7 +1483,12 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return DeinitializerDeclSyntax(newData)
   }
   
@@ -1396,7 +1497,7 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1406,35 +1507,53 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
-  public var unexpectedBetweenDeinitKeywordAndBody: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenDeinitKeywordAndEffectSpecifiers: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
+    }
+  }
+  
+  public var effectSpecifiers: DeinitEffectSpecifiersSyntax? {
+    get {
+      return data.child(at: 7, parent: Syntax(self)).map(DeinitEffectSpecifiersSyntax.init)
+    }
+    set(value) {
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 7, with: value?.data, arena: SyntaxArena()))
+    }
+  }
+  
+  public var unexpectedBetweenEffectSpecifiersAndBody: UnexpectedNodesSyntax? {
+    get {
+      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+    }
+    set(value) {
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
   /// The deinitializer's body.
   public var body: CodeBlockSyntax? {
     get {
-      return data.child(at: 7, parent: Syntax(self)).map(CodeBlockSyntax.init)
+      return data.child(at: 9, parent: Syntax(self)).map(CodeBlockSyntax.init)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
   public var unexpectedAfterBody: UnexpectedNodesSyntax? {
     get {
-      return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
+      return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = DeinitializerDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = DeinitializerDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1446,7 +1565,9 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           \Self.modifiers, 
           \Self.unexpectedBetweenModifiersAndDeinitKeyword, 
           \Self.deinitKeyword, 
-          \Self.unexpectedBetweenDeinitKeywordAndBody, 
+          \Self.unexpectedBetweenDeinitKeywordAndEffectSpecifiers, 
+          \Self.effectSpecifiers, 
+          \Self.unexpectedBetweenEffectSpecifiersAndBody, 
           \Self.body, 
           \Self.unexpectedAfterBody
         ])
@@ -1456,6 +1577,12 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - EditorPlaceholderDeclSyntax
 
 /// An editor placeholder, e.g. `<#declaration#>` that is used in a position that expects a declaration.
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `placeholder`: `<identifier>`
 public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1514,7 +1641,7 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1524,17 +1651,17 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
-  /// If there were attributes before the editor placeholder, the ``EditorPlaceholderDecl`` will contain these.
+  /// If there were attributes before the editor placeholder, the ``EditorPlaceholderDeclSyntax`` will contain these.
   public var attributes: AttributeListSyntax? {
     get {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1553,7 +1680,12 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return EditorPlaceholderDeclSyntax(newData)
   }
   
@@ -1562,7 +1694,7 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1572,7 +1704,7 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1591,7 +1723,12 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return EditorPlaceholderDeclSyntax(newData)
   }
   
@@ -1600,7 +1737,7 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1610,7 +1747,7 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1619,7 +1756,7 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = EditorPlaceholderDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1639,6 +1776,13 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - EnumCaseDeclSyntax
 
 /// A `case` declaration of a Swift `enum`. It can have 1 or more `EnumCaseElement`s inside, each declaring a different case of the enum.
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `caseKeyword`: `'case'`
+///  - `elements`: ``EnumCaseElementListSyntax``
 public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1703,7 +1847,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1713,7 +1857,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1723,7 +1867,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1742,7 +1886,12 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return EnumCaseDeclSyntax(newData)
   }
   
@@ -1751,7 +1900,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1761,7 +1910,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1780,7 +1929,12 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return EnumCaseDeclSyntax(newData)
   }
   
@@ -1789,7 +1943,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1799,7 +1953,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1808,7 +1962,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1818,7 +1972,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return EnumCaseElementListSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -1837,7 +1991,12 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.enumCaseElementList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 7, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 7, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return EnumCaseDeclSyntax(newData)
   }
   
@@ -1846,7 +2005,7 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumCaseDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = EnumCaseDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1868,6 +2027,17 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - EnumDeclSyntax
 
 /// A Swift `enum` declaration.
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `enumKeyword`: `'enum'`
+///  - `identifier`: `<identifier>`
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `inheritanceClause`: ``TypeInheritanceClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `memberBlock`: ``MemberDeclBlockSyntax``
 public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -1956,7 +2126,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -1966,7 +2136,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1976,7 +2146,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -1995,7 +2165,12 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return EnumDeclSyntax(newData)
   }
   
@@ -2004,7 +2179,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2014,7 +2189,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2033,7 +2208,12 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return EnumDeclSyntax(newData)
   }
   
@@ -2042,7 +2222,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2052,7 +2232,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2061,7 +2241,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2071,7 +2251,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2080,7 +2260,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2090,7 +2270,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2099,7 +2279,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2109,7 +2289,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(TypeInheritanceClauseSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2118,7 +2298,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2128,7 +2308,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2137,7 +2317,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2147,7 +2327,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return MemberDeclBlockSyntax(data.child(at: 15, parent: Syntax(self))!)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 15, with: value.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 15, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2156,7 +2336,7 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = EnumDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = EnumDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2186,6 +2366,16 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - ExtensionDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `extensionKeyword`: `'extension'`
+///  - `extendedType`: ``TypeSyntax``
+///  - `inheritanceClause`: ``TypeInheritanceClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `memberBlock`: ``MemberDeclBlockSyntax``
 public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -2268,7 +2458,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -2278,7 +2468,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2287,7 +2477,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2306,7 +2496,12 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ExtensionDeclSyntax(newData)
   }
   
@@ -2315,7 +2510,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2324,7 +2519,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2343,7 +2538,12 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ExtensionDeclSyntax(newData)
   }
   
@@ -2352,7 +2552,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2361,7 +2561,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2370,7 +2570,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2379,7 +2579,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TypeSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2388,7 +2588,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2397,7 +2597,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(TypeInheritanceClauseSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2406,7 +2606,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2415,7 +2615,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2424,7 +2624,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2433,7 +2633,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return MemberDeclBlockSyntax(data.child(at: 13, parent: Syntax(self))!)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 13, with: value.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 13, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2442,7 +2642,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ExtensionDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = ExtensionDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2470,6 +2670,17 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - FunctionDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `funcKeyword`: `'func'`
+///  - `identifier`: (`<identifier>` | `<binaryOperator>` | `<prefixOperator>` | `<postfixOperator>`)
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `signature`: ``FunctionSignatureSyntax``
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `body`: ``CodeBlockSyntax``?
 public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -2558,7 +2769,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -2568,7 +2779,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2577,7 +2788,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2596,7 +2807,12 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return FunctionDeclSyntax(newData)
   }
   
@@ -2605,7 +2821,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2614,7 +2830,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2633,7 +2849,12 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return FunctionDeclSyntax(newData)
   }
   
@@ -2642,7 +2863,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2651,7 +2872,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2660,7 +2881,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2669,7 +2890,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2678,7 +2899,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2687,7 +2908,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2696,7 +2917,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2705,7 +2926,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return FunctionSignatureSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 11, with: value.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 11, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2714,7 +2935,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2723,7 +2944,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2732,7 +2953,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2741,7 +2962,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 15, parent: Syntax(self)).map(CodeBlockSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 15, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 15, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2750,7 +2971,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = FunctionDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = FunctionDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2780,6 +3001,11 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - IfConfigDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `clauses`: ``IfConfigClauseListSyntax``
+///  - `poundEndif`: `'#endif'`
 public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -2832,7 +3058,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -2842,7 +3068,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = IfConfigDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = IfConfigDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2851,7 +3077,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return IfConfigClauseListSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = IfConfigDeclSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = IfConfigDeclSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2870,7 +3096,12 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.ifConfigClauseList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return IfConfigDeclSyntax(newData)
   }
   
@@ -2879,7 +3110,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = IfConfigDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = IfConfigDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2888,7 +3119,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = IfConfigDeclSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = IfConfigDeclSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -2897,7 +3128,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = IfConfigDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = IfConfigDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -2919,6 +3150,14 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 /// ```swift
 /// import Foundation
 /// ```
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `importKeyword`: `'import'`
+///  - `importKind`: (`'typealias'` | `'struct'` | `'class'` | `'enum'` | `'protocol'` | `'var'` | `'let'` | `'func'` | `'inout'`)?
+///  - `path`: ``ImportPathSyntax``
 public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -2989,7 +3228,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -2999,7 +3238,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3009,7 +3248,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3028,7 +3267,12 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ImportDeclSyntax(newData)
   }
   
@@ -3037,7 +3281,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3047,7 +3291,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3066,7 +3310,12 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ImportDeclSyntax(newData)
   }
   
@@ -3075,7 +3324,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3085,7 +3334,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -3094,7 +3343,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3104,7 +3353,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 7, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3113,7 +3362,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3123,7 +3372,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return ImportPathSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 9, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -3142,7 +3391,12 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.importPath,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 9, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 9, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ImportDeclSyntax(newData)
   }
   
@@ -3151,7 +3405,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ImportDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = ImportDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3182,6 +3436,17 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 /// ```
 /// 
 /// The body is optional because this node also represents initializer requirements inside protocols.
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `initKeyword`: `'init'`
+///  - `optionalMark`: (`'?'` | `'?'` | `'!'`)?
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `signature`: ``FunctionSignatureSyntax``
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `body`: ``CodeBlockSyntax``?
 public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -3270,7 +3535,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -3280,7 +3545,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3290,7 +3555,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3309,7 +3574,12 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return InitializerDeclSyntax(newData)
   }
   
@@ -3318,7 +3588,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3328,7 +3598,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3347,7 +3617,12 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return InitializerDeclSyntax(newData)
   }
   
@@ -3356,7 +3631,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3366,7 +3641,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -3375,7 +3650,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3385,7 +3660,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 7, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3394,7 +3669,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3404,7 +3679,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3413,7 +3688,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3423,7 +3698,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return FunctionSignatureSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 11, with: value.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 11, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -3432,7 +3707,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3442,7 +3717,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3451,7 +3726,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3461,7 +3736,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 15, parent: Syntax(self)).map(CodeBlockSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 15, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 15, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3470,7 +3745,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = InitializerDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = InitializerDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3500,6 +3775,17 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - MacroDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `macroKeyword`: `'macro'`
+///  - `identifier`: `<identifier>`
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `signature`: ``FunctionSignatureSyntax``
+///  - `definition`: ``InitializerClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
 public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -3588,7 +3874,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -3598,7 +3884,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3607,7 +3893,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3626,7 +3912,12 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return MacroDeclSyntax(newData)
   }
   
@@ -3635,7 +3926,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3644,7 +3935,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3663,7 +3954,12 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return MacroDeclSyntax(newData)
   }
   
@@ -3672,7 +3968,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3681,7 +3977,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -3690,7 +3986,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3699,7 +3995,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -3708,7 +4004,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3717,7 +4013,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3726,7 +4022,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3735,7 +4031,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return FunctionSignatureSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 11, with: value.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 11, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -3744,7 +4040,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3753,7 +4049,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(InitializerClauseSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3762,7 +4058,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3771,7 +4067,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 15, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 15, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 15, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3780,7 +4076,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = MacroDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3810,6 +4106,19 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - MacroExpansionDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `poundToken`: `'#'`
+///  - `macro`: `<identifier>`
+///  - `genericArguments`: ``GenericArgumentClauseSyntax``?
+///  - `leftParen`: `'('`?
+///  - `argumentList`: ``TupleExprElementListSyntax``
+///  - `rightParen`: `')'`?
+///  - `trailingClosure`: ``ClosureExprSyntax``?
+///  - `additionalTrailingClosures`: ``MultipleTrailingClosureElementListSyntax``
 public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -3910,7 +4219,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -3920,7 +4229,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3929,7 +4238,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3948,7 +4257,12 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return MacroExpansionDeclSyntax(newData)
   }
   
@@ -3957,7 +4271,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3966,7 +4280,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -3985,7 +4299,12 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return MacroExpansionDeclSyntax(newData)
   }
   
@@ -3994,7 +4313,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4004,7 +4323,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4013,7 +4332,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4022,7 +4341,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4031,7 +4350,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4040,7 +4359,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericArgumentClauseSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4049,7 +4368,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4058,7 +4377,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4067,7 +4386,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4076,7 +4395,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TupleExprElementListSyntax(data.child(at: 13, parent: Syntax(self))!)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 13, with: value.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 13, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4095,7 +4414,12 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.tupleExprElementList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 13, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 13, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return MacroExpansionDeclSyntax(newData)
   }
   
@@ -4104,7 +4428,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4113,7 +4437,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 15, parent: Syntax(self)).map(TokenSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 15, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 15, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4122,7 +4446,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4131,7 +4455,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 17, parent: Syntax(self)).map(ClosureExprSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 17, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 17, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4140,7 +4464,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 18, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 18, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 18, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4149,7 +4473,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 19, parent: Syntax(self)).map(MultipleTrailingClosureElementListSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 19, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 19, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4168,7 +4492,12 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.multipleTrailingClosureElementList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 19, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 19, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return MacroExpansionDeclSyntax(newData)
   }
   
@@ -4177,7 +4506,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 20, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MacroExpansionDeclSyntax(data.replacingChild(at: 20, with: value?.raw, arena: SyntaxArena()))
+      self = MacroExpansionDeclSyntax(data.replacingChild(at: 20, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4211,6 +4540,12 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - MissingDeclSyntax
 
 /// In case the source code is missing a declaration, this node stands in place of the missing declaration.
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `placeholder`: `<identifier>`
 public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -4269,7 +4604,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -4279,7 +4614,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MissingDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = MissingDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4289,7 +4624,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = MissingDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = MissingDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4308,7 +4643,12 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return MissingDeclSyntax(newData)
   }
   
@@ -4317,7 +4657,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MissingDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = MissingDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4327,7 +4667,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = MissingDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = MissingDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4346,7 +4686,12 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return MissingDeclSyntax(newData)
   }
   
@@ -4355,7 +4700,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MissingDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = MissingDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4365,7 +4710,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = MissingDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = MissingDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4374,7 +4719,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = MissingDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = MissingDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4394,6 +4739,13 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - OperatorDeclSyntax
 
 /// A Swift `operator` declaration.
+///
+/// ### Children
+/// 
+///  - `fixity`: (`'prefix'` | `'postfix'` | `'infix'`)
+///  - `operatorKeyword`: `'operator'`
+///  - `identifier`: (`<binaryOperator>` | `<prefixOperator>` | `<postfixOperator>`)
+///  - `operatorPrecedenceAndTypes`: ``OperatorPrecedenceAndTypesSyntax``?
 public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -4458,7 +4810,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -4468,7 +4820,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4478,7 +4830,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4487,7 +4839,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4496,7 +4848,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4505,7 +4857,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4514,7 +4866,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4523,7 +4875,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4533,7 +4885,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 7, parent: Syntax(self)).map(OperatorPrecedenceAndTypesSyntax.init)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 7, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4542,7 +4894,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = OperatorDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = OperatorDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4564,6 +4916,13 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - PoundSourceLocationSyntax
 
 
+
+/// ### Children
+/// 
+///  - `poundSourceLocation`: `'#sourceLocation'`
+///  - `leftParen`: `'('`
+///  - `args`: ``PoundSourceLocationArgsSyntax``?
+///  - `rightParen`: `')'`
 public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -4628,7 +4987,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -4638,7 +4997,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4647,7 +5006,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 1, with: value.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 1, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4656,7 +5015,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4665,7 +5024,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 3, with: value.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 3, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4674,7 +5033,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4683,7 +5042,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 5, parent: Syntax(self)).map(PoundSourceLocationArgsSyntax.init)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 5, with: value?.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 5, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4692,7 +5051,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4701,7 +5060,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4710,7 +5069,7 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PoundSourceLocationSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = PoundSourceLocationSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4732,6 +5091,16 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - PrecedenceGroupDeclSyntax
 
 /// A Swift `precedencegroup` declaration.
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `precedencegroupKeyword`: `'precedencegroup'`
+///  - `identifier`: `<identifier>`
+///  - `leftBrace`: `'{'`
+///  - `groupAttributes`: ``PrecedenceGroupAttributeListSyntax``
+///  - `rightBrace`: `'}'`
 public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -4814,7 +5183,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -4824,7 +5193,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4834,7 +5203,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4853,7 +5222,12 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return PrecedenceGroupDeclSyntax(newData)
   }
   
@@ -4862,7 +5236,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4872,7 +5246,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4891,7 +5265,12 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return PrecedenceGroupDeclSyntax(newData)
   }
   
@@ -4900,7 +5279,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4909,7 +5288,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4918,7 +5297,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4928,7 +5307,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4937,7 +5316,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4946,7 +5325,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 9, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4955,7 +5334,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -4965,7 +5344,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return PrecedenceGroupAttributeListSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 11, with: value.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 11, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -4984,7 +5363,12 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.precedenceGroupAttributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 11, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 11, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return PrecedenceGroupDeclSyntax(newData)
   }
   
@@ -4993,7 +5377,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5002,7 +5386,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 13, parent: Syntax(self))!)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 13, with: value.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 13, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -5011,7 +5395,7 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = PrecedenceGroupDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5045,6 +5429,17 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 ///   var isValid: Bool { get }
 /// }
 /// ```
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `protocolKeyword`: `'protocol'`
+///  - `identifier`: `<identifier>`
+///  - `primaryAssociatedTypeClause`: ``PrimaryAssociatedTypeClauseSyntax``?
+///  - `inheritanceClause`: ``TypeInheritanceClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `memberBlock`: ``MemberDeclBlockSyntax``
 public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -5133,7 +5528,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -5143,7 +5538,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5153,7 +5548,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5172,7 +5567,12 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ProtocolDeclSyntax(newData)
   }
   
@@ -5181,7 +5581,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5191,7 +5591,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5210,7 +5610,12 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return ProtocolDeclSyntax(newData)
   }
   
@@ -5219,7 +5624,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5229,7 +5634,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -5238,7 +5643,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5248,7 +5653,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -5257,7 +5662,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5267,7 +5672,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(PrimaryAssociatedTypeClauseSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5276,7 +5681,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5286,7 +5691,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(TypeInheritanceClauseSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5295,7 +5700,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5305,7 +5710,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5314,7 +5719,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5324,7 +5729,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return MemberDeclBlockSyntax(data.child(at: 15, parent: Syntax(self))!)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 15, with: value.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 15, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -5333,7 +5738,7 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = ProtocolDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = ProtocolDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5417,6 +5822,17 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 ///       }
 ///    }
 ///    ```
+///
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `structKeyword`: `'struct'`
+///  - `identifier`: `<identifier>`
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `inheritanceClause`: ``TypeInheritanceClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `memberBlock`: ``MemberDeclBlockSyntax``
 public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -5505,7 +5921,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -5515,7 +5931,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5525,7 +5941,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5544,7 +5960,12 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return StructDeclSyntax(newData)
   }
   
@@ -5553,7 +5974,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5563,7 +5984,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5582,7 +6003,12 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return StructDeclSyntax(newData)
   }
   
@@ -5591,7 +6017,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5601,7 +6027,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -5610,7 +6036,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5620,7 +6046,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -5629,7 +6055,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5639,7 +6065,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5648,7 +6074,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5658,7 +6084,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 11, parent: Syntax(self)).map(TypeInheritanceClauseSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 11, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 11, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5667,7 +6093,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5677,7 +6103,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5686,7 +6112,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5696,7 +6122,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return MemberDeclBlockSyntax(data.child(at: 15, parent: Syntax(self))!)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 15, with: value.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 15, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -5705,7 +6131,7 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = StructDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = StructDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5735,6 +6161,17 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - SubscriptDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `subscriptKeyword`: `'subscript'`
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `indices`: ``ParameterClauseSyntax``
+///  - `result`: ``ReturnClauseSyntax``
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
+///  - `accessor`: (``AccessorBlockSyntax`` | ``CodeBlockSyntax``)?
 public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public enum Accessor: SyntaxChildChoices {
     case `accessors`(AccessorBlockSyntax)
@@ -5865,7 +6302,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -5875,7 +6312,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5884,7 +6321,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5903,7 +6340,12 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return SubscriptDeclSyntax(newData)
   }
   
@@ -5912,7 +6354,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5921,7 +6363,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5940,7 +6382,12 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return SubscriptDeclSyntax(newData)
   }
   
@@ -5949,7 +6396,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5958,7 +6405,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -5967,7 +6414,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5976,7 +6423,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 7, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 7, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 7, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5985,7 +6432,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -5994,7 +6441,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return ParameterClauseSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 9, with: value.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 9, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -6003,7 +6450,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6012,7 +6459,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return ReturnClauseSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 11, with: value.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 11, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -6021,7 +6468,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6030,7 +6477,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6039,7 +6486,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6048,7 +6495,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 15, parent: Syntax(self)).map(Accessor.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 15, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 15, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6057,7 +6504,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 16, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = SubscriptDeclSyntax(data.replacingChild(at: 16, with: value?.raw, arena: SyntaxArena()))
+      self = SubscriptDeclSyntax(data.replacingChild(at: 16, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6087,6 +6534,16 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - TypealiasDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `typealiasKeyword`: `'typealias'`
+///  - `identifier`: `<identifier>`
+///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
+///  - `initializer`: ``TypeInitializerClauseSyntax``
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
 public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -6169,7 +6626,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -6179,7 +6636,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6188,7 +6645,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6207,7 +6664,12 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return TypealiasDeclSyntax(newData)
   }
   
@@ -6216,7 +6678,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6225,7 +6687,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6244,7 +6706,12 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return TypealiasDeclSyntax(newData)
   }
   
@@ -6253,7 +6720,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6262,7 +6729,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -6271,7 +6738,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6280,7 +6747,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -6289,7 +6756,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6298,7 +6765,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 9, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 9, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6307,7 +6774,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 10, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 10, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6316,7 +6783,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TypeInitializerClauseSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 11, with: value.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 11, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -6325,7 +6792,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 12, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 12, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6334,7 +6801,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 13, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 13, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6343,7 +6810,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 14, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = TypealiasDeclSyntax(data.replacingChild(at: 14, with: value?.raw, arena: SyntaxArena()))
+      self = TypealiasDeclSyntax(data.replacingChild(at: 14, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6371,6 +6838,13 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 // MARK: - VariableDeclSyntax
 
 
+
+/// ### Children
+/// 
+///  - `attributes`: ``AttributeListSyntax``
+///  - `modifiers`: ``ModifierListSyntax``
+///  - `bindingKeyword`: (`'let'` | `'var'` | `'inout'`)
+///  - `bindings`: ``PatternBindingListSyntax``
 public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -6435,7 +6909,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
         trailingTrivia: trailingTrivia
         
       )
-      return SyntaxData.forRoot(raw)
+      return SyntaxData.forRoot(raw, rawNodeArena: arena)
     }
     self.init(data)
   }
@@ -6445,7 +6919,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 0, with: value?.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 0, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6454,7 +6928,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 1, parent: Syntax(self)).map(AttributeListSyntax.init)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 1, with: value?.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 1, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6473,7 +6947,12 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.attributeList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 1, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 1, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return VariableDeclSyntax(newData)
   }
   
@@ -6482,7 +6961,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 2, with: value?.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 2, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6491,7 +6970,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 3, parent: Syntax(self)).map(ModifierListSyntax.init)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 3, with: value?.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 3, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6510,7 +6989,12 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.modifierList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 3, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 3, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return VariableDeclSyntax(newData)
   }
   
@@ -6519,7 +7003,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 4, with: value?.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 4, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6528,7 +7012,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 5, with: value.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 5, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -6537,7 +7021,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 6, with: value?.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 6, with: value?.data, arena: SyntaxArena()))
     }
   }
   
@@ -6546,7 +7030,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return PatternBindingListSyntax(data.child(at: 7, parent: Syntax(self))!)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 7, with: value.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 7, with: value.data, arena: SyntaxArena()))
     }
   }
   
@@ -6565,7 +7049,12 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       collection = RawSyntax.makeLayout(kind: SyntaxKind.patternBindingList,
                                         from: [element.raw], arena: arena)
     }
-    let newData = data.replacingChild(at: 7, with: collection, arena: arena)
+    let newData = data.replacingChild(
+        at: 7, 
+        with: collection, 
+        rawNodeArena: arena, 
+        allocationArena: arena
+      )
     return VariableDeclSyntax(newData)
   }
   
@@ -6574,7 +7063,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
     set(value) {
-      self = VariableDeclSyntax(data.replacingChild(at: 8, with: value?.raw, arena: SyntaxArena()))
+      self = VariableDeclSyntax(data.replacingChild(at: 8, with: value?.data, arena: SyntaxArena()))
     }
   }
   

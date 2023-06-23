@@ -13,6 +13,7 @@ add_swift_host_library(SwiftParser
   Declarations.swift
   Directives.swift
   Expressions.swift
+  IncrementalParseTransition.swift
   Lookahead.swift
   LoopProgressCondition.swift
   Modifiers.swift
@@ -37,6 +38,7 @@ add_swift_host_library(SwiftParser
 
   generated/IsLexerClassified.swift
   generated/Parser+Entry.swift
+  generated/Parser+TokenSpecSet.swift
   generated/TokenSpecStaticMembers.swift
 
   Lexer/Cursor.swift

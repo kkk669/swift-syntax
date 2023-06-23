@@ -29,8 +29,8 @@
 /// from a bad parse should be left `nonmutating` to indicate that they do not
 /// consume tokens.
 ///
-/// Token consumption is generally either unconditional via ``TokenConsumer/consumeAnyToken()``
-/// or conditional via a combination of ``TokenConsumer/at(_:where:)``
+/// Token consumption is generally either unconditional via `TokenConsumer.consumeAnyToken()`
+/// or conditional via a combination of `TokenConsumer/at(_:where:)`
 /// and `TokenConsumer.eat(_:)`. When parsing conditionally, `at` returns a
 /// handle that is passed to `eat`. This ensures that any structure that is
 /// checked for is actually parsed by the parser at that position. If the parser
@@ -46,7 +46,7 @@
 ///     /*  */
 ///     let rbrace = self.expect(.rightBrace)
 ///
-/// Unlike ``TokenConsumer/eat(_:)``, ``Parser/expect(_:remapping:)`` returns
+/// Unlike `TokenConsumer.eat(_:)`, `Parser.expect(_:remapping:)` returns
 /// a `missing` token of the given kind. This allows the tree to remain
 /// well-formed even when the input text is not, all without affecting
 /// source fidelity.
@@ -72,8 +72,8 @@
 ///
 /// This parser provides at most one token worth of lookahead via
 /// `peek()`. If more tokens are required to disambiguate a parse, a
-/// ``Parser/Lookahead`` instance should be constructed instead with
-/// ``Parser/lookahead()``.
+/// `Parser.Lookahead` instance should be constructed instead with
+/// `Parser.lookahead()`.
 ///
 /// Source Fidelity
 /// ===============
@@ -431,23 +431,31 @@ extension Parser {
     )
   }
 
-  /// If `keywordRecovery` is set to `true` and the parser is currently
-  /// positioned at a keyword instead of an identifier, this method recovers by
-  /// eating the keyword in place of an identifier, recovering if the developer
-  /// incorrectly used a keyword as an identifier.
-  /// This should be set if keywords aren't strong recovery marker at this
-  /// position, e.g. because the parser expects a punctuator next.
-  ///
-  /// If `allowSelfOrCapitalSelfAsIdentifier` is `true`, then `self` and `Self`
-  /// are also accepted and remapped to identifiers. This is exclusively used
-  /// to maintain compatibility with the C++ parser. No new uses of this should
-  /// be introduced.
+  /// - Parameters:
+  ///   - keywordRecovery: If set to `true` and the parser is currently
+  ///     positioned at a keyword instead of an identifier, this method recovers
+  ///     by eating the keyword in place of an identifier, recovering if the
+  ///     developer incorrectly used a keyword as an identifier. This should be
+  ///     set if keywords aren't strong recovery marker at this position, e.g.
+  ///     because the parser expects a punctuator next
+  ///   - allowSelfOrCapitalSelfAsIdentifier: If set to `true`, then `self` and
+  ///     `Self` are also accepted and remapped to identifiers. This is
+  ///     exclusively used to maintain compatibility with the C++ parser. No new
+  ///     uses of this should be introduced.
+  ///   - allowKeywordsAsIdentifier: If set to `true` and the parser is
+  ///     currently positioned at a keyword, consume that keyword and remap it
+  ///     to and identifier.
+  /// - Returns: The consumed token and any unexpected tokens that were skipped.
   mutating func expectIdentifier(
     keywordRecovery: Bool = false,
-    allowSelfOrCapitalSelfAsIdentifier: Bool = false
+    allowSelfOrCapitalSelfAsIdentifier: Bool = false,
+    allowKeywordsAsIdentifier: Bool = false
   ) -> (RawUnexpectedNodesSyntax?, RawTokenSyntax) {
     if let identifier = self.consume(if: .identifier) {
       return (nil, identifier)
+    }
+    if allowKeywordsAsIdentifier, self.currentToken.isLexerClassifiedKeyword {
+      return (nil, self.consumeAnyToken(remapping: .identifier))
     }
     if allowSelfOrCapitalSelfAsIdentifier,
       let selfOrCapitalSelf = self.consume(if: TokenSpec(.self, remapping: .identifier), TokenSpec(.Self, remapping: .identifier))
@@ -603,7 +611,7 @@ extension Parser {
 
     let beforePeriodWhitespace = previousNode?.raw.trailingTriviaByteLength ?? 0 > 0 || self.currentToken.leadingTriviaByteLength > 0
     let afterPeriodWhitespace = self.currentToken.trailingTriviaByteLength > 0 || self.peek().leadingTriviaByteLength > 0
-    let afterContainsAnyNewline = self.peek().flags.contains(.isAtStartOfLine)
+    let afterContainsAnyNewline = self.peek().isAtStartOfLine
 
     let period = self.consumeAnyToken()
 

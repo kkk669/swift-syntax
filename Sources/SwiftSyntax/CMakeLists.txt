@@ -11,7 +11,6 @@ add_swift_host_library(SwiftSyntax
   Assert.swift
   BumpPtrAllocator.swift
   CommonAncestor.swift
-  IncrementalParseTransition.swift
   MemoryLayout.swift
   MissingNodeInitializers.swift
   Trivia.swift
@@ -22,6 +21,7 @@ add_swift_host_library(SwiftSyntax
   Syntax.swift
   SyntaxArena.swift
   SyntaxChildren.swift
+  SyntaxCollection.swift
   SyntaxData.swift
   SyntaxText.swift
   SyntaxTreeViewMode.swift
@@ -39,6 +39,7 @@ add_swift_host_library(SwiftSyntax
 
   generated/ChildNameForKeyPath.swift
   generated/Keyword.swift
+  generated/RenamedChildrenCompatibility.swift
   generated/SyntaxAnyVisitor.swift
   generated/SyntaxBaseNodes.swift
   generated/SyntaxCollections.swift

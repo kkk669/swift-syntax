@@ -13,7 +13,7 @@
 //===----------------------------------------------------------------------===//
 
 /// Enumerates the known kinds of Syntax represented in the Syntax tree.
-public enum SyntaxKind {
+public enum SyntaxKind: CaseIterable {
   case token
   case accessesEffect
   case accessorBlock
@@ -90,6 +90,7 @@ public enum SyntaxKind {
   case declNameArguments
   case declName
   case deferStmt
+  case deinitEffectSpecifiers
   case deinitializerDecl
   case derivativeRegistrationAttributeArguments
   case designatedTypeElement
@@ -569,6 +570,8 @@ public enum SyntaxKind {
       return DeclNameSyntax.self
     case .deferStmt:
       return DeferStmtSyntax.self
+    case .deinitEffectSpecifiers:
+      return DeinitEffectSpecifiersSyntax.self
     case .deinitializerDecl:
       return DeinitializerDeclSyntax.self
     case .derivativeRegistrationAttributeArguments:

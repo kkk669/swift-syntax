@@ -341,4 +341,56 @@ final class BasicFormatTest: XCTestCase {
         """
     )
   }
+
+  func testSubTreeNode() {
+    let decl: DeclSyntax = """
+      func test() {
+          print(1)
+      }
+      """
+    let body = decl.cast(FunctionDeclSyntax.self).body!
+
+    assertFormatted(
+      source: body.formatted().description,
+      expected: """
+        {
+            print(1)
+        }
+        """
+    )
+  }
+
+  func testSubTreeNodeWithIndentedParentNode() {
+    let decl: DeclSyntax = """
+      struct X {
+          func test() {
+              print(1)
+          }
+      }
+      """
+
+    let body = decl.cast(StructDeclSyntax.self).memberBlock.members.first!.decl.cast(FunctionDeclSyntax.self).body!
+
+    assertFormatted(
+      source: body.formatted().description,
+      expected: """
+        {
+                print(1)
+            }
+        """
+    )
+  }
+
+  func testUnexpectedIsNotFormatted() {
+    let expr: ExprSyntax = """
+      let foo=1
+      """
+
+    assertFormatted(
+      tree: expr,
+      expected: """
+        let foo=1
+        """
+    )
+  }
 }
