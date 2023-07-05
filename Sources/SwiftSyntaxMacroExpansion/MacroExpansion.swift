@@ -1,3 +1,15 @@
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift.org open source project
+//
+// Copyright (c) 2023 Apple Inc. and the Swift project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See https://swift.org/LICENSE.txt for license information
+// See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+//
+//===----------------------------------------------------------------------===//
+
 import SwiftSyntax
 @_spi(MacroExpansion) import SwiftSyntaxMacros
 
@@ -10,6 +22,7 @@ public enum MacroRole {
   case peer
   case conformance
   case codeItem
+  case `extension`
 }
 
 extension MacroRole {
@@ -23,6 +36,7 @@ extension MacroRole {
     case .peer: return "PeerMacro"
     case .conformance: return "ConformanceMacro"
     case .codeItem: return "CodeItemMacro"
+    case .extension: return "ExtensionMacro"
     }
   }
 }
@@ -33,6 +47,7 @@ private enum MacroExpansionError: Error, CustomStringConvertible {
   case parentDeclGroupNil
   case declarationNotDeclGroup
   case declarationNotIdentified
+  case noExtendedTypeSyntax
   case noFreestandingMacroRoles(Macro.Type)
 
   var description: String {
@@ -48,6 +63,9 @@ private enum MacroExpansionError: Error, CustomStringConvertible {
 
     case .declarationNotIdentified:
       return "declaration is not a 'Identified' syntax"
+
+    case .noExtendedTypeSyntax:
+      return "no extended type for extension macro"
 
     case .noFreestandingMacroRoles(let type):
       return "macro implementation type '\(type)' does not conform to any freestanding macro protocol"
@@ -73,41 +91,38 @@ public func expandFreestandingMacro(
   in context: some MacroExpansionContext
 ) -> String? {
   do {
-    func _expand(node: some FreestandingMacroExpansionSyntax) throws -> String {
-      let expandedSyntax: Syntax
-      switch (macroRole, definition) {
-      case (.expression, let exprMacroDef as ExpressionMacro.Type):
-        expandedSyntax = try Syntax(exprMacroDef.expansion(of: node, in: context))
+    let expandedSyntax: Syntax
+    switch (macroRole, definition) {
+    case (.expression, let exprMacroDef as ExpressionMacro.Type):
+      expandedSyntax = try Syntax(exprMacroDef.expansion(of: node, in: context))
 
-      case (.declaration, let declMacroDef as DeclarationMacro.Type):
-        var rewritten = try declMacroDef.expansion(of: node, in: context)
-        // Copy attributes and modifiers to the generated decls.
-        if let expansionDecl = node.as(MacroExpansionDeclSyntax.self) {
-          let attributes = declMacroDef.propagateFreestandingMacroAttributes ? expansionDecl.attributes : nil
-          let modifiers = declMacroDef.propagateFreestandingMacroModifiers ? expansionDecl.modifiers : nil
-          rewritten = rewritten.map {
-            $0.applying(attributes: attributes, modifiers: modifiers)
-          }
+    case (.declaration, let declMacroDef as DeclarationMacro.Type):
+      var rewritten = try declMacroDef.expansion(of: node, in: context)
+      // Copy attributes and modifiers to the generated decls.
+      if let expansionDecl = node.as(MacroExpansionDeclSyntax.self) {
+        let attributes = declMacroDef.propagateFreestandingMacroAttributes ? expansionDecl.attributes : nil
+        let modifiers = declMacroDef.propagateFreestandingMacroModifiers ? expansionDecl.modifiers : nil
+        rewritten = rewritten.map {
+          $0.applying(attributes: attributes, modifiers: modifiers)
         }
-        expandedSyntax = Syntax(
-          CodeBlockItemListSyntax(
-            rewritten.map {
-              CodeBlockItemSyntax(item: .decl($0))
-            }
-          )
-        )
-
-      case (.codeItem, let codeItemMacroDef as CodeItemMacro.Type):
-        let rewritten = try codeItemMacroDef.expansion(of: node, in: context)
-        expandedSyntax = Syntax(CodeBlockItemListSyntax(rewritten))
-
-      case (.accessor, _), (.memberAttribute, _), (.member, _), (.peer, _), (.conformance, _), (.expression, _), (.declaration, _),
-        (.codeItem, _):
-        throw MacroExpansionError.unmatchedMacroRole(definition, macroRole)
       }
-      return expandedSyntax.formattedExpansion(definition.formatMode)
+      expandedSyntax = Syntax(
+        CodeBlockItemListSyntax(
+          rewritten.map {
+            CodeBlockItemSyntax(item: .decl($0))
+          }
+        )
+      )
+
+    case (.codeItem, let codeItemMacroDef as CodeItemMacro.Type):
+      let rewritten = try codeItemMacroDef.expansion(of: node, in: context)
+      expandedSyntax = Syntax(CodeBlockItemListSyntax(rewritten))
+
+    case (.accessor, _), (.memberAttribute, _), (.member, _), (.peer, _), (.conformance, _), (.extension, _), (.expression, _), (.declaration, _),
+      (.codeItem, _):
+      throw MacroExpansionError.unmatchedMacroRole(definition, macroRole)
     }
-    return try _openExistential(node, do: _expand)
+    return expandedSyntax.formattedExpansion(definition.formatMode)
   } catch {
     context.addDiagnostics(from: error, node: node)
     return nil
@@ -160,12 +175,14 @@ public func expandFreestandingMacro(
 /// - Returns: A list of expanded source text. Upon failure (i.e.
 ///   `defintion.expansion()` throws) returns `nil`, and the diagnostics
 ///   representing the `Error` are guaranteed to be added to context.
-public func expandAttachedMacro<Context: MacroExpansionContext>(
+public func expandAttachedMacroWithoutCollapsing<Context: MacroExpansionContext>(
   definition: Macro.Type,
   macroRole: MacroRole,
   attributeNode: AttributeSyntax,
   declarationNode: DeclSyntax,
   parentDeclNode: DeclSyntax?,
+  extendedType: TypeSyntax?,
+  conformanceList: InheritedTypeListSyntax?,
   in context: Context
 ) -> [String]? {
   do {
@@ -188,22 +205,11 @@ public func expandAttachedMacro<Context: MacroExpansionContext>(
         throw MacroExpansionError.parentDeclGroupNil
       }
 
-      // Local function to expand a member attribute macro once we've opened up
-      // the existential.
-      func expandMemberAttributeMacro(
-        _ node: some DeclGroupSyntax
-      ) throws -> [AttributeSyntax] {
-        return try attachedMacro.expansion(
-          of: attributeNode,
-          attachedTo: node,
-          providingAttributesFor: declarationNode,
-          in: context
-        )
-      }
-
-      let attributes = try _openExistential(
-        parentDeclGroup,
-        do: expandMemberAttributeMacro
+      let attributes = try attachedMacro.expansion(
+        of: attributeNode,
+        attachedTo: parentDeclGroup,
+        providingAttributesFor: declarationNode,
+        in: context
       )
 
       // Form a buffer containing an attribute list to return to the caller.
@@ -218,19 +224,11 @@ public func expandAttachedMacro<Context: MacroExpansionContext>(
         throw MacroExpansionError.declarationNotDeclGroup
       }
 
-      // Local function to expand a member macro once we've opened up
-      // the existential.
-      func expandMemberMacro(
-        _ node: some DeclGroupSyntax
-      ) throws -> [DeclSyntax] {
-        return try attachedMacro.expansion(
-          of: attributeNode,
-          providingMembersOf: node,
-          in: context
-        )
-      }
-
-      let members = try _openExistential(declGroup, do: expandMemberMacro)
+      let members = try attachedMacro.expansion(
+        of: attributeNode,
+        providingMembersOf: declGroup,
+        in: context
+      )
 
       // Form a buffer of member declarations to return to the caller.
       return members.map { $0.formattedExpansion(definition.formatMode) }
@@ -247,40 +245,29 @@ public func expandAttachedMacro<Context: MacroExpansionContext>(
         $0.formattedExpansion(definition.formatMode)
       }
 
-    case (let attachedMacro as ConformanceMacro.Type, .conformance):
+    case (let attachedMacro as ExtensionMacro.Type, .extension):
       guard let declGroup = declarationNode.asProtocol(DeclGroupSyntax.self) else {
         // Compiler error: type mismatch.
         throw MacroExpansionError.declarationNotDeclGroup
       }
-      guard let identified = declarationNode.asProtocol(IdentifiedDeclSyntax.self)
-      else {
-        // Compiler error: type mismatch.
-        throw MacroExpansionError.declarationNotIdentified
+
+      guard let extendedType = extendedType else {
+        throw MacroExpansionError.noExtendedTypeSyntax
       }
 
-      // Local function to expand a conformance macro once we've opened up
-      // the existential.
-      func expandConformanceMacro(
-        _ node: some DeclGroupSyntax
-      ) throws -> [(TypeSyntax, GenericWhereClauseSyntax?)] {
-        return try attachedMacro.expansion(
-          of: attributeNode,
-          providingConformancesOf: node,
-          in: context
-        )
-      }
+      let protocols = conformanceList?.map(\.typeName) ?? []
 
-      let conformances = try _openExistential(
-        declGroup,
-        do: expandConformanceMacro
+      let extensions = try attachedMacro.expansion(
+        of: attributeNode,
+        attachedTo: declGroup,
+        providingExtensionsOf: extendedType,
+        conformingTo: protocols,
+        in: context
       )
 
-      // Form a buffer of extension declarations to return to the caller.
-      return conformances.map { typeSyntax, whereClause in
-        let typeName = identified.identifier.trimmedDescription
-        let protocolName = typeSyntax.trimmedDescription
-        let whereClause = whereClause?.trimmedDescription ?? ""
-        return "extension \(typeName) : \(protocolName) \(whereClause) {}"
+      // Form a buffer of peer declarations to return to the caller.
+      return extensions.map {
+        $0.formattedExpansion(definition.formatMode)
       }
 
     default:
@@ -289,6 +276,44 @@ public func expandAttachedMacro<Context: MacroExpansionContext>(
   } catch {
     context.addDiagnostics(from: error, node: attributeNode)
     return nil
+  }
+}
+
+/// Expand `@attached(XXX)` macros.
+///
+/// - Parameters:
+///   - definition: a type that conforms to one or more attached `Macro` protocols.
+///   - macroRole: indicates which `Macro` protocol expansion should be performed
+///   - attributeNode: attribute syntax node (e.g. `@macroName(argument)`).
+///   - declarationNode: target declaration syntax node to apply the expansion.
+///   - parentDeclNode: Only used for `MacroRole.memberAttribute`. The parent
+///     context node of `declarationNode`.
+///   - in: context of the expansion.
+/// - Returns: expanded source text. Upon failure (i.e. `defintion.expansion()`
+///   throws) returns `nil`, and the diagnostics representing the `Error` are
+///   guaranteed to be added to context.
+public func expandAttachedMacro<Context: MacroExpansionContext>(
+  definition: Macro.Type,
+  macroRole: MacroRole,
+  attributeNode: AttributeSyntax,
+  declarationNode: DeclSyntax,
+  parentDeclNode: DeclSyntax?,
+  extendedType: TypeSyntax?,
+  conformanceList: InheritedTypeListSyntax?,
+  in context: Context
+) -> String? {
+  let expandedSources = expandAttachedMacroWithoutCollapsing(
+    definition: definition,
+    macroRole: macroRole,
+    attributeNode: attributeNode,
+    declarationNode: declarationNode,
+    parentDeclNode: parentDeclNode,
+    extendedType: extendedType,
+    conformanceList: conformanceList,
+    in: context
+  )
+  return expandedSources.map {
+    collapse(expansions: $0, for: macroRole, attachedTo: declarationNode)
   }
 }
 
@@ -305,4 +330,57 @@ fileprivate extension SyntaxProtocol {
     }
     return formatted.trimmedDescription(matching: { $0.isWhitespace })
   }
+}
+
+/// Join `expansions`
+public func collapse<Node: SyntaxProtocol>(
+  expansions: [String],
+  for role: MacroRole,
+  attachedTo declarationNode: Node
+) -> String {
+  if expansions.isEmpty {
+    return ""
+  }
+
+  var expansions = expansions
+  var separator: String = "\n\n"
+
+  if role == .accessor,
+    let varDecl = declarationNode.as(VariableDeclSyntax.self),
+    let binding = varDecl.bindings.first,
+    binding.accessor == nil
+  {
+    let indentation = String(repeating: " ", count: 4)
+
+    expansions = expansions.map({ indent($0, with: indentation) })
+    expansions[0] = "{\n" + expansions[0]
+    expansions[expansions.count - 1] += "\n}"
+  } else if role == .memberAttribute {
+    separator = " "
+  }
+
+  return expansions.joined(separator: separator)
+}
+
+fileprivate func indent(_ source: String, with indentation: String) -> String {
+  if source.isEmpty || indentation.isEmpty {
+    return source
+  }
+
+  var indented = ""
+  var remaining = source[...]
+  while let nextNewline = remaining.firstIndex(where: { $0.isNewline }) {
+    if nextNewline != remaining.startIndex {
+      indented += indentation
+    }
+    indented += remaining[...nextNewline]
+    remaining = remaining[remaining.index(after: nextNewline)...]
+  }
+
+  if !remaining.isEmpty {
+    indented += indentation
+    indented += remaining
+  }
+
+  return indented
 }

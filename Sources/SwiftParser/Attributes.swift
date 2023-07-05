@@ -47,7 +47,6 @@ extension Parser {
     case _private
     case _projectedValueProperty
     case _semantics
-    case _silgen_name
     case _specialize
     case _spi
     case _spi_available
@@ -82,7 +81,6 @@ extension Parser {
       case TokenSpec(._private): self = ._private
       case TokenSpec(._projectedValueProperty): self = ._projectedValueProperty
       case TokenSpec(._semantics): self = ._semantics
-      case TokenSpec(._silgen_name): self = ._silgen_name
       case TokenSpec(._specialize): self = ._specialize
       case TokenSpec(._spi): self = ._spi
       case TokenSpec(._spi_available): self = ._spi_available
@@ -121,7 +119,6 @@ extension Parser {
       case ._private: return .keyword(._private)
       case ._projectedValueProperty: return .keyword(._projectedValueProperty)
       case ._semantics: return .keyword(._semantics)
-      case ._silgen_name: return .keyword(._silgen_name)
       case ._specialize: return .keyword(._specialize)
       case ._spi: return .keyword(._spi)
       case ._spi_available: return .keyword(._spi_available)
@@ -149,7 +146,7 @@ extension Parser {
     return .attribute(
       RawAttributeSyntax(
         unexpectedBeforeAtSign,
-        atSignToken: atSign,
+        atSign: atSign,
         attributeName: attributeName,
         leftParen: nil,
         argument: nil,
@@ -187,7 +184,7 @@ extension Parser {
       return .attribute(
         RawAttributeSyntax(
           unexpectedBeforeAtSign,
-          atSignToken: atSign,
+          atSign: atSign,
           attributeName: attributeName,
           unexpectedBeforeLeftParen,
           leftParen: leftParen,
@@ -201,7 +198,7 @@ extension Parser {
       return .attribute(
         RawAttributeSyntax(
           unexpectedBeforeAtSign,
-          atSignToken: atSign,
+          atSign: atSign,
           attributeName: attributeName,
           leftParen: nil,
           argument: nil,
@@ -292,7 +289,7 @@ extension Parser {
         }
         return .effectsArguments(RawEffectsArgumentsSyntax(elements: tokens, arena: parser.arena))
       }
-    case ._cdecl, ._silgen_name:
+    case ._cdecl:
       return parseAttribute(argumentMode: .required) { parser in
         return .string(parser.parseStringLiteral())
       }
@@ -322,7 +319,7 @@ extension Parser {
       return .attribute(
         RawAttributeSyntax(
           unexpectedBeforeAtSign,
-          atSignToken: atSign,
+          atSign: atSign,
           unexpectedBeforeAttributeName,
           attributeName: RawTypeSyntax(RawSimpleTypeIdentifierSyntax(name: attributeName, genericArgumentClause: nil, arena: self.arena)),
           leftParen: nil,
@@ -332,11 +329,41 @@ extension Parser {
         )
       )
     case nil:
+      let isAttached = self.peek().isAttachedKeyword
       return parseAttribute(argumentMode: .customAttribute) { parser in
-        let arguments = parser.parseArgumentListElements(pattern: .none)
+        let arguments: [RawTupleExprElementSyntax]
+        if isAttached {
+          arguments = parser.parseAttachedArguments()
+        } else {
+          arguments = parser.parseArgumentListElements(pattern: .none)
+        }
+
         return .argumentList(RawTupleExprElementListSyntax(elements: arguments, arena: parser.arena))
       }
     }
+  }
+}
+
+extension Parser {
+  mutating func parseAttachedArguments() -> [RawTupleExprElementSyntax] {
+    let (unexpectedBeforeRole, role) = self.expect(.identifier, TokenSpec(.extension, remapping: .identifier), default: .identifier)
+    let roleTrailingComma = self.consume(if: .comma)
+    let roleElement = RawTupleExprElementSyntax(
+      label: nil,
+      colon: nil,
+      expression: RawExprSyntax(
+        RawIdentifierExprSyntax(
+          unexpectedBeforeRole,
+          identifier: role,
+          declNameArguments: nil,
+          arena: self.arena
+        )
+      ),
+      trailingComma: roleTrailingComma,
+      arena: self.arena
+    )
+    let additionalArgs = self.parseArgumentListElements(pattern: .none)
+    return [roleElement] + additionalArgs
   }
 }
 
@@ -351,7 +378,7 @@ extension Parser {
 
     return RawAttributeSyntax(
       unexpectedBeforeAtSign,
-      atSignToken: atSign,
+      atSign: atSign,
       unexpectedBeforeDifferentiable,
       attributeName: RawTypeSyntax(RawSimpleTypeIdentifierSyntax(name: differentiable, genericArgumentClause: nil, arena: self.arena)),
       unexpectedBeforeLeftParen,
@@ -493,7 +520,7 @@ extension Parser {
 
     return RawAttributeSyntax(
       unexpectedBeforeAtSign,
-      atSignToken: atSign,
+      atSign: atSign,
       unexpectedBeforeDerivative,
       attributeName: RawTypeSyntax(RawSimpleTypeIdentifierSyntax(name: derivative, genericArgumentClause: nil, arena: self.arena)),
       unexpectedBeforeLeftParen,
@@ -515,7 +542,7 @@ extension Parser {
 
     return RawAttributeSyntax(
       unexpectedBeforeAtSign,
-      atSignToken: atSign,
+      atSign: atSign,
       unexpectedBeforeTranspose,
       attributeName: RawTypeSyntax(RawSimpleTypeIdentifierSyntax(name: transpose, genericArgumentClause: nil, arena: self.arena)),
       unexpectedBeforeLeftParen,
@@ -663,7 +690,7 @@ extension Parser {
         elements.append(
           .targetFunctionEntry(
             RawTargetFunctionEntrySyntax(
-              label: ident,
+              targetLabel: ident,
               unexpectedBeforeColon,
               colon: colon,
               declname: declName,
@@ -680,7 +707,7 @@ extension Parser {
         elements.append(
           .availabilityEntry(
             RawAvailabilityEntrySyntax(
-              label: ident,
+              availabilityLabel: ident,
               unexpectedBeforeColon,
               colon: colon,
               availabilityArguments: availability,

@@ -393,6 +393,18 @@ final class AttributeTests: XCTestCase {
       @_silgen_name("") func foo() {}
       """
     )
+
+    assertParse(
+      """
+      @_silgen_name("foo") var global: Int
+      """
+    )
+
+    assertParse(
+      """
+      @_silgen_name(raw: "foo") var global: Int
+      """
+    )
   }
 
   func testBackDeployed() {
@@ -626,6 +638,22 @@ final class AttributeTests: XCTestCase {
       internal import E
       fileprivate import F
       private import G
+      """
+    )
+  }
+
+  func testAttachedExtensionAttribute() {
+    assertParse(
+      """
+      @attached(extension)
+      macro m()
+      """
+    )
+
+    assertParse(
+      """
+      @attached(extension, names: named(test))
+      macro m()
       """
     )
   }

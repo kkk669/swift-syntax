@@ -68,9 +68,15 @@ extension CompilerPluginMessageHandler {
     let diagnostics = context.diagnostics.map {
       PluginMessage.Diagnostic(from: $0, in: sourceManager)
     }
-    try self.sendMessage(
-      .expandFreestandingMacroResult(expandedSource: expandedSource, diagnostics: diagnostics)
-    )
+
+    let response: PluginToHostMessage
+    if hostCapability.hasExpandMacroResult {
+      response = .expandMacroResult(expandedSource: expandedSource, diagnostics: diagnostics)
+    } else {
+      // TODO: Remove this  when all compilers have 'hasExpandMacroResult'.
+      response = .expandFreestandingMacroResult(expandedSource: expandedSource, diagnostics: diagnostics)
+    }
+    try self.sendMessage(response)
   }
 
   /// Expand `@attached(XXX)` macros.
@@ -80,7 +86,9 @@ extension CompilerPluginMessageHandler {
     discriminator: String,
     attributeSyntax: PluginMessage.Syntax,
     declSyntax: PluginMessage.Syntax,
-    parentDeclSyntax: PluginMessage.Syntax?
+    parentDeclSyntax: PluginMessage.Syntax?,
+    extendedTypeSyntax: PluginMessage.Syntax?,
+    conformanceListSyntax: PluginMessage.Syntax?
   ) throws {
     let sourceManager = SourceManager()
     let context = PluginMacroExpansionContext(
@@ -94,21 +102,44 @@ extension CompilerPluginMessageHandler {
     ).cast(AttributeSyntax.self)
     let declarationNode = sourceManager.add(declSyntax).cast(DeclSyntax.self)
     let parentDeclNode = parentDeclSyntax.map { sourceManager.add($0).cast(DeclSyntax.self) }
+    let extendedType = extendedTypeSyntax.map {
+      sourceManager.add($0).cast(TypeSyntax.self)
+    }
+    let conformanceList = conformanceListSyntax.map {
+      let placeholderStruct = sourceManager.add($0).cast(StructDeclSyntax.self)
+      return placeholderStruct.inheritanceClause!.inheritedTypeCollection
+    }
 
+    // TODO: Make this a 'String?' and remove non-'hasExpandMacroResult' branches.
     let expandedSources: [String]?
     do {
       guard let macroDefinition = resolveMacro(macro) else {
         throw MacroExpansionError.macroTypeNotFound(macro)
       }
+      let role = MacroRole(messageMacroRole: macroRole)
 
-      expandedSources = SwiftSyntaxMacroExpansion.expandAttachedMacro(
+      let expansions = SwiftSyntaxMacroExpansion.expandAttachedMacroWithoutCollapsing(
         definition: macroDefinition,
-        macroRole: MacroRole(messageMacroRole: macroRole),
+        macroRole: role,
         attributeNode: attributeNode,
         declarationNode: declarationNode,
         parentDeclNode: parentDeclNode,
+        extendedType: extendedType,
+        conformanceList: conformanceList,
         in: context
       )
+      if let expansions, hostCapability.hasExpandMacroResult {
+        // Make a single element array by collapsing the results into a string.
+        expandedSources = [
+          SwiftSyntaxMacroExpansion.collapse(
+            expansions: expansions,
+            for: role,
+            attachedTo: declarationNode
+          )
+        ]
+      } else {
+        expandedSources = expansions
+      }
     } catch {
       context.addDiagnostics(from: error, node: attributeNode)
       expandedSources = nil
@@ -117,9 +148,14 @@ extension CompilerPluginMessageHandler {
     let diagnostics = context.diagnostics.map {
       PluginMessage.Diagnostic(from: $0, in: sourceManager)
     }
-    try self.sendMessage(
-      .expandAttachedMacroResult(expandedSources: expandedSources, diagnostics: diagnostics)
-    )
+
+    let response: PluginToHostMessage
+    if hostCapability.hasExpandMacroResult {
+      response = .expandMacroResult(expandedSource: expandedSources?.first, diagnostics: diagnostics)
+    } else {
+      response = .expandAttachedMacroResult(expandedSources: expandedSources, diagnostics: diagnostics)
+    }
+    try self.sendMessage(response)
   }
 }
 
@@ -134,6 +170,7 @@ private extension MacroRole {
     case .peer: self = .peer
     case .conformance: self = .conformance
     case .codeItem: self = .codeItem
+    case .extension: self = .extension
     }
   }
 }

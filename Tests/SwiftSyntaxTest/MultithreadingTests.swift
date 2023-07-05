@@ -42,7 +42,7 @@ public class MultithreadingTests: XCTestCase {
         base: IdentifierExprSyntax(
           identifier: .identifier("base")
         ),
-        dot: .periodToken(),
+        period: .periodToken(),
         name: .identifier("member")
       ),
       leftParen: .leftParenToken(),
