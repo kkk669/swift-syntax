@@ -837,7 +837,7 @@ final class DeclarationTests: XCTestCase {
     assertParse(
       "func test() -> 1️⃣throws Int",
       diagnostics: [
-        DiagnosticSpec(message: "'throws' must preceed '->'", fixIts: ["move 'throws' in front of '->'"])
+        DiagnosticSpec(message: "'throws' must precede '->'", fixIts: ["move 'throws' in front of '->'"])
       ],
       fixedSource: "func test() throws -> Int"
     )
@@ -1055,7 +1055,7 @@ final class DeclarationTests: XCTestCase {
         AccessorBlockSyntax(
           accessors: AccessorListSyntax([
             AccessorDeclSyntax(
-              accessorKind: .keyword(.get)
+              accessorSpecifier: .keyword(.get)
             )
           ]),
           UnexpectedNodesSyntax([
@@ -2271,7 +2271,7 @@ final class DeclarationTests: XCTestCase {
           modifiers: ModifierListSyntax([
             DeclModifierSyntax(name: .keyword(.open))
           ]),
-          bindingKeyword: .keyword(.var),
+          bindingSpecifier: .keyword(.var),
           bindings: PatternBindingListSyntax([
             PatternBindingSyntax(
               pattern: IdentifierPatternSyntax(identifier: .identifier("foo")),

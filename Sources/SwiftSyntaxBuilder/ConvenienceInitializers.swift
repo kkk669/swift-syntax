@@ -70,7 +70,7 @@ extension BinaryOperatorExprSyntax {
 
 extension BooleanLiteralExprSyntax: ExpressibleByBooleanLiteral {
   public init(_ value: Bool) {
-    self.init(booleanLiteral: value ? .keyword(.true) : .keyword(.false))
+    self.init(literal: value ? .keyword(.true) : .keyword(.false))
   }
 
   public init(booleanLiteral value: Bool) {
@@ -138,9 +138,9 @@ extension ExprSyntax {
   ///
   /// Conformances will generally handle edge cases sensibly: `String` will
   /// use raw literals and escapes as needed, `Optional` will wrap a nested
-  /// `nil` in `.some`, `Double` wil represent special values like infinities
+  /// `nil` in `.some`, `Double` will represent special values like infinities
   /// as code sequences like `.infinity`, etc. `Set` and `Dictionary` sort
-  /// thier elements to improve stability.
+  /// their elements to improve stability.
   ///
   /// Because of that intelligent behavior, this initializer is not guaranteed
   /// to produce a literal as the outermost syntax node, or even to have a
@@ -358,7 +358,7 @@ extension VariableDeclSyntax {
     leadingTrivia: Trivia = [],
     attributes: AttributeListSyntax? = nil,
     modifiers: ModifierListSyntax? = nil,
-    _ bindingKeyword: Keyword,
+    _ bindingSpecifier: Keyword,
     name: PatternSyntax,
     type: TypeAnnotationSyntax? = nil,
     initializer: InitializerClauseSyntax? = nil
@@ -367,7 +367,7 @@ extension VariableDeclSyntax {
       leadingTrivia: leadingTrivia,
       attributes: attributes?.with(\.trailingTrivia, .space),
       modifiers: modifiers,
-      bindingKeyword: .keyword(bindingKeyword)
+      bindingSpecifier: .keyword(bindingSpecifier)
     ) {
       PatternBindingSyntax(
         pattern: name,

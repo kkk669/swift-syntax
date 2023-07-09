@@ -16,6 +16,7 @@ import SwiftParser
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
+import SwiftSyntaxMacroExpansion
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
@@ -57,9 +58,9 @@ private func replaceFirstLabel(
     return tuple
   }
 
-  return tuple.replacing(
-    childAt: 0,
-    with: firstElement.with(\.label, .identifier(newLabel))
+  return tuple.with(
+    \.[tuple.startIndex],
+    firstElement.with(\.label, .identifier(newLabel))
   )
 }
 
@@ -350,16 +351,20 @@ public struct AddCompletionHandler: PeerMacro {
     let newParameterList: FunctionParameterListSyntax
     if let lastParam = parameterList.last {
       // We need to add a trailing comma to the preceding list.
-      newParameterList = parameterList.removingLast()
-        .appending(
+      let newParameterListElements =
+        parameterList.dropLast()
+        + [
           lastParam.with(
             \.trailingComma,
             .commaToken(trailingTrivia: .space)
-          )
-        )
-        .appending(completionHandlerParam)
+          ),
+          completionHandlerParam,
+        ]
+      newParameterList = FunctionParameterListSyntax(newParameterListElements)
     } else {
-      newParameterList = parameterList.appending(completionHandlerParam)
+      newParameterList = FunctionParameterListSyntax(
+        parameterList + [completionHandlerParam]
+      )
     }
 
     let callArguments: [String] = parameterList.map { param in
@@ -497,7 +502,7 @@ public struct WrapStoredProperties: MemberAttributeMacro {
       break
     case .accessors(let node):
       for accessor in node.accessors {
-        switch accessor.accessorKind.tokenKind {
+        switch accessor.accessorSpecifier.tokenKind {
         case .keyword(.get), .keyword(.set):
           return []
         default:

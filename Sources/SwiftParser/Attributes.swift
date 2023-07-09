@@ -54,6 +54,7 @@ extension Parser {
     case _typeEraser
     case _unavailableFromAsync
     case `rethrows`
+    case attached
     case available
     case backDeployed
     case derivative
@@ -88,6 +89,7 @@ extension Parser {
       case TokenSpec(._typeEraser): self = ._typeEraser
       case TokenSpec(._unavailableFromAsync): self = ._unavailableFromAsync
       case TokenSpec(.`rethrows`): self = .rethrows
+      case TokenSpec(.attached): self = .attached
       case TokenSpec(.available): self = .available
       case TokenSpec(.backDeployed): self = .backDeployed
       case TokenSpec(.derivative): self = .derivative
@@ -126,6 +128,7 @@ extension Parser {
       case ._typeEraser: return .keyword(._typeEraser)
       case ._unavailableFromAsync: return .keyword(._unavailableFromAsync)
       case .`rethrows`: return .keyword(.rethrows)
+      case .attached: return .keyword(.attached)
       case .available: return .keyword(.available)
       case .backDeployed: return .keyword(.backDeployed)
       case .derivative: return .keyword(.derivative)
@@ -313,6 +316,11 @@ extension Parser {
       return parseAttribute(argumentMode: .optional) { parser in
         return .unavailableFromAsyncArguments(parser.parseUnavailableFromAsyncArguments())
       }
+    case .attached:
+      return parseAttribute(argumentMode: .customAttribute) { parser in
+        let arguments = parser.parseAttachedArguments()
+        return .argumentList(RawTupleExprElementListSyntax(elements: arguments, arena: parser.arena))
+      }
     case .rethrows:
       let (unexpectedBeforeAtSign, atSign) = self.expect(.atSign)
       let (unexpectedBeforeAttributeName, attributeName) = self.expect(TokenSpec(.rethrows, remapping: .identifier))
@@ -329,15 +337,8 @@ extension Parser {
         )
       )
     case nil:
-      let isAttached = self.peek().isAttachedKeyword
       return parseAttribute(argumentMode: .customAttribute) { parser in
-        let arguments: [RawTupleExprElementSyntax]
-        if isAttached {
-          arguments = parser.parseAttachedArguments()
-        } else {
-          arguments = parser.parseArgumentListElements(pattern: .none)
-        }
-
+        let arguments = parser.parseArgumentListElements(pattern: .none)
         return .argumentList(RawTupleExprElementListSyntax(elements: arguments, arena: parser.arena))
       }
     }
@@ -391,24 +392,24 @@ extension Parser {
   }
 
   mutating func parseDifferentiableAttributeArguments() -> RawDifferentiableAttributeArgumentsSyntax {
-    let diffKind: RawTokenSyntax?
-    let diffKindComma: RawTokenSyntax?
-    if let (_, handle) = self.at(anyIn: DifferentiableAttributeArgumentsSyntax.DiffKindOptions.self) {
-      diffKind = self.eat(handle)
-      diffKindComma = self.consume(if: .comma)
+    let kindSpecifier: RawTokenSyntax?
+    let kindSpecifierComma: RawTokenSyntax?
+    if let (_, handle) = self.at(anyIn: DifferentiableAttributeArgumentsSyntax.KindSpecifierOptions.self) {
+      kindSpecifier = self.eat(handle)
+      kindSpecifierComma = self.consume(if: .comma)
     } else {
-      diffKind = nil
-      diffKindComma = nil
+      kindSpecifier = nil
+      kindSpecifierComma = nil
     }
 
-    let diffParams: RawDifferentiabilityParamsClauseSyntax?
-    let diffParamsComma: RawTokenSyntax?
+    let parameters: RawDifferentiabilityParamsClauseSyntax?
+    let parametersComma: RawTokenSyntax?
     if self.at(.keyword(.wrt)) {
-      diffParams = self.parseDifferentiabilityParameters()
-      diffParamsComma = self.consume(if: .comma)
+      parameters = self.parseDifferentiabilityParameters()
+      parametersComma = self.consume(if: .comma)
     } else {
-      diffParams = nil
-      diffParamsComma = nil
+      parameters = nil
+      parametersComma = nil
     }
 
     let whereClause: RawGenericWhereClauseSyntax?
@@ -418,10 +419,10 @@ extension Parser {
       whereClause = nil
     }
     return RawDifferentiableAttributeArgumentsSyntax(
-      diffKind: diffKind,
-      diffKindComma: diffKindComma,
-      diffParams: diffParams,
-      diffParamsComma: diffParamsComma,
+      kindSpecifier: kindSpecifier,
+      kindSpecifierComma: kindSpecifierComma,
+      parameters: parameters,
+      parametersComma: parametersComma,
       whereClause: whereClause,
       arena: self.arena
     )
@@ -567,11 +568,11 @@ extension Parser {
       (unexpectedBeforeAccessor, accessor) = (nil, nil)
     }
     let comma = self.consume(if: .comma)
-    let diffParams: RawDifferentiabilityParamsClauseSyntax?
+    let parameters: RawDifferentiabilityParamsClauseSyntax?
     if comma != nil {
-      diffParams = self.parseDifferentiabilityParameters()
+      parameters = self.parseDifferentiabilityParameters()
     } else {
-      diffParams = nil
+      parameters = nil
     }
     return RawDerivativeRegistrationAttributeArgumentsSyntax(
       unexpectedBeforeOfLabel,
@@ -581,9 +582,9 @@ extension Parser {
       originalDeclName: originalDeclName,
       period: period,
       unexpectedBeforeAccessor,
-      accessorKind: accessor,
+      accessorSpecifier: accessor,
       comma: comma,
-      diffParams: diffParams,
+      parameters: parameters,
       arena: self.arena
     )
   }

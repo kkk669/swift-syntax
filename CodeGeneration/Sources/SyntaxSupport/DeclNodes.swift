@@ -154,7 +154,8 @@ public let DECL_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "AccessorKind",
+        name: "AccessorSpecifier",
+        deprecatedName: "AccessorKind",
         kind: .token(choices: [
           .keyword(text: "get"),
           .keyword(text: "set"),
@@ -1213,7 +1214,8 @@ public let DECL_NODES: [Node] = [
         documentation: "The `import` keyword for this declaration."
       ),
       Child(
-        name: "ImportKind",
+        name: "ImportKindSpecifier",
+        deprecatedName: "ImportKind",
         kind: .token(choices: [
           .keyword(text: "typealias"),
           .keyword(text: "struct"),
@@ -1339,7 +1341,7 @@ public let DECL_NODES: [Node] = [
         name: "Signature",
         kind: .node(kind: .functionSignature),
         nameForDiagnostics: "function signature",
-        documentation: "The arguments of the initializer. While the function signature allows specifying an return clause, doing so is not semantically valid."
+        documentation: "The arguments of the initializer. While the function signature allows specifying a return clause, doing so is not semantically valid."
       ),
       Child(
         name: "GenericWhereClause",
@@ -1351,7 +1353,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "Body",
         kind: .node(kind: .codeBlock),
-        documentation: "The initializer’s body. Missing if the initialier is a requirement of a protocol declaration.",
+        documentation: "The initializer’s body. Missing if the initializer is a requirement of a protocol declaration.",
         isOptional: true
       ),
     ]
@@ -1570,7 +1572,8 @@ public let DECL_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "Fixity",
+        name: "FixitySpecifier",
+        deprecatedName: "Fixity",
         kind: .token(choices: [.keyword(text: "prefix"), .keyword(text: "postfix"), .keyword(text: "infix")]),
         nameForDiagnostics: "fixity",
         documentation: "The fixity applied to the 'operator' declaration."
@@ -1785,7 +1788,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "ColonToken")])
       ),
       Child(
-        name: "Flag",
+        name: "Value",
+        deprecatedName: "Flag",
         kind: .token(choices: [.keyword(text: "true"), .keyword(text: "false")]),
         documentation:
           "When true, an operator in the corresponding precedence group uses the same grouping rules during optional chaining as the assignment operators from the standard library. Otherwise, operators in the precedence group follows the same optional chaining rules as operators that don't perform assignment."
@@ -1919,7 +1923,7 @@ public let DECL_NODES: [Node] = [
     documentation: "Specify the new precedence group's relation to existing precedence groups.",
     children: [
       Child(
-        name: "HigherThanOrLowerThanKeyword",
+        name: "HigherThanOrLowerThanLabel",
         deprecatedName: "HigherThanOrLowerThan",
         kind: .token(choices: [.keyword(text: "higherThan"), .keyword(text: "lowerThan")]),
         documentation: "The relation to specified other precedence groups.",
@@ -2350,7 +2354,8 @@ public let DECL_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "BindingKeyword",
+        name: "BindingSpecifier",
+        deprecatedName: "BindingKeyword",
         kind: .token(choices: [.keyword(text: "let"), .keyword(text: "var"), .keyword(text: "inout")])
       ),
       Child(

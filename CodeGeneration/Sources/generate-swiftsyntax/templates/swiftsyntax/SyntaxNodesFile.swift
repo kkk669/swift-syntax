@@ -28,7 +28,7 @@ extension Child {
 }
 
 /// This file generates the syntax nodes for SwiftSyntax. To keep the generated
-/// files at a managable file size, it is to be invoked multiple times with the
+/// files at a manageable file size, it is to be invoked multiple times with the
 /// variable `emitKind` set to a base kind listed in
 /// It then only emits those syntax nodes whose base kind are that specified kind.
 func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
@@ -78,7 +78,12 @@ func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
           """
         )
 
-        try! InitializerDeclSyntax("\(node.generateInitializerDeclHeader())") {
+        try! InitializerDeclSyntax(
+          """
+          \(raw: node.generateInitializerDocComment())
+          \(node.generateInitializerDeclHeader())
+          """
+        ) {
           let parameters = ClosureParameterListSyntax {
             for child in node.children {
               ClosureParameterSyntax(firstName: .identifier(child.varName.backtickedIfNeeded))
@@ -100,7 +105,7 @@ func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
               ArrayElementSyntax(
                 expression: MemberAccessExprSyntax(
                   base: child.type.optionalChained(expr: ExprSyntax("\(raw: child.varName.backtickedIfNeeded)")),
-                  dot: .periodToken(),
+                  period: .periodToken(),
                   name: "raw"
                 )
               )
@@ -164,7 +169,7 @@ func syntaxNode(emitKind: SyntaxNodeKind) -> SourceFileSyntax {
             public var \(raw: child.varName.backtickedIfNeeded): \(type)
             """
           ) {
-            AccessorDeclSyntax(accessorKind: .keyword(.get)) {
+            AccessorDeclSyntax(accessorSpecifier: .keyword(.get)) {
               if child.isOptional {
                 StmtSyntax("return data.child(at: \(raw: index), parent: Syntax(self)).map(\(raw: childType).init)")
               } else {

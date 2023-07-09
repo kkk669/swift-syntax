@@ -20,7 +20,7 @@
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
 ///  - `modifier`: ``DeclModifierSyntax``?
-///  - `accessorKind`: (`'get'` | `'set'` | `'didSet'` | `'willSet'` | `'unsafeAddress'` | `'addressWithOwner'` | `'addressWithNativeOwner'` | `'unsafeMutableAddress'` | `'mutableAddressWithOwner'` | `'mutableAddressWithNativeOwner'` | `'_read'` | `'_modify'` | `'init'`)
+///  - `accessorSpecifier`: (`'get'` | `'set'` | `'didSet'` | `'willSet'` | `'unsafeAddress'` | `'addressWithOwner'` | `'addressWithNativeOwner'` | `'unsafeMutableAddress'` | `'mutableAddressWithOwner'` | `'mutableAddressWithNativeOwner'` | `'_read'` | `'_modify'` | `'init'`)
 ///  - `parameter`: ``AccessorParameterSyntax``?
 ///  - `effectSpecifiers`: ``AccessorEffectSpecifiersSyntax``?
 ///  - `initEffects`: ``AccessorInitEffectsSyntax``?
@@ -43,15 +43,18 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
       attributes: AttributeListSyntax? = nil,
       _ unexpectedBetweenAttributesAndModifier: UnexpectedNodesSyntax? = nil,
       modifier: DeclModifierSyntax? = nil,
-      _ unexpectedBetweenModifierAndAccessorKind: UnexpectedNodesSyntax? = nil,
-      accessorKind: TokenSyntax,
-      _ unexpectedBetweenAccessorKindAndParameter: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenModifierAndAccessorSpecifier: UnexpectedNodesSyntax? = nil,
+      accessorSpecifier: TokenSyntax,
+      _ unexpectedBetweenAccessorSpecifierAndParameter: UnexpectedNodesSyntax? = nil,
       parameter: AccessorParameterSyntax? = nil,
       _ unexpectedBetweenParameterAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
       effectSpecifiers: AccessorEffectSpecifiersSyntax? = nil,
@@ -70,9 +73,9 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             attributes, 
             unexpectedBetweenAttributesAndModifier, 
             modifier, 
-            unexpectedBetweenModifierAndAccessorKind, 
-            accessorKind, 
-            unexpectedBetweenAccessorKindAndParameter, 
+            unexpectedBetweenModifierAndAccessorSpecifier, 
+            accessorSpecifier, 
+            unexpectedBetweenAccessorSpecifierAndParameter, 
             parameter, 
             unexpectedBetweenParameterAndEffectSpecifiers, 
             effectSpecifiers, 
@@ -87,9 +90,9 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           attributes?.raw, 
           unexpectedBetweenAttributesAndModifier?.raw, 
           modifier?.raw, 
-          unexpectedBetweenModifierAndAccessorKind?.raw, 
-          accessorKind.raw, 
-          unexpectedBetweenAccessorKindAndParameter?.raw, 
+          unexpectedBetweenModifierAndAccessorSpecifier?.raw, 
+          accessorSpecifier.raw, 
+          unexpectedBetweenAccessorSpecifierAndParameter?.raw, 
           parameter?.raw, 
           unexpectedBetweenParameterAndEffectSpecifiers?.raw, 
           effectSpecifiers?.raw, 
@@ -172,7 +175,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenModifierAndAccessorKind: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenModifierAndAccessorSpecifier: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -181,7 +184,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var accessorKind: TokenSyntax {
+  public var accessorSpecifier: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
@@ -190,7 +193,7 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenAccessorKindAndParameter: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenAccessorSpecifierAndParameter: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -277,9 +280,9 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           \Self.attributes, 
           \Self.unexpectedBetweenAttributesAndModifier, 
           \Self.modifier, 
-          \Self.unexpectedBetweenModifierAndAccessorKind, 
-          \Self.accessorKind, 
-          \Self.unexpectedBetweenAccessorKindAndParameter, 
+          \Self.unexpectedBetweenModifierAndAccessorSpecifier, 
+          \Self.accessorSpecifier, 
+          \Self.unexpectedBetweenAccessorSpecifierAndParameter, 
           \Self.parameter, 
           \Self.unexpectedBetweenParameterAndEffectSpecifiers, 
           \Self.effectSpecifiers, 
@@ -324,6 +327,9 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -676,6 +682,16 @@ public struct AssociatedtypeDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: Attributes attached to the associated type declaration.
+  ///   - modifiers: Modifiers attached to the associated type declaration.
+  ///   - associatedtypeKeyword: The `associatedtype` keyword for this declaration.
+  ///   - identifier: The name of this associated type.
+  ///   - inheritanceClause: The inheritance clause describing conformances for this associated type declaration.
+  ///   - initializer: The type initializer clause for this associated type declaration which represents a default type assignment for the associated type.
+  ///   - genericWhereClause: The `where` clause that applies to the generic parameters of this associated type declaration.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -1008,6 +1024,17 @@ public struct ClassDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: Attributes attached to the class declaration, such as an `@available` attribute.
+  ///   - modifiers: Modifiers attached to the class declaration, such as `public`.
+  ///   - classKeyword: The `class` keyword for this declaration.
+  ///   - identifier: The name of the class.
+  ///   - genericParameterClause: The generic parameters, if any, of the class declaration.
+  ///   - inheritanceClause: The inheritance clause describing one or more conformances for this class declaration.
+  ///   - genericWhereClause: The `where` clause that applies to the generic parameters of this class declaration.
+  ///   - memberBlock: The members of the class declaration. As class extension declarations may declare additional members, the contents of this member block isn't guaranteed to be a complete list of members for this type.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -1349,6 +1376,13 @@ public struct DeinitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: Attributes that are attached to the deinitializer.
+  ///   - modifiers: Modifiers that are attached to the deinitializer.
+  ///   - deinitKeyword: The deinit keyword.
+  ///   - body: The deinitializer's body.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -1601,6 +1635,12 @@ public struct EditorPlaceholderDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: If there were attributes before the editor placeholder, the ``EditorPlaceholderDeclSyntax`` will contain these.
+  ///   - modifiers: If there were modifiers before the editor placeholder, the `EditorPlaceholderDecl` will contain these.
+  ///   - placeholder: The actual editor placeholder that starts with `<#` and ends with `#>`.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -1801,6 +1841,13 @@ public struct EnumCaseDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: The attributes applied to the case declaration.
+  ///   - modifiers: The declaration modifiers applied to the case declaration.
+  ///   - caseKeyword: The `case` keyword for this case.
+  ///   - elements: The elements this case declares.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -2056,6 +2103,17 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: The attributes applied to the enum declaration.
+  ///   - modifiers: The declaration modifiers applied to the enum declaration.
+  ///   - enumKeyword: The `enum` keyword for this declaration.
+  ///   - identifier: Declares the name of this enum. If the name matches a reserved keyword use backticks to escape it.
+  ///   - genericParameterClause: The generic parameters, if any, for this enum declaration.
+  ///   - inheritanceClause: The inheritance clause describing conformances or raw values for this enum declaration.
+  ///   - genericWhereClause: The `where` clause that applies to the generic parameters of this enum declaration.
+  ///   - memberBlock: The cases and other members associated with this enum declaration. Because enum extension declarations may declare additional members the contents of this member block isn't guaranteed to be a complete list of members for this type.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -2394,6 +2452,9 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -2699,6 +2760,9 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -3024,6 +3088,9 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeClauses: UnexpectedNodesSyntax? = nil,
@@ -3156,7 +3223,7 @@ public struct IfConfigDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 ///  - `attributes`: ``AttributeListSyntax``
 ///  - `modifiers`: ``ModifierListSyntax``
 ///  - `importKeyword`: `'import'`
-///  - `importKind`: (`'typealias'` | `'struct'` | `'class'` | `'enum'` | `'protocol'` | `'var'` | `'let'` | `'func'` | `'inout'`)?
+///  - `importKindSpecifier`: (`'typealias'` | `'struct'` | `'class'` | `'enum'` | `'protocol'` | `'var'` | `'let'` | `'func'` | `'inout'`)?
 ///  - `path`: ``ImportPathSyntax``
 public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
@@ -3176,6 +3243,14 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: Attributes attached to the import declaration, for example `@testable`.
+  ///   - modifiers: Modifiers attached to the import declaration. Currently, no modifiers are supported by Swift.
+  ///   - importKeyword: The `import` keyword for this declaration.
+  ///   - importKindSpecifier: The kind of declaration being imported. For example, a struct can be imported from a specific module.
+  ///   - path: The path to the module, submodule or symbol being imported.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -3184,9 +3259,9 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       modifiers: ModifierListSyntax? = nil,
       _ unexpectedBetweenModifiersAndImportKeyword: UnexpectedNodesSyntax? = nil,
       importKeyword: TokenSyntax = .keyword(.import),
-      _ unexpectedBetweenImportKeywordAndImportKind: UnexpectedNodesSyntax? = nil,
-      importKind: TokenSyntax? = nil,
-      _ unexpectedBetweenImportKindAndPath: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenImportKeywordAndImportKindSpecifier: UnexpectedNodesSyntax? = nil,
+      importKindSpecifier: TokenSyntax? = nil,
+      _ unexpectedBetweenImportKindSpecifierAndPath: UnexpectedNodesSyntax? = nil,
       path: ImportPathSyntax,
       _ unexpectedAfterPath: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
@@ -3201,9 +3276,9 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             modifiers, 
             unexpectedBetweenModifiersAndImportKeyword, 
             importKeyword, 
-            unexpectedBetweenImportKeywordAndImportKind, 
-            importKind, 
-            unexpectedBetweenImportKindAndPath, 
+            unexpectedBetweenImportKeywordAndImportKindSpecifier, 
+            importKindSpecifier, 
+            unexpectedBetweenImportKindSpecifierAndPath, 
             path, 
             unexpectedAfterPath
           ))) { (arena, _) in
@@ -3214,9 +3289,9 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           modifiers?.raw, 
           unexpectedBetweenModifiersAndImportKeyword?.raw, 
           importKeyword.raw, 
-          unexpectedBetweenImportKeywordAndImportKind?.raw, 
-          importKind?.raw, 
-          unexpectedBetweenImportKindAndPath?.raw, 
+          unexpectedBetweenImportKeywordAndImportKindSpecifier?.raw, 
+          importKindSpecifier?.raw, 
+          unexpectedBetweenImportKindSpecifierAndPath?.raw, 
           path.raw, 
           unexpectedAfterPath?.raw
         ]
@@ -3338,7 +3413,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenImportKeywordAndImportKind: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenImportKeywordAndImportKindSpecifier: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -3348,7 +3423,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   }
   
   /// The kind of declaration being imported. For example, a struct can be imported from a specific module.
-  public var importKind: TokenSyntax? {
+  public var importKindSpecifier: TokenSyntax? {
     get {
       return data.child(at: 7, parent: Syntax(self)).map(TokenSyntax.init)
     }
@@ -3357,7 +3432,7 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenImportKindAndPath: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenImportKindSpecifierAndPath: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -3417,9 +3492,9 @@ public struct ImportDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           \Self.modifiers, 
           \Self.unexpectedBetweenModifiersAndImportKeyword, 
           \Self.importKeyword, 
-          \Self.unexpectedBetweenImportKeywordAndImportKind, 
-          \Self.importKind, 
-          \Self.unexpectedBetweenImportKindAndPath, 
+          \Self.unexpectedBetweenImportKeywordAndImportKindSpecifier, 
+          \Self.importKindSpecifier, 
+          \Self.unexpectedBetweenImportKindSpecifierAndPath, 
           \Self.path, 
           \Self.unexpectedAfterPath
         ])
@@ -3465,6 +3540,17 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: Attributes that are attached to the initializer.
+  ///   - modifiers: Modifiers attached to the initializer
+  ///   - initKeyword: The init keyword
+  ///   - optionalMark: If the initializer is failable, a question mark to indicate that.
+  ///   - genericParameterClause: Generic parameters of the initializer.
+  ///   - signature: The arguments of the initializer. While the function signature allows specifying a return clause, doing so is not semantically valid.
+  ///   - genericWhereClause: If the initializer had generic parameters, a where clause that can restrict those
+  ///   - body: The initializer’s body. Missing if the initializer is a requirement of a protocol declaration.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -3692,7 +3778,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// The arguments of the initializer. While the function signature allows specifying an return clause, doing so is not semantically valid.
+  /// The arguments of the initializer. While the function signature allows specifying a return clause, doing so is not semantically valid.
   public var signature: FunctionSignatureSyntax {
     get {
       return FunctionSignatureSyntax(data.child(at: 11, parent: Syntax(self))!)
@@ -3730,7 +3816,7 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// The initializer’s body. Missing if the initialier is a requirement of a protocol declaration.
+  /// The initializer’s body. Missing if the initializer is a requirement of a protocol declaration.
   public var body: CodeBlockSyntax? {
     get {
       return data.child(at: 15, parent: Syntax(self)).map(CodeBlockSyntax.init)
@@ -3804,6 +3890,9 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -4137,6 +4226,10 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - pound: The `#` sign.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -4564,6 +4657,12 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: If there were standalone attributes without a declaration to attach them to, the ``MissingDeclSyntax`` will contain these.
+  ///   - modifiers: If there were standalone modifiers without a declaration to attach them to, the ``MissingDeclSyntax`` will contain these.
+  ///   - placeholder: A placeholder, i.e. `<#decl#>` that can be inserted into the source code to represent the missing declaration.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -4742,7 +4841,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 ///
 /// ### Children
 /// 
-///  - `fixity`: (`'prefix'` | `'postfix'` | `'infix'`)
+///  - `fixitySpecifier`: (`'prefix'` | `'postfix'` | `'infix'`)
 ///  - `operatorKeyword`: `'operator'`
 ///  - `identifier`: (`<binaryOperator>` | `<prefixOperator>` | `<postfixOperator>`)
 ///  - `operatorPrecedenceAndTypes`: ``OperatorPrecedenceAndTypesSyntax``?
@@ -4764,11 +4863,16 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - fixitySpecifier: The fixity applied to the 'operator' declaration.
+  ///   - operatorPrecedenceAndTypes: Optionally specify a precedence group and designated types.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
-      _ unexpectedBeforeFixity: UnexpectedNodesSyntax? = nil,
-      fixity: TokenSyntax,
-      _ unexpectedBetweenFixityAndOperatorKeyword: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBeforeFixitySpecifier: UnexpectedNodesSyntax? = nil,
+      fixitySpecifier: TokenSyntax,
+      _ unexpectedBetweenFixitySpecifierAndOperatorKeyword: UnexpectedNodesSyntax? = nil,
       operatorKeyword: TokenSyntax = .keyword(.operator),
       _ unexpectedBetweenOperatorKeywordAndIdentifier: UnexpectedNodesSyntax? = nil,
       identifier: TokenSyntax,
@@ -4781,9 +4885,9 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     // Extend the lifetime of all parameters so their arenas don't get destroyed
     // before they can be added as children of the new arena.
     let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (
-            unexpectedBeforeFixity, 
-            fixity, 
-            unexpectedBetweenFixityAndOperatorKeyword, 
+            unexpectedBeforeFixitySpecifier, 
+            fixitySpecifier, 
+            unexpectedBetweenFixitySpecifierAndOperatorKeyword, 
             operatorKeyword, 
             unexpectedBetweenOperatorKeywordAndIdentifier, 
             identifier, 
@@ -4792,9 +4896,9 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             unexpectedAfterOperatorPrecedenceAndTypes
           ))) { (arena, _) in
       let layout: [RawSyntax?] = [
-          unexpectedBeforeFixity?.raw, 
-          fixity.raw, 
-          unexpectedBetweenFixityAndOperatorKeyword?.raw, 
+          unexpectedBeforeFixitySpecifier?.raw, 
+          fixitySpecifier.raw, 
+          unexpectedBetweenFixitySpecifierAndOperatorKeyword?.raw, 
           operatorKeyword.raw, 
           unexpectedBetweenOperatorKeywordAndIdentifier?.raw, 
           identifier.raw, 
@@ -4815,7 +4919,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self.init(data)
   }
   
-  public var unexpectedBeforeFixity: UnexpectedNodesSyntax? {
+  public var unexpectedBeforeFixitySpecifier: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4825,7 +4929,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   }
   
   /// The fixity applied to the 'operator' declaration.
-  public var fixity: TokenSyntax {
+  public var fixitySpecifier: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
@@ -4834,7 +4938,7 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenFixityAndOperatorKeyword: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenFixitySpecifierAndOperatorKeyword: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4900,9 +5004,9 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   public static var structure: SyntaxNodeStructure {
     return .layout([
-          \Self.unexpectedBeforeFixity, 
-          \Self.fixity, 
-          \Self.unexpectedBetweenFixityAndOperatorKeyword, 
+          \Self.unexpectedBeforeFixitySpecifier, 
+          \Self.fixitySpecifier, 
+          \Self.unexpectedBetweenFixitySpecifierAndOperatorKeyword, 
           \Self.operatorKeyword, 
           \Self.unexpectedBetweenOperatorKeywordAndIdentifier, 
           \Self.identifier, 
@@ -4941,6 +5045,9 @@ public struct PoundSourceLocationSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforePoundSourceLocation: UnexpectedNodesSyntax? = nil,
@@ -5119,6 +5226,13 @@ public struct PrecedenceGroupDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: The attributes applied to the 'precedencegroup' declaration.
+  ///   - modifiers: The declaration modifiers applied to the 'precedencegroup' declaration.
+  ///   - identifier: The name of this precedence group.
+  ///   - groupAttributes: The characteristics of this precedence group.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -5458,6 +5572,17 @@ public struct ProtocolDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: Attributes attached to the protocol declaration, such as an `@available` attribute.
+  ///   - modifiers: Modifiers attached to the protocol declaration, such as `public`.
+  ///   - protocolKeyword: The `protocol` keyword for this declaration.
+  ///   - identifier: The name of the protocol.
+  ///   - primaryAssociatedTypeClause: The primary associated type for the protocol.
+  ///   - inheritanceClause: The inheritance clause describing one or more conformances for this protocol declaration.
+  ///   - genericWhereClause: The `where` clause that applies to the generic parameters of this protocol declaration.
+  ///   - memberBlock: The members of the protocol declaration.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -5851,6 +5976,17 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - attributes: Attributes that are attached to the struct declaration.
+  ///   - modifiers: Modifiers that are attached to the struct declaration.
+  ///   - structKeyword: The `struct` keyword for this declaration.
+  ///   - identifier: Declares the name of this struct. If the name matches a reserved keyword use backticks to escape it.
+  ///   - genericParameterClause: The generic parameters, if any, of the struct declaration.
+  ///   - inheritanceClause: The struct declaration inheritance clause describing one or more conformances for this struct declaration.
+  ///   - genericWhereClause: The `where` clause that applies to the generic parameters of this struct declaration.
+  ///   - memberBlock: The members of the struct declaration. Because struct extension declarations may declare additional members the contents of this member block isn't guaranteed to be a complete list of members for this type.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -6232,6 +6368,9 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -6562,6 +6701,9 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
@@ -6843,7 +6985,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
 ///  - `modifiers`: ``ModifierListSyntax``
-///  - `bindingKeyword`: (`'let'` | `'var'` | `'inout'`)
+///  - `bindingSpecifier`: (`'let'` | `'var'` | `'inout'`)
 ///  - `bindings`: ``PatternBindingListSyntax``
 public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
@@ -6863,15 +7005,18 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     self._syntaxNode = Syntax(data)
   }
   
+  /// - Parameters:
+  ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeAttributes: UnexpectedNodesSyntax? = nil,
       attributes: AttributeListSyntax? = nil,
       _ unexpectedBetweenAttributesAndModifiers: UnexpectedNodesSyntax? = nil,
       modifiers: ModifierListSyntax? = nil,
-      _ unexpectedBetweenModifiersAndBindingKeyword: UnexpectedNodesSyntax? = nil,
-      bindingKeyword: TokenSyntax,
-      _ unexpectedBetweenBindingKeywordAndBindings: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenModifiersAndBindingSpecifier: UnexpectedNodesSyntax? = nil,
+      bindingSpecifier: TokenSyntax,
+      _ unexpectedBetweenBindingSpecifierAndBindings: UnexpectedNodesSyntax? = nil,
       bindings: PatternBindingListSyntax,
       _ unexpectedAfterBindings: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
@@ -6884,9 +7029,9 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             attributes, 
             unexpectedBetweenAttributesAndModifiers, 
             modifiers, 
-            unexpectedBetweenModifiersAndBindingKeyword, 
-            bindingKeyword, 
-            unexpectedBetweenBindingKeywordAndBindings, 
+            unexpectedBetweenModifiersAndBindingSpecifier, 
+            bindingSpecifier, 
+            unexpectedBetweenBindingSpecifierAndBindings, 
             bindings, 
             unexpectedAfterBindings
           ))) { (arena, _) in
@@ -6895,9 +7040,9 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           attributes?.raw, 
           unexpectedBetweenAttributesAndModifiers?.raw, 
           modifiers?.raw, 
-          unexpectedBetweenModifiersAndBindingKeyword?.raw, 
-          bindingKeyword.raw, 
-          unexpectedBetweenBindingKeywordAndBindings?.raw, 
+          unexpectedBetweenModifiersAndBindingSpecifier?.raw, 
+          bindingSpecifier.raw, 
+          unexpectedBetweenBindingSpecifierAndBindings?.raw, 
           bindings.raw, 
           unexpectedAfterBindings?.raw
         ]
@@ -6998,7 +7143,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     return VariableDeclSyntax(newData)
   }
   
-  public var unexpectedBetweenModifiersAndBindingKeyword: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenModifiersAndBindingSpecifier: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -7007,7 +7152,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var bindingKeyword: TokenSyntax {
+  public var bindingSpecifier: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
     }
@@ -7016,7 +7161,7 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenBindingKeywordAndBindings: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenBindingSpecifierAndBindings: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -7073,9 +7218,9 @@ public struct VariableDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           \Self.attributes, 
           \Self.unexpectedBetweenAttributesAndModifiers, 
           \Self.modifiers, 
-          \Self.unexpectedBetweenModifiersAndBindingKeyword, 
-          \Self.bindingKeyword, 
-          \Self.unexpectedBetweenBindingKeywordAndBindings, 
+          \Self.unexpectedBetweenModifiersAndBindingSpecifier, 
+          \Self.bindingSpecifier, 
+          \Self.unexpectedBetweenBindingSpecifierAndBindings, 
           \Self.bindings, 
           \Self.unexpectedAfterBindings
         ])

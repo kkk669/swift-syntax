@@ -269,13 +269,13 @@ extension Parser {
           )
           break
         } else if self.at(.keyword(.Type)) || self.at(.keyword(.Protocol)) {
-          let typeOrProtocol = self.consume(if: .keyword(.Type)) ?? self.consume(if: .keyword(.Protocol))!
+          let metatypeSpecifier = self.consume(if: .keyword(.Type)) ?? self.consume(if: .keyword(.Protocol))!
           base = RawTypeSyntax(
             RawMetatypeTypeSyntax(
               baseType: base,
               unexpectedPeriod,
               period: period,
-              typeOrProtocol: typeOrProtocol,
+              metatypeSpecifier: metatypeSpecifier,
               arena: self.arena
             )
           )
@@ -1030,7 +1030,7 @@ extension Parser {
         )
       } else if self.at(.colon) {
         var lookahead = self.lookahead()
-        // We only want to continue with a dictionary if we can parse a colon and a simpletype.
+        // We only want to continue with a dictionary if we can parse a colon and a simple type.
         // Otherwise we can get a wrong diagnostic if we get a Python-style function declaration.
         guard lookahead.consume(if: .colon) != nil && lookahead.canParseSimpleType(),
           let colon = self.consume(if: TokenSpec(.colon, allowAtStartOfLine: false))
@@ -1074,10 +1074,6 @@ extension Lexer.Lexeme {
     return self.rawTokenKind == .binaryOperator
       || self.rawTokenKind == .postfixOperator
       || self.rawTokenKind == .prefixOperator
-  }
-
-  var isAttachedKeyword: Bool {
-    return self.rawTokenKind == .identifier && self.tokenText == "attached"
   }
 
   var isEllipsis: Bool {

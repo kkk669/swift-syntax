@@ -81,7 +81,7 @@ private enum MacroExpansionError: Error, CustomStringConvertible {
 ///   - macroRole: indicates which `Macro` protocol expansion should be performed
 ///   - node: macro expansion syntax node (e.g. `#macroName(argument)`).
 ///   - in: context of the expansion.
-/// - Returns: expanded source text. Upon failure (i.e. `defintion.expansion()`
+/// - Returns: expanded source text. Upon failure (i.e. `definition.expansion()`
 ///   throws) returns `nil`, and the diagnostics representing the `Error` are
 ///   guaranteed to be added to context.
 public func expandFreestandingMacro(
@@ -173,7 +173,7 @@ public func expandFreestandingMacro(
 ///     context node of `declarationNode`.
 ///   - in: context of the expansion.
 /// - Returns: A list of expanded source text. Upon failure (i.e.
-///   `defintion.expansion()` throws) returns `nil`, and the diagnostics
+///   `definition.expansion()` throws) returns `nil`, and the diagnostics
 ///   representing the `Error` are guaranteed to be added to context.
 public func expandAttachedMacroWithoutCollapsing<Context: MacroExpansionContext>(
   definition: Macro.Type,
@@ -251,7 +251,13 @@ public func expandAttachedMacroWithoutCollapsing<Context: MacroExpansionContext>
         throw MacroExpansionError.declarationNotDeclGroup
       }
 
-      guard let extendedType = extendedType else {
+      let extensionOf: TypeSyntax
+      if let extendedType {
+        extensionOf = extendedType
+      } else if let identified = declarationNode.asProtocol(IdentifiedDeclSyntax.self) {
+        // Fallback for old compilers with a new plugin, where
+        extensionOf = TypeSyntax(SimpleTypeIdentifierSyntax(name: identified.identifier))
+      } else {
         throw MacroExpansionError.noExtendedTypeSyntax
       }
 
@@ -260,7 +266,7 @@ public func expandAttachedMacroWithoutCollapsing<Context: MacroExpansionContext>
       let extensions = try attachedMacro.expansion(
         of: attributeNode,
         attachedTo: declGroup,
-        providingExtensionsOf: extendedType,
+        providingExtensionsOf: extensionOf,
         conformingTo: protocols,
         in: context
       )

@@ -340,9 +340,9 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
     return DeclSyntax(
       visitedVarDecl.with(
         \.bindings,
-        visitedVarDecl.bindings.replacing(
-          childAt: 0,
-          with: binding.with(
+        visitedVarDecl.bindings.with(
+          \.[visitedVarDecl.bindings.startIndex],
+          binding.with(
             \.accessor,
             .accessors(
               .init(
@@ -497,7 +497,7 @@ extension MacroApplication {
     }
 
     let newAttributes = attributes.reduce(attributedDecl.attributes ?? .init([])) {
-      $0.appending(AttributeListSyntax.Element($1))
+      AttributeListSyntax($0 + [AttributeListSyntax.Element($1)])
     }
 
     let newDecl = attributedDecl.with(\.attributes, newAttributes).as(DeclSyntax.self)!
