@@ -14,8 +14,6 @@
 
 // MARK: - AccessesEffectSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `accessesKeyword`: `'accesses'`
@@ -216,8 +214,6 @@ public struct AccessesEffectSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - AccessorBlockSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftBrace`: `'{'`
@@ -391,8 +387,6 @@ public struct AccessorBlockSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - AccessorEffectSpecifiersSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `asyncSpecifier`: `'async'`?
@@ -515,8 +509,6 @@ public struct AccessorEffectSpecifiersSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - AccessorInitEffectsSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `initializesEffect`: ``InitializesEffectSyntax``?
@@ -638,8 +630,6 @@ public struct AccessorInitEffectsSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - AccessorParameterSyntax
-
-
 
 /// ### Children
 /// 
@@ -789,8 +779,6 @@ public struct AccessorParameterSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ArrayElementSyntax
-
-
 
 /// ### Children
 /// 
@@ -1570,8 +1558,6 @@ public struct AvailabilityArgumentSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - AvailabilityConditionSyntax
-
-
 
 /// ### Children
 /// 
@@ -2611,8 +2597,6 @@ public struct BackDeployedAttributeSpecListSyntax: SyntaxProtocol, SyntaxHashabl
 
 // MARK: - CaseItemSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `pattern`: ``PatternSyntax``
@@ -2761,8 +2745,6 @@ public struct CaseItemSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - CatchClauseSyntax
-
-
 
 /// ### Children
 /// 
@@ -2937,8 +2919,6 @@ public struct CatchClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - CatchItemSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `pattern`: ``PatternSyntax``?
@@ -3087,8 +3067,6 @@ public struct CatchItemSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ClosureCaptureItemSpecifierSyntax
-
-
 
 /// ### Children
 /// 
@@ -3265,8 +3243,6 @@ public struct ClosureCaptureItemSpecifierSyntax: SyntaxProtocol, SyntaxHashable 
 }
 
 // MARK: - ClosureCaptureItemSyntax
-
-
 
 /// ### Children
 /// 
@@ -3471,8 +3447,6 @@ public struct ClosureCaptureItemSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - ClosureCaptureSignatureSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftSquare`: `'['`
@@ -3646,8 +3620,6 @@ public struct ClosureCaptureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - ClosureParamSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `name`: (`<identifier>` | `'_'`)
@@ -3769,8 +3741,6 @@ public struct ClosureParamSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ClosureParameterClauseSyntax
-
-
 
 /// ### Children
 /// 
@@ -3950,8 +3920,6 @@ public struct ClosureParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ClosureParameterSyntax
-
-
 
 /// ### Children
 /// 
@@ -4297,26 +4265,24 @@ public struct ClosureParameterSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - ClosureSignatureSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
 ///  - `capture`: ``ClosureCaptureSignatureSyntax``?
-///  - `input`: (``ClosureParamListSyntax`` | ``ClosureParameterClauseSyntax``)?
+///  - `parameterClause`: (``ClosureParamListSyntax`` | ``ClosureParameterClauseSyntax``)?
 ///  - `effectSpecifiers`: ``TypeEffectSpecifiersSyntax``?
-///  - `output`: ``ReturnClauseSyntax``?
+///  - `returnClause`: ``ReturnClauseSyntax``?
 ///  - `inKeyword`: `'in'`
 public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
-  public enum Input: SyntaxChildChoices {
+  public enum ParameterClause: SyntaxChildChoices {
     case `simpleInput`(ClosureParamListSyntax)
-    case `input`(ClosureParameterClauseSyntax)
+    case `parameterClause`(ClosureParameterClauseSyntax)
     
     public var _syntaxNode: Syntax {
       switch self {
       case .simpleInput(let node):
         return node._syntaxNode
-      case .input(let node):
+      case .parameterClause(let node):
         return node._syntaxNode
       }
     }
@@ -4330,7 +4296,7 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
     
     public init(_ node: ClosureParameterClauseSyntax) {
-      self = .input(node)
+      self = .parameterClause(node)
     }
     
     public init?(_ node: some SyntaxProtocol) {
@@ -4339,7 +4305,7 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
         return
       }
       if let node = node.as(ClosureParameterClauseSyntax.self) {
-        self = .input(node)
+        self = .parameterClause(node)
         return
       }
       return nil
@@ -4376,13 +4342,13 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
       attributes: AttributeListSyntax? = nil,
       _ unexpectedBetweenAttributesAndCapture: UnexpectedNodesSyntax? = nil,
       capture: ClosureCaptureSignatureSyntax? = nil,
-      _ unexpectedBetweenCaptureAndInput: UnexpectedNodesSyntax? = nil,
-      input: Input? = nil,
-      _ unexpectedBetweenInputAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenCaptureAndParameterClause: UnexpectedNodesSyntax? = nil,
+      parameterClause: ParameterClause? = nil,
+      _ unexpectedBetweenParameterClauseAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
       effectSpecifiers: TypeEffectSpecifiersSyntax? = nil,
-      _ unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? = nil,
-      output: ReturnClauseSyntax? = nil,
-      _ unexpectedBetweenOutputAndInKeyword: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenEffectSpecifiersAndReturnClause: UnexpectedNodesSyntax? = nil,
+      returnClause: ReturnClauseSyntax? = nil,
+      _ unexpectedBetweenReturnClauseAndInKeyword: UnexpectedNodesSyntax? = nil,
       inKeyword: TokenSyntax = .keyword(.in),
       _ unexpectedAfterInKeyword: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
@@ -4395,13 +4361,13 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
             attributes, 
             unexpectedBetweenAttributesAndCapture, 
             capture, 
-            unexpectedBetweenCaptureAndInput, 
-            input, 
-            unexpectedBetweenInputAndEffectSpecifiers, 
+            unexpectedBetweenCaptureAndParameterClause, 
+            parameterClause, 
+            unexpectedBetweenParameterClauseAndEffectSpecifiers, 
             effectSpecifiers, 
-            unexpectedBetweenEffectSpecifiersAndOutput, 
-            output, 
-            unexpectedBetweenOutputAndInKeyword, 
+            unexpectedBetweenEffectSpecifiersAndReturnClause, 
+            returnClause, 
+            unexpectedBetweenReturnClauseAndInKeyword, 
             inKeyword, 
             unexpectedAfterInKeyword
           ))) { (arena, _) in
@@ -4410,13 +4376,13 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
           attributes?.raw, 
           unexpectedBetweenAttributesAndCapture?.raw, 
           capture?.raw, 
-          unexpectedBetweenCaptureAndInput?.raw, 
-          input?.raw, 
-          unexpectedBetweenInputAndEffectSpecifiers?.raw, 
+          unexpectedBetweenCaptureAndParameterClause?.raw, 
+          parameterClause?.raw, 
+          unexpectedBetweenParameterClauseAndEffectSpecifiers?.raw, 
           effectSpecifiers?.raw, 
-          unexpectedBetweenEffectSpecifiersAndOutput?.raw, 
-          output?.raw, 
-          unexpectedBetweenOutputAndInKeyword?.raw, 
+          unexpectedBetweenEffectSpecifiersAndReturnClause?.raw, 
+          returnClause?.raw, 
+          unexpectedBetweenReturnClauseAndInKeyword?.raw, 
           inKeyword.raw, 
           unexpectedAfterInKeyword?.raw
         ]
@@ -4493,7 +4459,7 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenCaptureAndInput: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenCaptureAndParameterClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4502,16 +4468,16 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var input: Input? {
+  public var parameterClause: ParameterClause? {
     get {
-      return data.child(at: 5, parent: Syntax(self)).map(Input.init)
+      return data.child(at: 5, parent: Syntax(self)).map(ParameterClause.init)
     }
     set(value) {
       self = ClosureSignatureSyntax(data.replacingChild(at: 5, with: value?.data, arena: SyntaxArena()))
     }
   }
   
-  public var unexpectedBetweenInputAndEffectSpecifiers: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenParameterClauseAndEffectSpecifiers: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4529,7 +4495,7 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenEffectSpecifiersAndReturnClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4538,7 +4504,7 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var output: ReturnClauseSyntax? {
+  public var returnClause: ReturnClauseSyntax? {
     get {
       return data.child(at: 9, parent: Syntax(self)).map(ReturnClauseSyntax.init)
     }
@@ -4547,7 +4513,7 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenOutputAndInKeyword: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenReturnClauseAndInKeyword: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4580,13 +4546,13 @@ public struct ClosureSignatureSyntax: SyntaxProtocol, SyntaxHashable {
           \Self.attributes, 
           \Self.unexpectedBetweenAttributesAndCapture, 
           \Self.capture, 
-          \Self.unexpectedBetweenCaptureAndInput, 
-          \Self.input, 
-          \Self.unexpectedBetweenInputAndEffectSpecifiers, 
+          \Self.unexpectedBetweenCaptureAndParameterClause, 
+          \Self.parameterClause, 
+          \Self.unexpectedBetweenParameterClauseAndEffectSpecifiers, 
           \Self.effectSpecifiers, 
-          \Self.unexpectedBetweenEffectSpecifiersAndOutput, 
-          \Self.output, 
-          \Self.unexpectedBetweenOutputAndInKeyword, 
+          \Self.unexpectedBetweenEffectSpecifiersAndReturnClause, 
+          \Self.returnClause, 
+          \Self.unexpectedBetweenReturnClauseAndInKeyword, 
           \Self.inKeyword, 
           \Self.unexpectedAfterInKeyword
         ])
@@ -4776,8 +4742,6 @@ public struct CodeBlockItemSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - CodeBlockSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftBrace`: `'{'`
@@ -4951,8 +4915,6 @@ public struct CodeBlockSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - CompositionTypeElementSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `type`: ``TypeSyntax``
@@ -5074,8 +5036,6 @@ public struct CompositionTypeElementSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ConditionElementSyntax
-
-
 
 /// ### Children
 /// 
@@ -5267,8 +5227,6 @@ public struct ConditionElementSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ConformanceRequirementSyntax
-
-
 
 /// ### Children
 /// 
@@ -5777,8 +5735,6 @@ public struct ConventionWitnessMethodAttributeArgumentsSyntax: SyntaxProtocol, S
 
 // MARK: - DeclModifierDetailSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftParen`: `'('`
@@ -5928,8 +5884,6 @@ public struct DeclModifierDetailSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - DeclModifierSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `name`: (`'__consuming'` | `'__setter_access'` | `'_const'` | `'_local'` | `'actor'` | `'async'` | `'borrowing'` | `'class'` | `'consuming'` | `'convenience'` | `'distributed'` | `'dynamic'` | `'fileprivate'` | `'final'` | `'indirect'` | `'infix'` | `'internal'` | `'isolated'` | `'lazy'` | `'mutating'` | `'nonisolated'` | `'nonmutating'` | `'open'` | `'optional'` | `'override'` | `'package'` | `'postfix'` | `'prefix'` | `'private'` | `'public'` | `'reasync'` | `'required'` | `'static'` | `'unowned'` | `'weak'`)
@@ -6052,8 +6006,6 @@ public struct DeclModifierSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - DeclNameArgumentSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `name`: ``TokenSyntax``
@@ -6175,8 +6127,6 @@ public struct DeclNameArgumentSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - DeclNameArgumentsSyntax
-
-
 
 /// ### Children
 /// 
@@ -6351,12 +6301,10 @@ public struct DeclNameArgumentsSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - DeclNameSyntax
 
-
-
 /// ### Children
 /// 
-///  - `declBaseName`: (`<identifier>` | `<binaryOperator>` | `'init'` | `'self'` | `'Self'`)
-///  - `declNameArguments`: ``DeclNameArgumentsSyntax``?
+///  - `baseName`: (`<identifier>` | `<binaryOperator>` | `'init'` | `'self'` | `'Self'`)
+///  - `arguments`: ``DeclNameArgumentsSyntax``?
 public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -6377,34 +6325,34 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
-  ///   - declBaseName: The base name of the protocol's requirement.
-  ///   - declNameArguments: The argument labels of the protocol's requirement if it is a function requirement.
+  ///   - baseName: The base name of the protocol's requirement.
+  ///   - arguments: The argument labels of the protocol's requirement if it is a function requirement.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
-      _ unexpectedBeforeDeclBaseName: UnexpectedNodesSyntax? = nil,
-      declBaseName: TokenSyntax,
-      _ unexpectedBetweenDeclBaseNameAndDeclNameArguments: UnexpectedNodesSyntax? = nil,
-      declNameArguments: DeclNameArgumentsSyntax? = nil,
-      _ unexpectedAfterDeclNameArguments: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBeforeBaseName: UnexpectedNodesSyntax? = nil,
+      baseName: TokenSyntax,
+      _ unexpectedBetweenBaseNameAndArguments: UnexpectedNodesSyntax? = nil,
+      arguments: DeclNameArgumentsSyntax? = nil,
+      _ unexpectedAfterArguments: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
     
   ) {
     // Extend the lifetime of all parameters so their arenas don't get destroyed
     // before they can be added as children of the new arena.
     let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (
-            unexpectedBeforeDeclBaseName, 
-            declBaseName, 
-            unexpectedBetweenDeclBaseNameAndDeclNameArguments, 
-            declNameArguments, 
-            unexpectedAfterDeclNameArguments
+            unexpectedBeforeBaseName, 
+            baseName, 
+            unexpectedBetweenBaseNameAndArguments, 
+            arguments, 
+            unexpectedAfterArguments
           ))) { (arena, _) in
       let layout: [RawSyntax?] = [
-          unexpectedBeforeDeclBaseName?.raw, 
-          declBaseName.raw, 
-          unexpectedBetweenDeclBaseNameAndDeclNameArguments?.raw, 
-          declNameArguments?.raw, 
-          unexpectedAfterDeclNameArguments?.raw
+          unexpectedBeforeBaseName?.raw, 
+          baseName.raw, 
+          unexpectedBetweenBaseNameAndArguments?.raw, 
+          arguments?.raw, 
+          unexpectedAfterArguments?.raw
         ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.declName,
@@ -6419,7 +6367,7 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
     self.init(data)
   }
   
-  public var unexpectedBeforeDeclBaseName: UnexpectedNodesSyntax? {
+  public var unexpectedBeforeBaseName: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -6429,7 +6377,7 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   }
   
   /// The base name of the protocol's requirement.
-  public var declBaseName: TokenSyntax {
+  public var baseName: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
@@ -6438,7 +6386,7 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenDeclBaseNameAndDeclNameArguments: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenBaseNameAndArguments: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -6448,7 +6396,7 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   }
   
   /// The argument labels of the protocol's requirement if it is a function requirement.
-  public var declNameArguments: DeclNameArgumentsSyntax? {
+  public var arguments: DeclNameArgumentsSyntax? {
     get {
       return data.child(at: 3, parent: Syntax(self)).map(DeclNameArgumentsSyntax.init)
     }
@@ -6457,7 +6405,7 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedAfterDeclNameArguments: UnexpectedNodesSyntax? {
+  public var unexpectedAfterArguments: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -6468,18 +6416,16 @@ public struct DeclNameSyntax: SyntaxProtocol, SyntaxHashable {
   
   public static var structure: SyntaxNodeStructure {
     return .layout([
-          \Self.unexpectedBeforeDeclBaseName, 
-          \Self.declBaseName, 
-          \Self.unexpectedBetweenDeclBaseNameAndDeclNameArguments, 
-          \Self.declNameArguments, 
-          \Self.unexpectedAfterDeclNameArguments
+          \Self.unexpectedBeforeBaseName, 
+          \Self.baseName, 
+          \Self.unexpectedBetweenBaseNameAndArguments, 
+          \Self.arguments, 
+          \Self.unexpectedAfterArguments
         ])
   }
 }
 
 // MARK: - DeinitEffectSpecifiersSyntax
-
-
 
 /// ### Children
 /// 
@@ -6833,8 +6779,6 @@ public struct DerivativeRegistrationAttributeArgumentsSyntax: SyntaxProtocol, Sy
 
 // MARK: - DesignatedTypeElementSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leadingComma`: `','`
@@ -6956,8 +6900,6 @@ public struct DesignatedTypeElementSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - DictionaryElementSyntax
-
-
 
 /// ### Children
 /// 
@@ -7641,7 +7583,7 @@ public struct DifferentiabilityParamsSyntax: SyntaxProtocol, SyntaxHashable {
 ///  - `kindSpecifierComma`: `','`?
 ///  - `parameters`: ``DifferentiabilityParamsClauseSyntax``?
 ///  - `parametersComma`: `','`?
-///  - `whereClause`: ``GenericWhereClauseSyntax``?
+///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
 public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -7664,6 +7606,7 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   ///   - kindSpecifierComma: The comma following the differentiability kind, if it exists.
   ///   - parametersComma: The comma following the differentiability parameters clause, if it exists.
+  ///   - genericWhereClause: A `where` clause that places additional constraints on generic parameters like `where T: Differentiable`.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -7675,9 +7618,9 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
       parameters: DifferentiabilityParamsClauseSyntax? = nil,
       _ unexpectedBetweenParametersAndParametersComma: UnexpectedNodesSyntax? = nil,
       parametersComma: TokenSyntax? = nil,
-      _ unexpectedBetweenParametersCommaAndWhereClause: UnexpectedNodesSyntax? = nil,
-      whereClause: GenericWhereClauseSyntax? = nil,
-      _ unexpectedAfterWhereClause: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenParametersCommaAndGenericWhereClause: UnexpectedNodesSyntax? = nil,
+      genericWhereClause: GenericWhereClauseSyntax? = nil,
+      _ unexpectedAfterGenericWhereClause: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
     
   ) {
@@ -7692,9 +7635,9 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
             parameters, 
             unexpectedBetweenParametersAndParametersComma, 
             parametersComma, 
-            unexpectedBetweenParametersCommaAndWhereClause, 
-            whereClause, 
-            unexpectedAfterWhereClause
+            unexpectedBetweenParametersCommaAndGenericWhereClause, 
+            genericWhereClause, 
+            unexpectedAfterGenericWhereClause
           ))) { (arena, _) in
       let layout: [RawSyntax?] = [
           unexpectedBeforeKindSpecifier?.raw, 
@@ -7705,9 +7648,9 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
           parameters?.raw, 
           unexpectedBetweenParametersAndParametersComma?.raw, 
           parametersComma?.raw, 
-          unexpectedBetweenParametersCommaAndWhereClause?.raw, 
-          whereClause?.raw, 
-          unexpectedAfterWhereClause?.raw
+          unexpectedBetweenParametersCommaAndGenericWhereClause?.raw, 
+          genericWhereClause?.raw, 
+          unexpectedAfterGenericWhereClause?.raw
         ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.differentiableAttributeArguments,
@@ -7796,7 +7739,7 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
     }
   }
   
-  public var unexpectedBetweenParametersCommaAndWhereClause: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenParametersCommaAndGenericWhereClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -7805,7 +7748,8 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
     }
   }
   
-  public var whereClause: GenericWhereClauseSyntax? {
+  /// A `where` clause that places additional constraints on generic parameters like `where T: Differentiable`.
+  public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
       return data.child(at: 9, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
     }
@@ -7814,7 +7758,7 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
     }
   }
   
-  public var unexpectedAfterWhereClause: UnexpectedNodesSyntax? {
+  public var unexpectedAfterGenericWhereClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -7833,16 +7777,14 @@ public struct DifferentiableAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHash
           \Self.parameters, 
           \Self.unexpectedBetweenParametersAndParametersComma, 
           \Self.parametersComma, 
-          \Self.unexpectedBetweenParametersCommaAndWhereClause, 
-          \Self.whereClause, 
-          \Self.unexpectedAfterWhereClause
+          \Self.unexpectedBetweenParametersCommaAndGenericWhereClause, 
+          \Self.genericWhereClause, 
+          \Self.unexpectedAfterGenericWhereClause
         ])
   }
 }
 
 // MARK: - DocumentationAttributeArgumentSyntax
-
-
 
 /// ### Children
 /// 
@@ -8401,8 +8343,6 @@ public struct EnumCaseElementSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - EnumCaseParameterClauseSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftParen`: `'('`
@@ -8581,8 +8521,6 @@ public struct EnumCaseParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - EnumCaseParameterSyntax
-
-
 
 /// ### Children
 /// 
@@ -9024,8 +8962,6 @@ public struct ExposeAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - ExpressionSegmentSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `backslash`: `'\'`
@@ -9253,8 +9189,6 @@ public struct ExpressionSegmentSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - FunctionEffectSpecifiersSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `asyncSpecifier`: (`'async'` | `'reasync'`)?
@@ -9376,8 +9310,6 @@ public struct FunctionEffectSpecifiersSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - FunctionParameterSyntax
-
-
 
 /// ### Children
 /// 
@@ -9738,13 +9670,11 @@ public struct FunctionParameterSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - FunctionSignatureSyntax
 
-
-
 /// ### Children
 /// 
-///  - `input`: ``ParameterClauseSyntax``
+///  - `parameterClause`: ``ParameterClauseSyntax``
 ///  - `effectSpecifiers`: ``FunctionEffectSpecifiersSyntax``?
-///  - `output`: ``ReturnClauseSyntax``?
+///  - `returnClause`: ``ReturnClauseSyntax``?
 public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -9768,35 +9698,35 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
-      _ unexpectedBeforeInput: UnexpectedNodesSyntax? = nil,
-      input: ParameterClauseSyntax,
-      _ unexpectedBetweenInputAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBeforeParameterClause: UnexpectedNodesSyntax? = nil,
+      parameterClause: ParameterClauseSyntax,
+      _ unexpectedBetweenParameterClauseAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
       effectSpecifiers: FunctionEffectSpecifiersSyntax? = nil,
-      _ unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? = nil,
-      output: ReturnClauseSyntax? = nil,
-      _ unexpectedAfterOutput: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenEffectSpecifiersAndReturnClause: UnexpectedNodesSyntax? = nil,
+      returnClause: ReturnClauseSyntax? = nil,
+      _ unexpectedAfterReturnClause: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
     
   ) {
     // Extend the lifetime of all parameters so their arenas don't get destroyed
     // before they can be added as children of the new arena.
     let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (
-            unexpectedBeforeInput, 
-            input, 
-            unexpectedBetweenInputAndEffectSpecifiers, 
+            unexpectedBeforeParameterClause, 
+            parameterClause, 
+            unexpectedBetweenParameterClauseAndEffectSpecifiers, 
             effectSpecifiers, 
-            unexpectedBetweenEffectSpecifiersAndOutput, 
-            output, 
-            unexpectedAfterOutput
+            unexpectedBetweenEffectSpecifiersAndReturnClause, 
+            returnClause, 
+            unexpectedAfterReturnClause
           ))) { (arena, _) in
       let layout: [RawSyntax?] = [
-          unexpectedBeforeInput?.raw, 
-          input.raw, 
-          unexpectedBetweenInputAndEffectSpecifiers?.raw, 
+          unexpectedBeforeParameterClause?.raw, 
+          parameterClause.raw, 
+          unexpectedBetweenParameterClauseAndEffectSpecifiers?.raw, 
           effectSpecifiers?.raw, 
-          unexpectedBetweenEffectSpecifiersAndOutput?.raw, 
-          output?.raw, 
-          unexpectedAfterOutput?.raw
+          unexpectedBetweenEffectSpecifiersAndReturnClause?.raw, 
+          returnClause?.raw, 
+          unexpectedAfterReturnClause?.raw
         ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.functionSignature,
@@ -9811,7 +9741,7 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     self.init(data)
   }
   
-  public var unexpectedBeforeInput: UnexpectedNodesSyntax? {
+  public var unexpectedBeforeParameterClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 0, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -9820,7 +9750,7 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var input: ParameterClauseSyntax {
+  public var parameterClause: ParameterClauseSyntax {
     get {
       return ParameterClauseSyntax(data.child(at: 1, parent: Syntax(self))!)
     }
@@ -9829,7 +9759,7 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenInputAndEffectSpecifiers: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenParameterClauseAndEffectSpecifiers: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -9847,7 +9777,7 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenEffectSpecifiersAndReturnClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -9856,7 +9786,7 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var output: ReturnClauseSyntax? {
+  public var returnClause: ReturnClauseSyntax? {
     get {
       return data.child(at: 5, parent: Syntax(self)).map(ReturnClauseSyntax.init)
     }
@@ -9865,7 +9795,7 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedAfterOutput: UnexpectedNodesSyntax? {
+  public var unexpectedAfterReturnClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 6, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -9876,20 +9806,18 @@ public struct FunctionSignatureSyntax: SyntaxProtocol, SyntaxHashable {
   
   public static var structure: SyntaxNodeStructure {
     return .layout([
-          \Self.unexpectedBeforeInput, 
-          \Self.input, 
-          \Self.unexpectedBetweenInputAndEffectSpecifiers, 
+          \Self.unexpectedBeforeParameterClause, 
+          \Self.parameterClause, 
+          \Self.unexpectedBetweenParameterClauseAndEffectSpecifiers, 
           \Self.effectSpecifiers, 
-          \Self.unexpectedBetweenEffectSpecifiersAndOutput, 
-          \Self.output, 
-          \Self.unexpectedAfterOutput
+          \Self.unexpectedBetweenEffectSpecifiersAndReturnClause, 
+          \Self.returnClause, 
+          \Self.unexpectedAfterReturnClause
         ])
   }
 }
 
 // MARK: - GenericArgumentClauseSyntax
-
-
 
 /// ### Children
 /// 
@@ -10064,8 +9992,6 @@ public struct GenericArgumentClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - GenericArgumentSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `argumentType`: ``TypeSyntax``
@@ -10188,8 +10114,8 @@ public struct GenericArgumentSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - GenericParameterClauseSyntax
 
-
-
+/// The parameter clause that defines the generic parameters.
+///
 /// ### Children
 /// 
 ///  - `leftAngle`: `'<'`
@@ -10216,6 +10142,10 @@ public struct GenericParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - leftAngle: The opening angle bracket (`<`) of the generic parameter clause.
+  ///   - parameters: The list of generic parameters in the clause.
+  ///   - genericWhereClause: A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
+  ///   - rightAngle: The closing angle bracket (`>`) of the generic parameter clause.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -10277,6 +10207,7 @@ public struct GenericParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The opening angle bracket (`<`) of the generic parameter clause.
   public var leftAngle: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
@@ -10295,6 +10226,7 @@ public struct GenericParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The list of generic parameters in the clause.
   public var parameters: GenericParameterListSyntax {
     get {
       return GenericParameterListSyntax(data.child(at: 3, parent: Syntax(self))!)
@@ -10337,6 +10269,7 @@ public struct GenericParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
       return data.child(at: 5, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
@@ -10355,6 +10288,7 @@ public struct GenericParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The closing angle bracket (`>`) of the generic parameter clause.
   public var rightAngle: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 7, parent: Syntax(self))!)
@@ -10389,8 +10323,6 @@ public struct GenericParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - GenericParameterSyntax
-
-
 
 /// ### Children
 /// 
@@ -10646,8 +10578,6 @@ public struct GenericParameterSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - GenericRequirementSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `body`: (``SameTypeRequirementSyntax`` | ``ConformanceRequirementSyntax`` | ``LayoutRequirementSyntax``)
@@ -10823,8 +10753,8 @@ public struct GenericRequirementSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - GenericWhereClauseSyntax
 
-
-
+/// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
+///
 /// ### Children
 /// 
 ///  - `whereKeyword`: `'where'`
@@ -10849,6 +10779,8 @@ public struct GenericWhereClauseSyntax: SyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - whereKeyword: The `where` keyword in the clause.
+  ///   - requirementList: The list of requirements in the clause.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -10898,6 +10830,7 @@ public struct GenericWhereClauseSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The `where` keyword in the clause.
   public var whereKeyword: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
@@ -10916,6 +10849,7 @@ public struct GenericWhereClauseSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The list of requirements in the clause.
   public var requirementList: GenericRequirementListSyntax {
     get {
       return GenericRequirementListSyntax(data.child(at: 3, parent: Syntax(self))!)
@@ -10970,8 +10904,6 @@ public struct GenericWhereClauseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - IfConfigClauseSyntax
-
-
 
 /// ### Children
 /// 
@@ -11389,8 +11321,6 @@ public struct ImplementsAttributeArgumentsSyntax: SyntaxProtocol, SyntaxHashable
 
 // MARK: - ImportPathComponentSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `name`: (`<identifier>` | `<binaryOperator>` | `<prefixOperator>` | `<postfixOperator>`)
@@ -11512,8 +11442,6 @@ public struct ImportPathComponentSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - InheritedTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -11637,8 +11565,6 @@ public struct InheritedTypeSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - InitializerClauseSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `equal`: `'='`
@@ -11760,8 +11686,6 @@ public struct InitializerClauseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - InitializesEffectSyntax
-
-
 
 /// ### Children
 /// 
@@ -11963,8 +11887,6 @@ public struct InitializesEffectSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - KeyPathComponentSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `period`: `'.'`?
@@ -12140,8 +12062,6 @@ public struct KeyPathComponentSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - KeyPathOptionalComponentSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `questionOrExclamationMark`: (`'?'` | `'!'`)
@@ -12224,8 +12144,6 @@ public struct KeyPathOptionalComponentSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - KeyPathPropertyComponentSyntax
-
-
 
 /// ### Children
 /// 
@@ -12375,8 +12293,6 @@ public struct KeyPathPropertyComponentSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - KeyPathSubscriptComponentSyntax
-
-
 
 /// ### Children
 /// 
@@ -12737,8 +12653,6 @@ public struct LabeledSpecializeEntrySyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - LayoutRequirementSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `typeIdentifier`: ``TypeSyntax``
@@ -13023,8 +12937,6 @@ public struct LayoutRequirementSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - MatchingPatternConditionSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `caseKeyword`: `'case'`
@@ -13200,8 +13112,6 @@ public struct MatchingPatternConditionSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - MemberDeclBlockSyntax
-
-
 
 /// ### Children
 /// 
@@ -13529,7 +13439,7 @@ public struct MissingSyntax: SyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
-  ///   - placeholder: A placeholder, i.e. `<#syntax#>` that can be inserted into the source code to represent the missing pattern.
+  ///   - placeholder: A placeholder, i.e. `<#syntax#>`, that can be inserted into the source code to represent the missing pattern.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -13565,7 +13475,7 @@ public struct MissingSyntax: SyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// A placeholder, i.e. `<#syntax#>` that can be inserted into the source code to represent the missing pattern./// This token should always have `presence = .missing`
+  /// A placeholder, i.e. `<#syntax#>`, that can be inserted into the source code to represent the missing pattern./// This token should always have `presence = .missing`
   public var placeholder: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
@@ -13590,8 +13500,6 @@ public struct MissingSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - MultipleTrailingClosureElementSyntax
-
-
 
 /// ### Children
 /// 
@@ -14200,8 +14108,6 @@ public struct OperatorPrecedenceAndTypesSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - OptionalBindingConditionSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `bindingSpecifier`: (`'let'` | `'var'` | `'inout'`)
@@ -14607,8 +14513,6 @@ public struct OriginallyDefinedInArgumentsSyntax: SyntaxProtocol, SyntaxHashable
 
 // MARK: - ParameterClauseSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftParen`: `'('`
@@ -14781,8 +14685,6 @@ public struct ParameterClauseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - PatternBindingSyntax
-
-
 
 /// ### Children
 /// 
@@ -15028,8 +14930,6 @@ public struct PatternBindingSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - PoundSourceLocationArgsSyntax
-
-
 
 /// ### Children
 /// 
@@ -15594,8 +15494,6 @@ public struct PrecedenceGroupAssociativitySyntax: SyntaxProtocol, SyntaxHashable
 
 // MARK: - PrecedenceGroupNameElementSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `name`: `<identifier>`
@@ -15897,8 +15795,6 @@ public struct PrecedenceGroupRelationSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - PrimaryAssociatedTypeClauseSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftAngle`: `'<'`
@@ -16071,8 +15967,6 @@ public struct PrimaryAssociatedTypeClauseSyntax: SyntaxProtocol, SyntaxHashable 
 }
 
 // MARK: - PrimaryAssociatedTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -16380,8 +16274,6 @@ public struct QualifiedDeclNameSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - ReturnClauseSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `arrow`: `'->'`
@@ -16503,8 +16395,6 @@ public struct ReturnClauseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - SameTypeRequirementSyntax
-
-
 
 /// ### Children
 /// 
@@ -16655,8 +16545,6 @@ public struct SameTypeRequirementSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - SourceFileSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `statements`: ``CodeBlockItemListSyntax``
@@ -16687,7 +16575,7 @@ public struct SourceFileSyntax: SyntaxProtocol, SyntaxHashable {
       _ unexpectedBeforeStatements: UnexpectedNodesSyntax? = nil,
       statements: CodeBlockItemListSyntax,
       _ unexpectedBetweenStatementsAndEndOfFileToken: UnexpectedNodesSyntax? = nil,
-      endOfFileToken: TokenSyntax = .eof(),
+      endOfFileToken: TokenSyntax = .endOfFileToken(),
       _ unexpectedAfterEndOfFileToken: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
     
@@ -16803,8 +16691,6 @@ public struct SourceFileSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - StringSegmentSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `content`: `<stringSegment>`
@@ -16887,8 +16773,6 @@ public struct StringSegmentSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - SwitchCaseLabelSyntax
-
-
 
 /// ### Children
 /// 
@@ -17062,8 +16946,6 @@ public struct SwitchCaseLabelSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - SwitchCaseSyntax
-
-
 
 /// ### Children
 /// 
@@ -17279,8 +17161,6 @@ public struct SwitchCaseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - SwitchDefaultLabelSyntax
-
-
 
 /// ### Children
 /// 
@@ -17590,8 +17470,6 @@ public struct TargetFunctionEntrySyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - TupleExprElementSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `label`: (`<identifier>` | `'_'`)?
@@ -17768,8 +17646,6 @@ public struct TupleExprElementSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - TuplePatternElementSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `label`: `<identifier>`?
@@ -17945,8 +17821,6 @@ public struct TuplePatternElementSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - TupleTypeElementSyntax
-
-
 
 /// ### Children
 /// 
@@ -18232,8 +18106,6 @@ public struct TupleTypeElementSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - TypeAnnotationSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `colon`: `':'`
@@ -18356,8 +18228,6 @@ public struct TypeAnnotationSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - TypeEffectSpecifiersSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `asyncSpecifier`: `'async'`?
@@ -18479,8 +18349,6 @@ public struct TypeEffectSpecifiersSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - TypeInheritanceClauseSyntax
-
-
 
 /// ### Children
 /// 
@@ -18627,8 +18495,6 @@ public struct TypeInheritanceClauseSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - TypeInitializerClauseSyntax
-
-
 
 /// ### Children
 /// 
@@ -19334,8 +19200,6 @@ public struct VersionTupleSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - WhereClauseSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `whereKeyword`: `'where'`
@@ -19458,8 +19322,6 @@ public struct WhereClauseSyntax: SyntaxProtocol, SyntaxHashable {
 
 // MARK: - YieldExprListElementSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `expression`: ``ExprSyntax``
@@ -19581,8 +19443,6 @@ public struct YieldExprListElementSyntax: SyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - YieldListSyntax
-
-
 
 /// ### Children
 /// 

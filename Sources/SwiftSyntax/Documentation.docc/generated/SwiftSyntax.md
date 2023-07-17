@@ -377,9 +377,11 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/EffectSpecifiersSyntax>
 - <doc:SwiftSyntax/FreestandingMacroExpansionSyntax>
 - <doc:SwiftSyntax/IdentifiedDeclSyntax>
+- <doc:SwiftSyntax/MissingNodeSyntax>
 - <doc:SwiftSyntax/ParenthesizedSyntax>
 - <doc:SwiftSyntax/WithAttributesSyntax>
 - <doc:SwiftSyntax/WithCodeBlockSyntax>
+- <doc:SwiftSyntax/WithGenericParametersSyntax>
 - <doc:SwiftSyntax/WithModifiersSyntax>
 - <doc:SwiftSyntax/WithStatementsSyntax>
 - <doc:SwiftSyntax/WithTrailingCommaSyntax>
@@ -394,15 +396,6 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/SourceLocationConverter>
 - <doc:SwiftSyntax/SourceRange>
 - <doc:SwiftSyntax/SourceLength>
-
-### Incremental Parsing
-
-- <doc:SwiftSyntax/IncrementalParseLookup>
-- <doc:SwiftSyntax/IncrementalParseTransition>
-- <doc:SwiftSyntax/IncrementalParseReusedNodeDelegate>
-- <doc:SwiftSyntax/IncrementalParseReusedNodeCollector>
-- <doc:SwiftSyntax/SourceEdit>
-- <doc:SwiftSyntax/ConcurrentEdits>
 
 ### Internals
 

@@ -15,12 +15,17 @@ import XCTest
 @_spi(RawSyntax) @_spi(Testing) import SwiftParser
 
 fileprivate func lex(_ sourceBytes: [UInt8], body: ([Lexer.Lexeme]) throws -> Void) rethrows {
+  let lookaheadTracker = UnsafeMutablePointer<LookaheadTracker>.allocate(capacity: 1)
+  defer {
+    lookaheadTracker.deallocate()
+  }
+  lookaheadTracker.initialize(to: LookaheadTracker())
   try sourceBytes.withUnsafeBufferPointer { (buf) in
     var lexemes = [Lexer.Lexeme]()
-    for token in Lexer.tokenize(buf, from: 0) {
+    for token in Lexer.tokenize(buf, from: 0, lookaheadTracker: lookaheadTracker) {
       lexemes.append(token)
 
-      if token.rawTokenKind == .eof {
+      if token.rawTokenKind == .endOfFile {
         break
       }
     }
@@ -100,7 +105,7 @@ public class LexerTests: XCTestCase {
       /* /* */ */
       """,
       lexemes: [
-        LexemeSpec(.eof, leading: "/* */\n/**/\n/* /* */ */", text: "", flags: [.isAtStartOfLine])
+        LexemeSpec(.endOfFile, leading: "/* */\n/**/\n/* /* */ */", text: "", flags: [.isAtStartOfLine])
       ]
     )
   }
@@ -294,7 +299,7 @@ public class LexerTests: XCTestCase {
         LexemeSpec(.identifier, text: "x"),
         LexemeSpec(.colon, text: ":", trailing: " "),
         LexemeSpec(.identifier, text: "Int"),
-        LexemeSpec(.eof, leading: "\n/* regular comment */", text: "", flags: [.isAtStartOfLine]),
+        LexemeSpec(.endOfFile, leading: "\n/* regular comment */", text: "", flags: [.isAtStartOfLine]),
       ]
     )
   }
@@ -608,7 +613,7 @@ public class LexerTests: XCTestCase {
       """,
       lexemes: [
         LexemeSpec(
-          .eof,
+          .endOfFile,
           leading:
             """
             // diff3-style conflict markers
@@ -646,7 +651,7 @@ public class LexerTests: XCTestCase {
       """,
       lexemes: [
         LexemeSpec(
-          .eof,
+          .endOfFile,
           leading:
             """
             // Perforce-style conflict markers
@@ -722,7 +727,7 @@ public class LexerTests: XCTestCase {
         LexemeSpec(.binaryOperator, text: "/"),
         LexemeSpec(.identifier, leading: "\n         ", text: "x", flags: [.isAtStartOfLine]),
         LexemeSpec(.rightBrace, leading: "\n", text: "}", flags: [.isAtStartOfLine]),
-        LexemeSpec(.eof, leading: "\n\n///", text: "", flags: [.isAtStartOfLine]),
+        LexemeSpec(.endOfFile, leading: "\n\n///", text: "", flags: [.isAtStartOfLine]),
       ]
     )
 
@@ -975,7 +980,7 @@ public class LexerTests: XCTestCase {
 
       assertRawBytesLexeme(
         lexemes[0],
-        kind: .eof,
+        kind: .endOfFile,
         leadingTrivia: sourceBytes,
         text: []
       )
@@ -1022,7 +1027,7 @@ public class LexerTests: XCTestCase {
       }
       assertRawBytesLexeme(
         lexemes[0],
-        kind: .eof,
+        kind: .endOfFile,
         leadingTrivia: sourceBytes,
         text: [],
         error: TokenDiagnostic(.invalidUtf8, byteOffset: 0)
@@ -1039,7 +1044,7 @@ public class LexerTests: XCTestCase {
       }
       assertRawBytesLexeme(
         lexemes[0],
-        kind: .eof,
+        kind: .endOfFile,
         leadingTrivia: sourceBytes,
         text: [],
         error: TokenDiagnostic(.invalidUtf8, byteOffset: 0)
@@ -1129,7 +1134,7 @@ public class LexerTests: XCTestCase {
       lexemes: [
         LexemeSpec(.stringQuote, text: #"""#),
         LexemeSpec(.stringSegment, text: "bar"),
-        LexemeSpec(.eof, leading: "\n", text: "", flags: [.isAtStartOfLine]),
+        LexemeSpec(.endOfFile, leading: "\n", text: "", flags: [.isAtStartOfLine]),
       ]
     )
   }
@@ -1146,7 +1151,7 @@ public class LexerTests: XCTestCase {
         LexemeSpec(.backslash, text: "\\"),
         LexemeSpec(.leftParen, text: "("),
         LexemeSpec(.stringSegment, text: ""),
-        LexemeSpec(.eof, leading: "\n", text: "", flags: .isAtStartOfLine),
+        LexemeSpec(.endOfFile, leading: "\n", text: "", flags: .isAtStartOfLine),
       ]
     )
   }
@@ -1466,7 +1471,7 @@ public class LexerTests: XCTestCase {
     assertLexemes(
       "1️⃣/*",
       lexemes: [
-        LexemeSpec(.eof, leading: "/*", text: "", diagnostic: "unterminated '/*' comment")
+        LexemeSpec(.endOfFile, leading: "/*", text: "", diagnostic: "unterminated '/*' comment")
       ]
     )
   }
@@ -1475,7 +1480,7 @@ public class LexerTests: XCTestCase {
     assertLexemes(
       "1️⃣/*/",
       lexemes: [
-        LexemeSpec(.eof, leading: "/*/", text: "", diagnostic: "unterminated '/*' comment")
+        LexemeSpec(.endOfFile, leading: "/*/", text: "", diagnostic: "unterminated '/*' comment")
       ]
     )
   }

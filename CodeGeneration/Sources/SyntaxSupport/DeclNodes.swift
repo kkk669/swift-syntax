@@ -243,6 +243,7 @@ public let DECL_NODES: [Node] = [
       "DeclGroup",
       "IdentifiedDecl",
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -270,6 +271,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
+        documentation: "The parameter clause that defines the generic parameters.",
         isOptional: true
       ),
       Child(
@@ -282,6 +284,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
+        documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
         isOptional: true
       ),
       Child(
@@ -416,6 +419,7 @@ public let DECL_NODES: [Node] = [
       "DeclGroup",
       "IdentifiedDecl",
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -837,6 +841,7 @@ public let DECL_NODES: [Node] = [
       "DeclGroup",
       "IdentifiedDecl",
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -941,6 +946,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
+        documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
         isOptional: true
       ),
       Child(
@@ -957,6 +963,7 @@ public let DECL_NODES: [Node] = [
     traits: [
       "IdentifiedDecl",
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -989,6 +996,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
+        documentation: "The parameter clause that defines the generic parameters.",
         isOptional: true
       ),
       Child(
@@ -1000,6 +1008,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
+        documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
         isOptional: true
       ),
       Child(
@@ -1087,7 +1096,8 @@ public let DECL_NODES: [Node] = [
     nameForDiagnostics: "function signature",
     children: [
       Child(
-        name: "Input",
+        name: "ParameterClause",
+        deprecatedName: "Input",
         kind: .node(kind: .parameterClause)
       ),
       Child(
@@ -1096,7 +1106,8 @@ public let DECL_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "Output",
+        name: "ReturnClause",
+        deprecatedName: "Output",
         kind: .node(kind: .returnClause),
         isOptional: true
       ),
@@ -1298,6 +1309,7 @@ public let DECL_NODES: [Node] = [
       """,
     traits: [
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -1366,6 +1378,7 @@ public let DECL_NODES: [Node] = [
     traits: [
       "IdentifiedDecl",
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -1393,6 +1406,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
+        documentation: "The parameter clause that defines the generic parameters.",
         isOptional: true
       ),
       Child(
@@ -1410,6 +1424,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
+        documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
         isOptional: true
       ),
     ]
@@ -1449,7 +1464,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")])
       ),
       Child(
-        name: "GenericArguments",
+        name: "GenericArgumentClause",
+        deprecatedName: "GenericArguments",
         kind: .node(kind: .genericArgumentClause),
         isOptional: true
       ),
@@ -2033,7 +2049,7 @@ public let DECL_NODES: [Node] = [
     ]
   ),
 
-  // source-file = code-block-item-list eof
+  // source-file = code-block-item-list endOfFile
   Node(
     kind: .sourceFile,
     base: .syntax,
@@ -2048,7 +2064,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "EndOfFileToken",
         deprecatedName: "EOFToken",
-        kind: .token(choices: [.token(tokenKind: "EOFToken")])
+        kind: .token(choices: [.token(tokenKind: "EndOfFileToken")])
       ),
     ]
   ),
@@ -2125,6 +2141,7 @@ public let DECL_NODES: [Node] = [
       "DeclGroup",
       "IdentifiedDecl",
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -2188,6 +2205,7 @@ public let DECL_NODES: [Node] = [
     nameForDiagnostics: "subscript",
     traits: [
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -2211,20 +2229,24 @@ public let DECL_NODES: [Node] = [
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
+        documentation: "The parameter clause that defines the generic parameters.",
         isOptional: true
       ),
       Child(
-        name: "Indices",
+        name: "ParameterClause",
+        deprecatedName: "Indices",
         kind: .node(kind: .parameterClause)
       ),
       Child(
-        name: "Result",
+        name: "ReturnClause",
+        deprecatedName: "Result",
         kind: .node(kind: .returnClause)
       ),
       Child(
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
+        documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
         isOptional: true
       ),
       Child(
@@ -2290,6 +2312,7 @@ public let DECL_NODES: [Node] = [
     traits: [
       "IdentifiedDecl",
       "WithAttributes",
+      "WithGenericParameters",
       "WithModifiers",
     ],
     children: [
@@ -2317,6 +2340,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericParameterClause",
         kind: .node(kind: .genericParameterClause),
         nameForDiagnostics: "generic parameter clause",
+        documentation: "The parameter clause that defines the generic parameters.",
         isOptional: true
       ),
       Child(
@@ -2327,6 +2351,7 @@ public let DECL_NODES: [Node] = [
         name: "GenericWhereClause",
         kind: .node(kind: .genericWhereClause),
         nameForDiagnostics: "generic where clause",
+        documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
         isOptional: true
       ),
     ]

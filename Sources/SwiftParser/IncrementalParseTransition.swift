@@ -11,7 +11,31 @@
 //===----------------------------------------------------------------------===//
 
 @_spi(RawSyntax) import SwiftSyntax
-/// Accepts the re-used ``Syntax`` nodes that `IncrementalParseTransition`
+
+extension Parser {
+  mutating func loadCurrentSyntaxNodeFromCache(for kind: SyntaxKind) -> Syntax? {
+    guard parseLookup != nil else {
+      return nil
+    }
+
+    let currentOffset = self.lexemes.offsetToStart(self.currentToken)
+    if let node = parseLookup!.lookUp(currentOffset, kind: kind) {
+      self.lexemes.advance(by: node.byteSize, currentToken: &self.currentToken)
+      return node
+    }
+
+    return nil
+  }
+
+  mutating func registerNodeForIncrementalParse(node: RawSyntax, startToken: Lexer.Lexeme) {
+    lookaheadRanges.registerNodeForIncrementalParse(
+      node: node,
+      lookaheadLength: lexemes.lookaheadTracker.pointee.furthestOffset - self.lexemes.offsetToStart(startToken)
+    )
+  }
+}
+
+/// Accepts a re-used ``Syntax`` node that `IncrementalParseTransition`
 /// determined they should be re-used for a parse invocation.
 ///
 /// The client can use this information to potentially avoid unnecessary work
@@ -19,57 +43,37 @@
 ///
 /// This is also used for testing purposes to ensure incremental reparsing
 /// worked as expected.
-public protocol IncrementalParseReusedNodeDelegate {
-  /// Accepts the range and ``Syntax`` node of skipped source region.
-  ///
-  /// - Parameters:
-  ///   - range: The source region of the currently parsed source.
-  ///   - previousNode: The node from the previous tree that is associated with
-  ///                   the skipped source region.
-  func parserReusedNode(range: ByteSourceRange, previousNode: Syntax)
-}
-
-/// An implementation of `IncrementalParseReusedNodeDelegate` that just collects
-/// the range and re-used node into an array.
-public final class IncrementalParseReusedNodeCollector:
-  IncrementalParseReusedNodeDelegate
-{
-  public var rangeAndNodes: [(ByteSourceRange, Syntax)] = []
-
-  public init() {}
-
-  public func parserReusedNode(range: ByteSourceRange, previousNode: Syntax) {
-    rangeAndNodes.append((range, previousNode))
-  }
-}
+public typealias ReusedNodeCallback = (_ node: Syntax) -> ()
 
 /// Keeps track of a previously parsed syntax tree and the source edits that
 /// occurred since it was created.
 public final class IncrementalParseTransition {
   fileprivate let previousTree: SourceFileSyntax
   fileprivate let edits: ConcurrentEdits
-  fileprivate let reusedDelegate: IncrementalParseReusedNodeDelegate?
+  fileprivate let lookaheadRanges: LookaheadRanges
+  fileprivate let reusedNodeCallback: ReusedNodeCallback?
 
   /// - Parameters:
   ///   - previousTree: The previous tree to do lookups on.
   ///   - edits: The edits that have occurred since the last parse that resulted
   ///            in the new source that is about to be parsed.
-  ///   - reusedNodeDelegate: Optional delegate to accept information about the
-  ///                         reused regions and nodes.
+  ///   - reusedNodeCallback: Optional closure to accept information about the re-used node. For each node that gets re-used `reusedNodeCallback` is called.
   public init(
     previousTree: SourceFileSyntax,
     edits: ConcurrentEdits,
-    reusedNodeDelegate: IncrementalParseReusedNodeDelegate? = nil
+    lookaheadRanges: LookaheadRanges,
+    reusedNodeCallback: ReusedNodeCallback? = nil
   ) {
     self.previousTree = previousTree
     self.edits = edits
-    self.reusedDelegate = reusedNodeDelegate
+    self.lookaheadRanges = lookaheadRanges
+    self.reusedNodeCallback = reusedNodeCallback
   }
 }
 
 /// Provides a mechanism for the parser to skip regions of an incrementally
 /// updated source that was already parsed during a previous parse invocation.
-public struct IncrementalParseLookup {
+struct IncrementalParseLookup {
   fileprivate let transition: IncrementalParseTransition
   fileprivate var cursor: SyntaxCursor
 
@@ -84,8 +88,8 @@ public struct IncrementalParseLookup {
     return transition.edits
   }
 
-  fileprivate var reusedDelegate: IncrementalParseReusedNodeDelegate? {
-    return transition.reusedDelegate
+  fileprivate var reusedCallback: ReusedNodeCallback? {
+    return transition.reusedNodeCallback
   }
 
   /// Does a lookup to see if the current source `offset` should be associated
@@ -100,23 +104,19 @@ public struct IncrementalParseLookup {
   /// - Returns: A ``Syntax`` node from the previous parse invocation,
   ///            representing the contents of this region, if it is still valid
   ///            to re-use. `nil` otherwise.
-  @_spi(RawSyntax)
-  public mutating func lookUp(_ newOffset: Int, kind: SyntaxKind) -> Syntax? {
+  fileprivate mutating func lookUp(_ newOffset: Int, kind: SyntaxKind) -> Syntax? {
     guard let prevOffset = translateToPreEditOffset(newOffset) else {
       return nil
     }
     let prevPosition = AbsolutePosition(utf8Offset: prevOffset)
     let node = cursorLookup(prevPosition: prevPosition, kind: kind)
-    if let delegate = reusedDelegate, let node {
-      delegate.parserReusedNode(
-        range: ByteSourceRange(offset: newOffset, length: node.byteSize),
-        previousNode: node
-      )
+    if let node {
+      reusedCallback?(node)
     }
     return node
   }
 
-  mutating fileprivate func cursorLookup(
+  fileprivate mutating func cursorLookup(
     prevPosition: AbsolutePosition,
     kind: SyntaxKind
   ) -> Syntax? {
@@ -148,24 +148,13 @@ public struct IncrementalParseLookup {
       return true
     }
 
-    // Node can also not be reused if an edit has been made in the next token's
-    // text, e.g. because `private struct Foo {}` parses as a CodeBlockItem with
-    // a StructDecl inside and `private struc Foo {}` parses as two
-    // CodeBlockItems one for `private` and one for `struc Foo {}`
-    var nextLeafNodeLength: SourceLength = .zero
-    if let nextSibling = cursor.nextSibling {
-      // Fast path check: if next sibling is before all the edits then we can
-      // re-use the node.
-      if !edits.edits.isEmpty && edits.edits.first!.range.offset > nextSibling.endPosition.utf8Offset {
-        return true
-      }
-      if let nextToken = nextSibling.firstToken(viewMode: .sourceAccurate) {
-        nextLeafNodeLength = nextToken.leadingTriviaLength + nextToken.contentLength
-      }
+    guard let nodeAffectRangeLength = transition.lookaheadRanges.lookaheadRanges[node.raw.id] else {
+      return false
     }
+
     let nodeAffectRange = ByteSourceRange(
       offset: node.position.utf8Offset,
-      length: (node.totalLength + nextLeafNodeLength).utf8Length
+      length: nodeAffectRangeLength
     )
 
     for edit in edits.edits {

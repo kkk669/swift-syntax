@@ -10,15 +10,19 @@
 //
 //===----------------------------------------------------------------------===//
 
+import SwiftSyntax
+
 public class Trait {
   public let traitName: String
+  public let protocolName: TokenSyntax
+  public let documentation: SwiftSyntax.Trivia
   public let children: [Child]
-  public let description: String?
 
-  init(traitName: String, children: [Child], description: String? = nil) {
+  init(traitName: String, documentation: String? = nil, children: [Child]) {
     self.traitName = traitName
+    self.protocolName = .identifier("\(traitName)Syntax")
+    self.documentation = docCommentTrivia(from: documentation)
     self.children = children
-    self.description = description
   }
 }
 
@@ -36,7 +40,12 @@ public let TRAITS: [Trait] = [
       Child(name: "Attributes", kind: .node(kind: .attributeList), isOptional: true),
       Child(name: "Modifiers", kind: .node(kind: .modifierList), isOptional: true),
       Child(name: "InheritanceClause", kind: .node(kind: .typeInheritanceClause), isOptional: true),
-      Child(name: "GenericWhereClause", kind: .node(kind: .genericWhereClause), isOptional: true),
+      Child(
+        name: "GenericWhereClause",
+        kind: .node(kind: .genericWhereClause),
+        documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
+        isOptional: true
+      ),
       Child(name: "MemberBlock", kind: .node(kind: .memberDeclBlock)),
     ]
   ),
@@ -55,7 +64,7 @@ public let TRAITS: [Trait] = [
     children: [
       Child(name: "PoundToken", kind: .token(choices: [.token(tokenKind: "PoundToken")])),
       Child(name: "Macro", kind: .token(choices: [.token(tokenKind: "IdentifierToken")])),
-      Child(name: "GenericArguments", kind: .node(kind: .genericArgumentClause), isOptional: true),
+      Child(name: "GenericArgumentClause", kind: .node(kind: .genericArgumentClause), isOptional: true),
       Child(name: "LeftParen", kind: .token(choices: [.token(tokenKind: "LeftParenToken")]), isOptional: true),
       Child(name: "ArgumentList", kind: .node(kind: .tupleExprElementList)),
       Child(name: "RightParen", kind: .token(choices: [.token(tokenKind: "RightParenToken")]), isOptional: true),
@@ -67,6 +76,23 @@ public let TRAITS: [Trait] = [
     traitName: "IdentifiedDecl",
     children: [
       Child(name: "Identifier", kind: .token(choices: [.token(tokenKind: "IdentifierToken")]))
+    ]
+  ),
+  Trait(
+    traitName: "MissingNode",
+    documentation: """
+      Represents a layout node that is missing in the source file.
+
+      See the types conforming to this protocol for examples of where missing nodes can occur.
+      """,
+    children: [
+      Child(
+        name: "Placeholder",
+        kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
+        documentation: """
+          A placeholder, i.e. `<#placeholder#>`, that can be inserted into the source code to represent the missing node.
+          """
+      )
     ]
   ),
   Trait(
@@ -89,6 +115,29 @@ public let TRAITS: [Trait] = [
     ]
   ),
   Trait(
+    traitName: "WithGenericParameters",
+    documentation: """
+      Syntax nodes that have generic parameters.
+
+      For example, functions or nominal types like `class` or `struct` can have generic parameters \
+      and have a generic where clause that restricts these generic parameters.
+      """,
+    children: [
+      Child(
+        name: "GenericParameterClause",
+        kind: .node(kind: .genericParameterClause),
+        documentation: "The parameter clause that defines the generic parameters.",
+        isOptional: true
+      ),
+      Child(
+        name: "GenericWhereClause",
+        kind: .node(kind: .genericWhereClause),
+        documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
+        isOptional: true
+      ),
+    ]
+  ),
+  Trait(
     traitName: "WithModifiers",
     children: [
       Child(name: "Modifiers", kind: .node(kind: .modifierList), isOptional: true)
@@ -107,3 +156,8 @@ public let TRAITS: [Trait] = [
     ]
   ),
 ]
+
+//==========================================================================//
+// IMPORTANT: If you are tempted to add a trait here please insert in in    //
+// alphabetical order above                                                 //
+//==========================================================================//

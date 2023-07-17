@@ -150,6 +150,18 @@ open class BasicFormat: SyntaxRewriter {
 
   // MARK: - Customization points
 
+  /// If we are formatting a subtree and the line that the initial token occurs on is indented,
+  /// use that line indentation for the first token in the subtree to format.
+  ///
+  /// For example, when formatting only the code block in the following,
+  /// then the opening `{` should be indented by four spaces.
+  /// ```
+  ///     func test() {
+  ///         print(1)
+  ///     }
+  /// ```
+  open var inferInitialTokenIndentaiton: Bool { true }
+
   /// Whether a leading newline on `token` should be added.
   open func requiresIndent(_ node: some SyntaxProtocol) -> Bool {
     return node.requiresIndent
@@ -186,12 +198,12 @@ open class BasicFormat: SyntaxRewriter {
     }
 
     switch (first?.tokenKind, second?.tokenKind) {
-
     case (.multilineStringQuote, .backslash),  // string interpolation segment inside a multi-line string literal
       (.multilineStringQuote, .multilineStringQuote),  // empty multi-line string literal
       (.multilineStringQuote, .stringSegment),  // segment starting a multi-line string literal
       (.stringSegment, .multilineStringQuote),  // ending a multi-line string literal that has a string interpolation segment at its end
       (.rightParen, .multilineStringQuote),  // ending a multi-line string literal that has a string interpolation segment at its end
+      (.poundEndifKeyword, _),
       (_, .poundElseKeyword),
       (_, .poundElseifKeyword),
       (_, .poundEndifKeyword),
@@ -208,7 +220,7 @@ open class BasicFormat: SyntaxRewriter {
       (.backslash, _),
       (.backtick, _),
       (.dollarIdentifier, .period),  // a.b
-      (.eof, _),
+      (.endOfFile, _),
       (.exclamationMark, .leftParen),  // myOptionalClosure!()
       (.exclamationMark, .period),  // myOptionalBar!.foo()
       (.extendedRegexDelimiter, .leftParen),  // opening extended regex delimiter should never be separate by a space
@@ -254,7 +266,7 @@ open class BasicFormat: SyntaxRewriter {
       (.stringSegment, _),
       (_, .comma),
       (_, .ellipsis),
-      (_, .eof),
+      (_, .endOfFile),
       (_, .exclamationMark),
       (_, .postfixOperator),
       (_, .postfixQuestionMark),
@@ -411,6 +423,16 @@ open class BasicFormat: SyntaxRewriter {
       // If the token starts on a new line and does not have indentation, this
       // is the last non-indented token. Store its indentation level
       anchorPoints[token] = currentIndentationLevel
+    }
+
+    if inferInitialTokenIndentaiton
+      && isInitialToken
+      && token.presence == .present
+    {
+      let indentationOfLine = token.indentationOfLine
+      if token.leadingTrivia.pieces.suffix(indentationOfLine.pieces.count) != indentationOfLine.pieces {
+        leadingTrivia += indentationOfLine
+      }
     }
 
     // Add a trailing space to the token unless

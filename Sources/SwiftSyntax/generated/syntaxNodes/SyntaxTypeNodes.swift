@@ -14,8 +14,6 @@
 
 // MARK: - ArrayTypeSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftSquare`: `'['`
@@ -164,8 +162,6 @@ public struct ArrayTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - AttributedTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -340,8 +336,6 @@ public struct AttributedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 
 // MARK: - ClassRestrictionTypeSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `classKeyword`: `'class'`
@@ -424,8 +418,6 @@ public struct ClassRestrictionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - CompositionTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -533,8 +525,6 @@ public struct CompositionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ConstrainedSugarTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -657,8 +647,6 @@ public struct ConstrainedSugarTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - DictionaryTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -863,15 +851,13 @@ public struct DictionaryTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 
 // MARK: - FunctionTypeSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `leftParen`: `'('`
 ///  - `parameters`: ``TupleTypeElementListSyntax``
 ///  - `rightParen`: `')'`
 ///  - `effectSpecifiers`: ``TypeEffectSpecifiersSyntax``?
-///  - `output`: ``ReturnClauseSyntax``
+///  - `returnClause`: ``ReturnClauseSyntax``
 public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -903,9 +889,9 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedBetweenRightParenAndEffectSpecifiers: UnexpectedNodesSyntax? = nil,
       effectSpecifiers: TypeEffectSpecifiersSyntax? = nil,
-      _ unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? = nil,
-      output: ReturnClauseSyntax,
-      _ unexpectedAfterOutput: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenEffectSpecifiersAndReturnClause: UnexpectedNodesSyntax? = nil,
+      returnClause: ReturnClauseSyntax,
+      _ unexpectedAfterReturnClause: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
     
   ) {
@@ -920,9 +906,9 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
             rightParen, 
             unexpectedBetweenRightParenAndEffectSpecifiers, 
             effectSpecifiers, 
-            unexpectedBetweenEffectSpecifiersAndOutput, 
-            output, 
-            unexpectedAfterOutput
+            unexpectedBetweenEffectSpecifiersAndReturnClause, 
+            returnClause, 
+            unexpectedAfterReturnClause
           ))) { (arena, _) in
       let layout: [RawSyntax?] = [
           unexpectedBeforeLeftParen?.raw, 
@@ -933,9 +919,9 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
           rightParen.raw, 
           unexpectedBetweenRightParenAndEffectSpecifiers?.raw, 
           effectSpecifiers?.raw, 
-          unexpectedBetweenEffectSpecifiersAndOutput?.raw, 
-          output.raw, 
-          unexpectedAfterOutput?.raw
+          unexpectedBetweenEffectSpecifiersAndReturnClause?.raw, 
+          returnClause.raw, 
+          unexpectedAfterReturnClause?.raw
         ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.functionType,
@@ -1046,7 +1032,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenEffectSpecifiersAndOutput: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenEffectSpecifiersAndReturnClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -1055,7 +1041,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var output: ReturnClauseSyntax {
+  public var returnClause: ReturnClauseSyntax {
     get {
       return ReturnClauseSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
@@ -1064,7 +1050,7 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedAfterOutput: UnexpectedNodesSyntax? {
+  public var unexpectedAfterReturnClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -1083,16 +1069,14 @@ public struct FunctionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
           \Self.rightParen, 
           \Self.unexpectedBetweenRightParenAndEffectSpecifiers, 
           \Self.effectSpecifiers, 
-          \Self.unexpectedBetweenEffectSpecifiersAndOutput, 
-          \Self.output, 
-          \Self.unexpectedAfterOutput
+          \Self.unexpectedBetweenEffectSpecifiersAndReturnClause, 
+          \Self.returnClause, 
+          \Self.unexpectedAfterReturnClause
         ])
   }
 }
 
 // MARK: - ImplicitlyUnwrappedOptionalTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -1215,8 +1199,6 @@ public struct ImplicitlyUnwrappedOptionalTypeSyntax: TypeSyntaxProtocol, SyntaxH
 }
 
 // MARK: - MemberTypeIdentifierSyntax
-
-
 
 /// ### Children
 /// 
@@ -1394,8 +1376,6 @@ public struct MemberTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
 
 // MARK: - MetatypeTypeSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `baseType`: ``TypeSyntax``
@@ -1570,7 +1550,7 @@ public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
-  ///   - placeholder: A placeholder, i.e. `<#type#>` that can be inserted into the source code to represent the missing type. This token should always have `presence = .missing`.
+  ///   - placeholder: A placeholder, i.e. `<#type#>`, that can be inserted into the source code to represent the missing type. This token should always have `presence = .missing`.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -1606,7 +1586,7 @@ public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// A placeholder, i.e. `<#type#>` that can be inserted into the source code to represent the missing type. This token should always have `presence = .missing`.
+  /// A placeholder, i.e. `<#type#>`, that can be inserted into the source code to represent the missing type. This token should always have `presence = .missing`.
   public var placeholder: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
@@ -1632,8 +1612,6 @@ public struct MissingTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 
 // MARK: - NamedOpaqueReturnTypeSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `genericParameterClause`: ``GenericParameterClauseSyntax``
@@ -1658,6 +1636,7 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - genericParameterClause: The parameter clause that defines the generic parameters.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -1707,6 +1686,7 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The parameter clause that defines the generic parameters.
   public var genericParameterClause: GenericParameterClauseSyntax {
     get {
       return GenericParameterClauseSyntax(data.child(at: 1, parent: Syntax(self))!)
@@ -1755,8 +1735,6 @@ public struct NamedOpaqueReturnTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - OptionalTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -1880,8 +1858,6 @@ public struct OptionalTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 
 // MARK: - PackExpansionTypeSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `repeatKeyword`: `'repeat'`
@@ -2003,8 +1979,6 @@ public struct PackExpansionTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - PackReferenceTypeSyntax
-
-
 
 /// ### Children
 /// 
@@ -2128,8 +2102,6 @@ public struct PackReferenceTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 
 // MARK: - SimpleTypeIdentifierSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `name`: (`<identifier>` | `'self'` | `'Self'` | `'Any'` | `'_'`)
@@ -2252,8 +2224,6 @@ public struct SimpleTypeIdentifierSyntax: TypeSyntaxProtocol, SyntaxHashable {
 
 // MARK: - SuppressedTypeSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `withoutTilde`: `<prefixOperator>`
@@ -2375,8 +2345,6 @@ public struct SuppressedTypeSyntax: TypeSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - TupleTypeSyntax
-
-
 
 /// ### Children
 /// 

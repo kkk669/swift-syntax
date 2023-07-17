@@ -22,6 +22,8 @@ fileprivate func findCommonAncestor(_ nodes: [Syntax]) -> Syntax? {
 }
 
 class NoNewlinesFormat: BasicFormat {
+  override var inferInitialTokenIndentaiton: Bool { false }
+
   override func requiresNewline(between first: TokenSyntax?, and second: TokenSyntax?) -> Bool {
     return false
   }
@@ -388,7 +390,15 @@ extension ParseDiagnosticsGenerator {
       }
     }
 
-    let changes = missingNodes.map { FixIt.MultiNodeChange.makePresent($0) }
+    let changes = missingNodes.map { node in
+      if let missing = node.asProtocol(MissingNodeSyntax.self) {
+        // For missing nodes, only make the placeholder present. Don’t make any
+        // missing nodes, e.g. in a malformed attribute, present.
+        return FixIt.MultiNodeChange.makePresent(missing.placeholder)
+      } else {
+        return FixIt.MultiNodeChange.makePresent(node)
+      }
+    }
     let fixIt = FixIt(
       message: InsertTokenFixIt(missingNodes: missingNodes),
       changes: additionalChanges + changes

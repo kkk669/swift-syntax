@@ -14,8 +14,6 @@
 
 // MARK: - AccessorDeclSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
@@ -297,8 +295,6 @@ public struct AccessorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 
 // MARK: - ActorDeclSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
@@ -329,6 +325,8 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - genericParameterClause: The parameter clause that defines the generic parameters.
+  ///   - genericWhereClause: A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -534,6 +532,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The parameter clause that defines the generic parameters.
   public var genericParameterClause: GenericParameterClauseSyntax? {
     get {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
@@ -570,6 +569,7 @@ public struct ActorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
@@ -2423,8 +2423,6 @@ public struct EnumDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 
 // MARK: - ExtensionDeclSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
@@ -2454,6 +2452,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - genericWhereClause: A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -2671,6 +2670,7 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
       return data.child(at: 11, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
@@ -2730,8 +2730,6 @@ public struct ExtensionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 
 // MARK: - FunctionDeclSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
@@ -2762,6 +2760,8 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - genericParameterClause: The parameter clause that defines the generic parameters.
+  ///   - genericWhereClause: A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -2967,6 +2967,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The parameter clause that defines the generic parameters.
   public var genericParameterClause: GenericParameterClauseSyntax? {
     get {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
@@ -3003,6 +3004,7 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
@@ -3063,8 +3065,6 @@ public struct FunctionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - IfConfigDeclSyntax
-
-
 
 /// ### Children
 /// 
@@ -3860,8 +3860,6 @@ public struct InitializerDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 
 // MARK: - MacroDeclSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
@@ -3892,6 +3890,8 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - genericParameterClause: The parameter clause that defines the generic parameters.
+  ///   - genericWhereClause: A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -4097,6 +4097,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The parameter clause that defines the generic parameters.
   public var genericParameterClause: GenericParameterClauseSyntax? {
     get {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
@@ -4151,6 +4152,7 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
       return data.child(at: 15, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
@@ -4194,15 +4196,13 @@ public struct MacroDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 
 // MARK: - MacroExpansionDeclSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
 ///  - `modifiers`: ``ModifierListSyntax``
 ///  - `pound`: `'#'`
 ///  - `macro`: `<identifier>`
-///  - `genericArguments`: ``GenericArgumentClauseSyntax``?
+///  - `genericArgumentClause`: ``GenericArgumentClauseSyntax``?
 ///  - `leftParen`: `'('`?
 ///  - `argumentList`: ``TupleExprElementListSyntax``
 ///  - `rightParen`: `')'`?
@@ -4240,9 +4240,9 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       pound: TokenSyntax = .poundToken(),
       _ unexpectedBetweenPoundAndMacro: UnexpectedNodesSyntax? = nil,
       macro: TokenSyntax,
-      _ unexpectedBetweenMacroAndGenericArguments: UnexpectedNodesSyntax? = nil,
-      genericArguments: GenericArgumentClauseSyntax? = nil,
-      _ unexpectedBetweenGenericArgumentsAndLeftParen: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenMacroAndGenericArgumentClause: UnexpectedNodesSyntax? = nil,
+      genericArgumentClause: GenericArgumentClauseSyntax? = nil,
+      _ unexpectedBetweenGenericArgumentClauseAndLeftParen: UnexpectedNodesSyntax? = nil,
       leftParen: TokenSyntax? = nil,
       _ unexpectedBetweenLeftParenAndArgumentList: UnexpectedNodesSyntax? = nil,
       argumentList: TupleExprElementListSyntax,
@@ -4267,9 +4267,9 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             pound, 
             unexpectedBetweenPoundAndMacro, 
             macro, 
-            unexpectedBetweenMacroAndGenericArguments, 
-            genericArguments, 
-            unexpectedBetweenGenericArgumentsAndLeftParen, 
+            unexpectedBetweenMacroAndGenericArgumentClause, 
+            genericArgumentClause, 
+            unexpectedBetweenGenericArgumentClauseAndLeftParen, 
             leftParen, 
             unexpectedBetweenLeftParenAndArgumentList, 
             argumentList, 
@@ -4290,9 +4290,9 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           pound.raw, 
           unexpectedBetweenPoundAndMacro?.raw, 
           macro.raw, 
-          unexpectedBetweenMacroAndGenericArguments?.raw, 
-          genericArguments?.raw, 
-          unexpectedBetweenGenericArgumentsAndLeftParen?.raw, 
+          unexpectedBetweenMacroAndGenericArgumentClause?.raw, 
+          genericArgumentClause?.raw, 
+          unexpectedBetweenGenericArgumentClauseAndLeftParen?.raw, 
           leftParen?.raw, 
           unexpectedBetweenLeftParenAndArgumentList?.raw, 
           argumentList.raw, 
@@ -4438,7 +4438,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenMacroAndGenericArguments: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenMacroAndGenericArgumentClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4447,7 +4447,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var genericArguments: GenericArgumentClauseSyntax? {
+  public var genericArgumentClause: GenericArgumentClauseSyntax? {
     get {
       return data.child(at: 9, parent: Syntax(self)).map(GenericArgumentClauseSyntax.init)
     }
@@ -4456,7 +4456,7 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenGenericArgumentsAndLeftParen: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenGenericArgumentClauseAndLeftParen: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -4613,9 +4613,9 @@ public struct MacroExpansionDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           \Self.pound, 
           \Self.unexpectedBetweenPoundAndMacro, 
           \Self.macro, 
-          \Self.unexpectedBetweenMacroAndGenericArguments, 
-          \Self.genericArguments, 
-          \Self.unexpectedBetweenGenericArgumentsAndLeftParen, 
+          \Self.unexpectedBetweenMacroAndGenericArgumentClause, 
+          \Self.genericArgumentClause, 
+          \Self.unexpectedBetweenGenericArgumentClauseAndLeftParen, 
           \Self.leftParen, 
           \Self.unexpectedBetweenLeftParenAndArgumentList, 
           \Self.argumentList, 
@@ -4661,7 +4661,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   ///   - attributes: If there were standalone attributes without a declaration to attach them to, the ``MissingDeclSyntax`` will contain these.
   ///   - modifiers: If there were standalone modifiers without a declaration to attach them to, the ``MissingDeclSyntax`` will contain these.
-  ///   - placeholder: A placeholder, i.e. `<#decl#>` that can be inserted into the source code to represent the missing declaration.
+  ///   - placeholder: A placeholder, i.e. `<#decl#>`, that can be inserted into the source code to represent the missing declaration.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -4803,7 +4803,7 @@ public struct MissingDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// A placeholder, i.e. `<#decl#>` that can be inserted into the source code to represent the missing declaration./// This token should always have `presence = .missing`.
+  /// A placeholder, i.e. `<#decl#>`, that can be inserted into the source code to represent the missing declaration./// This token should always have `presence = .missing`.
   public var placeholder: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 5, parent: Syntax(self))!)
@@ -5018,8 +5018,6 @@ public struct OperatorDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - PoundSourceLocationSyntax
-
-
 
 /// ### Children
 /// 
@@ -6296,16 +6294,14 @@ public struct StructDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 
 // MARK: - SubscriptDeclSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `attributes`: ``AttributeListSyntax``
 ///  - `modifiers`: ``ModifierListSyntax``
 ///  - `subscriptKeyword`: `'subscript'`
 ///  - `genericParameterClause`: ``GenericParameterClauseSyntax``?
-///  - `indices`: ``ParameterClauseSyntax``
-///  - `result`: ``ReturnClauseSyntax``
+///  - `parameterClause`: ``ParameterClauseSyntax``
+///  - `returnClause`: ``ReturnClauseSyntax``
 ///  - `genericWhereClause`: ``GenericWhereClauseSyntax``?
 ///  - `accessor`: (``AccessorBlockSyntax`` | ``CodeBlockSyntax``)?
 public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
@@ -6370,6 +6366,8 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - genericParameterClause: The parameter clause that defines the generic parameters.
+  ///   - genericWhereClause: A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -6381,11 +6379,11 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
       subscriptKeyword: TokenSyntax = .keyword(.subscript),
       _ unexpectedBetweenSubscriptKeywordAndGenericParameterClause: UnexpectedNodesSyntax? = nil,
       genericParameterClause: GenericParameterClauseSyntax? = nil,
-      _ unexpectedBetweenGenericParameterClauseAndIndices: UnexpectedNodesSyntax? = nil,
-      indices: ParameterClauseSyntax,
-      _ unexpectedBetweenIndicesAndResult: UnexpectedNodesSyntax? = nil,
-      result: ReturnClauseSyntax,
-      _ unexpectedBetweenResultAndGenericWhereClause: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenGenericParameterClauseAndParameterClause: UnexpectedNodesSyntax? = nil,
+      parameterClause: ParameterClauseSyntax,
+      _ unexpectedBetweenParameterClauseAndReturnClause: UnexpectedNodesSyntax? = nil,
+      returnClause: ReturnClauseSyntax,
+      _ unexpectedBetweenReturnClauseAndGenericWhereClause: UnexpectedNodesSyntax? = nil,
       genericWhereClause: GenericWhereClauseSyntax? = nil,
       _ unexpectedBetweenGenericWhereClauseAndAccessor: UnexpectedNodesSyntax? = nil,
       accessor: Accessor? = nil,
@@ -6404,11 +6402,11 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
             subscriptKeyword, 
             unexpectedBetweenSubscriptKeywordAndGenericParameterClause, 
             genericParameterClause, 
-            unexpectedBetweenGenericParameterClauseAndIndices, 
-            indices, 
-            unexpectedBetweenIndicesAndResult, 
-            result, 
-            unexpectedBetweenResultAndGenericWhereClause, 
+            unexpectedBetweenGenericParameterClauseAndParameterClause, 
+            parameterClause, 
+            unexpectedBetweenParameterClauseAndReturnClause, 
+            returnClause, 
+            unexpectedBetweenReturnClauseAndGenericWhereClause, 
             genericWhereClause, 
             unexpectedBetweenGenericWhereClauseAndAccessor, 
             accessor, 
@@ -6423,11 +6421,11 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           subscriptKeyword.raw, 
           unexpectedBetweenSubscriptKeywordAndGenericParameterClause?.raw, 
           genericParameterClause?.raw, 
-          unexpectedBetweenGenericParameterClauseAndIndices?.raw, 
-          indices.raw, 
-          unexpectedBetweenIndicesAndResult?.raw, 
-          result.raw, 
-          unexpectedBetweenResultAndGenericWhereClause?.raw, 
+          unexpectedBetweenGenericParameterClauseAndParameterClause?.raw, 
+          parameterClause.raw, 
+          unexpectedBetweenParameterClauseAndReturnClause?.raw, 
+          returnClause.raw, 
+          unexpectedBetweenReturnClauseAndGenericWhereClause?.raw, 
           genericWhereClause?.raw, 
           unexpectedBetweenGenericWhereClauseAndAccessor?.raw, 
           accessor?.raw, 
@@ -6557,6 +6555,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The parameter clause that defines the generic parameters.
   public var genericParameterClause: GenericParameterClauseSyntax? {
     get {
       return data.child(at: 7, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
@@ -6566,7 +6565,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenGenericParameterClauseAndIndices: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenGenericParameterClauseAndParameterClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 8, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -6575,7 +6574,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var indices: ParameterClauseSyntax {
+  public var parameterClause: ParameterClauseSyntax {
     get {
       return ParameterClauseSyntax(data.child(at: 9, parent: Syntax(self))!)
     }
@@ -6584,7 +6583,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenIndicesAndResult: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenParameterClauseAndReturnClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 10, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -6593,7 +6592,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var result: ReturnClauseSyntax {
+  public var returnClause: ReturnClauseSyntax {
     get {
       return ReturnClauseSyntax(data.child(at: 11, parent: Syntax(self))!)
     }
@@ -6602,7 +6601,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenResultAndGenericWhereClause: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenReturnClauseAndGenericWhereClause: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 12, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -6611,6 +6610,7 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
@@ -6657,11 +6657,11 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
           \Self.subscriptKeyword, 
           \Self.unexpectedBetweenSubscriptKeywordAndGenericParameterClause, 
           \Self.genericParameterClause, 
-          \Self.unexpectedBetweenGenericParameterClauseAndIndices, 
-          \Self.indices, 
-          \Self.unexpectedBetweenIndicesAndResult, 
-          \Self.result, 
-          \Self.unexpectedBetweenResultAndGenericWhereClause, 
+          \Self.unexpectedBetweenGenericParameterClauseAndParameterClause, 
+          \Self.parameterClause, 
+          \Self.unexpectedBetweenParameterClauseAndReturnClause, 
+          \Self.returnClause, 
+          \Self.unexpectedBetweenReturnClauseAndGenericWhereClause, 
           \Self.genericWhereClause, 
           \Self.unexpectedBetweenGenericWhereClauseAndAccessor, 
           \Self.accessor, 
@@ -6671,8 +6671,6 @@ public struct SubscriptDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - TypealiasDeclSyntax
-
-
 
 /// ### Children
 /// 
@@ -6703,6 +6701,8 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
+  ///   - genericParameterClause: The parameter clause that defines the generic parameters.
+  ///   - genericWhereClause: A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -6902,6 +6902,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// The parameter clause that defines the generic parameters.
   public var genericParameterClause: GenericParameterClauseSyntax? {
     get {
       return data.child(at: 9, parent: Syntax(self)).map(GenericParameterClauseSyntax.init)
@@ -6938,6 +6939,7 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
     }
   }
   
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   public var genericWhereClause: GenericWhereClauseSyntax? {
     get {
       return data.child(at: 13, parent: Syntax(self)).map(GenericWhereClauseSyntax.init)
@@ -6978,8 +6980,6 @@ public struct TypealiasDeclSyntax: DeclSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - VariableDeclSyntax
-
-
 
 /// ### Children
 /// 

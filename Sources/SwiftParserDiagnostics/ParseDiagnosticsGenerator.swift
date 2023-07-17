@@ -51,31 +51,6 @@ fileprivate func getTokens(between first: TokenSyntax, and second: TokenSyntax) 
 }
 
 fileprivate extension TokenSyntax {
-  /// The indentation of this token
-  ///
-  /// In contrast to `indentation`, this does not walk to previous tokens to
-  /// find the indentation of the line this token occurs on.
-  private var indentation: Trivia? {
-    let previous = self.previousToken(viewMode: .sourceAccurate)
-    return ((previous?.trailingTrivia ?? []) + leadingTrivia).indentation(isOnNewline: false)
-  }
-
-  /// Returns the indentation of the line this token occurs on
-  var indentationOfLine: Trivia {
-    var token: TokenSyntax = self
-    if let indentation = token.indentation {
-      return indentation
-    }
-    while let previous = token.previousToken(viewMode: .sourceAccurate) {
-      token = previous
-      if let indentation = token.indentation {
-        return indentation
-      }
-    }
-
-    return []
-  }
-
   /// Assuming this token is a `poundAvailableKeyword` or `poundUnavailableKeyword`
   /// returns the opposite keyword.
   var negatedAvailabilityKeyword: TokenSyntax {
@@ -640,7 +615,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
 
-    if let versionTuple = node.versionInfo?.versionTuple,
+    if let versionTuple = node.versionInfo?.version,
       let unexpectedVersionTuple = node.unexpectedBetweenVersionInfoAndRightParen
     {
       if versionTuple.major.isMissing {
@@ -673,7 +648,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         handledNodes: [node.label.id]
       )
 
-      handledNodes.append(contentsOf: [node.unexpectedBetweenLabelAndColon?.id, node.colon.id, node.versionTuple.id].compactMap { $0 })
+      handledNodes.append(contentsOf: [node.unexpectedBetweenLabelAndColon?.id, node.colon.id, node.version.id].compactMap { $0 })
     }
 
     return .visitChildren
@@ -711,7 +686,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if shouldSkip(node) {
       return .skipChildren
     }
-    handleMisplacedEffectSpecifiers(effectSpecifiers: node.effectSpecifiers, output: node.output)
+    handleMisplacedEffectSpecifiers(effectSpecifiers: node.effectSpecifiers, output: node.returnClause)
     return .visitChildren
   }
 
@@ -1005,7 +980,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if shouldSkip(node) {
       return .skipChildren
     }
-    handleMisplacedEffectSpecifiers(effectSpecifiers: node.effectSpecifiers, output: node.output)
+    handleMisplacedEffectSpecifiers(effectSpecifiers: node.effectSpecifiers, output: node.returnClause)
     return .visitChildren
   }
 
@@ -1013,7 +988,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     if shouldSkip(node) {
       return .skipChildren
     }
-    handleMisplacedEffectSpecifiers(effectSpecifiers: node.effectSpecifiers, output: node.output)
+    handleMisplacedEffectSpecifiers(effectSpecifiers: node.effectSpecifiers, output: node.returnClause)
     return .visitChildren
   }
 
@@ -1100,6 +1075,22 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     return .visitChildren
   }
 
+  public override func visit(_ node: IfConfigClauseSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    if let unexpectedBetweenConditionAndElements = node.unexpectedBetweenConditionAndElements {
+      addDiagnostic(
+        unexpectedBetweenConditionAndElements,
+        .extraTokensFollowingConditionalCompilationDirective,
+        handledNodes: [unexpectedBetweenConditionAndElements.id]
+      )
+    }
+
+    return .visitChildren
+  }
+
   public override func visit(_ node: IfConfigDeclSyntax) -> SyntaxVisitorContinueKind {
     for clause in node.clauses where clause.hasError {
       if let unexpectedBeforePoundKeyword = clause.unexpectedBeforePoundKeyword,
@@ -1136,6 +1127,15 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         }
       }
     }
+
+    if let unexpectedAfterPoundEndif = node.unexpectedAfterPoundEndif {
+      addDiagnostic(
+        unexpectedAfterPoundEndif,
+        .extraTokensFollowingConditionalCompilationDirective,
+        handledNodes: [unexpectedAfterPoundEndif.id]
+      )
+    }
+
     return .visitChildren
   }
 
@@ -1196,7 +1196,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
 
-    if let unexpectedName = node.signature.input.unexpectedBeforeLeftParen,
+    if let unexpectedName = node.signature.parameterClause.unexpectedBeforeLeftParen,
       let previous = unexpectedName.previousToken(viewMode: .sourceAccurate)
     {
       addDiagnostic(
@@ -1215,7 +1215,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       )
     }
 
-    if let unexpectedOutput = node.signature.unexpectedAfterOutput {
+    if let unexpectedOutput = node.signature.unexpectedAfterReturnClause {
       addDiagnostic(
         unexpectedOutput,
         .initializerCannotHaveResultType,
@@ -1415,6 +1415,22 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     return .visitChildren
   }
 
+  public override func visit(_ node: PoundSourceLocationSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    if let unexpectedAfterRightParen = node.unexpectedAfterRightParen {
+      addDiagnostic(
+        unexpectedAfterRightParen,
+        .extraTokensAtTheEndOfSourceLocationDirective,
+        handledNodes: [unexpectedAfterRightParen.id]
+      )
+    }
+
+    return .visitChildren
+  }
+
   public override func visit(_ node: PrecedenceGroupAssignmentSyntax) -> SyntaxVisitorContinueKind {
     if shouldSkip(node) {
       return .skipChildren
@@ -1580,7 +1596,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         handledNodes: [unexpected.id]
       )
     }
-    if let unexpected = node.indices.unexpectedBeforeLeftParen,
+    if let unexpected = node.parameterClause.unexpectedBeforeLeftParen,
       let nameTokens = unexpected.onlyPresentTokens(satisfying: { !$0.tokenKind.isLexerClassifiedKeyword })
     {
       addDiagnostic(
@@ -1897,14 +1913,22 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
 
-    if let trailingComponents = node.unexpectedAfterComponents,
-      let components = node.components
-    {
-      addDiagnostic(
-        trailingComponents,
-        TrailingVersionAreIgnored(major: node.major, components: components),
-        handledNodes: [trailingComponents.id]
-      )
+    if let unexpectedAfterComponents = node.unexpectedAfterComponents {
+      if let components = node.components,
+        unexpectedAfterComponents.allSatisfy({ $0.is(VersionComponentSyntax.self) })
+      {
+        addDiagnostic(
+          unexpectedAfterComponents,
+          TrailingVersionAreIgnored(major: node.major, components: components),
+          handledNodes: [unexpectedAfterComponents.id]
+        )
+      } else {
+        addDiagnostic(
+          unexpectedAfterComponents,
+          CannotParseVersionTuple(versionTuple: unexpectedAfterComponents),
+          handledNodes: [node.major.id, node.components?.id, unexpectedAfterComponents.id].compactMap { $0 }
+        )
+      }
     }
 
     return .visitChildren

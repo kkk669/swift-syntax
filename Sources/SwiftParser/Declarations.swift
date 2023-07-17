@@ -85,7 +85,7 @@ extension TokenConsumer {
     }
 
     if hasAttribute {
-      if subparser.at(.rightBrace) || subparser.at(.eof) || subparser.at(.poundEndifKeyword) {
+      if subparser.at(.rightBrace) || subparser.at(.endOfFile) || subparser.at(.poundEndifKeyword) {
         return true
       }
     }
@@ -733,6 +733,11 @@ extension Parser {
 
 extension Parser {
   mutating func parseMemberDeclListItem() -> RawMemberDeclListItemSyntax? {
+    let startToken = self.currentToken
+    if let syntax = self.loadCurrentSyntaxNodeFromCache(for: .memberDeclListItem) {
+      self.registerNodeForIncrementalParse(node: syntax.raw, startToken: startToken)
+      return RawMemberDeclListItemSyntax(syntax.raw)
+    }
     if let remainingTokens = remainingTokensIfMaximumNestingLevelReached() {
       let item = RawMemberDeclListItemSyntax(
         remainingTokens,
@@ -760,12 +765,16 @@ extension Parser {
       return nil
     }
 
-    return RawMemberDeclListItemSyntax(
+    let result = RawMemberDeclListItemSyntax(
       decl: decl,
       semicolon: semi,
       RawUnexpectedNodesSyntax(trailingSemis, arena: self.arena),
       arena: self.arena
     )
+
+    self.registerNodeForIncrementalParse(node: result.raw, startToken: startToken)
+
+    return result
   }
 
   /// `introducer` is the `struct`, `class`, ... keyword that is the cause that the member decl block is being parsed.
@@ -776,7 +785,7 @@ extension Parser {
     let (unexpectedBeforeLBrace, lbrace) = self.expect(.leftBrace)
     do {
       var loopProgress = LoopProgressCondition()
-      while !self.at(.eof, .rightBrace) && loopProgress.evaluate(currentToken) {
+      while !self.at(.endOfFile, .rightBrace) && loopProgress.evaluate(currentToken) {
         let newItemAtStartOfLine = self.currentToken.isAtStartOfLine
         guard let newElement = self.parseMemberDeclListItem() else {
           break
@@ -1168,35 +1177,35 @@ extension Parser {
   }
 
   mutating func parseFunctionSignature(allowOutput: Bool = true) -> RawFunctionSignatureSyntax {
-    let input = self.parseParameterClause(RawParameterClauseSyntax.self) { parser in
+    let parameterClause = self.parseParameterClause(RawParameterClauseSyntax.self) { parser in
       parser.parseFunctionParameter()
     }
 
     var effectSpecifiers = self.parseFunctionEffectSpecifiers()
 
-    var output: RawReturnClauseSyntax?
+    var returnClause: RawReturnClauseSyntax?
 
     /// Only allow recovery to the arrow with exprKeyword precedence so we only
     /// skip over misplaced identifiers and don't e.g. recover to an arrow in a 'where' clause.
     if self.canRecoverTo(TokenSpec(.arrow, recoveryPrecedence: .exprKeyword)) != nil {
-      output = self.parseFunctionReturnClause(effectSpecifiers: &effectSpecifiers, allowNamedOpaqueResultType: true)
+      returnClause = self.parseFunctionReturnClause(effectSpecifiers: &effectSpecifiers, allowNamedOpaqueResultType: true)
     } else {
-      output = nil
+      returnClause = nil
     }
 
-    var unexpectedAfterOutput: RawUnexpectedNodesSyntax?
+    var unexpectedAfterReturnClause: RawUnexpectedNodesSyntax?
     if !allowOutput,
-      let unexpectedOutput = output
+      let unexpectedOutput = returnClause
     {
-      output = nil
-      unexpectedAfterOutput = RawUnexpectedNodesSyntax([unexpectedOutput], arena: self.arena)
+      returnClause = nil
+      unexpectedAfterReturnClause = RawUnexpectedNodesSyntax([unexpectedOutput], arena: self.arena)
     }
 
     return RawFunctionSignatureSyntax(
-      input: input,
+      parameterClause: parameterClause,
       effectSpecifiers: effectSpecifiers,
-      output: output,
-      unexpectedAfterOutput,
+      returnClause: returnClause,
+      unexpectedAfterReturnClause,
       arena: self.arena
     )
   }
@@ -1233,12 +1242,12 @@ extension Parser {
       genericParameterClause = nil
     }
 
-    let indices = self.parseParameterClause(RawParameterClauseSyntax.self) { parser in
+    let parameterClause = self.parseParameterClause(RawParameterClauseSyntax.self) { parser in
       parser.parseFunctionParameter()
     }
 
     var misplacedEffectSpecifiers: RawFunctionEffectSpecifiersSyntax?
-    let result = self.parseFunctionReturnClause(effectSpecifiers: &misplacedEffectSpecifiers, allowNamedOpaqueResultType: true)
+    let returnClause = self.parseFunctionReturnClause(effectSpecifiers: &misplacedEffectSpecifiers, allowNamedOpaqueResultType: true)
 
     // Parse a 'where' clause if present.
     let genericWhereClause: RawGenericWhereClauseSyntax?
@@ -1263,8 +1272,8 @@ extension Parser {
       subscriptKeyword: subscriptKeyword,
       RawUnexpectedNodesSyntax([unexpectedName], arena: self.arena),
       genericParameterClause: genericParameterClause,
-      indices: indices,
-      result: result,
+      parameterClause: parameterClause,
+      returnClause: returnClause,
       genericWhereClause: genericWhereClause,
       accessor: accessor,
       arena: self.arena
@@ -1421,7 +1430,7 @@ extension Parser {
     // Check there is an identifier before consuming
     var look = self.lookahead()
     let _ = look.consumeAttributeList()
-    let hasModifier = look.consume(if: .keyword(.mutating), .keyword(.nonmutating), .keyword(.__consuming)) != nil
+    let hasModifier = look.consume(ifAnyIn: AccessorModifier.self) != nil
     guard let (kind, _) = look.at(anyIn: AccessorDeclSyntax.AccessorSpecifierOptions.self) ?? forcedKind else {
       return nil
     }
@@ -1432,7 +1441,7 @@ extension Parser {
     // get and set.
     let modifier: RawDeclModifierSyntax?
     if hasModifier {
-      let (unexpectedBeforeName, name) = self.expect(.keyword(.mutating), .keyword(.nonmutating), .keyword(.__consuming), default: .keyword(.mutating))
+      let (unexpectedBeforeName, name) = self.expect(anyIn: AccessorModifier.self, default: .mutating)
       modifier = RawDeclModifierSyntax(
         unexpectedBeforeName,
         name: name,
@@ -1539,7 +1548,7 @@ extension Parser {
     var elements = [RawAccessorDeclSyntax]()
     do {
       var loopProgress = LoopProgressCondition()
-      while !self.at(.eof, .rightBrace) && loopProgress.evaluate(currentToken) {
+      while !self.at(.endOfFile, .rightBrace) && loopProgress.evaluate(currentToken) {
         guard let introducer = self.parseAccessorIntroducer() else {
           // There can only be an implicit getter if no other accessors were
           // seen before this one.
@@ -1758,7 +1767,7 @@ extension Parser {
     var loopProgress = LoopProgressCondition()
     while (identifiersAfterOperatorName.last ?? name).trailingTriviaByteLength == 0,
       self.currentToken.leadingTriviaByteLength == 0,
-      !self.at(.colon, .leftBrace, .eof),
+      !self.at(.colon, .leftBrace, .endOfFile),
       loopProgress.evaluate(self.currentToken)
     {
       identifiersAfterOperatorName.append(consumeAnyToken())
@@ -1906,7 +1915,7 @@ extension Parser {
     var elements = [RawPrecedenceGroupAttributeListSyntax.Element]()
     do {
       var attributesProgress = LoopProgressCondition()
-      LOOP: while !self.at(.eof, .rightBrace) && attributesProgress.evaluate(currentToken) {
+      LOOP: while !self.at(.endOfFile, .rightBrace) && attributesProgress.evaluate(currentToken) {
         switch self.at(anyIn: LabelText.self) {
         case (.associativity, let handle)?:
           let associativity = self.eat(handle)
@@ -2121,7 +2130,7 @@ extension Parser {
       pound: pound,
       unexpectedBeforeMacro,
       macro: macro,
-      genericArguments: generics,
+      genericArgumentClause: generics,
       leftParen: leftParen,
       argumentList: RawTupleExprElementListSyntax(
         elements: args,

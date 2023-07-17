@@ -14,8 +14,6 @@
 
 // MARK: - BreakStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `breakKeyword`: `'break'`
@@ -137,8 +135,6 @@ public struct BreakStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ContinueStmtSyntax
-
-
 
 /// ### Children
 /// 
@@ -262,8 +258,6 @@ public struct ContinueStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 
 // MARK: - DeferStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `deferKeyword`: `'defer'`
@@ -386,8 +380,6 @@ public struct DeferStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 
 // MARK: - DiscardStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `discardKeyword`: (`'_forget'` | `'discard'`)
@@ -509,8 +501,6 @@ public struct DiscardStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - DoStmtSyntax
-
-
 
 /// ### Children
 /// 
@@ -685,8 +675,6 @@ public struct DoStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 
 // MARK: - ExpressionStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `expression`: ``ExprSyntax``
@@ -770,8 +758,6 @@ public struct ExpressionStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 
 // MARK: - FallthroughStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `fallthroughKeyword`: `'fallthrough'`
@@ -854,8 +840,6 @@ public struct FallthroughStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - ForInStmtSyntax
-
-
 
 /// ### Children
 /// 
@@ -1195,8 +1179,6 @@ public struct ForInStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 
 // MARK: - GuardStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `guardKeyword`: `'guard'`
@@ -1397,8 +1379,6 @@ public struct GuardStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 
 // MARK: - LabeledStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `label`: `<identifier>`
@@ -1573,7 +1553,7 @@ public struct MissingStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
   
   /// - Parameters:
   ///   - leadingTrivia: Trivia to be prepended to the leading trivia of the node’s first token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
-  ///   - placeholder: A placeholder, i.e. `<#statement#>` that can be inserted into the source code to represent the missing pattern.
+  ///   - placeholder: A placeholder, i.e. `<#statement#>`, that can be inserted into the source code to represent the missing pattern.
   ///   - trailingTrivia: Trivia to be appended to the trailing trivia of the node’s last token. If the node is empty, there is no token to attach the trivia to and the parameter is ignored.
   public init(
       leadingTrivia: Trivia? = nil,
@@ -1609,7 +1589,7 @@ public struct MissingStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// A placeholder, i.e. `<#statement#>` that can be inserted into the source code to represent the missing pattern./// This token should always have `presence = .missing`.
+  /// A placeholder, i.e. `<#statement#>`, that can be inserted into the source code to represent the missing pattern./// This token should always have `presence = .missing`.
   public var placeholder: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
@@ -1634,8 +1614,6 @@ public struct MissingStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - RepeatWhileStmtSyntax
-
-
 
 /// ### Children
 /// 
@@ -1813,8 +1791,6 @@ public struct RepeatWhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 
 // MARK: - ReturnStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `returnKeyword`: `'return'`
@@ -1937,8 +1913,6 @@ public struct ReturnStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 
 // MARK: - ThrowStmtSyntax
 
-
-
 /// ### Children
 /// 
 ///  - `throwKeyword`: `'throw'`
@@ -2060,8 +2034,6 @@ public struct ThrowStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - WhileStmtSyntax
-
-
 
 /// ### Children
 /// 
@@ -2235,8 +2207,6 @@ public struct WhileStmtSyntax: StmtSyntaxProtocol, SyntaxHashable {
 }
 
 // MARK: - YieldStmtSyntax
-
-
 
 /// ### Children
 /// 

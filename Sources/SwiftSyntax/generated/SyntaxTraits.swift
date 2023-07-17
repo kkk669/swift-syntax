@@ -14,6 +14,7 @@
 
 // MARK: - BracedSyntax
 
+
 public protocol BracedSyntax: SyntaxProtocol {
   var leftBrace: TokenSyntax {
     get
@@ -55,6 +56,7 @@ public extension SyntaxProtocol {
 
 // MARK: - DeclGroupSyntax
 
+
 public protocol DeclGroupSyntax: SyntaxProtocol {
   var attributes: AttributeListSyntax? {
     get
@@ -71,6 +73,7 @@ public protocol DeclGroupSyntax: SyntaxProtocol {
     set
   }
   
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
   var genericWhereClause: GenericWhereClauseSyntax? {
     get
     set
@@ -110,6 +113,7 @@ public extension SyntaxProtocol {
 }
 
 // MARK: - EffectSpecifiersSyntax
+
 
 public protocol EffectSpecifiersSyntax: SyntaxProtocol {
   var unexpectedBeforeAsyncSpecifier: UnexpectedNodesSyntax? {
@@ -167,6 +171,7 @@ public extension SyntaxProtocol {
 
 // MARK: - FreestandingMacroExpansionSyntax
 
+
 public protocol FreestandingMacroExpansionSyntax: SyntaxProtocol {
   var poundToken: TokenSyntax {
     get
@@ -178,7 +183,7 @@ public protocol FreestandingMacroExpansionSyntax: SyntaxProtocol {
     set
   }
   
-  var genericArguments: GenericArgumentClauseSyntax? {
+  var genericArgumentClause: GenericArgumentClauseSyntax? {
     get
     set
   }
@@ -238,6 +243,7 @@ public extension SyntaxProtocol {
 
 // MARK: - IdentifiedDeclSyntax
 
+
 public protocol IdentifiedDeclSyntax: SyntaxProtocol {
   var identifier: TokenSyntax {
     get
@@ -272,7 +278,48 @@ public extension SyntaxProtocol {
   }
 }
 
+// MARK: - MissingNodeSyntax
+
+/// Represents a layout node that is missing in the source file.
+/// 
+/// See the types conforming to this protocol for examples of where missing nodes can occur.
+public protocol MissingNodeSyntax: SyntaxProtocol {
+  /// A placeholder, i.e. `<#placeholder#>`, that can be inserted into the source code to represent the missing node.
+  var placeholder: TokenSyntax {
+    get
+    set
+  }
+}
+
+public extension MissingNodeSyntax {
+  /// Without this function, the `with` function defined on `SyntaxProtocol`
+  /// does not work on existentials of this protocol type.
+  @_disfavoredOverload
+  func with<T>(_ keyPath: WritableKeyPath<MissingNodeSyntax, T>, _ newChild: T) -> MissingNodeSyntax {
+    var copy: MissingNodeSyntax = self
+    copy[keyPath: keyPath] = newChild
+    return copy
+  }
+}
+
+public extension SyntaxProtocol {
+  /// Check whether the non-type erased version of this syntax node conforms to
+  /// `MissingNodeSyntax`.
+  /// Note that this will incur an existential conversion.
+  func isProtocol(_: MissingNodeSyntax.Protocol) -> Bool {
+    return self.asProtocol(MissingNodeSyntax.self) != nil
+  }
+  
+  /// Return the non-type erased version of this syntax node if it conforms to
+  /// `MissingNodeSyntax`. Otherwise return `nil`.
+  /// Note that this will incur an existential conversion.
+  func asProtocol(_: MissingNodeSyntax.Protocol) -> MissingNodeSyntax? {
+    return Syntax(self).asProtocol(SyntaxProtocol.self) as? MissingNodeSyntax
+  }
+}
+
 // MARK: - ParenthesizedSyntax
+
 
 public protocol ParenthesizedSyntax: SyntaxProtocol {
   var leftParen: TokenSyntax {
@@ -315,6 +362,7 @@ public extension SyntaxProtocol {
 
 // MARK: - WithAttributesSyntax
 
+
 public protocol WithAttributesSyntax: SyntaxProtocol {
   var attributes: AttributeListSyntax? {
     get
@@ -351,6 +399,7 @@ public extension SyntaxProtocol {
 
 // MARK: - WithCodeBlockSyntax
 
+
 public protocol WithCodeBlockSyntax: SyntaxProtocol {
   var body: CodeBlockSyntax {
     get
@@ -385,7 +434,54 @@ public extension SyntaxProtocol {
   }
 }
 
+// MARK: - WithGenericParametersSyntax
+
+/// Syntax nodes that have generic parameters.
+/// 
+/// For example, functions or nominal types like `class` or `struct` can have generic parameters and have a generic where clause that restricts these generic parameters.
+public protocol WithGenericParametersSyntax: SyntaxProtocol {
+  /// The parameter clause that defines the generic parameters.
+  var genericParameterClause: GenericParameterClauseSyntax? {
+    get
+    set
+  }
+  
+  /// A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.
+  var genericWhereClause: GenericWhereClauseSyntax? {
+    get
+    set
+  }
+}
+
+public extension WithGenericParametersSyntax {
+  /// Without this function, the `with` function defined on `SyntaxProtocol`
+  /// does not work on existentials of this protocol type.
+  @_disfavoredOverload
+  func with<T>(_ keyPath: WritableKeyPath<WithGenericParametersSyntax, T>, _ newChild: T) -> WithGenericParametersSyntax {
+    var copy: WithGenericParametersSyntax = self
+    copy[keyPath: keyPath] = newChild
+    return copy
+  }
+}
+
+public extension SyntaxProtocol {
+  /// Check whether the non-type erased version of this syntax node conforms to
+  /// `WithGenericParametersSyntax`.
+  /// Note that this will incur an existential conversion.
+  func isProtocol(_: WithGenericParametersSyntax.Protocol) -> Bool {
+    return self.asProtocol(WithGenericParametersSyntax.self) != nil
+  }
+  
+  /// Return the non-type erased version of this syntax node if it conforms to
+  /// `WithGenericParametersSyntax`. Otherwise return `nil`.
+  /// Note that this will incur an existential conversion.
+  func asProtocol(_: WithGenericParametersSyntax.Protocol) -> WithGenericParametersSyntax? {
+    return Syntax(self).asProtocol(SyntaxProtocol.self) as? WithGenericParametersSyntax
+  }
+}
+
 // MARK: - WithModifiersSyntax
+
 
 public protocol WithModifiersSyntax: SyntaxProtocol {
   var modifiers: ModifierListSyntax? {
@@ -423,6 +519,7 @@ public extension SyntaxProtocol {
 
 // MARK: - WithStatementsSyntax
 
+
 public protocol WithStatementsSyntax: SyntaxProtocol {
   var statements: CodeBlockItemListSyntax {
     get
@@ -458,6 +555,7 @@ public extension SyntaxProtocol {
 }
 
 // MARK: - WithTrailingCommaSyntax
+
 
 public protocol WithTrailingCommaSyntax: SyntaxProtocol {
   var trailingComma: TokenSyntax? {
@@ -501,7 +599,7 @@ extension AccessorEffectSpecifiersSyntax: EffectSpecifiersSyntax {}
 
 extension AccessorParameterSyntax: ParenthesizedSyntax {}
 
-extension ActorDeclSyntax: DeclGroupSyntax, IdentifiedDeclSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+extension ActorDeclSyntax: DeclGroupSyntax, IdentifiedDeclSyntax, WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
 extension ArrayElementSyntax: WithTrailingCommaSyntax {}
 
@@ -519,7 +617,7 @@ extension CatchClauseSyntax: WithCodeBlockSyntax {}
 
 extension CatchItemSyntax: WithTrailingCommaSyntax {}
 
-extension ClassDeclSyntax: DeclGroupSyntax, IdentifiedDeclSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+extension ClassDeclSyntax: DeclGroupSyntax, IdentifiedDeclSyntax, WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
 extension ClosureCaptureItemSyntax: WithTrailingCommaSyntax {}
 
@@ -563,7 +661,7 @@ extension EnumCaseParameterClauseSyntax: ParenthesizedSyntax {}
 
 extension EnumCaseParameterSyntax: WithTrailingCommaSyntax, WithModifiersSyntax {}
 
-extension EnumDeclSyntax: DeclGroupSyntax, IdentifiedDeclSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+extension EnumDeclSyntax: DeclGroupSyntax, IdentifiedDeclSyntax, WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
 extension ExpressionSegmentSyntax: ParenthesizedSyntax {}
 
@@ -571,7 +669,7 @@ extension ExtensionDeclSyntax: DeclGroupSyntax, WithAttributesSyntax, WithModifi
 
 extension ForInStmtSyntax: WithCodeBlockSyntax {}
 
-extension FunctionDeclSyntax: IdentifiedDeclSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+extension FunctionDeclSyntax: IdentifiedDeclSyntax, WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
 extension FunctionEffectSpecifiersSyntax: EffectSpecifiersSyntax {}
 
@@ -593,11 +691,11 @@ extension ImportDeclSyntax: WithAttributesSyntax, WithModifiersSyntax {}
 
 extension InheritedTypeSyntax: WithTrailingCommaSyntax {}
 
-extension InitializerDeclSyntax: WithAttributesSyntax, WithModifiersSyntax {}
+extension InitializerDeclSyntax: WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
 extension LabeledSpecializeEntrySyntax: WithTrailingCommaSyntax {}
 
-extension MacroDeclSyntax: IdentifiedDeclSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+extension MacroDeclSyntax: IdentifiedDeclSyntax, WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
 extension MacroExpansionDeclSyntax: FreestandingMacroExpansionSyntax, WithAttributesSyntax, WithModifiersSyntax {}
 
@@ -605,7 +703,17 @@ extension MacroExpansionExprSyntax: FreestandingMacroExpansionSyntax {}
 
 extension MemberDeclBlockSyntax: BracedSyntax {}
 
-extension MissingDeclSyntax: WithAttributesSyntax, WithModifiersSyntax {}
+extension MissingDeclSyntax: MissingNodeSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+
+extension MissingExprSyntax: MissingNodeSyntax {}
+
+extension MissingPatternSyntax: MissingNodeSyntax {}
+
+extension MissingStmtSyntax: MissingNodeSyntax {}
+
+extension MissingSyntax: MissingNodeSyntax {}
+
+extension MissingTypeSyntax: MissingNodeSyntax {}
 
 extension OperatorDeclSyntax: IdentifiedDeclSyntax {}
 
@@ -627,9 +735,9 @@ extension RepeatWhileStmtSyntax: WithCodeBlockSyntax {}
 
 extension SourceFileSyntax: WithStatementsSyntax {}
 
-extension StructDeclSyntax: DeclGroupSyntax, IdentifiedDeclSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+extension StructDeclSyntax: DeclGroupSyntax, IdentifiedDeclSyntax, WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
-extension SubscriptDeclSyntax: WithAttributesSyntax, WithModifiersSyntax {}
+extension SubscriptDeclSyntax: WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
 extension SwitchCaseSyntax: WithStatementsSyntax {}
 
@@ -651,7 +759,7 @@ extension TupleTypeSyntax: ParenthesizedSyntax {}
 
 extension TypeEffectSpecifiersSyntax: EffectSpecifiersSyntax {}
 
-extension TypealiasDeclSyntax: IdentifiedDeclSyntax, WithAttributesSyntax, WithModifiersSyntax {}
+extension TypealiasDeclSyntax: IdentifiedDeclSyntax, WithAttributesSyntax, WithGenericParametersSyntax, WithModifiersSyntax {}
 
 extension VariableDeclSyntax: WithAttributesSyntax, WithModifiersSyntax {}
 

@@ -287,7 +287,7 @@ extension Parser {
         // The contents of the @_effects attribute are parsed in SIL, we just
         // represent the contents as a list of tokens in SwiftSyntax.
         var tokens: [RawTokenSyntax] = []
-        while !parser.at(.rightParen, .eof) {
+        while !parser.at(.rightParen, .endOfFile) {
           tokens.append(parser.consumeAnyToken())
         }
         return .effectsArguments(RawEffectsArgumentsSyntax(elements: tokens, arena: parser.arena))
@@ -423,7 +423,7 @@ extension Parser {
       kindSpecifierComma: kindSpecifierComma,
       parameters: parameters,
       parametersComma: parametersComma,
-      whereClause: whereClause,
+      genericWhereClause: whereClause,
       arena: self.arena
     )
   }
@@ -453,7 +453,7 @@ extension Parser {
 
     var elements = [RawDifferentiabilityParamSyntax]()
     var loopProgress = LoopProgressCondition()
-    while !self.at(.eof, .rightParen) && loopProgress.evaluate(currentToken) {
+    while !self.at(.endOfFile, .rightParen) && loopProgress.evaluate(currentToken) {
       guard let param = self.parseDifferentiabilityParameter() else {
         break
       }
@@ -676,15 +676,15 @@ extension Parser {
     var elements = [RawSpecializeAttributeSpecListSyntax.Element]()
     // Parse optional "exported" and "kind" labeled parameters.
     var loopProgress = LoopProgressCondition()
-    while !self.at(.eof, .rightParen, .keyword(.where)) && loopProgress.evaluate(currentToken) {
+    while !self.at(.endOfFile, .rightParen, .keyword(.where)) && loopProgress.evaluate(currentToken) {
       switch self.at(anyIn: SpecializeParameter.self) {
       case (.target, let handle)?:
         let ident = self.eat(handle)
         let (unexpectedBeforeColon, colon) = self.expect(.colon)
         let (targetFunction, args) = self.parseDeclNameRef([.zeroArgCompoundNames, .keywordsUsingSpecialNames, .operators])
         let declName = RawDeclNameSyntax(
-          declBaseName: targetFunction,
-          declNameArguments: args,
+          baseName: targetFunction,
+          arguments: args,
           arena: self.arena
         )
         let comma = self.consume(if: .comma)
@@ -1031,7 +1031,7 @@ extension Parser {
         .zeroArgCompoundNames, .keywordsUsingSpecialNames, .operators,
       ])
     }
-    let method = RawDeclNameSyntax(declBaseName: base, declNameArguments: args, arena: self.arena)
+    let method = RawDeclNameSyntax(baseName: base, arguments: args, arena: self.arena)
     return RawDynamicReplacementArgumentsSyntax(
       unexpectedBeforeLabel,
       forLabel: label,

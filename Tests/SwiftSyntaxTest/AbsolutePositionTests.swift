@@ -34,7 +34,7 @@ public class AbsolutePositionTests: XCTestCase {
     }
     let root = SourceFileSyntax(
       statements: CodeBlockItemListSyntax(l),
-      endOfFileToken: .eof()
+      endOfFileToken: .endOfFileToken()
     )
     _ = root.statements[idx].position
     _ = root.statements[idx].byteSize
@@ -70,7 +70,7 @@ public class AbsolutePositionTests: XCTestCase {
       )
     return SourceFileSyntax(
       statements: CodeBlockItemListSyntax(items),
-      endOfFileToken: .eof()
+      endOfFileToken: .endOfFileToken()
     )
   }
 

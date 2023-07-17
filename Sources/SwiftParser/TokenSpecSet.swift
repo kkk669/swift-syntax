@@ -23,6 +23,35 @@ protocol TokenSpecSet: CaseIterable {
 
 // MARK: - Subsets
 
+enum AccessorModifier: TokenSpecSet {
+  case __consuming
+  case consuming
+  case borrowing
+  case mutating
+  case nonmutating
+
+  init?(lexeme: Lexer.Lexeme) {
+    switch PrepareForKeywordMatch(lexeme) {
+    case TokenSpec(.__consuming): self = .__consuming
+    case TokenSpec(.consuming): self = .consuming
+    case TokenSpec(.borrowing): self = .borrowing
+    case TokenSpec(.mutating): self = .mutating
+    case TokenSpec(.nonmutating): self = .nonmutating
+    default: return nil
+    }
+  }
+
+  var spec: TokenSpec {
+    switch self {
+    case .__consuming: return .keyword(.__consuming)
+    case .consuming: return .keyword(.consuming)
+    case .borrowing: return .keyword(.borrowing)
+    case .mutating: return .keyword(.mutating)
+    case .nonmutating: return .keyword(.nonmutating)
+    }
+  }
+}
+
 enum CanBeStatementStart: TokenSpecSet {
   case _forget  // NOTE: support for deprecated _forget
   case `break`
@@ -616,6 +645,9 @@ enum ExpressionModifierKeyword: TokenSpecSet {
   case `try`
   case consume
   case copy
+  case `repeat`
+  case each
+  case any
 
   init?(lexeme: Lexer.Lexeme) {
     switch PrepareForKeywordMatch(lexeme) {
@@ -625,6 +657,9 @@ enum ExpressionModifierKeyword: TokenSpecSet {
     case TokenSpec(.try): self = .try
     case TokenSpec(.consume): self = .consume
     case TokenSpec(.copy): self = .copy
+    case TokenSpec(.repeat): self = .repeat
+    case TokenSpec(.each): self = .each
+    case TokenSpec(.any): self = .any
     default: return nil
     }
   }
@@ -637,6 +672,9 @@ enum ExpressionModifierKeyword: TokenSpecSet {
     case .consume: return .keyword(.consume)
     case .copy: return .keyword(.copy)
     case .try: return .keyword(.try)
+    case .repeat: return .keyword(.repeat)
+    case .each: return .keyword(.each)
+    case .any: return .keyword(.any)
     }
   }
 }

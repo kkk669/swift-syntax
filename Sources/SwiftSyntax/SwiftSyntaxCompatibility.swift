@@ -22,6 +22,18 @@ public typealias AccessPathComponentSyntax = ImportPathComponentSyntax
 @available(*, deprecated, renamed: "WithAttributesSyntax")
 public typealias AttributedSyntax = WithAttributesSyntax
 
+extension ClosureSignatureSyntax {
+  @available(*, deprecated, renamed: "ParameterClause")
+  public typealias Input = ParameterClause
+}
+
+extension ClosureSignatureSyntax.ParameterClause {
+  @available(*, deprecated, renamed: "parameterClause")
+  public static func input(_ parameterClause: ClosureParameterClauseSyntax) -> Self {
+    return .parameterClause(parameterClause)
+  }
+}
+
 public extension DeclGroupSyntax {
   @available(*, deprecated, renamed: "memberBlock")
   var members: MemberDeclBlockSyntax {
@@ -30,6 +42,18 @@ public extension DeclGroupSyntax {
     }
     set(value) {
       memberBlock = value
+    }
+  }
+}
+
+public extension FreestandingMacroExpansionSyntax {
+  @available(*, deprecated, renamed: "genericArgumentClause")
+  var genericArguments: GenericArgumentClauseSyntax? {
+    get {
+      return genericArgumentClause
+    }
+    set {
+      genericArgumentClause = newValue
     }
   }
 }
@@ -51,6 +75,9 @@ public extension TokenKind {
   static var rightSquareBracket: TokenKind {
     return .rightSquare
   }
+
+  @available(*, deprecated, renamed: "endOfFile")
+  static var eof: TokenKind { .endOfFile }
 }
 
 public extension TokenSyntax {
@@ -74,6 +101,19 @@ public extension TokenSyntax {
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return .rightSquareToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "endOfFileToken")
+  static func eof(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return .endOfFileToken(
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
