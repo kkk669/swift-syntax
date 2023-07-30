@@ -274,12 +274,6 @@ let package = Package(
 
     // MARK: PerformanceTest
     // TODO: Should be included in SwiftParserTest/SwiftSyntaxTest
-
-    .testTarget(
-      name: "PerformanceTest",
-      dependencies: ["_InstructionCounter", "SwiftIDEUtils", "SwiftParser", "SwiftSyntax"],
-      exclude: ["Inputs"]
-    ),
   ]
 )
 
