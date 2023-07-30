@@ -14,22 +14,22 @@
 
 extension Parser {
   private enum IfConfigContinuationClauseStartKeyword: TokenSpecSet {
-    case poundElseifKeyword
-    case poundElseKeyword
+    case poundElseif
+    case poundElse
     case pound
 
     var spec: TokenSpec {
       switch self {
-      case .poundElseifKeyword: return .poundElseifKeyword
-      case .poundElseKeyword: return .poundElseKeyword
+      case .poundElseif: return .poundElseif
+      case .poundElse: return .poundElse
       case .pound: return TokenSpec(.pound, recoveryPrecedence: .openingPoundIf)
       }
     }
 
     init?(lexeme: Lexer.Lexeme) {
       switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.poundElseifKeyword): self = .poundElseifKeyword
-      case TokenSpec(.poundElseKeyword): self = .poundElseKeyword
+      case TokenSpec(.poundElseif): self = .poundElseif
+      case TokenSpec(.poundElse): self = .poundElse
       case TokenSpec(.pound): self = .pound
       default: return nil
       }
@@ -44,41 +44,6 @@ extension Parser {
   /// syntax kind to be emitted to collect the results. For example, declaration
   /// parsing parses items and collects the items into a ``MemberDeclListSyntax``
   /// node.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     conditional-compilation-block → if-directive-clause elseif-directive-clauses? else-directive-clause? endif-directive
-  ///
-  ///     if-directive-clause → if-directive compilation-condition statements?
-  ///     elseif-directive-clauses → elseif-directive-clause elseif-directive-clauses?
-  ///     elseif-directive-clause → elseif-directive compilation-condition statements?
-  ///     else-directive-clause → else-directive statements?
-  ///     if-directive → '#if'
-  ///     elseif-directive → '#elseif'
-  ///     else-directive → '#else'
-  ///     endif-directive → '#endif'
-  ///
-  ///     compilation-condition → platform-condition
-  ///     compilation-condition → identifier
-  ///     compilation-condition → boolean-literal
-  ///     compilation-condition → '(' compilation-condition ')'
-  ///     compilation-condition → '!' compilation-condition
-  ///     compilation-condition → compilation-condition '&&' compilation-condition
-  ///     compilation-condition → compilation-condition '||' compilation-condition
-  ///
-  ///     platform-condition → 'os' '(' operating-system ')'
-  ///     platform-condition → 'arch' '(' architecture ')'
-  ///     platform-condition → 'swift' '(' '>=' swift-version ')' | 'swift' ( < swift-version )
-  ///     platform-condition → 'compiler' '(' '>=' swift-version ')' | 'compiler' ( < swift-version )
-  ///     platform-condition → 'canImport' '(' import-path ')'
-  ///     platform-condition → 'targetEnvironment' '(' environment ')'
-  ///
-  ///     operating-system → 'macOS' | 'iOS' | 'watchOS' | 'tvOS' | 'Linux' | 'Windows'
-  ///     architecture → 'i386' | 'x86_64' | 'arm' | 'arm64'
-  ///     swift-version → decimal-digits swift-version-continuation?
-  ///     swift-version-continuation → '.' decimal-digits swift-version-continuation?
-  ///     environment → 'simulator' | 'macCatalyst'
   ///
   /// - Parameters:
   ///   - parseElement: Parse an element of the conditional compilation block.
@@ -96,7 +61,7 @@ extension Parser {
       return RawIfConfigDeclSyntax(
         remainingTokens,
         clauses: RawIfConfigClauseListSyntax(elements: [], arena: self.arena),
-        poundEndif: missingToken(.poundEndifKeyword),
+        poundEndif: missingToken(.poundEndif),
         arena: self.arena
       )
     }
@@ -104,14 +69,14 @@ extension Parser {
     var clauses = [RawIfConfigClauseSyntax]()
 
     // Parse #if
-    let (unexpectedBeforePoundIfKeyword, poundIfKeyword) = self.expect(.poundIfKeyword)
+    let (unexpectedBeforePoundIf, poundIf) = self.expect(.poundIf)
     let condition = RawExprSyntax(self.parseSequenceExpression(.basic, forDirective: true))
     let unexpectedBetweenConditionAndElements = self.consumeRemainingTokenOnLine()
 
     clauses.append(
       RawIfConfigClauseSyntax(
-        unexpectedBeforePoundIfKeyword,
-        poundKeyword: poundIfKeyword,
+        unexpectedBeforePoundIf,
+        poundKeyword: poundIf,
         condition: condition,
         unexpectedBetweenConditionAndElements,
         elements: syntax(&self, parseIfConfigClauseElements(parseElement, addSemicolonIfNeeded: addSemicolonIfNeeded)),
@@ -121,22 +86,22 @@ extension Parser {
 
     // Proceed to parse #if continuation clauses (#elseif, #else, check #elif typo, #endif)
     var loopProgress = LoopProgressCondition()
-    LOOP: while let (match, handle) = self.canRecoverTo(anyIn: IfConfigContinuationClauseStartKeyword.self), loopProgress.evaluate(self.currentToken) {
-      var unexpectedBeforePoundKeyword: RawUnexpectedNodesSyntax?
-      var poundKeyword: RawTokenSyntax
+    LOOP: while let (match, handle) = self.canRecoverTo(anyIn: IfConfigContinuationClauseStartKeyword.self), self.hasProgressed(&loopProgress) {
+      var unexpectedBeforePound: RawUnexpectedNodesSyntax?
+      var pound: RawTokenSyntax
       let condition: RawExprSyntax?
       let unexpectedBetweenConditionAndElements: RawUnexpectedNodesSyntax?
 
       switch match {
-      case .poundElseifKeyword:
-        (unexpectedBeforePoundKeyword, poundKeyword) = self.eat(handle)
+      case .poundElseif:
+        (unexpectedBeforePound, pound) = self.eat(handle)
         condition = RawExprSyntax(self.parseSequenceExpression(.basic, forDirective: true))
         unexpectedBetweenConditionAndElements = self.consumeRemainingTokenOnLine()
-      case .poundElseKeyword:
-        (unexpectedBeforePoundKeyword, poundKeyword) = self.eat(handle)
+      case .poundElse:
+        (unexpectedBeforePound, pound) = self.eat(handle)
         if let ifToken = self.consume(if: .init(.if, allowAtStartOfLine: false)) {
-          unexpectedBeforePoundKeyword = RawUnexpectedNodesSyntax(combining: unexpectedBeforePoundKeyword, poundKeyword, ifToken, arena: self.arena)
-          poundKeyword = self.missingToken(.poundElseifKeyword)
+          unexpectedBeforePound = RawUnexpectedNodesSyntax(combining: unexpectedBeforePound, pound, ifToken, arena: self.arena)
+          pound = self.missingToken(.poundElseif)
           condition = RawExprSyntax(self.parseSequenceExpression(.basic, forDirective: true))
         } else {
           condition = nil
@@ -144,12 +109,12 @@ extension Parser {
         unexpectedBetweenConditionAndElements = self.consumeRemainingTokenOnLine()
       case .pound:
         if self.atElifTypo() {
-          (unexpectedBeforePoundKeyword, poundKeyword) = self.eat(handle)
+          (unexpectedBeforePound, pound) = self.eat(handle)
           guard let elif = self.consume(if: TokenSpec(.identifier, allowAtStartOfLine: false)) else {
             preconditionFailure("The current token should be an identifier, guaranteed by the `atElifTypo` check.")
           }
-          unexpectedBeforePoundKeyword = RawUnexpectedNodesSyntax(combining: unexpectedBeforePoundKeyword, poundKeyword, elif, arena: self.arena)
-          poundKeyword = self.missingToken(.poundElseifKeyword)
+          unexpectedBeforePound = RawUnexpectedNodesSyntax(combining: unexpectedBeforePound, pound, elif, arena: self.arena)
+          pound = self.missingToken(.poundElseif)
           condition = RawExprSyntax(self.parseSequenceExpression(.basic, forDirective: true))
           unexpectedBetweenConditionAndElements = self.consumeRemainingTokenOnLine()
         } else {
@@ -159,8 +124,8 @@ extension Parser {
 
       clauses.append(
         RawIfConfigClauseSyntax(
-          unexpectedBeforePoundKeyword,
-          poundKeyword: poundKeyword,
+          unexpectedBeforePound,
+          poundKeyword: pound,
           condition: condition,
           unexpectedBetweenConditionAndElements,
           elements: syntax(&self, parseIfConfigClauseElements(parseElement, addSemicolonIfNeeded: addSemicolonIfNeeded)),
@@ -169,9 +134,8 @@ extension Parser {
       )
     }
 
-    let (unexpectedBeforePoundEndIf, poundEndIf) = self.expect(.poundEndifKeyword)
+    let (unexpectedBeforePoundEndIf, poundEndIf) = self.expect(.poundEndif)
     let unexpectedAfterPoundEndif = self.consumeRemainingTokenOnLine()
-
     return RawIfConfigDeclSyntax(
       clauses: RawIfConfigClauseListSyntax(elements: clauses, arena: self.arena),
       unexpectedBeforePoundEndIf,
@@ -206,11 +170,11 @@ extension Parser {
     var elements = [Element]()
     var elementsProgress = LoopProgressCondition()
     while !self.at(.endOfFile)
-      && !self.at(.poundElseKeyword, .poundElseifKeyword, .poundEndifKeyword)
+      && !self.at(.poundElse, .poundElseif, .poundEndif)
       && !self.atElifTypo()
-      && elementsProgress.evaluate(currentToken)
+      && self.hasProgressed(&elementsProgress)
     {
-      let newItemAtStartOfLine = self.currentToken.isAtStartOfLine
+      let newItemAtStartOfLine = self.atStartOfLine
       guard let element = parseElement(&self, elements.isEmpty), !element.isEmpty else {
         break
       }
@@ -225,18 +189,10 @@ extension Parser {
 
 extension Parser {
   /// Parse a line control directive.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     line-control-statement → '#sourceLocation' '(' 'file' ':' file-path ',' 'line' ':' line-number ')'
-  ///     line-control-statement → '#sourceLocation' '(' ')'
-  ///     line-number → `A decimal integer greater than zero`
-  ///     file-path → static-string-literal
   mutating func parsePoundSourceLocationDirective() -> RawPoundSourceLocationSyntax {
     let line = self.consumeAnyToken()
     let (unexpectedBeforeLParen, lparen) = self.expect(.leftParen)
-    let args: RawPoundSourceLocationArgsSyntax?
+    let arguments: RawPoundSourceLocationArgumentsSyntax?
     if !self.at(.rightParen) {
       let (unexpectedBeforeFile, file) = self.expect(.keyword(.file))
       let (unexpectedBeforeFileColon, fileColon) = self.expect(.colon)
@@ -247,7 +203,7 @@ extension Parser {
       let (unexpectedBeforeLineColon, lineColon) = self.expect(.colon)
       let lineNumber = self.expectWithoutRecovery(.integerLiteral)
 
-      args = RawPoundSourceLocationArgsSyntax(
+      arguments = RawPoundSourceLocationArgumentsSyntax(
         unexpectedBeforeFile,
         fileLabel: file,
         unexpectedBeforeFileColon,
@@ -263,7 +219,7 @@ extension Parser {
         arena: self.arena
       )
     } else {
-      args = nil
+      arguments = nil
     }
     let (unexpectedBeforeRParen, rparen) = self.expect(.rightParen)
     let unexpectedAfterRightParen = self.consumeRemainingTokenOnLine()
@@ -272,7 +228,7 @@ extension Parser {
       poundSourceLocation: line,
       unexpectedBeforeLParen,
       leftParen: lparen,
-      args: args,
+      arguments: arguments,
       unexpectedBeforeRParen,
       rightParen: rparen,
       unexpectedAfterRightParen,

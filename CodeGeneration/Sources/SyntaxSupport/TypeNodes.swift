@@ -23,7 +23,8 @@ public let TYPE_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "LeftSquareToken")])
       ),
       Child(
-        name: "ElementType",
+        name: "Element",
+        deprecatedName: "ElementType",
         kind: .node(kind: .type)
       ),
       Child(
@@ -123,7 +124,7 @@ public let TYPE_NODES: [Node] = [
 
   // constrained-sugar-type -> ('some'|'any') type
   Node(
-    kind: .constrainedSugarType,
+    kind: .someOrAnyType,
     base: .type,
     nameForDiagnostics: "type",
     children: [
@@ -132,7 +133,8 @@ public let TYPE_NODES: [Node] = [
         kind: .token(choices: [.keyword(text: "some"), .keyword(text: "any")])
       ),
       Child(
-        name: "BaseType",
+        name: "Constraint",
+        deprecatedName: "BaseType",
         kind: .node(kind: .type)
       ),
     ]
@@ -150,7 +152,8 @@ public let TYPE_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "LeftSquareToken")])
       ),
       Child(
-        name: "KeyType",
+        name: "Key",
+        deprecatedName: "KeyType",
         kind: .node(kind: .type),
         nameForDiagnostics: "key type"
       ),
@@ -159,7 +162,8 @@ public let TYPE_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "ColonToken")])
       ),
       Child(
-        name: "ValueType",
+        name: "Value",
+        deprecatedName: "ValueType",
         kind: .node(kind: .type),
         nameForDiagnostics: "value type"
       ),
@@ -189,8 +193,7 @@ public let TYPE_NODES: [Node] = [
       Child(
         name: "Parameters",
         deprecatedName: "arguments",
-        kind: .collection(kind: .tupleTypeElementList, collectionElementName: "Parameter", deprecatedCollectionElementName: "Argument"),
-        isIndented: true
+        kind: .collection(kind: .tupleTypeElementList, collectionElementName: "Parameter", deprecatedCollectionElementName: "Argument")
       ),
       Child(
         name: "RightParen",
@@ -252,7 +255,8 @@ public let TYPE_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "ArgumentType",
+        name: "Argument",
+        deprecatedName: "ArgumentType",
         kind: .node(kind: .type)
       ),
       Child(
@@ -282,7 +286,7 @@ public let TYPE_NODES: [Node] = [
 
   // member-type-identifier -> type '.' identifier generic-argument-clause?
   Node(
-    kind: .memberTypeIdentifier,
+    kind: .memberType,
     base: .type,
     nameForDiagnostics: "member type",
     children: [
@@ -298,8 +302,7 @@ public let TYPE_NODES: [Node] = [
       Child(
         name: "Name",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .keyword(text: "self"), .keyword(text: "Self")]),
-        nameForDiagnostics: "name",
-        classification: "TypeIdentifier"
+        nameForDiagnostics: "name"
       ),
       Child(
         name: "GenericArgumentClause",
@@ -345,7 +348,8 @@ public let TYPE_NODES: [Node] = [
         documentation: "The parameter clause that defines the generic parameters."
       ),
       Child(
-        name: "BaseType",
+        name: "Type",
+        deprecatedName: "BaseType",
         kind: .node(kind: .type)
       ),
     ]
@@ -379,7 +383,8 @@ public let TYPE_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "PrefixOperatorToken")])
       ),
       Child(
-        name: "PatternType",
+        name: "Type",
+        deprecatedName: "PatternType",
         kind: .node(kind: .type)
       ),
     ]
@@ -396,7 +401,8 @@ public let TYPE_NODES: [Node] = [
         kind: .token(choices: [.keyword(text: "repeat")])
       ),
       Child(
-        name: "PatternType",
+        name: "RepetitionPattern",
+        deprecatedName: "PatternType",
         kind: .node(kind: .type)
       ),
     ]
@@ -404,16 +410,17 @@ public let TYPE_NODES: [Node] = [
 
   // pack-reference-type -> 'each' type
   Node(
-    kind: .packReferenceType,
+    kind: .packElementType,
     base: .type,
-    nameForDiagnostics: "pack reference",
+    nameForDiagnostics: "pack element",
     children: [
       Child(
         name: "EachKeyword",
         kind: .token(choices: [.keyword(text: "each")])
       ),
       Child(
-        name: "PackType",
+        name: "Pack",
+        deprecatedName: "PackType",
         kind: .node(kind: .type)
       ),
     ]
@@ -421,7 +428,7 @@ public let TYPE_NODES: [Node] = [
 
   // simple-type-identifier -> identifier generic-argument-clause?
   Node(
-    kind: .simpleTypeIdentifier,
+    kind: .identifierType,
     base: .type,
     nameForDiagnostics: "type",
     children: [
@@ -433,8 +440,7 @@ public let TYPE_NODES: [Node] = [
           .keyword(text: "Self"),
           .keyword(text: "Any"),
           .token(tokenKind: "WildcardToken"),
-        ]),
-        classification: "TypeIdentifier"
+        ])
       ),
       Child(
         name: "GenericArgumentClause",
@@ -468,7 +474,8 @@ public let TYPE_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "Name",
+        name: "FirstName",
+        deprecatedName: "Name",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken"), .token(tokenKind: "WildcardToken")]),
         nameForDiagnostics: "name",
         isOptional: true
@@ -494,11 +501,6 @@ public let TYPE_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "Initializer",
-        kind: .node(kind: .initializerClause),
-        isOptional: true
-      ),
-      Child(
         name: "TrailingComma",
         kind: .token(choices: [.token(tokenKind: "CommaToken")]),
         isOptional: true
@@ -521,8 +523,7 @@ public let TYPE_NODES: [Node] = [
       ),
       Child(
         name: "Elements",
-        kind: .collection(kind: .tupleTypeElementList, collectionElementName: "Element"),
-        isIndented: true
+        kind: .collection(kind: .tupleTypeElementList, collectionElementName: "Element")
       ),
       Child(
         name: "RightParen",

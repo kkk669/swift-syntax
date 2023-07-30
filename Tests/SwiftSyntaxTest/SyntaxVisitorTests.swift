@@ -35,7 +35,7 @@ public class SyntaxVisitorTests: XCTestCase {
         CodeBlockItemSyntax(
           item: CodeBlockItemSyntax.Item(
             IntegerLiteralExprSyntax(
-              digits: .integerLiteral(
+              literal: .integerLiteral(
                 "0xG",
                 leadingTrivia: [
                   .newlines(1),
@@ -56,11 +56,11 @@ public class SyntaxVisitorTests: XCTestCase {
           item: CodeBlockItemSyntax.Item(
             FunctionDeclSyntax(
               funcKeyword: .keyword(.func, trailingTrivia: .space),
-              identifier: .identifier("foo"),
+              name: .identifier("foo"),
               signature: FunctionSignatureSyntax(
-                parameterClause: ParameterClauseSyntax(
+                parameterClause: FunctionParameterClauseSyntax(
                   leftParen: .leftParenToken(),
-                  parameterList: FunctionParameterListSyntax([]),
+                  parameters: FunctionParameterListSyntax([]),
                   rightParen: .rightParenToken(trailingTrivia: .space)
                 )
               ),
@@ -70,15 +70,15 @@ public class SyntaxVisitorTests: XCTestCase {
                   CodeBlockItemSyntax(
                     item: CodeBlockItemSyntax.Item(
                       FunctionDeclSyntax(
-                        modifiers: ModifierListSyntax([
+                        modifiers: DeclModifierListSyntax([
                           DeclModifierSyntax(name: .keyword(.public, leadingTrivia: [.newlines(1), .spaces(2)], trailingTrivia: .space))
                         ]),
                         funcKeyword: .keyword(.func, trailingTrivia: .space),
-                        identifier: .identifier("foo"),
+                        name: .identifier("foo"),
                         signature: FunctionSignatureSyntax(
-                          parameterClause: ParameterClauseSyntax(
+                          parameterClause: FunctionParameterClauseSyntax(
                             leftParen: .leftParenToken(),
-                            parameterList: FunctionParameterListSyntax([]),
+                            parameters: FunctionParameterListSyntax([]),
                             rightParen: .rightParenToken(trailingTrivia: .space)
                           )
                         ),
@@ -89,11 +89,11 @@ public class SyntaxVisitorTests: XCTestCase {
                               item: CodeBlockItemSyntax.Item(
                                 FunctionDeclSyntax(
                                   funcKeyword: .keyword(.func, leadingTrivia: [.newlines(1), .spaces(4)], trailingTrivia: .space),
-                                  identifier: .identifier("foo"),
+                                  name: .identifier("foo"),
                                   signature: FunctionSignatureSyntax(
-                                    parameterClause: ParameterClauseSyntax(
+                                    parameterClause: FunctionParameterClauseSyntax(
                                       leftParen: .leftParenToken(),
-                                      parameterList: FunctionParameterListSyntax([]),
+                                      parameters: FunctionParameterListSyntax([]),
                                       rightParen: .rightParenToken(trailingTrivia: .space)
                                     )
                                   ),
@@ -159,7 +159,7 @@ public class SyntaxVisitorTests: XCTestCase {
       statements: CodeBlockItemListSyntax([])
     )
     let rewriter = ClosureRewriter(viewMode: .sourceAccurate)
-    let rewritten = rewriter.visit(closure)
+    let rewritten = rewriter.rewrite(closure)
     XCTAssertEqual(closure.description, rewritten.description)
   }
 
@@ -230,14 +230,14 @@ public class SyntaxVisitorTests: XCTestCase {
           pattern: PatternSyntax(IdentifierPatternSyntax(identifier: .identifier("a", trailingTrivia: .space))),
           initializer: InitializerClauseSyntax(
             equal: .equalToken(trailingTrivia: .space),
-            value: ExprSyntax(IntegerLiteralExprSyntax(digits: .integerLiteral("5")))
+            value: ExprSyntax(IntegerLiteralExprSyntax(literal: .integerLiteral("5")))
           )
         )
       ])
     )
     XCTAssertEqual(source.description, "let a = 5")
-    let visitor = TriviaRemover(viewMode: .sourceAccurate)
-    let rewritten = visitor.visit(source)
+    let rewriter = TriviaRemover(viewMode: .sourceAccurate)
+    let rewritten = rewriter.rewrite(source)
     XCTAssertEqual(rewritten.description, "leta=5")
   }
 }

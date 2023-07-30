@@ -177,15 +177,15 @@ extension AttributedTypeSyntax {
 
 extension AvailabilityConditionSyntax {
   enum AvailabilityKeywordOptions: TokenSpecSet {
-    case poundAvailableKeyword
-    case poundUnavailableKeyword
+    case poundAvailable
+    case poundUnavailable
     
     init?(lexeme: Lexer.Lexeme) {
       switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.poundAvailableKeyword):
-        self = .poundAvailableKeyword
-      case TokenSpec(.poundUnavailableKeyword):
-        self = .poundUnavailableKeyword
+      case TokenSpec(.poundAvailable):
+        self = .poundAvailable
+      case TokenSpec(.poundUnavailable):
+        self = .poundUnavailable
       default:
         return nil
       }
@@ -193,10 +193,10 @@ extension AvailabilityConditionSyntax {
     
     var spec: TokenSpec {
       switch self {
-      case .poundAvailableKeyword:
-        return .poundAvailableKeyword
-      case .poundUnavailableKeyword:
-        return .poundUnavailableKeyword
+      case .poundAvailable:
+        return .poundAvailable
+      case .poundUnavailable:
+        return .poundUnavailable
       }
     }
   }
@@ -298,7 +298,7 @@ extension CanImportVersionInfoSyntax {
   }
 }
 
-extension ClosureCaptureItemSpecifierSyntax {
+extension ClosureCaptureSpecifierSyntax {
   enum SpecifierOptions: TokenSpecSet {
     case weak
     case unowned
@@ -325,7 +325,7 @@ extension ClosureCaptureItemSpecifierSyntax {
   }
 }
 
-extension ClosureCaptureItemSpecifierSyntax {
+extension ClosureCaptureSpecifierSyntax {
   enum DetailOptions: TokenSpecSet {
     case safe
     case unsafe
@@ -347,33 +347,6 @@ extension ClosureCaptureItemSpecifierSyntax {
         return .keyword(.safe)
       case .unsafe:
         return .keyword(.unsafe)
-      }
-    }
-  }
-}
-
-extension ClosureParamSyntax {
-  enum NameOptions: TokenSpecSet {
-    case identifier
-    case wildcard
-    
-    init?(lexeme: Lexer.Lexeme) {
-      switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.identifier):
-        self = .identifier
-      case TokenSpec(.wildcard):
-        self = .wildcard
-      default:
-        return nil
-      }
-    }
-    
-    var spec: TokenSpec {
-      switch self {
-      case .identifier:
-        return .identifier
-      case .wildcard:
-        return .wildcard
       }
     }
   }
@@ -433,17 +406,17 @@ extension ClosureParameterSyntax {
   }
 }
 
-extension ConstrainedSugarTypeSyntax {
-  enum SomeOrAnySpecifierOptions: TokenSpecSet {
-    case some
-    case any
+extension ClosureShorthandParameterSyntax {
+  enum NameOptions: TokenSpecSet {
+    case identifier
+    case wildcard
     
     init?(lexeme: Lexer.Lexeme) {
       switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.some):
-        self = .some
-      case TokenSpec(.any):
-        self = .any
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
       default:
         return nil
       }
@@ -451,10 +424,37 @@ extension ConstrainedSugarTypeSyntax {
     
     var spec: TokenSpec {
       switch self {
-      case .some:
-        return .keyword(.some)
-      case .any:
-        return .keyword(.any)
+      case .identifier:
+        return .identifier
+      case .wildcard:
+        return .wildcard
+      }
+    }
+  }
+}
+
+extension ConsumeExprSyntax {
+  enum ConsumeKeywordOptions: TokenSpecSet {
+    case _move
+    case consume
+    
+    init?(lexeme: Lexer.Lexeme) {
+      switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(._move):
+        self = ._move
+      case TokenSpec(.consume):
+        self = .consume
+      default:
+        return nil
+      }
+    }
+    
+    var spec: TokenSpec {
+      switch self {
+      case ._move:
+        return .keyword(._move)
+      case .consume:
+        return .keyword(.consume)
       }
     }
   }
@@ -694,7 +694,7 @@ extension DeclNameSyntax {
   }
 }
 
-extension DerivativeRegistrationAttributeArgumentsSyntax {
+extension DerivativeAttributeArgumentsSyntax {
   enum AccessorSpecifierOptions: TokenSpecSet {
     case get
     case set
@@ -721,8 +721,8 @@ extension DerivativeRegistrationAttributeArgumentsSyntax {
   }
 }
 
-extension DifferentiabilityParamSyntax {
-  enum ParameterOptions: TokenSpecSet {
+extension DifferentiabilityArgumentSyntax {
+  enum ArgumentOptions: TokenSpecSet {
     case identifier
     case integerLiteral
     case `self`
@@ -894,7 +894,7 @@ extension EnumCaseParameterSyntax {
 }
 
 extension FunctionDeclSyntax {
-  enum IdentifierOptions: TokenSpecSet {
+  enum NameOptions: TokenSpecSet {
     case identifier
     case binaryOperator
     case prefixOperator
@@ -1117,20 +1117,26 @@ extension IdentifierPatternSyntax {
   }
 }
 
-extension IfConfigClauseSyntax {
-  enum PoundKeywordOptions: TokenSpecSet {
-    case poundIfKeyword
-    case poundElseifKeyword
-    case poundElseKeyword
+extension IdentifierTypeSyntax {
+  enum NameOptions: TokenSpecSet {
+    case identifier
+    case `self`
+    case `Self`
+    case `Any`
+    case wildcard
     
     init?(lexeme: Lexer.Lexeme) {
       switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.poundIfKeyword):
-        self = .poundIfKeyword
-      case TokenSpec(.poundElseifKeyword):
-        self = .poundElseifKeyword
-      case TokenSpec(.poundElseKeyword):
-        self = .poundElseKeyword
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.`self`):
+        self = .`self`
+      case TokenSpec(.`Self`):
+        self = .`Self`
+      case TokenSpec(.`Any`):
+        self = .`Any`
+      case TokenSpec(.wildcard):
+        self = .wildcard
       default:
         return nil
       }
@@ -1138,12 +1144,48 @@ extension IfConfigClauseSyntax {
     
     var spec: TokenSpec {
       switch self {
-      case .poundIfKeyword:
-        return .poundIfKeyword
-      case .poundElseifKeyword:
-        return .poundElseifKeyword
-      case .poundElseKeyword:
-        return .poundElseKeyword
+      case .identifier:
+        return .identifier
+      case .`self`:
+        return .keyword(.`self`)
+      case .`Self`:
+        return .keyword(.`Self`)
+      case .`Any`:
+        return .keyword(.`Any`)
+      case .wildcard:
+        return .wildcard
+      }
+    }
+  }
+}
+
+extension IfConfigClauseSyntax {
+  enum PoundKeywordOptions: TokenSpecSet {
+    case poundIf
+    case poundElseif
+    case poundElse
+    
+    init?(lexeme: Lexer.Lexeme) {
+      switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.poundIf):
+        self = .poundIf
+      case TokenSpec(.poundElseif):
+        self = .poundElseif
+      case TokenSpec(.poundElse):
+        self = .poundElse
+      default:
+        return nil
+      }
+    }
+    
+    var spec: TokenSpec {
+      switch self {
+      case .poundIf:
+        return .poundIf
+      case .poundElseif:
+        return .poundElseif
+      case .poundElse:
+        return .poundElse
       }
     }
   }
@@ -1308,7 +1350,7 @@ extension KeyPathOptionalComponentSyntax {
 }
 
 extension KeyPathPropertyComponentSyntax {
-  enum IdentifierOptions: TokenSpecSet {
+  enum PropertyOptions: TokenSpecSet {
     case identifier
     case `self`
     case `Self`
@@ -1359,8 +1401,35 @@ extension KeyPathPropertyComponentSyntax {
   }
 }
 
+extension LabeledExprSyntax {
+  enum LabelOptions: TokenSpecSet {
+    case identifier
+    case wildcard
+    
+    init?(lexeme: Lexer.Lexeme) {
+      switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.identifier):
+        self = .identifier
+      case TokenSpec(.wildcard):
+        self = .wildcard
+      default:
+        return nil
+      }
+    }
+    
+    var spec: TokenSpec {
+      switch self {
+      case .identifier:
+        return .identifier
+      case .wildcard:
+        return .wildcard
+      }
+    }
+  }
+}
+
 extension LayoutRequirementSyntax {
-  enum LayoutConstraintOptions: TokenSpecSet {
+  enum LayoutSpecifierOptions: TokenSpecSet {
     case _Trivial
     case _TrivialAtMost
     case _UnknownLayout
@@ -1411,7 +1480,7 @@ extension LayoutRequirementSyntax {
   }
 }
 
-extension MemberTypeIdentifierSyntax {
+extension MemberTypeSyntax {
   enum NameOptions: TokenSpecSet {
     case identifier
     case `self`
@@ -1465,33 +1534,6 @@ extension MetatypeTypeSyntax {
         return .keyword(.`Type`)
       case .`Protocol`:
         return .keyword(.`Protocol`)
-      }
-    }
-  }
-}
-
-extension MoveExprSyntax {
-  enum ConsumeKeywordOptions: TokenSpecSet {
-    case _move
-    case consume
-    
-    init?(lexeme: Lexer.Lexeme) {
-      switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(._move):
-        self = ._move
-      case TokenSpec(.consume):
-        self = .consume
-      default:
-        return nil
-      }
-    }
-    
-    var spec: TokenSpec {
-      switch self {
-      case ._move:
-        return .keyword(._move)
-      case .consume:
-        return .keyword(.consume)
       }
     }
   }
@@ -1557,7 +1599,7 @@ extension OperatorDeclSyntax {
 }
 
 extension OperatorDeclSyntax {
-  enum IdentifierOptions: TokenSpecSet {
+  enum NameOptions: TokenSpecSet {
     case binaryOperator
     case prefixOperator
     case postfixOperator
@@ -1749,7 +1791,7 @@ extension QualifiedDeclNameSyntax {
 }
 
 extension SameTypeRequirementSyntax {
-  enum EqualityTokenOptions: TokenSpecSet {
+  enum EqualOptions: TokenSpecSet {
     case binaryOperator
     case prefixOperator
     case postfixOperator
@@ -1780,26 +1822,17 @@ extension SameTypeRequirementSyntax {
   }
 }
 
-extension SimpleTypeIdentifierSyntax {
-  enum NameOptions: TokenSpecSet {
-    case identifier
-    case `self`
-    case `Self`
-    case `Any`
-    case wildcard
+extension SomeOrAnyTypeSyntax {
+  enum SomeOrAnySpecifierOptions: TokenSpecSet {
+    case some
+    case any
     
     init?(lexeme: Lexer.Lexeme) {
       switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.identifier):
-        self = .identifier
-      case TokenSpec(.`self`):
-        self = .`self`
-      case TokenSpec(.`Self`):
-        self = .`Self`
-      case TokenSpec(.`Any`):
-        self = .`Any`
-      case TokenSpec(.wildcard):
-        self = .wildcard
+      case TokenSpec(.some):
+        self = .some
+      case TokenSpec(.any):
+        self = .any
       default:
         return nil
       }
@@ -1807,23 +1840,17 @@ extension SimpleTypeIdentifierSyntax {
     
     var spec: TokenSpec {
       switch self {
-      case .identifier:
-        return .identifier
-      case .`self`:
-        return .keyword(.`self`)
-      case .`Self`:
-        return .keyword(.`Self`)
-      case .`Any`:
-        return .keyword(.`Any`)
-      case .wildcard:
-        return .wildcard
+      case .some:
+        return .keyword(.some)
+      case .any:
+        return .keyword(.any)
       }
     }
   }
 }
 
 extension StringLiteralExprSyntax {
-  enum OpenQuoteOptions: TokenSpecSet {
+  enum OpeningQuoteOptions: TokenSpecSet {
     case stringQuote
     case multilineStringQuote
     case singleQuote
@@ -1855,7 +1882,7 @@ extension StringLiteralExprSyntax {
 }
 
 extension StringLiteralExprSyntax {
-  enum CloseQuoteOptions: TokenSpecSet {
+  enum ClosingQuoteOptions: TokenSpecSet {
     case stringQuote
     case multilineStringQuote
     case singleQuote
@@ -1913,35 +1940,8 @@ extension TryExprSyntax {
   }
 }
 
-extension TupleExprElementSyntax {
-  enum LabelOptions: TokenSpecSet {
-    case identifier
-    case wildcard
-    
-    init?(lexeme: Lexer.Lexeme) {
-      switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.identifier):
-        self = .identifier
-      case TokenSpec(.wildcard):
-        self = .wildcard
-      default:
-        return nil
-      }
-    }
-    
-    var spec: TokenSpec {
-      switch self {
-      case .identifier:
-        return .identifier
-      case .wildcard:
-        return .wildcard
-      }
-    }
-  }
-}
-
 extension TupleTypeElementSyntax {
-  enum NameOptions: TokenSpecSet {
+  enum FirstNameOptions: TokenSpecSet {
     case identifier
     case wildcard
     

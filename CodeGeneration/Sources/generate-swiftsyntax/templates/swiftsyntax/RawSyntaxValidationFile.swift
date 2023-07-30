@@ -28,7 +28,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
     IfConfigDeclSyntax(
       clauses: try IfConfigClauseListSyntax {
         IfConfigClauseSyntax(
-          poundKeyword: .poundIfKeyword(),
+          poundKeyword: .poundIfToken(),
           condition: ExprSyntax("SWIFTSYNTAX_ENABLE_RAWSYNTAX_VALIDATION"),
           elements: .statements(
             try CodeBlockItemListSyntax {
@@ -216,7 +216,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
                               case .keyword(text: let text):
                                 ArrayElementSyntax(expression: ExprSyntax(#".keyword("\#(raw: text)")"#))
                               case .token(tokenKind: let tokenKind):
-                                ArrayElementSyntax(expression: ExprSyntax(".tokenKind(.\(raw: SYNTAX_TOKEN_MAP[tokenKind]!.swiftKind))"))
+                                ArrayElementSyntax(expression: ExprSyntax(".tokenKind(.\(SYNTAX_TOKEN_MAP[tokenKind]!.varOrCaseName))"))
                               }
                             }
                           }
@@ -227,7 +227,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
                         }
                       }
                     } else if let node = node.collectionNode {
-                      try ForInStmtSyntax("for (index, element) in layout.enumerated()") {
+                      try ForStmtSyntax("for (index, element) in layout.enumerated()") {
                         if let onlyElement = node.elementChoices.only {
                           ExprSyntax("assertNoError(kind, index, verify(element, as: \(onlyElement.rawType).self))")
                         } else {

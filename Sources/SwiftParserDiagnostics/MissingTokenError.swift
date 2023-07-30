@@ -36,7 +36,7 @@ extension ParseDiagnosticsGenerator {
       handled = handleInvalidMultilineStringQuote(invalidToken: invalidToken, missingToken: missingToken, invalidTokenContainer: invalidTokenContainer)
     case (.period, .period):
       handled = handleInvalidPeriod(invalidToken: invalidToken, missingToken: missingToken, invalidTokenContainer: invalidTokenContainer)
-    case (.rawStringDelimiter, .rawStringDelimiter), (.extendedRegexDelimiter, .extendedRegexDelimiter):
+    case (.rawStringPoundDelimiter, .rawStringPoundDelimiter), (.regexPoundDelimiter, .regexPoundDelimiter):
       handled = handleInvalidPoundDelimiter(invalidToken: invalidToken, missingToken: missingToken, invalidTokenContainer: invalidTokenContainer)
     default:
       handled = false
@@ -136,7 +136,7 @@ extension ParseDiagnosticsGenerator {
     missingToken: TokenSyntax,
     invalidTokenContainer: UnexpectedNodesSyntax
   ) -> Bool {
-    let isTooMany = invalidToken.contentLength > missingToken.contentLength
+    let isTooMany = invalidToken.trimmedLength > missingToken.trimmedLength
     let message: DiagnosticMessage
     if missingToken.parent?.is(ExpressionSegmentSyntax.self) == true {
       message = .tooManyRawStringDelimitersToStartInterpolation
@@ -157,7 +157,7 @@ extension ParseDiagnosticsGenerator {
     )
     addDiagnostic(
       invalidToken,
-      position: invalidToken.positionAfterSkippingLeadingTrivia.advanced(by: missingToken.contentLength.utf8Length),
+      position: invalidToken.positionAfterSkippingLeadingTrivia.advanced(by: missingToken.trimmedLength.utf8Length),
       message,
       fixIts: [fixIt],
       handledNodes: [invalidTokenContainer.id]

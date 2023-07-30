@@ -14,36 +14,6 @@
 
 extension Parser {
   /// Parse a pattern.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     pattern → wildcard-pattern type-annotation?
-  ///     pattern → identifier-pattern type-annotation?
-  ///     pattern → value-binding-pattern
-  ///     pattern → tuple-pattern type-annotation?
-  ///     pattern → enum-case-pattern
-  ///     pattern → optional-pattern
-  ///     pattern → type-casting-pattern
-  ///     pattern → expression-pattern
-  ///
-  ///     wildcard-pattern → _
-  ///
-  ///     identifier-pattern → identifier
-  ///
-  ///     value-binding-pattern → 'var' pattern | 'let' pattern
-  ///
-  ///     tuple-pattern → ( tuple-pattern-element-list opt )
-  ///
-  ///     enum-case-pattern → type-identifier? '.' enum-case-name tuple-pattern?
-  ///
-  ///     optional-pattern → identifier-pattern '?'
-  ///
-  ///     type-casting-pattern → is-pattern | as-pattern
-  ///     is-pattern → 'is' type
-  ///     as-pattern → pattern 'as' type
-  ///
-  ///     expression-pattern → expression
   mutating func parsePattern() -> RawPatternSyntax {
     enum ExpectedTokens: TokenSpecSet {
       case leftParen
@@ -129,12 +99,12 @@ extension Parser {
       return RawPatternSyntax(
         RawValueBindingPatternSyntax(
           bindingSpecifier: bindingSpecifier,
-          valuePattern: value,
+          pattern: value,
           arena: self.arena
         )
       )
     case nil:
-      if self.currentToken.isLexerClassifiedKeyword, !self.currentToken.isAtStartOfLine {
+      if self.currentToken.isLexerClassifiedKeyword, !self.atStartOfLine {
         // Recover if a keyword was used instead of an identifier
         let keyword = self.consumeAnyToken()
         return RawPatternSyntax(
@@ -151,11 +121,6 @@ extension Parser {
   }
 
   /// Parse a typed pattern.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     typed-pattern → pattern ':' attributes? inout? type
   mutating func parseTypedPattern(allowRecoveryFromMissingColon: Bool = true) -> (RawPatternSyntax, RawTypeAnnotationSyntax?) {
     let pattern = self.parsePattern()
 
@@ -171,7 +136,7 @@ extension Parser {
         arena: self.arena
       )
     } else if allowRecoveryFromMissingColon
-      && !self.currentToken.isAtStartOfLine
+      && !self.atStartOfLine
       && lookahead.canParseType()
     {
       let (unexpectedBeforeColon, colon) = self.expect(.colon)
@@ -189,12 +154,6 @@ extension Parser {
   }
 
   /// Parse the elements of a tuple pattern.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     tuple-pattern-element-list → tuple-pattern-element | tuple-pattern-element ',' tuple-pattern-element-list
-  ///     tuple-pattern-element → pattern | identifier ':' pattern
   mutating func parsePatternTupleElements() -> RawTuplePatternElementListSyntax {
     if let remainingTokens = remainingTokensIfMaximumNestingLevelReached() {
       return RawTuplePatternElementListSyntax(
@@ -215,14 +174,14 @@ extension Parser {
     do {
       var keepGoing = true
       var loopProgress = LoopProgressCondition()
-      while !self.at(.endOfFile, .rightParen) && keepGoing && loopProgress.evaluate(currentToken) {
+      while !self.at(.endOfFile, .rightParen) && keepGoing && self.hasProgressed(&loopProgress) {
         // If the tuple element has a label, parse it.
         let labelAndColon = self.consume(if: .identifier, followedBy: .colon)
         var (label, colon) = (labelAndColon?.0, labelAndColon?.1)
 
         /// If we have something like `x SomeType`, use the indication that `SomeType` starts with a capital letter (and is thus probably a type name)
         /// as an indication that the user forgot to write the colon instead of forgetting to write the comma to separate two elements.
-        if label == nil, colon == nil, self.at(.identifier), peek().rawTokenKind == .identifier, peek().tokenText.isStartingWithUppercase {
+        if label == nil, colon == nil, self.at(.identifier), peek(isAt: .identifier), peek().tokenText.isStartingWithUppercase {
           label = consume(if: .identifier)
           colon = self.missingToken(.colon)
         }
@@ -264,7 +223,7 @@ extension Parser {
       return RawPatternSyntax(
         RawValueBindingPatternSyntax(
           bindingSpecifier: bindingSpecifier,
-          valuePattern: value,
+          pattern: value,
           arena: self.arena
         )
       )
@@ -283,7 +242,7 @@ extension Parser {
       // Fall back to expression parsing for ambiguous forms. Name lookup will
       // disambiguate.
       let patternSyntax = self.parseSequenceExpression(.basic, pattern: context)
-      if let pat = patternSyntax.as(RawUnresolvedPatternExprSyntax.self) {
+      if let pat = patternSyntax.as(RawPatternExprSyntax.self) {
         // The most common case here is to parse something that was a lexically
         // obvious pattern, which will come back wrapped in an immediate
         // RawUnresolvedPatternExprSyntax.
@@ -368,7 +327,7 @@ extension Parser.Lookahead {
         guard self.canParsePattern() else {
           return false
         }
-      } while self.consume(if: .comma) != nil && loopProgress.evaluate(currentToken)
+      } while self.consume(if: .comma) != nil && self.hasProgressed(&loopProgress)
     }
 
     return self.consume(if: .rightParen) != nil
@@ -386,7 +345,7 @@ extension Parser.Lookahead {
     }
 
     // To have a parameter name here, we need a name.
-    guard self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true) else {
+    guard self.atArgumentLabel(allowDollarIdentifier: true) else {
       return false
     }
 
@@ -397,7 +356,7 @@ extension Parser.Lookahead {
     }
 
     // If the next token can be an argument label, we might have a name.
-    if nextTok.canBeArgumentLabel(allowDollarIdentifier: true) {
+    if nextTok.isArgumentLabel(allowDollarIdentifier: true) {
       // If the first name wasn't a contextual keyword, we're done.
       if !self.at(.keyword(.isolated))
         && !self.at(.keyword(.some))
@@ -420,7 +379,7 @@ extension Parser.Lookahead {
           return true  // isolated :
         }
         self.consumeAnyToken()
-        return self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true) && self.peek().rawTokenKind == .colon
+        return self.atArgumentLabel(allowDollarIdentifier: true) && self.peek().rawTokenKind == .colon
       }
     }
 

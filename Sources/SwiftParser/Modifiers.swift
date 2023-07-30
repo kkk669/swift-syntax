@@ -13,10 +13,10 @@
 @_spi(RawSyntax) import SwiftSyntax
 
 extension Parser {
-  mutating func parseModifierList() -> RawModifierListSyntax? {
+  mutating func parseDeclModifierList() -> RawDeclModifierListSyntax? {
     var elements = [RawDeclModifierSyntax]()
-    var modifierLoopCondition = LoopProgressCondition()
-    MODIFIER_LOOP: while modifierLoopCondition.evaluate(currentToken) {
+    var modifierLoopProgress = LoopProgressCondition()
+    MODIFIER_LOOP: while self.hasProgressed(&modifierLoopProgress) {
       switch self.canRecoverTo(anyIn: DeclarationStart.self) {
       case (.declarationModifier(.private), _)?,
         (.declarationModifier(.fileprivate), _)?,
@@ -93,7 +93,7 @@ extension Parser {
         break MODIFIER_LOOP
       }
     }
-    return elements.isEmpty ? nil : RawModifierListSyntax(elements: elements, arena: arena)
+    return elements.isEmpty ? nil : RawDeclModifierListSyntax(elements: elements, arena: arena)
   }
 }
 

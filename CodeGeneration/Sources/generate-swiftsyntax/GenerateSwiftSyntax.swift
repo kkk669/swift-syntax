@@ -80,12 +80,6 @@ struct GenerateSwiftSyntax: ParsableCommand {
 
     let fileSpecs: [GeneratedFileSpec] =
       [
-        // SwiftBasicFormat
-        GeneratedFileSpec(swiftBasicFormatGeneratedDir + ["BasicFormat+Extensions.swift"], basicFormatExtensionsFile),
-
-        // IDEUtils
-        GeneratedFileSpec(swiftideUtilsGeneratedDir + ["SyntaxClassification.swift"], syntaxClassificationFile),
-
         // SwiftParser
         GeneratedFileSpec(swiftParserGeneratedDir + ["IsLexerClassified.swift"], isLexerClassifiedFile),
         GeneratedFileSpec(swiftParserGeneratedDir + ["Parser+Entry.swift"], parserEntryFile),
@@ -103,6 +97,7 @@ struct GenerateSwiftSyntax: ParsableCommand {
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["raw", "RawSyntaxNodes.swift"], rawSyntaxNodesFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["raw", "RawSyntaxValidation.swift"], rawSyntaxValidationFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["RenamedChildrenCompatibility.swift"], renamedChildrenCompatibilityFile),
+        GeneratedFileSpec(swiftSyntaxGeneratedDir + ["RenamedNodesCompatibility.swift"], renamedSyntaxNodesFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxAnyVisitor.swift"], syntaxAnyVisitorFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxBaseNodes.swift"], syntaxBaseNodesFile),
         GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxCollections.swift"], syntaxCollectionsFile),

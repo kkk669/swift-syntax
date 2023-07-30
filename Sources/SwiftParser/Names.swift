@@ -24,7 +24,7 @@ extension Parser {
   }
 
   mutating func parseArgumentLabel() -> (RawUnexpectedNodesSyntax?, RawTokenSyntax) {
-    guard self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true) else {
+    guard self.atArgumentLabel(allowDollarIdentifier: true) else {
       return (nil, missingToken(.identifier))
     }
     if let dollarIdent = self.consume(if: .dollarIdentifier) {
@@ -93,12 +93,10 @@ extension Parser {
 
     // Okay, let's look ahead and see if the next token is something that could
     // be in an arg label list...
-    let next = self.peek()
-
     // A close parenthesis, if empty lists are allowed.
-    let nextIsRParen = flags.contains(.zeroArgCompoundNames) && next.rawTokenKind == .rightParen
+    let nextIsRParen = flags.contains(.zeroArgCompoundNames) && peek(isAt: .rightParen)
     // An argument label.
-    let nextIsArgLabel = next.canBeArgumentLabel() || next.rawTokenKind == .colon
+    let nextIsArgLabel = peek().isArgumentLabel() || peek(isAt: .colon)
 
     guard nextIsRParen || nextIsArgLabel else {
       return nil
@@ -115,9 +113,9 @@ extension Parser {
     var elements = [RawDeclNameArgumentSyntax]()
     do {
       var loopProgress = LoopProgressCondition()
-      while !self.at(.endOfFile, .rightParen) && loopProgress.evaluate(currentToken) {
+      while !self.at(.endOfFile, .rightParen) && self.hasProgressed(&loopProgress) {
         // Check to see if there is an argument label.
-        precondition(self.currentToken.canBeArgumentLabel() && self.peek().rawTokenKind == .colon)
+        precondition(self.atArgumentLabel() && self.peek(isAt: .colon))
         let name = self.consumeAnyToken()
         let (unexpectedBeforeColon, colon) = self.expect(.colon)
         elements.append(
@@ -186,7 +184,7 @@ extension Parser {
       }
       if let keepGoing {
         result = RawTypeSyntax(
-          RawMemberTypeIdentifierSyntax(
+          RawMemberTypeSyntax(
             baseType: result!,
             period: keepGoing,
             unexpectedBeforeName,
@@ -197,7 +195,7 @@ extension Parser {
         )
       } else {
         result = RawTypeSyntax(
-          RawSimpleTypeIdentifierSyntax(
+          RawIdentifierTypeSyntax(
             unexpectedBeforeName,
             name: name,
             genericArgumentClause: generics,
@@ -216,7 +214,7 @@ extension Parser {
       }
 
       keepGoing = self.consume(if: .period)
-    } while keepGoing != nil && loopProgress.evaluate(currentToken)
+    } while keepGoing != nil && self.hasProgressed(&loopProgress)
 
     return result!
   }
@@ -228,7 +226,7 @@ extension Parser.Lookahead {
     guard lookahead.canParseTypeIdentifier() else {
       return false
     }
-    return lookahead.currentToken.starts(with: ".")
+    return lookahead.at(prefix: ".")
   }
 }
 
@@ -240,9 +238,9 @@ extension Parser.Lookahead {
     }
 
     var loopProgress = LoopProgressCondition()
-    while !lookahead.at(.endOfFile, .rightParen) && loopProgress.evaluate(lookahead.currentToken) {
+    while !lookahead.at(.endOfFile, .rightParen) && lookahead.hasProgressed(&loopProgress) {
       // Check to see if there is an argument label.
-      guard lookahead.currentToken.canBeArgumentLabel() && lookahead.peek().rawTokenKind == .colon else {
+      guard lookahead.atArgumentLabel() && lookahead.peek().rawTokenKind == .colon else {
         return false
       }
 
@@ -261,18 +259,16 @@ extension Parser.Lookahead {
 }
 
 extension Lexer.Lexeme {
-  func canBeArgumentLabel(allowDollarIdentifier: Bool = false) -> Bool {
-    // `inout` is reserved as an argument label for historical reasons.
-    if TypeSpecifier(lexeme: self) == .inout {
-      return false
-    }
-
-    switch self.rawTokenKind {
+  func isArgumentLabel(allowDollarIdentifier: Bool = false) -> Bool {
+    switch self {
     case .identifier, .wildcard:
       // Identifiers, escaped identifiers, and '_' can be argument labels.
       return true
     case .dollarIdentifier:
       return allowDollarIdentifier
+    case .keyword(.inout):
+      // `inout` cannot be an argument label for historical reasons.
+      return false
     default:
       // All other keywords can be argument labels.
       return self.isLexerClassifiedKeyword
@@ -288,13 +284,5 @@ extension Lexer.Lexeme {
     // Contextual keywords will only be made keywords when a ``RawTokenSyntax`` is
     // constructed from them.
     return self.rawTokenKind == .keyword
-  }
-
-  func starts(with symbol: SyntaxText) -> Bool {
-    guard Operator(lexeme: self) != nil || self.rawTokenKind.isPunctuation else {
-      return false
-    }
-
-    return self.tokenText.hasPrefix(symbol)
   }
 }

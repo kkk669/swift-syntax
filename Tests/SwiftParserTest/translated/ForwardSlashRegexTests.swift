@@ -368,11 +368,11 @@ final class ForwardSlashRegexTests: XCTestCase {
             AssignmentExprSyntax(),
             OptionalChainingExprSyntax(
               expression: OptionalChainingExprSyntax(
-                expression: RegexLiteralExprSyntax(regexPattern: .regexLiteralPattern("x"))
+                expression: RegexLiteralExprSyntax(regex: .regexLiteralPattern("x"))
               )
             ),
             BinaryOperatorExprSyntax(operator: .binaryOperator("/")),
-            PostfixUnaryExprSyntax(expression: IdentifierExprSyntax(identifier: "x"), operator: .postfixOperator("/")),
+            PostfixOperatorExprSyntax(expression: IdentifierExprSyntax(identifier: "x"), operator: .postfixOperator("/")),
           ])
         )
       )
@@ -522,7 +522,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       substructure: Syntax(
         InOutExprSyntax(
           expression: RegexLiteralExprSyntax(
-            regexPattern: .regexLiteralPattern("x")
+            regex: .regexLiteralPattern("x")
           )
         )
       )
@@ -632,8 +632,8 @@ final class ForwardSlashRegexTests: XCTestCase {
           content: .elements(
             .init([
               .init(
-                keyExpression: RegexLiteralExprSyntax(regexPattern: .regexLiteralPattern("abc")),
-                valueExpression: RegexLiteralExprSyntax(regexPattern: .regexLiteralPattern("abc"))
+                key: RegexLiteralExprSyntax(regex: .regexLiteralPattern("abc")),
+                value: RegexLiteralExprSyntax(regex: .regexLiteralPattern("abc"))
               )
             ])
           )
@@ -774,7 +774,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       _ = 2
       /1/ .bitWidth
       """,
-      substructure: Syntax(RegexLiteralExprSyntax(regexPattern: .regexLiteralPattern("1")))
+      substructure: Syntax(RegexLiteralExprSyntax(regex: .regexLiteralPattern("1")))
     )
   }
 
@@ -811,8 +811,8 @@ final class ForwardSlashRegexTests: XCTestCase {
       substructure: Syntax(
         PrefixOperatorExprSyntax(
           operator: .prefixOperator("!!"),
-          postfixExpression: MemberAccessExprSyntax(
-            base: RegexLiteralExprSyntax(regexPattern: .regexLiteralPattern("1")),
+          expression: MemberAccessExprSyntax(
+            base: RegexLiteralExprSyntax(regex: .regexLiteralPattern("1")),
             name: "bitWidth"
           )
         )
@@ -836,7 +836,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       let z =
       /y/
       """,
-      substructure: Syntax(RegexLiteralExprSyntax(regexPattern: .regexLiteralPattern("y")))
+      substructure: Syntax(RegexLiteralExprSyntax(regex: .regexLiteralPattern("y")))
     )
   }
 
@@ -1058,7 +1058,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       """
       _ = /x// comment
       """,
-      substructure: Syntax(PrefixOperatorExprSyntax(operator: .prefixOperator("/"), postfixExpression: IdentifierExprSyntax(identifier: "x")))
+      substructure: Syntax(PrefixOperatorExprSyntax(operator: .prefixOperator("/"), expression: IdentifierExprSyntax(identifier: "x")))
     )
   }
 
@@ -1067,7 +1067,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       """
       _ = /x // comment
       """,
-      substructure: Syntax(PrefixOperatorExprSyntax(operator: .prefixOperator("/"), postfixExpression: IdentifierExprSyntax(identifier: "x")))
+      substructure: Syntax(PrefixOperatorExprSyntax(operator: .prefixOperator("/"), expression: IdentifierExprSyntax(identifier: "x")))
     )
   }
 
@@ -1076,7 +1076,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       """
       _ = /x/*comment*/
       """,
-      substructure: Syntax(PrefixOperatorExprSyntax(operator: .prefixOperator("/"), postfixExpression: IdentifierExprSyntax(identifier: "x")))
+      substructure: Syntax(PrefixOperatorExprSyntax(operator: .prefixOperator("/"), expression: IdentifierExprSyntax(identifier: "x")))
     )
   }
 
@@ -1087,7 +1087,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       baz(/, /)
       """,
       substructure: Syntax(
-        TupleExprElementListSyntax([
+        LabeledExprListSyntax([
           .init(expression: IdentifierExprSyntax(identifier: .binaryOperator("/")), trailingComma: .commaToken()),
           .init(expression: IdentifierExprSyntax(identifier: .binaryOperator("/"))),
         ])
@@ -1097,7 +1097,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       """
       baz(/,/)
       """,
-      substructure: Syntax(RegexLiteralExprSyntax(regexPattern: .regexLiteralPattern(",")))
+      substructure: Syntax(RegexLiteralExprSyntax(regex: .regexLiteralPattern(",")))
     )
   }
 
@@ -1107,7 +1107,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       baz((/), /)
       """,
       substructure: Syntax(
-        TupleExprElementListSyntax([
+        LabeledExprListSyntax([
           .init(
             expression: TupleExprSyntax(
               elements: .init([
@@ -1128,7 +1128,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       baz(/^, /)
       """,
       substructure: Syntax(
-        TupleExprElementListSyntax([
+        LabeledExprListSyntax([
           .init(expression: IdentifierExprSyntax(identifier: .binaryOperator("/^")), trailingComma: .commaToken()),
           .init(expression: IdentifierExprSyntax(identifier: .binaryOperator("/"))),
         ])
@@ -1138,7 +1138,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       """
       baz(/^,/)
       """,
-      substructure: Syntax(RegexLiteralExprSyntax(regexPattern: .regexLiteralPattern("^,")))
+      substructure: Syntax(RegexLiteralExprSyntax(regex: .regexLiteralPattern("^,")))
     )
   }
 
@@ -1148,7 +1148,7 @@ final class ForwardSlashRegexTests: XCTestCase {
       baz((/^), /)
       """,
       substructure: Syntax(
-        TupleExprElementListSyntax([
+        LabeledExprListSyntax([
           .init(
             expression: TupleExprSyntax(
               elements: .init([

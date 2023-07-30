@@ -16,7 +16,10 @@
 import SwiftSyntax
 
 @available(*, deprecated, renamed: "ImportPathBuilder")
-public typealias AccessPathBuilder = ImportPathBuilder
+public typealias AccessPathBuilder = ImportPathComponentListBuilder
+
+@available(*, deprecated, renamed: "LabeledExprListBuilder")
+public typealias TupleExprElementListBuilder = LabeledExprListBuilder
 
 //==========================================================================//
 // IMPORTANT: If you are tempted to add a compatibility layer code here     //

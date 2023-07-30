@@ -17,11 +17,18 @@ import Utils
 
 let syntaxCollectionsFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
   for node in SYNTAX_NODES.compactMap(\.collectionNode) {
-    let documentation = """
-      \(node.documentation)
-      \(node.documentation.isEmpty ? "" : "///")
-      \(node.grammar)
-      """.removingEmptyLines
+    let documentationSections = [
+      node.documentation,
+      node.grammar,
+      node.containedIn,
+    ]
+
+    let documentation =
+      documentationSections
+      .filter { !$0.isEmpty }
+      .map { [$0] }
+      .joined(separator: [Trivia.newline, Trivia.docLineComment("///"), Trivia.newline])
+      .reduce(Trivia(), +)
 
     try! StructDeclSyntax(
       """
@@ -43,7 +50,7 @@ let syntaxCollectionsFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
           }
 
           try VariableDeclSyntax("public var _syntaxNode: Syntax") {
-            SwitchExprSyntax(switchKeyword: .keyword(.switch), expression: ExprSyntax("self")) {
+            SwitchExprSyntax(switchKeyword: .keyword(.switch), subject: ExprSyntax("self")) {
               for choiceName in node.elementChoices {
                 let choice = SYNTAX_NODE_MAP[choiceName]!
                 SwitchCaseSyntax("case .\(choice.varOrCaseName)(let node):") {

@@ -116,7 +116,7 @@ fileprivate class ParameterReplacementVisitor: SyntaxAnyVisitor {
     let identifier = node.identifier
     let signature = macro.signature
 
-    let matchedParameter = signature.parameterClause.parameterList.enumerated().first { (index, parameter) in
+    let matchedParameter = signature.parameterClause.parameters.enumerated().first { (index, parameter) in
       if identifier.text == "_" {
         return false
       }
@@ -248,7 +248,7 @@ extension MacroDeclSyntax {
   /// Expand the definition of this macro when provided with the given
   /// argument list.
   private func expand(
-    argumentList: TupleExprElementListSyntax?,
+    argumentList: LabeledExprListSyntax?,
     definition: MacroExpansionExprSyntax,
     replacements: [MacroDefinition.Replacement]
   ) -> ExprSyntax {
@@ -293,8 +293,8 @@ extension MacroDeclSyntax {
     replacements: [MacroDefinition.Replacement]
   ) -> ExprSyntax {
     // Dig out the argument list.
-    let argumentList: TupleExprElementListSyntax?
-    if case let .argumentList(argList) = node.argument {
+    let argumentList: LabeledExprListSyntax?
+    if case let .argumentList(argList) = node.arguments {
       argumentList = argList
     } else {
       argumentList = nil

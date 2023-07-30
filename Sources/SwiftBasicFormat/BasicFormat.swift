@@ -117,8 +117,8 @@ open class BasicFormat: SyntaxRewriter {
   }
 
   private func childrenSeparatedByNewline(_ node: Syntax) -> Bool {
-    switch node.as(SyntaxEnum.self) {
-    case .accessorList:
+    switch node.kind {
+    case .accessorDeclList:
       return true
     case .codeBlockItemList:
       return true
@@ -164,7 +164,43 @@ open class BasicFormat: SyntaxRewriter {
 
   /// Whether a leading newline on `token` should be added.
   open func requiresIndent(_ node: some SyntaxProtocol) -> Bool {
-    return node.requiresIndent
+    guard let keyPath = node.keyPathInParent else {
+      return false
+    }
+    switch keyPath {
+    case \AccessorBlockSyntax.accessors:
+      return true
+    case \ArrayExprSyntax.elements:
+      return true
+    case \ClosureExprSyntax.statements:
+      return true
+    case \ClosureParameterClauseSyntax.parameters:
+      return true
+    case \CodeBlockSyntax.statements:
+      return true
+    case \DictionaryElementSyntax.value:
+      return true
+    case \DictionaryExprSyntax.content:
+      return true
+    case \EnumCaseParameterClauseSyntax.parameters:
+      return true
+    case \FunctionCallExprSyntax.arguments:
+      return true
+    case \FunctionTypeSyntax.parameters:
+      return true
+    case \MemberDeclBlockSyntax.members:
+      return true
+    case \ParameterClauseSyntax.parameters:
+      return true
+    case \SwitchCaseSyntax.statements:
+      return true
+    case \TupleExprSyntax.elements:
+      return true
+    case \TupleTypeSyntax.elements:
+      return true
+    default:
+      return false
+    }
   }
 
   open func requiresNewline(between first: TokenSyntax?, and second: TokenSyntax?) -> Bool {
@@ -203,10 +239,10 @@ open class BasicFormat: SyntaxRewriter {
       (.multilineStringQuote, .stringSegment),  // segment starting a multi-line string literal
       (.stringSegment, .multilineStringQuote),  // ending a multi-line string literal that has a string interpolation segment at its end
       (.rightParen, .multilineStringQuote),  // ending a multi-line string literal that has a string interpolation segment at its end
-      (.poundEndifKeyword, _),
-      (_, .poundElseKeyword),
-      (_, .poundElseifKeyword),
-      (_, .poundEndifKeyword),
+      (.poundEndif, _),
+      (_, .poundElse),
+      (_, .poundElseif),
+      (_, .poundEndif),
       (_, .rightBrace):
       return true
     default:
@@ -223,8 +259,8 @@ open class BasicFormat: SyntaxRewriter {
       (.endOfFile, _),
       (.exclamationMark, .leftParen),  // myOptionalClosure!()
       (.exclamationMark, .period),  // myOptionalBar!.foo()
-      (.extendedRegexDelimiter, .leftParen),  // opening extended regex delimiter should never be separate by a space
-      (.extendedRegexDelimiter, .regexSlash),  // opening extended regex delimiter should never be separate by a space
+      (.regexPoundDelimiter, .leftParen),  // opening extended regex delimiter should never be separate by a space
+      (.regexPoundDelimiter, .regexSlash),  // opening extended regex delimiter should never be separate by a space
       (.identifier, .leftAngle),  // MyType<Int>
       (.identifier, .leftParen),  // foo()
       (.identifier, .leftSquare),  // myArray[1]
@@ -241,28 +277,28 @@ open class BasicFormat: SyntaxRewriter {
       (.leftBrace, .rightBrace),  // {}
       (.leftParen, _),
       (.leftSquare, _),
-      (.multilineStringQuote, .rawStringDelimiter),  // closing raw string delimiter should never be separate by a space
+      (.multilineStringQuote, .rawStringPoundDelimiter),  // closing raw string delimiter should never be separate by a space
       (.period, _),
       (.postfixQuestionMark, .leftAngle),  // init?<T>()
       (.postfixQuestionMark, .leftParen),  // init?() or myOptionalClosure?()
       (.postfixQuestionMark, .period),  // someOptional?.someProperty
       (.pound, _),
-      (.poundUnavailableKeyword, .leftParen),  // #unavailable(...)
+      (.poundUnavailable, .leftParen),  // #unavailable(...)
       (.prefixAmpersand, _),
       (.prefixOperator, _),
-      (.rawStringDelimiter, .leftParen),  // opening raw string delimiter should never be separate by a space
-      (.rawStringDelimiter, .multilineStringQuote),  // opening raw string delimiter should never be separate by a space
-      (.rawStringDelimiter, .singleQuote),  // opening raw string delimiter should never be separate by a space
-      (.rawStringDelimiter, .stringQuote),  // opening raw string delimiter should never be separate by a space
+      (.rawStringPoundDelimiter, .leftParen),  // opening raw string delimiter should never be separate by a space
+      (.rawStringPoundDelimiter, .multilineStringQuote),  // opening raw string delimiter should never be separate by a space
+      (.rawStringPoundDelimiter, .singleQuote),  // opening raw string delimiter should never be separate by a space
+      (.rawStringPoundDelimiter, .stringQuote),  // opening raw string delimiter should never be separate by a space
       (.regexLiteralPattern, _),
-      (.regexSlash, .extendedRegexDelimiter),  // closing extended regex delimiter should never be separate by a space
+      (.regexSlash, .regexPoundDelimiter),  // closing extended regex delimiter should never be separate by a space
       (.rightAngle, .leftParen),  // func foo<T>(x: T)
       (.rightBrace, .leftParen),  // { return 1 }()
       (.rightParen, .leftParen),  // returnsClosure()()
       (.rightParen, .period),  // foo().bar
       (.rightSquare, .period),  // myArray[1].someProperty
-      (.singleQuote, .rawStringDelimiter),  // closing raw string delimiter should never be separate by a space
-      (.stringQuote, .rawStringDelimiter),  // closing raw string delimiter should never be separate by a space
+      (.singleQuote, .rawStringPoundDelimiter),  // closing raw string delimiter should never be separate by a space
+      (.stringQuote, .rawStringPoundDelimiter),  // closing raw string delimiter should never be separate by a space
       (.stringSegment, _),
       (_, .comma),
       (_, .ellipsis),
@@ -294,8 +330,8 @@ open class BasicFormat: SyntaxRewriter {
     case \ExpressionSegmentSyntax.backslash,
       \ExpressionSegmentSyntax.rightParen,
       \DeclNameArgumentSyntax.colon,
-      \StringLiteralExprSyntax.openQuote,
-      \RegexLiteralExprSyntax.openSlash:
+      \StringLiteralExprSyntax.openingQuote,
+      \RegexLiteralExprSyntax.openingSlash:
       return false
     default:
       break
@@ -338,7 +374,7 @@ open class BasicFormat: SyntaxRewriter {
 
     /// This method does not consider any posssible mutations to `previousToken`
     /// because newlines should be added to the next token's leading trivia.
-    lazy var previousTokenWillEndWithNewline: Bool = {
+    let previousTokenWillEndWithNewline: Bool = {
       guard let previousToken = previousToken else {
         // Assume that the start of the tree is equivalent to a newline so we
         // don't add a leading newline to the file.
@@ -350,7 +386,7 @@ open class BasicFormat: SyntaxRewriter {
       return previousToken.isStringSegmentWithLastCharacterBeingNewline
     }()
 
-    lazy var previousTokenIsStringLiteralEndingInNewline: Bool = {
+    let previousTokenIsStringLiteralEndingInNewline: Bool = {
       guard let previousToken = previousToken else {
         // Assume that the start of the tree is equivalent to a newline so we
         // don't add a leading newline to the file.
@@ -373,7 +409,7 @@ open class BasicFormat: SyntaxRewriter {
 
     /// Also considers `nextToken` as starting with a leading newline if `token`
     /// and `nextToken` should be separated by a newline.
-    lazy var nextTokenWillStartWithNewline: Bool = {
+    let nextTokenWillStartWithNewline: Bool = {
       guard let nextToken = nextToken else {
         return false
       }
@@ -390,15 +426,15 @@ open class BasicFormat: SyntaxRewriter {
       return false
     }()
 
+    var leadingTrivia = token.leadingTrivia
+    var trailingTrivia = token.trailingTrivia
+
     /// This token's trailing trivia + any spaces or tabs at the start of the
     /// next token's leading trivia.
-    lazy var combinedTrailingTrivia: Trivia = {
+    let combinedTrailingTrivia: Trivia = {
       let nextTokenLeadingWhitespace = nextToken?.leadingTrivia.prefix(while: { $0.isSpaceOrTab }) ?? []
       return trailingTrivia + Trivia(pieces: nextTokenLeadingWhitespace)
     }()
-
-    var leadingTrivia = token.leadingTrivia
-    var trailingTrivia = token.trailingTrivia
 
     if requiresNewline(between: previousToken, and: token) {
       // Add a leading newline if the token requires it unless

@@ -907,7 +907,7 @@ extension Lexer.Cursor {
     case UInt8(ascii: "#"):
       // Try lex a raw string literal.
       if let delimiterLength = self.advanceIfOpeningRawStringDelimiter() {
-        return Lexer.Result(.rawStringDelimiter, stateTransition: .push(newState: .afterRawStringDelimiter(delimiterLength: delimiterLength)))
+        return Lexer.Result(.rawStringPoundDelimiter, stateTransition: .push(newState: .afterRawStringDelimiter(delimiterLength: delimiterLength)))
       }
 
       // Try lex a regex literal.
@@ -1021,7 +1021,7 @@ extension Lexer.Cursor {
     switch self.peek() {
     case UInt8(ascii: "#"):
       self.advance(while: { $0 == Unicode.Scalar("#") })
-      return Lexer.Result(.rawStringDelimiter, stateTransition: .pop)
+      return Lexer.Result(.rawStringPoundDelimiter, stateTransition: .pop)
     case nil:
       return Lexer.Result(.endOfFile)
     default:
@@ -1040,7 +1040,7 @@ extension Lexer.Cursor {
       /// would have returned false in `lexInStringLiteral` and w we wouldn't have
       /// transitioned to the `afterBackslashOfStringInterpolation` state.
       self.advance(while: { $0 == Unicode.Scalar("#") })
-      return Lexer.Result(.rawStringDelimiter)
+      return Lexer.Result(.rawStringPoundDelimiter)
     case UInt8(ascii: "("):
       _ = self.advance()
       return Lexer.Result(.leftParen, stateTransition: .replace(newState: .inStringInterpolation(stringLiteralKind: stringLiteralKind, parenCount: 0)))
@@ -1563,13 +1563,13 @@ extension Lexer.Cursor {
 
     let kind: RawTokenKind
     switch literal {
-    case "sourceLocation": kind = .poundSourceLocationKeyword
-    case "if": kind = .poundIfKeyword
-    case "else": kind = .poundElseKeyword
-    case "elseif": kind = .poundElseifKeyword
-    case "endif": kind = .poundEndifKeyword
-    case "available": kind = .poundAvailableKeyword
-    case "unavailable": kind = .poundUnavailableKeyword
+    case "sourceLocation": kind = .poundSourceLocation
+    case "if": kind = .poundIf
+    case "else": kind = .poundElse
+    case "elseif": kind = .poundElseif
+    case "endif": kind = .poundEndif
+    case "available": kind = .poundAvailable
+    case "unavailable": kind = .poundUnavailable
     default:
       // If we didn't find a match, then just return `.pound`.  This is highly
       // dubious in terms of error recovery, but is useful for code completion and

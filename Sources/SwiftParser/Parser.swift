@@ -90,7 +90,12 @@ public struct Parser {
   var arena: ParsingSyntaxArena
   /// A view of the sequence of lexemes in the input.
   var lexemes: Lexer.LexemeSequence
-  /// The current token. If there was no input, this token will have a kind of `.endOfFile`.
+  /// The current token that should be consumed next.
+  ///
+  /// If the end of the source file is reached, this is `.endOfFile`.
+  ///
+  /// - Important: You should almost never need to access this token directly
+  ///   in the parser. Instead, prefer using the `at` methods.
   var currentToken: Lexer.Lexeme
 
   /// The current nesting level, i.e. the number of tokens that
@@ -221,9 +226,9 @@ public struct Parser {
 
   private mutating func adjustNestingLevel(for tokenKind: RawTokenKind) {
     switch tokenKind {
-    case .leftAngle, .leftBrace, .leftParen, .leftSquare, .poundIfKeyword:
+    case .leftAngle, .leftBrace, .leftParen, .leftSquare, .poundIf:
       nestingLevel += 1
-    case .rightAngle, .rightBrace, .rightParen, .rightSquare, .poundEndifKeyword:
+    case .rightAngle, .rightBrace, .rightParen, .rightSquare, .poundEndif:
       nestingLevel -= 1
     default:
       break
@@ -284,13 +289,13 @@ extension Parser {
   /// Consumes remaining token on the line and returns a ``RawUnexpectedNodesSyntax``
   /// if there is any tokens consumed.
   mutating func consumeRemainingTokenOnLine() -> RawUnexpectedNodesSyntax? {
-    guard !self.currentToken.isAtStartOfLine else {
+    guard !self.atStartOfLine else {
       return nil
     }
 
     var unexpectedTokens = [RawTokenSyntax]()
     var loopProgress = LoopProgressCondition()
-    while !self.at(.endOfFile), !currentToken.isAtStartOfLine, loopProgress.evaluate(self.currentToken) {
+    while !self.at(.endOfFile), !atStartOfLine, self.hasProgressed(&loopProgress) {
       unexpectedTokens += [self.consumeAnyToken()]
     }
 
@@ -471,6 +476,17 @@ extension Parser {
     )
   }
 
+  /// If the current token starts with the given prefix, consume the prefis as the given token kind.
+  ///
+  /// Otherwise, synthesize a missing token of the given kind.
+  mutating func expectWithoutRecovery(prefix: SyntaxText, as tokenKind: RawTokenKind) -> Token {
+    if self.at(prefix: prefix) {
+      return consumePrefix(prefix, as: tokenKind)
+    } else {
+      return missingToken(tokenKind)
+    }
+  }
+
   /// - Parameters:
   ///   - keywordRecovery: If set to `true` and the parser is currently
   ///     positioned at a keyword instead of an identifier, this method recovers
@@ -514,8 +530,8 @@ extension Parser {
         self.missingToken(.identifier)
       )
     } else if keywordRecovery,
-      (self.currentToken.isLexerClassifiedKeyword || self.currentToken.rawTokenKind == .wildcard),
-      !self.currentToken.isAtStartOfLine
+      (self.currentToken.isLexerClassifiedKeyword || self.at(.wildcard)),
+      !self.atStartOfLine
     {
       let keyword = self.consumeAnyToken()
       return (
@@ -594,6 +610,10 @@ extension Parser {
     _ prefix: SyntaxText,
     as tokenKind: RawTokenKind
   ) -> RawTokenSyntax {
+    precondition(
+      tokenKind.defaultText == nil || prefix == tokenKind.defaultText!,
+      "If tokenKind has a defaultText, the prefix needs to match it"
+    )
     let current = self.currentToken
     // Current token can be either one-character token we want to consume...
     let tokenText = current.tokenText

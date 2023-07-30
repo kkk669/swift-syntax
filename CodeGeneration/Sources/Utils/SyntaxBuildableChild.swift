@@ -54,30 +54,24 @@ public extension Child {
   }
 
   var parameterType: TypeSyntax {
-    return self.type.optionalWrapped(type: SimpleTypeIdentifierSyntax(name: .identifier(parameterBaseType)))
+    return self.type.optionalWrapped(type: IdentifierTypeSyntax(name: .identifier(parameterBaseType)))
   }
 
-  /// If the child node has a default value, return an expression of the form
-  /// ` = default_value` that can be used as the default value to for a
-  /// function parameter. Otherwise, return `nil`.
-  var defaultInitialization: InitializerClauseSyntax? {
+  var defaultValue: ExprSyntax? {
     if isOptional || isUnexpectedNodes {
       if type.isBaseType && kind.isNodeChoicesEmpty {
-        return InitializerClauseSyntax(value: ExprSyntax("\(type.buildable).none"))
+        return ExprSyntax("\(type.buildable).none")
       } else {
-        return InitializerClauseSyntax(value: NilLiteralExprSyntax())
+        return ExprSyntax("nil")
       }
     }
     guard let token = token, isToken else {
-      return type.defaultValue.map { InitializerClauseSyntax(value: $0) }
-    }
-    if token.isKeyword {
-      return InitializerClauseSyntax(value: ExprSyntax(".\(raw: token.swiftKind)()"))
+      return type.defaultValue
     }
     if token.text != nil {
-      return InitializerClauseSyntax(value: ExprSyntax(".\(raw: token.swiftKind)Token()"))
+      return ExprSyntax(".\(token.varOrCaseName)Token()")
     }
-    guard case .token(let choices, _, _) = kind, choices.count == 1, token.associatedValueClass != nil else {
+    guard case .token(let choices, _, _) = kind, choices.count == 1, token.kind == .keyword else {
       return nil
     }
     var textChoice: String
@@ -88,7 +82,18 @@ public extension Child {
     if textChoice == "init" {
       textChoice = "`init`"
     }
-    return InitializerClauseSyntax(value: ExprSyntax(".\(raw: token.swiftKind)(.\(raw: textChoice))"))
+    return ExprSyntax(".\(token.varOrCaseName)(.\(raw: textChoice))")
+  }
+
+  /// If the child node has a default value, return an expression of the form
+  /// ` = default_value` that can be used as the default value to for a
+  /// function parameter. Otherwise, return `nil`.
+  var defaultInitialization: InitializerClauseSyntax? {
+    if let defaultValue {
+      return InitializerClauseSyntax(equal: .equalToken(leadingTrivia: .space, trailingTrivia: .space), value: defaultValue)
+    } else {
+      return nil
+    }
   }
 
   /// If this node is a token that can't contain arbitrary text, generate a Swift
@@ -146,7 +151,7 @@ public extension Child {
     }
     let disjunction = ExprListSyntax(preconditionChoices.flatMap { [$0, ExprSyntax(BinaryOperatorExprSyntax(text: "||"))] }.dropLast())
     return FunctionCallExprSyntax(callee: ExprSyntax("precondition")) {
-      TupleExprElementSyntax(expression: SequenceExprSyntax(elements: disjunction))
+      LabeledExprSyntax(expression: SequenceExprSyntax(elements: disjunction))
     }
   }
 }

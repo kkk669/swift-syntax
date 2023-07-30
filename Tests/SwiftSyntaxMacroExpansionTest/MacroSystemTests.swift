@@ -51,9 +51,9 @@ public struct StringifyMacro: ExpressionMacro {
 /// Replace the label of the first element in the tuple with the given
 /// new label.
 private func replaceFirstLabel(
-  of tuple: TupleExprElementListSyntax,
+  of tuple: LabeledExprListSyntax,
   with newLabel: String
-) -> TupleExprElementListSyntax {
+) -> LabeledExprListSyntax {
   guard let firstElement = tuple.first else {
     return tuple
   }
@@ -252,7 +252,7 @@ extension PropertyWrapper: AccessorMacro {
     guard let varDecl = declaration.as(VariableDeclSyntax.self),
       let binding = varDecl.bindings.first,
       let identifier = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier,
-      binding.accessor == nil
+      binding.accessors == nil
     else {
       return []
     }
@@ -287,12 +287,12 @@ extension PropertyWrapper: PeerMacro {
       let binding = varDecl.bindings.first,
       let identifier = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier,
       let type = binding.typeAnnotation?.type,
-      binding.accessor == nil
+      binding.accessors == nil
     else {
       return []
     }
 
-    guard case .argumentList(let arguments) = node.argument,
+    guard case .argumentList(let arguments) = node.arguments,
       let wrapperTypeNameExpr = arguments.first?.expression,
       let stringLiteral = wrapperTypeNameExpr.as(StringLiteralExprSyntax.self),
       stringLiteral.segments.count == 1,
@@ -337,7 +337,7 @@ public struct AddCompletionHandler: PeerMacro {
     }
 
     // Form the completion handler parameter.
-    let resultType: TypeSyntax? = funcDecl.signature.returnClause?.returnType.with(\.leadingTrivia, []).with(\.trailingTrivia, [])
+    let resultType: TypeSyntax? = funcDecl.signature.returnClause?.type.with(\.leadingTrivia, []).with(\.trailingTrivia, [])
 
     let completionHandlerParam =
       FunctionParameterSyntax(
@@ -347,7 +347,7 @@ public struct AddCompletionHandler: PeerMacro {
       )
 
     // Add the completion handler parameter to the parameter list.
-    let parameterList = funcDecl.signature.parameterClause.parameterList
+    let parameterList = funcDecl.signature.parameterClause.parameters
     let newParameterList: FunctionParameterListSyntax
     if let lastParam = parameterList.last {
       // We need to add a trailing comma to the preceding list.
@@ -378,7 +378,7 @@ public struct AddCompletionHandler: PeerMacro {
     }
 
     let call: ExprSyntax =
-      "\(funcDecl.identifier)(\(raw: callArguments.joined(separator: ", ")))"
+      "\(funcDecl.name)(\(raw: callArguments.joined(separator: ", ")))"
 
     // FIXME: We should make CodeBlockSyntax ExpressibleByStringInterpolation,
     // so that the full body could go here.
@@ -414,7 +414,7 @@ public struct AddCompletionHandler: PeerMacro {
           .with(\.returnClause, nil)  // drop result type
           .with(
             \.parameterClause,  // add completion handler parameter
-            funcDecl.signature.parameterClause.with(\.parameterList, newParameterList)
+            funcDecl.signature.parameterClause.with(\.parameters, newParameterList)
               .with(\.trailingTrivia, [])
           )
       )
@@ -470,7 +470,7 @@ public struct WrapAllProperties: MemberAttributeMacro {
 
     return [
       AttributeSyntax(
-        attributeName: SimpleTypeIdentifierSyntax(
+        attributeName: IdentifierTypeSyntax(
           name: .identifier("Wrapper")
         )
       )
@@ -497,7 +497,7 @@ public struct WrapStoredProperties: MemberAttributeMacro {
     }
 
     let binding = property.bindings.first!
-    switch binding.accessor {
+    switch binding.accessors {
     case .none:
       break
     case .accessors(let node):
@@ -516,7 +516,7 @@ public struct WrapStoredProperties: MemberAttributeMacro {
 
     return [
       AttributeSyntax(
-        attributeName: SimpleTypeIdentifierSyntax(
+        attributeName: IdentifierTypeSyntax(
           name: .identifier("Wrapper")
         )
       )
@@ -558,7 +558,7 @@ extension CustomTypeWrapperMacro: MemberAttributeMacro {
   ) throws -> [AttributeSyntax] {
     return [
       AttributeSyntax(
-        attributeName: SimpleTypeIdentifierSyntax(
+        attributeName: IdentifierTypeSyntax(
           name: .identifier("customTypeWrapper")
         )
       )
@@ -579,7 +579,7 @@ extension CustomTypeWrapperMacro: AccessorMacro {
     guard let property = declaration.as(VariableDeclSyntax.self),
       let binding = property.bindings.first,
       let identifier = binding.pattern.as(IdentifierPatternSyntax.self)?.identifier,
-      binding.accessor == nil
+      binding.accessors == nil
     else {
       return []
     }
@@ -613,7 +613,7 @@ public struct UnwrapMacro: CodeItemMacro {
     }
     let errorThrower = node.trailingClosure
     let identifiers = try node.argumentList.map { argument in
-      guard let tupleElement = argument.as(TupleExprElementSyntax.self),
+      guard let tupleElement = argument.as(LabeledExprSyntax.self),
         let identifierExpr = tupleElement.expression.as(IdentifierExprSyntax.self)
       else {
         throw CustomError.message("Arguments must be identifiers")

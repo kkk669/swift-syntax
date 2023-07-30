@@ -68,6 +68,15 @@ fileprivate extension ChildKind {
       return false
     }
   }
+
+  var isCollection: Bool {
+    switch self {
+    case .node: return false
+    case .nodeChoices(let choices): return choices.contains(where: { $0.kind.isCollection })
+    case .collection: return true
+    case .token: return false
+    }
+  }
 }
 
 fileprivate extension Child {
@@ -122,9 +131,29 @@ class ValidateSyntaxNodes: XCTestCase {
       failures,
       expectedFailures: [
         ValidationFailure(node: .canImportVersionInfo, message: "has base kind 'ExprSyntax' but type name doesn’t have 'ExprSyntax' suffix"),
-        ValidationFailure(node: .memberTypeIdentifier, message: "has base kind 'TypeSyntax' but type name doesn’t have 'TypeSyntax' suffix"),
         ValidationFailure(node: .poundSourceLocation, message: "has base kind 'DeclSyntax' but type name doesn’t have 'DeclSyntax' suffix"),
-        ValidationFailure(node: .simpleTypeIdentifier, message: "has base kind 'TypeSyntax' but type name doesn’t have 'TypeSyntax' suffix"),
+      ]
+    )
+  }
+
+  func testSyntaxCollectionsShouldEndWithList() {
+    var failures: [ValidationFailure] = []
+
+    for node in SYNTAX_NODES.compactMap(\.collectionNode) {
+      if !node.kind.syntaxType.description.hasSuffix("ListSyntax") {
+        failures.append(
+          ValidationFailure(
+            node: node.kind,
+            message: "is a collection but does not end with ListSyntax"
+          )
+        )
+      }
+    }
+
+    assertFailuresMatchXFails(
+      failures,
+      expectedFailures: [
+        ValidationFailure(node: .unexpectedNodes, message: "is a collection but does not end with ListSyntax")
       ]
     )
   }
@@ -200,7 +229,7 @@ class ValidateSyntaxNodes: XCTestCase {
             // To be consistent with AsyncSpecifier properties that can be both 'async' and 'reasync'
         ),
         ValidationFailure(
-          node: .deinitEffectSpecifiers,
+          node: .deinitializerEffectSpecifiers,
           message: "child 'AsyncSpecifier' has a single keyword as its only token choice and should thus be named 'AsyncKeyword'"
             // To be consistent with AsyncSpecifier properties that can be both 'async' and 'reasync'
         ),
@@ -223,44 +252,48 @@ class ValidateSyntaxNodes: XCTestCase {
         ),
         ValidationFailure(
           node: .differentiableAttributeArguments,
-          message: "child 'ParametersComma' has a comma keyword as its only token choice and should thus be named 'Comma' or 'TrailingComma'"
+          message: "child 'ArgumentsComma' has a comma keyword as its only token choice and should thus be named 'Comma' or 'TrailingComma'"
         ),
         ValidationFailure(
-          node: .poundSourceLocationArgs,
+          node: .poundSourceLocationArguments,
           message: "child 'FileColon' has a token as its only token choice and should thus be named 'Colon'"
             // There are two colons in the node
         ),
         ValidationFailure(
-          node: .poundSourceLocationArgs,
+          node: .poundSourceLocationArguments,
           message: "child 'LineColon' has a token as its only token choice and should thus be named 'Colon'"
         ),
         ValidationFailure(
           node: .regexLiteralExpr,
-          message: "child 'OpeningPounds' has a token as its only token choice and should thus be named 'ExtendedRegexDelimiter'"
+          message: "child 'OpeningPounds' has a token as its only token choice and should thus be named 'RegexPoundDelimiter'"
         ),
         ValidationFailure(
           node: .regexLiteralExpr,
-          message: "child 'OpenSlash' has a token as its only token choice and should thus be named 'RegexSlash'"
+          message: "child 'OpeningSlash' has a token as its only token choice and should thus be named 'RegexSlash'"
         ),
         ValidationFailure(
           node: .regexLiteralExpr,
-          message: "child 'CloseSlash' has a token as its only token choice and should thus be named 'RegexSlash'"
+          message: "child 'ClosingSlash' has a token as its only token choice and should thus be named 'RegexSlash'"
             // There are the opening and closing slashes in the node
         ),
         ValidationFailure(
           node: .regexLiteralExpr,
-          message: "child 'ClosingPounds' has a token as its only token choice and should thus be named 'ExtendedRegexDelimiter'"
+          message: "child 'ClosingPounds' has a token as its only token choice and should thus be named 'RegexPoundDelimiter'"
             // There are the opening and closing ExtendedRegexDelimiter in the node
         ),
         // We should explicitly mention token here because it’s not obvious that the end of a file is represented by a token
         ValidationFailure(node: .sourceFile, message: "child 'EndOfFileToken' has a token as its only token choice and should thus be named 'EndOfFile'"),
         ValidationFailure(
           node: .stringLiteralExpr,
-          message: "child 'OpenDelimiter' has a token as its only token choice and should thus be named 'RawStringDelimiter'"
+          message: "child 'OpeningPounds' has a token as its only token choice and should thus be named 'RawStringPoundDelimiter'"
         ),
         ValidationFailure(
           node: .stringLiteralExpr,
-          message: "child 'CloseDelimiter' has a token as its only token choice and should thus be named 'RawStringDelimiter'"
+          message: "child 'ClosingPounds' has a token as its only token choice and should thus be named 'RawStringPoundDelimiter'"
+        ),
+        ValidationFailure(
+          node: .expressionSegment,
+          message: "child 'Pounds' has a token as its only token choice and should thus be named 'RawStringPoundDelimiter'"
         ),
 
         // MARK: Tokens that contain underscores
@@ -280,7 +313,7 @@ class ValidateSyntaxNodes: XCTestCase {
         // If the node is named the same as the token, we don't need to repeat the entire token name
         ValidationFailure(
           node: .regexLiteralExpr,
-          message: "child 'RegexPattern' has a token as its only token choice and should thus be named 'RegexLiteralPattern'"
+          message: "child 'Regex' has a token as its only token choice and should thus be named 'RegexLiteralPattern'"
             // No point repeating the `Literal` because the node name alredy contains it
         ),
         ValidationFailure(
@@ -292,7 +325,7 @@ class ValidateSyntaxNodes: XCTestCase {
         // MARK: Miscellaneous
         // This is the only place where we use LeadingComma, similar to 'TrailingComma'
         ValidationFailure(
-          node: .designatedTypeElement,
+          node: .designatedType,
           message: "child 'LeadingComma' has a comma keyword as its only token choice and should thus be named 'Comma' or 'TrailingComma'"
         ),
         // This is similar to `TrailingComma`
@@ -353,7 +386,7 @@ class ValidateSyntaxNodes: XCTestCase {
             // DiscardKeyword can be 'discard' or '_forget' and '_forget' is deprecated
         ),
         ValidationFailure(
-          node: .moveExpr,
+          node: .consumeExpr,
           message: "child 'ConsumeKeyword' only has keywords as its token choices and should thus end with 'Specifier'"
             // ConsumeKeyword can be 'consume' or '_move' and '_move' is deprecated
         ),
@@ -376,18 +409,13 @@ class ValidateSyntaxNodes: XCTestCase {
         // MARK: Miscellaneous
         // 'weak' or 'unowned' are already the specifier, this is the detail in parens
         ValidationFailure(
-          node: .closureCaptureItemSpecifier,
+          node: .closureCaptureSpecifier,
           message: "child 'Detail' only has keywords as its token choices and should thus end with 'Specifier'"
         ),
         // This really is the modifier name and not a specifier
         ValidationFailure(
           node: .declModifier,
           message: "child 'Name' only has keywords as its token choices and should thus end with 'Specifier'"
-        ),
-        // Conceptually, this isn't a specifier, it's more like a type inheritance
-        ValidationFailure(
-          node: .layoutRequirement,
-          message: "child 'LayoutConstraint' only has keywords as its token choices and should thus end with 'Specifier'"
         ),
       ]
     )
@@ -451,12 +479,12 @@ class ValidateSyntaxNodes: XCTestCase {
         ValidationFailure(
           node: .enumCaseParameter,
           message:
-            "child 'DefaultArgument' is named inconsistently with 'MatchingPatternConditionSyntax.Initializer', which has the same type ('InitializerClauseSyntax')"
+            "child 'DefaultValue' is named inconsistently with 'MatchingPatternConditionSyntax.Initializer', which has the same type ('InitializerClauseSyntax')"
         ),
         ValidationFailure(
           node: .functionParameter,
           message:
-            "child 'DefaultArgument' is named inconsistently with 'MatchingPatternConditionSyntax.Initializer', which has the same type ('InitializerClauseSyntax')"
+            "child 'DefaultValue' is named inconsistently with 'MatchingPatternConditionSyntax.Initializer', which has the same type ('InitializerClauseSyntax')"
         ),
         ValidationFailure(
           node: .macroDecl,
@@ -496,16 +524,192 @@ class ValidateSyntaxNodes: XCTestCase {
     assertFailuresMatchXFails(
       failures,
       expectedFailures: [
-        ValidationFailure(node: .accessesEffect, message: "could conform to trait 'Parenthesized' but does not"),
+        ValidationFailure(node: .accessorParameters, message: "could conform to trait 'NamedDecl' but does not"),
         ValidationFailure(node: .availabilityCondition, message: "could conform to trait 'Parenthesized' but does not"),
         ValidationFailure(node: .canImportExpr, message: "could conform to trait 'Parenthesized' but does not"),
-        ValidationFailure(node: .differentiabilityParams, message: "could conform to trait 'Parenthesized' but does not"),
+        ValidationFailure(node: .differentiabilityArguments, message: "could conform to trait 'Parenthesized' but does not"),
         ValidationFailure(node: .editorPlaceholderDecl, message: "could conform to trait 'MissingNode' but does not"),
-        ValidationFailure(node: .editorPlaceholderExpr, message: "could conform to trait 'IdentifiedDecl' but does not"),
-        ValidationFailure(node: .enumCaseElement, message: "could conform to trait 'IdentifiedDecl' but does not"),
-        ValidationFailure(node: .initializesEffect, message: "could conform to trait 'Parenthesized' but does not"),
+        ValidationFailure(node: .editorPlaceholderExpr, message: "could conform to trait 'MissingNode' but does not"),
+        ValidationFailure(node: .enumCaseElement, message: "could conform to trait 'NamedDecl' but does not"),
+        ValidationFailure(node: .genericParameter, message: "could conform to trait 'NamedDecl' but does not"),
         ValidationFailure(node: .precedenceGroupDecl, message: "could conform to trait 'Braced' but does not"),
-        ValidationFailure(node: .yieldList, message: "could conform to trait 'Parenthesized' but does not"),
+        ValidationFailure(node: .precedenceGroupName, message: "could conform to trait 'NamedDecl' but does not"),
+        ValidationFailure(node: .primaryAssociatedType, message: "could conform to trait 'NamedDecl' but does not"),
+        ValidationFailure(node: .yieldedExpressionsClause, message: "could conform to trait 'Parenthesized' but does not"),
+      ]
+    )
+  }
+
+  func testChildrenShouldNeverEndWithToken() {
+    var failures: [ValidationFailure] = []
+
+    for node in SYNTAX_NODES.compactMap(\.layoutNode) {
+      for child in node.nonUnexpectedChildren {
+        if child.name.hasSuffix("Token") {
+          failures.append(
+            ValidationFailure(
+              node: node.kind,
+              message: "child '\(child.name)' should not end with 'Token'"
+            )
+          )
+        }
+      }
+    }
+
+    assertFailuresMatchXFails(
+      failures,
+      expectedFailures: [
+        // it's not obvious that the end of file is represented by a token, thus its good to highlight it in the name
+        ValidationFailure(node: .sourceFile, message: "child 'EndOfFileToken' should not end with 'Token'")
+      ]
+    )
+  }
+
+  func testAllCollectionChildrenAreMarkedAsSuch() {
+    var failures: [ValidationFailure] = []
+
+    for node in SYNTAX_NODES.compactMap(\.layoutNode) {
+      for child in node.children {
+        if case .node(kind: let kind) = child.kind, SYNTAX_NODE_MAP[kind]?.collectionNode != nil {
+          failures.append(
+            ValidationFailure(
+              node: node.kind,
+              message: "child '\(child.name)' is a SyntaxCollection but child is not marked as a collection"
+            )
+          )
+        }
+      }
+    }
+
+    assertFailuresMatchXFails(
+      failures,
+      expectedFailures: []
+    )
+  }
+
+  func testSyntaxCollectionChildrenArePlural() {
+    var failures: [ValidationFailure] = []
+
+    for node in SYNTAX_NODES.compactMap(\.layoutNode) {
+      for child in node.nonUnexpectedChildren where child.kind.isCollection {
+        if !child.name.hasSuffix("s") {
+          failures.append(
+            ValidationFailure(
+              node: node.kind,
+              message: "child '\(child.name)' is a collection and should thus be named as a plural"
+            )
+          )
+        }
+      }
+    }
+
+    assertFailuresMatchXFails(
+      failures,
+      expectedFailures: [
+        // The child is singular here, the path just consists of multiple components
+        ValidationFailure(node: .importDecl, message: "child 'Path' is a collection and should thus be named as a plural")
+      ]
+    )
+  }
+
+  /// Identifier is a wonderful ambiguous term. Almost always, 'name' or something similar is more expressive
+  func testNoChildContainsIdentifier() {
+    var failures: [ValidationFailure] = []
+
+    for node in SYNTAX_NODES.compactMap(\.layoutNode) {
+      for child in node.nonUnexpectedChildren {
+        if child.name.contains("Identifier") {
+          failures.append(
+            ValidationFailure(
+              node: node.kind,
+              message: "child '\(child.name)' should generally not contain 'Identifier'"
+            )
+          )
+        }
+      }
+    }
+
+    assertFailuresMatchXFails(
+      failures,
+      expectedFailures: [
+        // The identifier expr / pattern nodes do actually have a child that’s the identifier
+        ValidationFailure(node: .identifierExpr, message: "child 'Identifier' should generally not contain 'Identifier'"),
+        ValidationFailure(node: .identifierPattern, message: "child 'Identifier' should generally not contain 'Identifier'"),
+      ]
+    )
+  }
+
+  func testNoAbbreviationsInChildNames() {
+    var failures: [ValidationFailure] = []
+
+    let abbreviations = ["Args", "Params"]
+
+    for node in SYNTAX_NODES.compactMap(\.layoutNode) {
+      for child in node.nonUnexpectedChildren {
+        if abbreviations.contains(where: { child.name.contains($0) }) {
+          failures.append(
+            ValidationFailure(
+              node: node.kind,
+              message: "child '\(child.name)' should not contain abbreviations"
+            )
+          )
+        }
+      }
+    }
+
+    assertFailuresMatchXFails(
+      failures,
+      expectedFailures: []
+    )
+  }
+
+  func testChildrenDontEndWithNodeKind() {
+    var failures: [ValidationFailure] = []
+
+    let forbiddenSuffixes = ["Decl", "Declaration", "Expr", "Expression", "Pattern", "Stmt", "Statement", "Syntax", "Type"]
+
+    for node in SYNTAX_NODES.compactMap(\.layoutNode) {
+      for child in node.nonUnexpectedChildren {
+        for forbiddenSuffix in forbiddenSuffixes {
+          if child.name.hasSuffix(forbiddenSuffix) && child.name != forbiddenSuffix {
+            failures.append(
+              ValidationFailure(
+                node: node.kind,
+                message: "child '\(child.name)' should not end with '\(forbiddenSuffix)'"
+              )
+            )
+          }
+        }
+      }
+    }
+
+    assertFailuresMatchXFails(
+      failures,
+      expectedFailures: [
+        // MARK: Adjective + Type
+        // There’s no real better way to name these except to use an adjective followed by 'Type'
+        ValidationFailure(node: .attributedType, message: "child 'BaseType' should not end with 'Type'"),
+        ValidationFailure(node: .conformanceRequirement, message: "child 'LeftType' should not end with 'Type'"),
+        ValidationFailure(node: .conformanceRequirement, message: "child 'RightType' should not end with 'Type'"),
+        ValidationFailure(node: .extensionDecl, message: "child 'ExtendedType' should not end with 'Type'"),
+        ValidationFailure(node: .genericParameter, message: "child 'InheritedType' should not end with 'Type'"),
+        ValidationFailure(node: .implicitlyUnwrappedOptionalType, message: "child 'WrappedType' should not end with 'Type'"),
+        ValidationFailure(node: .memberType, message: "child 'BaseType' should not end with 'Type'"),
+        ValidationFailure(node: .metatypeType, message: "child 'BaseType' should not end with 'Type'"),
+        ValidationFailure(node: .optionalType, message: "child 'WrappedType' should not end with 'Type'"),
+        ValidationFailure(node: .qualifiedDeclName, message: "child 'BaseType' should not end with 'Type'"),
+        ValidationFailure(node: .sameTypeRequirement, message: "child 'LeftType' should not end with 'Type'"),
+        ValidationFailure(node: .sameTypeRequirement, message: "child 'RightType' should not end with 'Type'"),
+        // MARK: Adjective + Expr
+        ValidationFailure(node: .functionCallExpr, message: "child 'CalledExpression' should not end with 'Expression'"),
+        ValidationFailure(node: .subscriptCallExpr, message: "child 'CalledExpression' should not end with 'Expression'"),
+        ValidationFailure(node: .ternaryExpr, message: "child 'ThenExpression' should not end with 'Expression'"),
+        ValidationFailure(node: .ternaryExpr, message: "child 'ElseExpression' should not end with 'Expression'"),
+        ValidationFailure(node: .unresolvedTernaryExpr, message: "child 'ThenExpression' should not end with 'Expression'"),
+        // MARK: Other
+        // Even though the repetition pattern is not a PatternSyntax, pattern is the correct term here
+        ValidationFailure(node: .packExpansionExpr, message: "child 'RepetitionPattern' should not end with 'Pattern'"),
+        ValidationFailure(node: .packExpansionType, message: "child 'RepetitionPattern' should not end with 'Pattern'"),
       ]
     )
   }

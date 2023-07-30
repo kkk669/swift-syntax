@@ -17,7 +17,7 @@ import SwiftSyntaxBuilder
 final class StructTests: XCTestCase {
   func testEmptyStruct() {
     let leadingTrivia = Trivia.unexpectedText("␣")
-    let buildable = StructDeclSyntax(leadingTrivia: leadingTrivia, identifier: "TestStruct") {}
+    let buildable = StructDeclSyntax(leadingTrivia: leadingTrivia, name: "TestStruct") {}
 
     assertBuildResult(
       buildable,
@@ -45,8 +45,8 @@ final class StructTests: XCTestCase {
         .carriageReturns(1),
       ],
       structKeyword: .keyword(.struct),
-      identifier: "CarriateReturnsStruct",
-      memberBlock: MemberDeclBlockSyntax(members: [])
+      name: "CarriateReturnsStruct",
+      memberBlock: MemberBlockSyntax(members: [])
     )
     let carriageReturnFormFeedsStruct = StructDeclSyntax(
       leadingTrivia: [
@@ -56,8 +56,8 @@ final class StructTests: XCTestCase {
         .carriageReturnLineFeeds(1),
       ],
       structKeyword: .keyword(.struct),
-      identifier: "CarriageReturnFormFeedsStruct",
-      memberBlock: MemberDeclBlockSyntax(members: [])
+      name: "CarriageReturnFormFeedsStruct",
+      memberBlock: MemberBlockSyntax(members: [])
     )
     let testStruct = try StructDeclSyntax("public struct TestStruct") {
       nestedStruct
@@ -87,7 +87,7 @@ final class StructTests: XCTestCase {
   }
 
   func testControlWithLoopAndIf() {
-    let myStruct = StructDeclSyntax(identifier: "MyStruct") {
+    let myStruct = StructDeclSyntax(name: "MyStruct") {
       for i in 0..<5 {
         if i.isMultiple(of: 2) {
           VariableDeclSyntax(bindingSpecifier: .keyword(.let)) {

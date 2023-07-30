@@ -17,15 +17,15 @@ protocol NominalTypeDeclarationTrait {
 
   init(
     attributes: RawAttributeListSyntax?,
-    modifiers: RawModifierListSyntax?,
+    modifiers: RawDeclModifierListSyntax?,
     _ unexpectedBeforeIntroducerKeyword: RawUnexpectedNodesSyntax?,
     introducerKeyword: RawTokenSyntax,
     _ unexpectedBeforeIdentifier: RawUnexpectedNodesSyntax?,
-    identifier: RawTokenSyntax,
+    name: RawTokenSyntax,
     primaryOrGenerics: PrimaryOrGenerics?,
-    inheritanceClause: RawTypeInheritanceClauseSyntax?,
+    inheritanceClause: RawInheritanceClauseSyntax?,
     genericWhereClause: RawGenericWhereClauseSyntax?,
-    memberBlock: RawMemberDeclBlockSyntax,
+    memberBlock: RawMemberBlockSyntax,
     arena: __shared SyntaxArena
   )
 
@@ -35,15 +35,15 @@ protocol NominalTypeDeclarationTrait {
 extension RawProtocolDeclSyntax: NominalTypeDeclarationTrait {
   init(
     attributes: RawAttributeListSyntax?,
-    modifiers: RawModifierListSyntax?,
+    modifiers: RawDeclModifierListSyntax?,
     _ unexpectedBeforeIntroducerKeyword: RawUnexpectedNodesSyntax?,
     introducerKeyword: RawTokenSyntax,
     _ unexpectedBeforeIdentifier: RawUnexpectedNodesSyntax?,
-    identifier: RawTokenSyntax,
+    name: RawTokenSyntax,
     primaryOrGenerics: RawPrimaryAssociatedTypeClauseSyntax?,
-    inheritanceClause: RawTypeInheritanceClauseSyntax?,
+    inheritanceClause: RawInheritanceClauseSyntax?,
     genericWhereClause: RawGenericWhereClauseSyntax?,
-    memberBlock: RawMemberDeclBlockSyntax,
+    memberBlock: RawMemberBlockSyntax,
     arena: __shared SyntaxArena
   ) {
     self.init(
@@ -52,7 +52,7 @@ extension RawProtocolDeclSyntax: NominalTypeDeclarationTrait {
       unexpectedBeforeIntroducerKeyword,
       protocolKeyword: introducerKeyword,
       unexpectedBeforeIdentifier,
-      identifier: identifier,
+      name: name,
       primaryAssociatedTypeClause: primaryOrGenerics,
       inheritanceClause: inheritanceClause,
       genericWhereClause: genericWhereClause,
@@ -69,15 +69,15 @@ extension RawProtocolDeclSyntax: NominalTypeDeclarationTrait {
 extension RawClassDeclSyntax: NominalTypeDeclarationTrait {
   init(
     attributes: RawAttributeListSyntax?,
-    modifiers: RawModifierListSyntax?,
+    modifiers: RawDeclModifierListSyntax?,
     _ unexpectedBeforeIntroducerKeyword: RawUnexpectedNodesSyntax?,
     introducerKeyword: RawTokenSyntax,
     _ unexpectedBeforeIdentifier: RawUnexpectedNodesSyntax?,
-    identifier: RawTokenSyntax,
+    name: RawTokenSyntax,
     primaryOrGenerics: RawGenericParameterClauseSyntax?,
-    inheritanceClause: RawTypeInheritanceClauseSyntax?,
+    inheritanceClause: RawInheritanceClauseSyntax?,
     genericWhereClause: RawGenericWhereClauseSyntax?,
-    memberBlock: RawMemberDeclBlockSyntax,
+    memberBlock: RawMemberBlockSyntax,
     arena: __shared SyntaxArena
   ) {
     self.init(
@@ -86,7 +86,7 @@ extension RawClassDeclSyntax: NominalTypeDeclarationTrait {
       unexpectedBeforeIntroducerKeyword,
       classKeyword: introducerKeyword,
       unexpectedBeforeIdentifier,
-      identifier: identifier,
+      name: name,
       genericParameterClause: primaryOrGenerics,
       inheritanceClause: inheritanceClause,
       genericWhereClause: genericWhereClause,
@@ -103,15 +103,15 @@ extension RawClassDeclSyntax: NominalTypeDeclarationTrait {
 extension RawActorDeclSyntax: NominalTypeDeclarationTrait {
   init(
     attributes: RawAttributeListSyntax?,
-    modifiers: RawModifierListSyntax?,
+    modifiers: RawDeclModifierListSyntax?,
     _ unexpectedBeforeIntroducerKeyword: RawUnexpectedNodesSyntax?,
     introducerKeyword: RawTokenSyntax,
     _ unexpectedBeforeIdentifier: RawUnexpectedNodesSyntax?,
-    identifier: RawTokenSyntax,
+    name: RawTokenSyntax,
     primaryOrGenerics: RawGenericParameterClauseSyntax?,
-    inheritanceClause: RawTypeInheritanceClauseSyntax?,
+    inheritanceClause: RawInheritanceClauseSyntax?,
     genericWhereClause: RawGenericWhereClauseSyntax?,
-    memberBlock: RawMemberDeclBlockSyntax,
+    memberBlock: RawMemberBlockSyntax,
     arena: __shared SyntaxArena
   ) {
     self.init(
@@ -120,7 +120,7 @@ extension RawActorDeclSyntax: NominalTypeDeclarationTrait {
       unexpectedBeforeIntroducerKeyword,
       actorKeyword: introducerKeyword,
       unexpectedBeforeIdentifier,
-      identifier: identifier,
+      name: name,
       genericParameterClause: primaryOrGenerics,
       inheritanceClause: inheritanceClause,
       genericWhereClause: genericWhereClause,
@@ -137,15 +137,15 @@ extension RawActorDeclSyntax: NominalTypeDeclarationTrait {
 extension RawStructDeclSyntax: NominalTypeDeclarationTrait {
   init(
     attributes: RawAttributeListSyntax?,
-    modifiers: RawModifierListSyntax?,
+    modifiers: RawDeclModifierListSyntax?,
     _ unexpectedBeforeIntroducerKeyword: RawUnexpectedNodesSyntax?,
     introducerKeyword: RawTokenSyntax,
     _ unexpectedBeforeIdentifier: RawUnexpectedNodesSyntax?,
-    identifier: RawTokenSyntax,
+    name: RawTokenSyntax,
     primaryOrGenerics: RawGenericParameterClauseSyntax?,
-    inheritanceClause: RawTypeInheritanceClauseSyntax?,
+    inheritanceClause: RawInheritanceClauseSyntax?,
     genericWhereClause: RawGenericWhereClauseSyntax?,
-    memberBlock: RawMemberDeclBlockSyntax,
+    memberBlock: RawMemberBlockSyntax,
     arena: __shared SyntaxArena
   ) {
     self.init(
@@ -154,7 +154,7 @@ extension RawStructDeclSyntax: NominalTypeDeclarationTrait {
       unexpectedBeforeIntroducerKeyword,
       structKeyword: introducerKeyword,
       unexpectedBeforeIdentifier,
-      identifier: identifier,
+      name: name,
       genericParameterClause: primaryOrGenerics,
       inheritanceClause: inheritanceClause,
       genericWhereClause: genericWhereClause,
@@ -171,15 +171,15 @@ extension RawStructDeclSyntax: NominalTypeDeclarationTrait {
 extension RawEnumDeclSyntax: NominalTypeDeclarationTrait {
   init(
     attributes: RawAttributeListSyntax?,
-    modifiers: RawModifierListSyntax?,
+    modifiers: RawDeclModifierListSyntax?,
     _ unexpectedBeforeIntroducerKeyword: RawUnexpectedNodesSyntax?,
     introducerKeyword: RawTokenSyntax,
     _ unexpectedBeforeIdentifier: RawUnexpectedNodesSyntax?,
-    identifier: RawTokenSyntax,
+    name: RawTokenSyntax,
     primaryOrGenerics: RawGenericParameterClauseSyntax?,
-    inheritanceClause: RawTypeInheritanceClauseSyntax?,
+    inheritanceClause: RawInheritanceClauseSyntax?,
     genericWhereClause: RawGenericWhereClauseSyntax?,
-    memberBlock: RawMemberDeclBlockSyntax,
+    memberBlock: RawMemberBlockSyntax,
     arena: __shared SyntaxArena
   ) {
     self.init(
@@ -188,7 +188,7 @@ extension RawEnumDeclSyntax: NominalTypeDeclarationTrait {
       unexpectedBeforeIntroducerKeyword,
       enumKeyword: introducerKeyword,
       unexpectedBeforeIdentifier,
-      identifier: identifier,
+      name: name,
       genericParameterClause: primaryOrGenerics,
       inheritanceClause: inheritanceClause,
       genericWhereClause: genericWhereClause,
@@ -211,21 +211,21 @@ extension Parser {
   ) -> T where T: NominalTypeDeclarationTrait {
     let (unexpectedBeforeIntroducerKeyword, introducerKeyword) = self.eat(introucerHandle)
     let (unexpectedBeforeName, name) = self.expectIdentifier(keywordRecovery: true)
-    if unexpectedBeforeName == nil && name.isMissing && self.currentToken.isAtStartOfLine {
+    if unexpectedBeforeName == nil && name.isMissing && self.atStartOfLine {
       return T.init(
         attributes: attrs.attributes,
         modifiers: attrs.modifiers,
         unexpectedBeforeIntroducerKeyword,
         introducerKeyword: introducerKeyword,
         unexpectedBeforeName,
-        identifier: name,
+        name: name,
         primaryOrGenerics: nil,
         inheritanceClause: nil,
         genericWhereClause: nil,
-        memberBlock: RawMemberDeclBlockSyntax(
-          leftBrace: RawTokenSyntax(missing: .leftBrace, arena: self.arena),
-          members: RawMemberDeclListSyntax(elements: [], arena: self.arena),
-          rightBrace: RawTokenSyntax(missing: .rightBrace, arena: self.arena),
+        memberBlock: RawMemberBlockSyntax(
+          leftBrace: missingToken(.leftBrace),
+          members: RawMemberBlockItemListSyntax(elements: [], arena: self.arena),
+          rightBrace: missingToken(.rightBrace),
           arena: self.arena
         ),
         arena: self.arena
@@ -233,13 +233,13 @@ extension Parser {
     }
 
     let primaryOrGenerics: T.PrimaryOrGenerics?
-    if self.currentToken.starts(with: "<") {
+    if self.at(prefix: "<") {
       primaryOrGenerics = T.parsePrimaryOrGenerics(&self)
     } else {
       primaryOrGenerics = nil
     }
 
-    let inheritance: RawTypeInheritanceClauseSyntax?
+    let inheritance: RawInheritanceClauseSyntax?
     if self.at(.colon) || self.isAtPythonStyleInheritanceClause() {
       inheritance = self.parseInheritance()
     } else {
@@ -254,14 +254,14 @@ extension Parser {
       whereClause = nil
     }
 
-    let memberBlock = self.parseMemberDeclList(introducer: introducerKeyword)
+    let memberBlock = self.parseMemberBlock(introducer: introducerKeyword)
     return T.init(
       attributes: attrs.attributes,
       modifiers: attrs.modifiers,
       unexpectedBeforeIntroducerKeyword,
       introducerKeyword: introducerKeyword,
       unexpectedBeforeName,
-      identifier: name,
+      name: name,
       primaryOrGenerics: primaryOrGenerics,
       inheritanceClause: inheritance,
       genericWhereClause: whereClause,
@@ -271,7 +271,7 @@ extension Parser {
   }
 
   /// Parse an inheritance clause.
-  mutating func parseInheritance() -> RawTypeInheritanceClauseSyntax {
+  mutating func parseInheritance() -> RawInheritanceClauseSyntax {
     let unexpectedBeforeColon: RawUnexpectedNodesSyntax?
     let colon: RawTokenSyntax
 
@@ -306,12 +306,12 @@ extension Parser {
         keepGoing = self.consume(if: .comma)
         elements.append(
           RawInheritedTypeSyntax(
-            typeName: type,
+            type: type,
             trailingComma: keepGoing,
             arena: self.arena
           )
         )
-      } while keepGoing != nil && loopProgress.evaluate(currentToken)
+      } while keepGoing != nil && self.hasProgressed(&loopProgress)
     }
 
     let unexpectedAfterInheritedTypeCollection: RawUnexpectedNodesSyntax?
@@ -323,10 +323,10 @@ extension Parser {
       unexpectedAfterInheritedTypeCollection = nil
     }
 
-    return RawTypeInheritanceClauseSyntax(
+    return RawInheritanceClauseSyntax(
       unexpectedBeforeColon,
       colon: colon,
-      inheritedTypeCollection: RawInheritedTypeListSyntax(elements: elements, arena: self.arena),
+      inheritedTypes: RawInheritedTypeListSyntax(elements: elements, arena: self.arena),
       unexpectedAfterInheritedTypeCollection,
       arena: self.arena
     )
@@ -350,20 +350,12 @@ extension Parser {
             arena: self.arena
           )
         )
-      } while keepGoing != nil && loopProgress.evaluate(currentToken)
+      } while keepGoing != nil && self.hasProgressed(&loopProgress)
     }
-    let unexpectedBeforeRangle: RawUnexpectedNodesSyntax?
-    let rangle: RawTokenSyntax
-    if self.currentToken.starts(with: ">") {
-      unexpectedBeforeRangle = nil
-      rangle = self.consumePrefix(">", as: .rightAngle)
-    } else {
-      (unexpectedBeforeRangle, rangle) = self.expect(.rightAngle)
-    }
+    let rangle = self.expectWithoutRecovery(prefix: ">", as: .rightAngle)
     return RawPrimaryAssociatedTypeClauseSyntax(
       leftAngle: langle,
-      primaryAssociatedTypeList: RawPrimaryAssociatedTypeListSyntax(elements: associatedTypes, arena: self.arena),
-      unexpectedBeforeRangle,
+      primaryAssociatedTypes: RawPrimaryAssociatedTypeListSyntax(elements: associatedTypes, arena: self.arena),
       rightAngle: rangle,
       arena: self.arena
     )

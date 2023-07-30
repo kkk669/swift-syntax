@@ -363,7 +363,9 @@ public struct MissingPatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  /// A placeholder, i.e. `<#pattern#>`, that can be inserted into the source code to represent the missing pattern./// This token should always have `presence = .missing`.
+  /// A placeholder, i.e. `<#pattern#>`, that can be inserted into the source code to represent the missing pattern.
+  /// 
+  /// This token should always have `presence = .missing`.
   public var placeholder: TokenSyntax {
     get {
       return TokenSyntax(data.child(at: 1, parent: Syntax(self))!)
@@ -565,7 +567,7 @@ public struct TuplePatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
 /// ### Children
 /// 
 ///  - `bindingSpecifier`: (`'let'` | `'var'` | `'inout'`)
-///  - `valuePattern`: ``PatternSyntax``
+///  - `pattern`: ``PatternSyntax``
 public struct ValueBindingPatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
   public let _syntaxNode: Syntax
   
@@ -591,9 +593,9 @@ public struct ValueBindingPatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
       leadingTrivia: Trivia? = nil,
       _ unexpectedBeforeBindingSpecifier: UnexpectedNodesSyntax? = nil,
       bindingSpecifier: TokenSyntax,
-      _ unexpectedBetweenBindingSpecifierAndValuePattern: UnexpectedNodesSyntax? = nil,
-      valuePattern: some PatternSyntaxProtocol,
-      _ unexpectedAfterValuePattern: UnexpectedNodesSyntax? = nil,
+      _ unexpectedBetweenBindingSpecifierAndPattern: UnexpectedNodesSyntax? = nil,
+      pattern: some PatternSyntaxProtocol,
+      _ unexpectedAfterPattern: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
     
   ) {
@@ -602,16 +604,16 @@ public struct ValueBindingPatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
     let data: SyntaxData = withExtendedLifetime((SyntaxArena(), (
             unexpectedBeforeBindingSpecifier, 
             bindingSpecifier, 
-            unexpectedBetweenBindingSpecifierAndValuePattern, 
-            valuePattern, 
-            unexpectedAfterValuePattern
+            unexpectedBetweenBindingSpecifierAndPattern, 
+            pattern, 
+            unexpectedAfterPattern
           ))) { (arena, _) in
       let layout: [RawSyntax?] = [
           unexpectedBeforeBindingSpecifier?.raw, 
           bindingSpecifier.raw, 
-          unexpectedBetweenBindingSpecifierAndValuePattern?.raw, 
-          valuePattern.raw, 
-          unexpectedAfterValuePattern?.raw
+          unexpectedBetweenBindingSpecifierAndPattern?.raw, 
+          pattern.raw, 
+          unexpectedAfterPattern?.raw
         ]
       let raw = RawSyntax.makeLayout(
         kind: SyntaxKind.valueBindingPattern,
@@ -644,7 +646,7 @@ public struct ValueBindingPatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedBetweenBindingSpecifierAndValuePattern: UnexpectedNodesSyntax? {
+  public var unexpectedBetweenBindingSpecifierAndPattern: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 2, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -653,7 +655,7 @@ public struct ValueBindingPatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var valuePattern: PatternSyntax {
+  public var pattern: PatternSyntax {
     get {
       return PatternSyntax(data.child(at: 3, parent: Syntax(self))!)
     }
@@ -662,7 +664,7 @@ public struct ValueBindingPatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
     }
   }
   
-  public var unexpectedAfterValuePattern: UnexpectedNodesSyntax? {
+  public var unexpectedAfterPattern: UnexpectedNodesSyntax? {
     get {
       return data.child(at: 4, parent: Syntax(self)).map(UnexpectedNodesSyntax.init)
     }
@@ -675,9 +677,9 @@ public struct ValueBindingPatternSyntax: PatternSyntaxProtocol, SyntaxHashable {
     return .layout([
           \Self.unexpectedBeforeBindingSpecifier, 
           \Self.bindingSpecifier, 
-          \Self.unexpectedBetweenBindingSpecifierAndValuePattern, 
-          \Self.valuePattern, 
-          \Self.unexpectedAfterValuePattern
+          \Self.unexpectedBetweenBindingSpecifierAndPattern, 
+          \Self.pattern, 
+          \Self.unexpectedAfterPattern
         ])
   }
 }

@@ -24,7 +24,8 @@ public let AVAILABILITY_NODES: [Node] = [
     traits: ["WithTrailingComma"],
     children: [
       Child(
-        name: "Entry",
+        name: "Argument",
+        deprecatedName: "Entry",
         kind: .nodeChoices(choices: [
           Child(
             name: "Token",
@@ -36,7 +37,7 @@ public let AVAILABILITY_NODES: [Node] = [
           ),
           Child(
             name: "AvailabilityVersionRestriction",
-            kind: .node(kind: .availabilityVersionRestriction)
+            kind: .node(kind: .platformVersion)
           ),
           Child(
             name: "AvailabilityLabeledArgument",
@@ -99,7 +100,7 @@ public let AVAILABILITY_NODES: [Node] = [
 
   // availability-spec-list -> availability-entry availability-spec-list?
   Node(
-    kind: .availabilitySpecList,
+    kind: .availabilityArgumentList,
     base: .syntaxCollection,
     nameForDiagnostics: "'@availability' arguments",
     elementChoices: [.availabilityArgument]
@@ -108,7 +109,7 @@ public let AVAILABILITY_NODES: [Node] = [
   // Representation for 'iOS 10', 'swift 3.4' etc.
   // availability-version-restriction -> identifier version-tuple
   Node(
-    kind: .availabilityVersionRestriction,
+    kind: .platformVersion,
     base: .syntax,
     nameForDiagnostics: "version restriction",
     documentation: "An argument to `@available` that restricts the availability on a certain platform to a version, e.g. `iOS 10` or `swift 3.4`.",
@@ -118,8 +119,7 @@ public let AVAILABILITY_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         nameForDiagnostics: "platform",
         documentation:
-          "The name of the OS on which the availability should be restricted or 'swift' if the availability should be restricted based on a Swift version.",
-        classification: "Keyword"
+          "The name of the OS on which the availability should be restricted or 'swift' if the availability should be restricted based on a Swift version."
       ),
       Child(
         name: "Version",

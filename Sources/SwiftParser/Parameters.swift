@@ -33,13 +33,13 @@ extension RawClosureParameterListSyntax: RawParameterListTrait {}
 extension RawEnumCaseParameterListSyntax: RawParameterListTrait {}
 
 protocol RawParameterClauseTrait: RawSyntaxNodeProtocol {
-  associatedtype ParameterList: RawParameterListTrait
+  associatedtype Parameters: RawParameterListTrait
 
   init(
     _ unexpectedBeforeLeftParen: RawUnexpectedNodesSyntax?,
     leftParen: RawTokenSyntax,
     _ unexpectedBetweenLeftParenAndParameterList: RawUnexpectedNodesSyntax?,
-    parameterList: ParameterList,
+    parameters: Parameters,
     _ unexpectedBetweenParameterListAndRightParen: RawUnexpectedNodesSyntax?,
     rightParen: RawTokenSyntax,
     _ unexpectedAfterRightParen: RawUnexpectedNodesSyntax?,
@@ -47,7 +47,7 @@ protocol RawParameterClauseTrait: RawSyntaxNodeProtocol {
   )
 }
 
-extension RawParameterClauseSyntax: RawParameterClauseTrait {}
+extension RawFunctionParameterClauseSyntax: RawParameterClauseTrait {}
 extension RawClosureParameterClauseSyntax: RawParameterClauseTrait {}
 extension RawEnumCaseParameterClauseSyntax: RawParameterClauseTrait {}
 
@@ -64,7 +64,7 @@ extension Parser {
   fileprivate mutating func parseParameterNames() -> ParameterNames {
     let unexpectedBeforeFirstName: RawUnexpectedNodesSyntax?
     let firstName: RawTokenSyntax?
-    if self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true) {
+    if self.atArgumentLabel(allowDollarIdentifier: true) {
       (unexpectedBeforeFirstName, firstName) = self.parseArgumentLabel()
     } else {
       (unexpectedBeforeFirstName, firstName) = (nil, nil)
@@ -72,7 +72,7 @@ extension Parser {
 
     let unexpectedBeforeSecondName: RawUnexpectedNodesSyntax?
     let secondName: RawTokenSyntax?
-    if self.currentToken.canBeArgumentLabel(allowDollarIdentifier: true) {
+    if self.atArgumentLabel(allowDollarIdentifier: true) {
       (unexpectedBeforeSecondName, secondName) = self.parseArgumentLabel()
     } else {
       (unexpectedBeforeSecondName, secondName) = (nil, nil)
@@ -100,7 +100,7 @@ extension Parser {
     if colon.presence == .missing, let secondName = names.secondName, secondName.tokenText.isStartingWithUppercase {
       // Synthesize the secondName parameter as a type node.
       type = RawTypeSyntax(
-        RawSimpleTypeIdentifierSyntax(
+        RawIdentifierTypeSyntax(
           name: secondName,
           genericArgumentClause: nil,
           arena: self.arena
@@ -119,11 +119,11 @@ extension Parser {
 
     let ellipsis = self.consumeIfContextualPunctuator("...", remapping: .ellipsis)
 
-    let defaultArgument: RawInitializerClauseSyntax?
+    let defaultValue: RawInitializerClauseSyntax?
     if self.at(.equal) || self.atContextualPunctuator("==") {
-      defaultArgument = self.parseDefaultArgument()
+      defaultValue = self.parseDefaultArgument()
     } else {
-      defaultArgument = nil
+      defaultValue = nil
     }
 
     let trailingComma = self.consume(if: .comma)
@@ -139,7 +139,7 @@ extension Parser {
       colon: colon,
       type: type,
       ellipsis: ellipsis,
-      defaultArgument: defaultArgument,
+      defaultValue: defaultValue,
       trailingComma: trailingComma,
       arena: self.arena
     )
@@ -206,11 +206,11 @@ extension Parser {
       type = self.parseType(misplacedSpecifiers: misplacedSpecifiers)
     }
 
-    let defaultArgument: RawInitializerClauseSyntax?
+    let defaultValue: RawInitializerClauseSyntax?
     if self.at(.equal) || self.atContextualPunctuator("==") {
-      defaultArgument = self.parseDefaultArgument()
+      defaultValue = self.parseDefaultArgument()
     } else {
-      defaultArgument = nil
+      defaultValue = nil
     }
 
     let trailingComma = self.consume(if: .comma)
@@ -224,7 +224,7 @@ extension Parser {
       unexpectedBeforeColon,
       colon: colon,
       type: type,
-      defaultArgument: defaultArgument,
+      defaultValue: defaultValue,
       trailingComma: trailingComma,
       arena: self.arena
     )
@@ -234,10 +234,10 @@ extension Parser {
 // MARK: - Parameter Modifiers
 
 extension Parser {
-  mutating func parseParameterModifiers(isClosure: Bool) -> RawModifierListSyntax? {
+  mutating func parseParameterModifiers(isClosure: Bool) -> RawDeclModifierListSyntax? {
     var elements = [RawDeclModifierSyntax]()
-    var loopCondition = LoopProgressCondition()
-    MODIFIER_LOOP: while loopCondition.evaluate(currentToken) {
+    var loopProgress = LoopProgressCondition()
+    MODIFIER_LOOP: while self.hasProgressed(&loopProgress) {
       switch self.at(anyIn: ParameterModifier.self) {
       case (._const, let handle)?:
         elements.append(RawDeclModifierSyntax(name: self.eat(handle), detail: nil, arena: self.arena))
@@ -250,7 +250,7 @@ extension Parser {
     if elements.isEmpty {
       return nil
     } else {
-      return RawModifierListSyntax(elements: elements, arena: self.arena)
+      return RawDeclModifierListSyntax(elements: elements, arena: self.arena)
     }
   }
 
@@ -272,21 +272,21 @@ extension Parser {
     ParameterClause: RawParameterClauseTrait
   >(
     _ parameterClauseType: ParameterClause.Type,
-    parseParameter: (inout Parser) -> ParameterClause.ParameterList.ParameterSyntax
+    parseParameter: (inout Parser) -> ParameterClause.Parameters.ParameterSyntax
   ) -> ParameterClause {
     let (unexpectedBeforeLParen, lparen) = self.expect(.leftParen)
-    var elements = [ParameterClause.ParameterList.ParameterSyntax]()
+    var elements = [ParameterClause.Parameters.ParameterSyntax]()
     // If we are missing the left parenthesis and the next token doesn't appear
     // to be an argument label, don't parse any parameters.
     let shouldSkipParameterParsing =
       lparen.isMissing
-      && (!currentToken.canBeArgumentLabel(allowDollarIdentifier: true) || currentToken.isLexerClassifiedKeyword)
+      && (!self.atArgumentLabel(allowDollarIdentifier: true) || currentToken.isLexerClassifiedKeyword)
     if !shouldSkipParameterParsing {
       var keepGoing = true
       var loopProgress = LoopProgressCondition()
       while !self.at(.endOfFile, .rightParen)
         && keepGoing
-        && loopProgress.evaluate(currentToken)
+        && self.hasProgressed(&loopProgress)
       {
         let parameter = parseParameter(&self)
         if parameter.isEmpty {
@@ -299,18 +299,18 @@ extension Parser {
     }
     let (unexpectedBeforeRParen, rparen) = self.expect(.rightParen)
 
-    let parameters: ParameterClause.ParameterList
+    let parameters: ParameterClause.Parameters
     if elements.isEmpty && (lparen.isMissing || rparen.isMissing) {
-      parameters = ParameterClause.ParameterList(elements: [], arena: self.arena)
+      parameters = ParameterClause.Parameters(elements: [], arena: self.arena)
     } else {
-      parameters = ParameterClause.ParameterList(elements: elements, arena: self.arena)
+      parameters = ParameterClause.Parameters(elements: elements, arena: self.arena)
     }
 
     return ParameterClause(
       unexpectedBeforeLParen,
       leftParen: lparen,
       nil,
-      parameterList: parameters,
+      parameters: parameters,
       unexpectedBeforeRParen,
       rightParen: rparen,
       nil,

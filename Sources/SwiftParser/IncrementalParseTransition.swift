@@ -20,7 +20,7 @@ extension Parser {
 
     let currentOffset = self.lexemes.offsetToStart(self.currentToken)
     if let node = parseLookup!.lookUp(currentOffset, kind: kind) {
-      self.lexemes.advance(by: node.byteSize, currentToken: &self.currentToken)
+      self.lexemes.advance(by: node.totalLength.utf8Length, currentToken: &self.currentToken)
       return node
     }
 
@@ -213,8 +213,10 @@ fileprivate struct SyntaxCursor {
     var node = self.node
     while let parent = node.parent {
       let children = parent.children(viewMode: viewMode)
-      if children.index(after: node.index) != children.endIndex {
-        return children[children.index(after: node.index)]
+      if let nodeIndex = children.index(of: node),
+        children.index(after: nodeIndex) != children.endIndex
+      {
+        return children[children.index(after: nodeIndex)]
       }
       node = parent
     }

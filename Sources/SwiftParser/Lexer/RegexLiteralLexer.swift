@@ -359,7 +359,7 @@ extension RegexLiteralLexemes.Element {
   var tokenKind: RawTokenKind {
     switch kind {
     case .openingPounds, .closingPounds:
-      return .extendedRegexDelimiter
+      return .regexPoundDelimiter
     case .openingSlash, .closingSlash:
       return .regexSlash
     case .pattern:
@@ -644,15 +644,15 @@ extension Lexer.Cursor {
       return false
 
     // Pound keywords that do not generally sequence expressions.
-    case .poundAvailableKeyword, .poundSourceLocationKeyword, .poundUnavailableKeyword:
+    case .poundAvailable, .poundSourceLocation, .poundUnavailable:
       return false
 
     // Pound keywords that generally do sequence expressions.
-    case .poundIfKeyword, .poundElseKeyword, .poundElseifKeyword, .poundEndifKeyword:
+    case .poundIf, .poundElse, .poundElseif, .poundEndif:
       return true
 
     // Bits of string/regex grammar, we can't start lexing a regex literal here.
-    case .extendedRegexDelimiter, .regexSlash, .regexLiteralPattern, .rawStringDelimiter, .stringQuote, .stringSegment, .multilineStringQuote, .singleQuote:
+    case .regexPoundDelimiter, .regexSlash, .regexLiteralPattern, .rawStringPoundDelimiter, .stringQuote, .stringSegment, .multilineStringQuote, .singleQuote:
       return false
 
     // Allow unknown for better recovery.

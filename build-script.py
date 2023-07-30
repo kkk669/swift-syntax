@@ -16,6 +16,7 @@ PACKAGE_DIR = os.path.dirname(os.path.realpath(__file__))
 WORKSPACE_DIR = os.path.dirname(PACKAGE_DIR)
 EXAMPLES_DIR = os.path.join(PACKAGE_DIR, "Examples")
 SOURCES_DIR = os.path.join(PACKAGE_DIR, "Sources")
+TESTS_DIR = os.path.join(PACKAGE_DIR, "Tests")
 SWIFTIDEUTILS_DIR = os.path.join(SOURCES_DIR, "SwiftIDEUtils")
 SWIFTSYNTAX_DIR = os.path.join(SOURCES_DIR, "SwiftSyntax")
 SWIFTSYNTAX_DOCUMENTATION_DIR = \
@@ -236,6 +237,7 @@ class Builder(object):
         env["SWIFTCI_USE_LOCAL_DEPS"] = "1"
         env["SWIFT_SYNTAX_PARSER_LIB_SEARCH_PATH"] = \
             os.path.join(self.toolchain, "lib", "swift", "macosx")
+
         check_call(command, env=env, verbose=self.verbose)
 
 
@@ -262,8 +264,8 @@ def verify_code_generated_files(
 
     print("** Verifing code generated files **")
 
-    for module in ["SwiftBasicFormat", "SwiftIDEUtils", \
-      "SwiftParser", "SwiftSyntax", "SwiftSyntaxBuilder"]:
+    for module in ["SwiftParser", "SwiftParserDiagnostics", \
+      "SwiftSyntax", "SwiftSyntaxBuilder"]:
       self_generated_dir = os.path.join(self_temp_dir, module, "generated")
       user_generated_dir = os.path.join(SOURCES_DIR, module, "generated")
       check_generated_files_match(self_generated_dir, user_generated_dir)
@@ -463,6 +465,7 @@ def run_xctests(
     env["SWIFTCI_USE_LOCAL_DEPS"] = "1"
     env["SWIFT_SYNTAX_PARSER_LIB_SEARCH_PATH"] = \
         os.path.join(toolchain, "lib", "swift", "macosx")
+
     check_call(swiftpm_call, env=env, verbose=verbose)
 
 # -----------------------------------------------------------------------------

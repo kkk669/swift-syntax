@@ -141,7 +141,7 @@ extension OperatorTable {
       return ExprSyntax(
         InfixOperatorExprSyntax(
           leftOperand: lhs,
-          operatorOperand: ExprSyntax(binaryOperatorExpr),
+          operator: ExprSyntax(binaryOperatorExpr),
           rightOperand: rhs
         )
       )
@@ -151,14 +151,14 @@ extension OperatorTable {
     if let ternaryExpr = op.as(UnresolvedTernaryExprSyntax.self) {
       return ExprSyntax(
         TernaryExprSyntax(
-          conditionExpression: lhs,
+          condition: lhs,
           ternaryExpr.unexpectedBeforeQuestionMark,
           questionMark: ternaryExpr.questionMark,
-          ternaryExpr.unexpectedBetweenQuestionMarkAndFirstChoice,
-          firstChoice: ternaryExpr.firstChoice,
-          ternaryExpr.unexpectedBetweenFirstChoiceAndColon,
+          ternaryExpr.unexpectedBetweenQuestionMarkAndThenExpression,
+          thenExpression: ternaryExpr.thenExpression,
+          ternaryExpr.unexpectedBetweenThenExpressionAndColon,
           colon: ternaryExpr.colon,
-          secondChoice: rhs
+          elseExpression: rhs
         )
       )
     }
@@ -168,7 +168,7 @@ extension OperatorTable {
       return ExprSyntax(
         InfixOperatorExprSyntax(
           leftOperand: lhs,
-          operatorOperand: ExprSyntax(assignExpr),
+          operator: ExprSyntax(assignExpr),
           rightOperand: rhs
         )
       )
@@ -183,7 +183,7 @@ extension OperatorTable {
           expression: lhs,
           isExpr.unexpectedBeforeIsKeyword,
           isKeyword: isExpr.isKeyword,
-          typeName: rhs.as(TypeExprSyntax.self)!.type
+          type: rhs.as(TypeExprSyntax.self)!.type
         )
       )
     }
@@ -199,7 +199,7 @@ extension OperatorTable {
           asKeyword: asExpr.asKeyword,
           asExpr.unexpectedBetweenAsKeywordAndQuestionOrExclamationMark,
           questionOrExclamationMark: asExpr.questionOrExclamationMark,
-          typeName: rhs.as(TypeExprSyntax.self)!.type
+          type: rhs.as(TypeExprSyntax.self)!.type
         )
       )
     }
@@ -209,7 +209,7 @@ extension OperatorTable {
       return ExprSyntax(
         InfixOperatorExprSyntax(
           leftOperand: lhs,
-          operatorOperand: ExprSyntax(arrowExpr),
+          operator: ExprSyntax(arrowExpr),
           rightOperand: rhs
         )
       )

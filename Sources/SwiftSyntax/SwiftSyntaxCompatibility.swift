@@ -13,11 +13,10 @@
 // This file provides compatibility aliases to keep dependents of SwiftSyntax building.
 // All users of the declarations in this file should transition away from them ASAP.
 
-@available(*, deprecated, renamed: "ImportPathSyntax")
-public typealias AccessPathSyntax = ImportPathSyntax
-
-@available(*, deprecated, renamed: "ImportPathComponentSyntax")
-public typealias AccessPathComponentSyntax = ImportPathComponentSyntax
+extension AttributeSyntax {
+  @available(*, deprecated, renamed: "Arguments")
+  public typealias Argument = Arguments
+}
 
 @available(*, deprecated, renamed: "WithAttributesSyntax")
 public typealias AttributedSyntax = WithAttributesSyntax
@@ -58,6 +57,36 @@ public extension FreestandingMacroExpansionSyntax {
   }
 }
 
+extension GenericRequirementSyntax {
+  @available(*, deprecated, renamed: "Requirement")
+  public typealias Body = Requirement
+}
+
+@available(*, deprecated, renamed: "NamedDecl")
+public typealias IdentifiedDeclSyntax = NamedDeclSyntax
+
+@available(*, deprecated, renamed: "NamedDecl")
+extension IdentifiedDeclSyntax where Self: NamedDeclSyntax {
+  public var identifier: TokenSyntax {
+    get {
+      return self.name
+    }
+    set {
+      self.name = newValue
+    }
+  }
+}
+
+extension PatternBindingSyntax {
+  @available(*, deprecated, renamed: "Accessors")
+  public typealias Accessor = Accessors
+}
+
+extension SubscriptDeclSyntax {
+  @available(*, deprecated, renamed: "Accessors")
+  public typealias Accessor = Accessors
+}
+
 public extension SyntaxProtocol {
   @available(*, deprecated, message: "Use detached computed property instead.")
   func detach() -> Self {
@@ -66,9 +95,54 @@ public extension SyntaxProtocol {
 }
 
 public extension TokenKind {
+  @available(*, deprecated, renamed: "regexPoundDelimiter")
+  static func extendedRegexDelimiter(_ text: String) -> TokenKind {
+    return .regexPoundDelimiter(text)
+  }
+
   @available(*, deprecated, renamed: "leftSquare")
   static var leftSquareBracket: TokenKind {
     return .leftSquare
+  }
+
+  @available(*, deprecated, renamed: "poundAvailable")
+  static var poundAvailableKeyword: TokenKind {
+    return .poundAvailable
+  }
+
+  @available(*, deprecated, renamed: "poundElse")
+  static var poundElseKeyword: TokenKind {
+    return .poundElse
+  }
+
+  @available(*, deprecated, renamed: "poundElseif")
+  static var poundElseifKeyword: TokenKind {
+    return .poundElseif
+  }
+
+  @available(*, deprecated, renamed: "poundEndif")
+  static var poundEndifKeyword: TokenKind {
+    return .poundEndif
+  }
+
+  @available(*, deprecated, renamed: "poundIf")
+  static var poundIfKeyword: TokenKind {
+    return .poundIf
+  }
+
+  @available(*, deprecated, renamed: "poundSourceLocation")
+  static var poundSourceLocationKeyword: TokenKind {
+    return .poundSourceLocation
+  }
+
+  @available(*, deprecated, renamed: "poundUnavailable")
+  static var poundUnavailableKeyword: TokenKind {
+    return .poundUnavailable
+  }
+
+  @available(*, deprecated, renamed: "rawStringPoundDelimiter")
+  static func rawStringDelimiter(_ text: String) -> TokenKind {
+    return .rawStringPoundDelimiter(text)
   }
 
   @available(*, deprecated, renamed: "rightSquare")
@@ -81,6 +155,21 @@ public extension TokenKind {
 }
 
 public extension TokenSyntax {
+  @available(*, deprecated, renamed: "regexPoundDelimiter")
+  static func extendedRegexDelimiter(
+    _ text: String,
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return regexPoundDelimiter(
+      text,
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
   @available(*, deprecated, renamed: "leftSquareToken")
   static func leftSquareBracketToken(
     leadingTrivia: Trivia = [],
@@ -88,6 +177,112 @@ public extension TokenSyntax {
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return .leftSquareToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "poundAvailableToken")
+  static func poundAvailableKeyword(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return poundAvailableToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "poundElseToken")
+  static func poundElseKeyword(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return poundElseToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "poundElseifToken")
+  static func poundElseIfKeyword(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return poundElseifToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "poundEndifToken")
+  static func poundEndifKeyword(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return poundEndifToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "poundIfToken")
+  static func poundIfKeyword(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return poundIfToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "poundSourceLocationToken")
+  static func poundSourceLocationKeyword(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return poundSourceLocationToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "poundUnavailableToken")
+  static func poundUnavailableKeyword(
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return poundUnavailableToken(
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
+  @available(*, deprecated, renamed: "rawStringPoundDelimiter")
+  static func rawStringDelimiter(
+    _ text: String,
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return rawStringPoundDelimiter(
+      text,
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence

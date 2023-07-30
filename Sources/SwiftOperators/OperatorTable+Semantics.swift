@@ -16,7 +16,7 @@ extension PrecedenceGroup {
   ///
   /// TODO: This ignores all semantic errors.
   init(from syntax: PrecedenceGroupDeclSyntax) {
-    self.name = syntax.identifier.text
+    self.name = syntax.name.text
     self.syntax = syntax
 
     for attr in syntax.groupAttributes {
@@ -24,7 +24,7 @@ extension PrecedenceGroup {
       // Relation (lowerThan, higherThan)
       case .precedenceGroupRelation(let relation):
         let isLowerThan = relation.higherThanOrLowerThanLabel.text == "lowerThan"
-        for otherGroup in relation.otherNames {
+        for otherGroup in relation.precedenceGroups {
           let otherGroupName = otherGroup.name.text
           let relationKind: PrecedenceRelation.Kind =
             isLowerThan
@@ -70,7 +70,7 @@ extension Operator {
     self.syntax = syntax
     kind = OperatorKind(rawValue: syntax.fixitySpecifier.text) ?? .infix
 
-    name = syntax.identifier.text
+    name = syntax.name.text
 
     precedenceGroup = syntax.operatorPrecedenceAndTypes?.precedenceGroup.text
   }

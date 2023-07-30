@@ -14,22 +14,17 @@
 
 extension Parser {
   /// Parse a list of availability arguments.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     availability-arguments → availability-argument | availability-argument , availability-arguments
-  mutating func parseAvailabilitySpecList() -> RawAvailabilitySpecListSyntax {
+  mutating func parseAvailabilitySpecList() -> RawAvailabilityArgumentListSyntax {
     var elements = [RawAvailabilityArgumentSyntax]()
     do {
       var keepGoing: RawTokenSyntax? = nil
       var availabilityArgumentProgress = LoopProgressCondition()
       repeat {
-        let entry: RawAvailabilityArgumentSyntax.Entry
+        let argument: RawAvailabilityArgumentSyntax.Argument
         if self.at(.identifier) {
-          entry = .availabilityVersionRestriction(self.parseAvailabilityMacro())
+          argument = .availabilityVersionRestriction(self.parsePlatformVersion())
         } else {
-          entry = self.parseAvailabilitySpec()
+          argument = self.parseAvailabilitySpec()
         }
 
         let unexpectedBeforeKeepGoing: RawUnexpectedNodesSyntax?
@@ -42,16 +37,16 @@ extension Parser {
         }
         elements.append(
           RawAvailabilityArgumentSyntax(
-            entry: entry,
+            argument: argument,
             unexpectedBeforeKeepGoing,
             trailingComma: keepGoing,
             arena: self.arena
           )
         )
-      } while keepGoing != nil && availabilityArgumentProgress.evaluate(currentToken)
+      } while keepGoing != nil && self.hasProgressed(&availabilityArgumentProgress)
     }
 
-    return RawAvailabilitySpecListSyntax(elements: elements, arena: self.arena)
+    return RawAvailabilityArgumentListSyntax(elements: elements, arena: self.arena)
   }
 
   enum AvailabilityArgumentKind: TokenSpecSet {
@@ -95,13 +90,13 @@ extension Parser {
     }
   }
 
-  mutating func parseAvailabilityArgumentSpecList() -> RawAvailabilitySpecListSyntax {
+  mutating func parseAvailabilityArgumentSpecList() -> RawAvailabilityArgumentListSyntax {
     var elements = [RawAvailabilityArgumentSyntax]()
     var keepGoing: RawTokenSyntax? = nil
 
-    var loopProgressCondition = LoopProgressCondition()
+    var loopProgress = LoopProgressCondition()
     LOOP: repeat {
-      let entry: RawAvailabilityArgumentSyntax.Entry
+      let entry: RawAvailabilityArgumentSyntax.Argument
       switch self.at(anyIn: AvailabilityArgumentKind.self) {
       case (.message, let handle)?,
         (.renamed, let handle)?:
@@ -157,7 +152,7 @@ extension Parser {
       case (.star, _)?:
         entry = self.parseAvailabilitySpec()
       case (.identifier, let handle)?:
-        if self.peek().rawTokenKind == .comma {
+        if self.peek(isAt: .comma) {
           // An argument like `_iOS13Aligned` that isn't followed by a version.
           let version = self.eat(handle)
           entry = .token(version)
@@ -171,44 +166,33 @@ extension Parser {
       keepGoing = self.consume(if: .comma)
       elements.append(
         RawAvailabilityArgumentSyntax(
-          entry: entry,
+          argument: entry,
           trailingComma: keepGoing,
           arena: self.arena
         )
       )
-    } while keepGoing != nil && loopProgressCondition.evaluate(currentToken)
-    return RawAvailabilitySpecListSyntax(elements: elements, arena: self.arena)
+    } while keepGoing != nil && self.hasProgressed(&loopProgress)
+    return RawAvailabilityArgumentListSyntax(elements: elements, arena: self.arena)
   }
 
   /// Parse an availability argument.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     availability-argument → platform-name platform-version
-  ///     availability-argument → *
-  mutating func parseAvailabilitySpec() -> RawAvailabilityArgumentSyntax.Entry {
+  mutating func parseAvailabilitySpec() -> RawAvailabilityArgumentSyntax.Argument {
     if let star = self.consumeIfContextualPunctuator("*") {
       // FIXME: Use makeAvailabilityVersionRestriction here - but swift-format
       // doesn't expect it.
       return .token(star)
     }
 
-    return .availabilityVersionRestriction(self.parseAvailabilityMacro())
+    return .availabilityVersionRestriction(self.parsePlatformVersion())
   }
 
   /// Parse an availability macro.
   ///
   /// Availability macros are not an official part of the Swift language.
   ///
-  /// Grammar
-  /// =======
-  ///
-  ///     availability-argument → macro-name platform-version
-  ///
   /// If `allowStarAsVersionNumber` is `true`, versions like `* 13.0` are accepted.
   /// This is to match the behavior of `@_originallyDefinedIn` in the old parser that accepted such versions
-  mutating func parseAvailabilityMacro(allowStarAsVersionNumber: Bool = false) -> RawAvailabilityVersionRestrictionSyntax {
+  mutating func parsePlatformVersion(allowStarAsVersionNumber: Bool = false) -> RawPlatformVersionSyntax {
     let unexpectedBeforePlatform: RawUnexpectedNodesSyntax?
     let platform: RawTokenSyntax
     if allowStarAsVersionNumber, self.atContextualPunctuator("*") {
@@ -232,7 +216,7 @@ extension Parser {
       version = nil
     }
 
-    return RawAvailabilityVersionRestrictionSyntax(
+    return RawPlatformVersionSyntax(
       unexpectedBeforePlatform,
       platform: platform,
       unexpectedComparison,
@@ -266,18 +250,11 @@ extension Parser {
         unexpectedTokens.append(unexpectedVersion)
       }
       keepGoing = self.consume(if: .period)
-    } while keepGoing != nil && loopProgress.evaluate(currentToken)
+    } while keepGoing != nil && self.hasProgressed(&loopProgress)
     return RawUnexpectedNodesSyntax(unexpectedTokens, arena: self.arena)
   }
 
   /// Parse a dot-separated list of version numbers.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     version-tuple -> integer-literal version-list?
-  ///     version-list -> version-tuple-element version-list?
-  ///     version-tuple-element -> '.' integer-literal
   mutating func parseVersionTuple(maxComponentCount: Int) -> RawVersionTupleSyntax {
     if self.at(.floatingLiteral),
       let periodIndex = self.currentToken.tokenText.firstIndex(of: UInt8(ascii: ".")),

@@ -36,7 +36,7 @@ public let DECL_NODES: [Node] = [
   ),
 
   Node(
-    kind: .importPath,
+    kind: .importPathComponentList,
     base: .syntaxCollection,
     nameForDiagnostics: nil,
     elementChoices: [.importPathComponent]
@@ -56,80 +56,11 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Accessors",
-        kind: .collection(kind: .accessorList, collectionElementName: "Accessor"),
-        isIndented: true
+        kind: .collection(kind: .accessorDeclList, collectionElementName: "Accessor")
       ),
       Child(
         name: "RightBrace",
         kind: .token(choices: [.token(tokenKind: "RightBraceToken")])
-      ),
-    ]
-  ),
-
-  Node(
-    kind: .accessesEffect,
-    base: .syntax,
-    nameForDiagnostics: "accesses effect",
-    children: [
-      Child(
-        name: "AccessesKeyword",
-        kind: .token(choices: [.keyword(text: "accesses")])
-      ),
-      Child(
-        name: "LeftParen",
-        kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
-      ),
-      Child(
-        name: "PropertyList",
-        kind: .collection(kind: .tupleExprElementList, collectionElementName: "Property"),
-        nameForDiagnostics: "properties"
-      ),
-      Child(
-        name: "RightParen",
-        kind: .token(choices: [.token(tokenKind: "RightParenToken")])
-      ),
-    ]
-  ),
-
-  Node(
-    kind: .initializesEffect,
-    base: .syntax,
-    nameForDiagnostics: "initializes effect",
-    children: [
-      Child(
-        name: "InitializesKeyword",
-        kind: .token(choices: [.keyword(text: "initializes")])
-      ),
-      Child(
-        name: "LeftParen",
-        kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
-      ),
-      Child(
-        name: "PropertyList",
-        kind: .collection(kind: .tupleExprElementList, collectionElementName: "Property"),
-        nameForDiagnostics: "properties"
-      ),
-      Child(
-        name: "RightParen",
-        kind: .token(choices: [.token(tokenKind: "RightParenToken")])
-      ),
-    ]
-  ),
-
-  Node(
-    kind: .accessorInitEffects,
-    base: .syntax,
-    nameForDiagnostics: "init accessor effects",
-    children: [
-      Child(
-        name: "InitializesEffect",
-        kind: .node(kind: .initializesEffect),
-        isOptional: true
-      ),
-      Child(
-        name: "AccessesEffect",
-        kind: .node(kind: .accessesEffect),
-        isOptional: true
       ),
     ]
   ),
@@ -173,19 +104,15 @@ public let DECL_NODES: [Node] = [
         ])
       ),
       Child(
-        name: "Parameter",
-        kind: .node(kind: .accessorParameter),
+        name: "Parameters",
+        deprecatedName: "Parameter",
+        kind: .node(kind: .accessorParameters),
         nameForDiagnostics: "parameter",
         isOptional: true
       ),
       Child(
         name: "EffectSpecifiers",
         kind: .node(kind: .accessorEffectSpecifiers),
-        isOptional: true
-      ),
-      Child(
-        name: "InitEffects",
-        kind: .node(kind: .accessorInitEffects),
         isOptional: true
       ),
       Child(
@@ -197,7 +124,7 @@ public let DECL_NODES: [Node] = [
   ),
 
   Node(
-    kind: .accessorList,
+    kind: .accessorDeclList,
     base: .syntaxCollection,
     nameForDiagnostics: nil,
     elementChoices: [.accessorDecl]
@@ -205,7 +132,7 @@ public let DECL_NODES: [Node] = [
 
   // (value)
   Node(
-    kind: .accessorParameter,
+    kind: .accessorParameters,
     base: .syntax,
     nameForDiagnostics: nil,
     traits: [
@@ -241,7 +168,7 @@ public let DECL_NODES: [Node] = [
     nameForDiagnostics: "actor",
     traits: [
       "DeclGroup",
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithGenericParameters",
       "WithModifiers",
@@ -255,7 +182,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -264,7 +191,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.keyword(text: "actor")])
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")])
       ),
       Child(
@@ -276,8 +204,8 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "InheritanceClause",
-        kind: .node(kind: .typeInheritanceClause),
-        nameForDiagnostics: "type inheritance clause",
+        kind: .node(kind: .inheritanceClause),
+        nameForDiagnostics: "inheritance clause",
         isOptional: true
       ),
       Child(
@@ -289,7 +217,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "MemberBlock",
-        kind: .node(kind: .memberDeclBlock)
+        kind: .node(kind: .memberBlock)
       ),
     ]
   ),
@@ -300,7 +228,7 @@ public let DECL_NODES: [Node] = [
   //                                 generic-where-clause?
   // associatedtype-name -> identifier
   Node(
-    kind: .associatedtypeDecl,
+    kind: .associatedTypeDecl,
     base: .decl,
     nameForDiagnostics: "associatedtype declaration",
     documentation: """
@@ -329,7 +257,7 @@ public let DECL_NODES: [Node] = [
       ```
       """,
     traits: [
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithModifiers",
     ],
@@ -343,7 +271,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "Modifiers attached to the associated type declaration.",
         isOptional: true
@@ -354,13 +282,14 @@ public let DECL_NODES: [Node] = [
         documentation: "The `associatedtype` keyword for this declaration."
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         documentation: "The name of this associated type."
       ),
       Child(
         name: "InheritanceClause",
-        kind: .node(kind: .typeInheritanceClause),
+        kind: .node(kind: .inheritanceClause),
         nameForDiagnostics: "inheritance clause",
         documentation: "The inheritance clause describing conformances for this associated type declaration.",
         isOptional: true
@@ -417,7 +346,7 @@ public let DECL_NODES: [Node] = [
       """,
     traits: [
       "DeclGroup",
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithGenericParameters",
       "WithModifiers",
@@ -432,7 +361,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "Modifiers attached to the class declaration, such as `public`.",
         isOptional: true
@@ -443,7 +372,8 @@ public let DECL_NODES: [Node] = [
         documentation: "The `class` keyword for this declaration."
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         documentation: "The name of the class."
       ),
@@ -456,7 +386,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "InheritanceClause",
-        kind: .node(kind: .typeInheritanceClause),
+        kind: .node(kind: .inheritanceClause),
         nameForDiagnostics: "inheritance clause",
         documentation: "The inheritance clause describing one or more conformances for this class declaration.",
         isOptional: true
@@ -470,7 +400,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "MemberBlock",
-        kind: .node(kind: .memberDeclBlock),
+        kind: .node(kind: .memberBlock),
         documentation:
           "The members of the class declaration. As class extension declarations may declare additional members, the contents of this member block isn't guaranteed to be a complete list of members for this type."
       ),
@@ -543,8 +473,7 @@ public let DECL_NODES: [Node] = [
           .keyword(text: "static"),
           .keyword(text: "unowned"),
           .keyword(text: "weak"),
-        ]),
-        classification: "Attribute"
+        ])
       ),
       Child(
         name: "Detail",
@@ -580,7 +509,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "Modifiers that are attached to the deinitializer.",
         isOptional: true
@@ -592,7 +521,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "EffectSpecifiers",
-        kind: .node(kind: .deinitEffectSpecifiers),
+        kind: .node(kind: .deinitializerEffectSpecifiers),
         isOptional: true
       ),
       Child(
@@ -605,7 +534,7 @@ public let DECL_NODES: [Node] = [
   ),
 
   Node(
-    kind: .designatedTypeElement,
+    kind: .designatedType,
     base: .syntax,
     nameForDiagnostics: nil,
     children: [
@@ -625,7 +554,7 @@ public let DECL_NODES: [Node] = [
     kind: .designatedTypeList,
     base: .syntaxCollection,
     nameForDiagnostics: nil,
-    elementChoices: [.designatedTypeElement]
+    elementChoices: [.designatedType]
   ),
 
   // <#content#>
@@ -649,7 +578,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         documentation: "If there were modifiers before the editor placeholder, the `EditorPlaceholderDecl` will contain these.",
         isOptional: true
       ),
@@ -678,11 +607,11 @@ public let DECL_NODES: [Node] = [
         documentation: "The '(' to open the parameter clause."
       ),
       Child(
-        name: "ParameterList",
+        name: "Parameters",
+        deprecatedName: "ParameterList",
         kind: .collection(kind: .enumCaseParameterList, collectionElementName: "Parameter"),
         nameForDiagnostics: "parameters",
-        documentation: "The actual parameters.",
-        isIndented: true
+        documentation: "The actual parameters."
       ),
       Child(
         name: "RightParen",
@@ -708,7 +637,7 @@ public let DECL_NODES: [Node] = [
     children: [
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -735,9 +664,10 @@ public let DECL_NODES: [Node] = [
         documentation: "The parameter's type."
       ),
       Child(
-        name: "DefaultArgument",
+        name: "DefaultValue",
+        deprecatedName: "DefaultArgument",
         kind: .node(kind: .initializerClause),
-        nameForDiagnostics: "default argument",
+        nameForDiagnostics: "default value",
         documentation: "If the parameter has a default value, the initializer clause describing the default value.",
         isOptional: true
       ),
@@ -769,7 +699,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "The declaration modifiers applied to the case declaration.",
         isOptional: true
@@ -806,12 +736,14 @@ public let DECL_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         documentation: "The name of this case."
       ),
       Child(
-        name: "AssociatedValue",
+        name: "ParameterClause",
+        deprecatedName: "AssociatedValue",
         kind: .node(kind: .enumCaseParameterClause),
         nameForDiagnostics: "associated values",
         documentation: "The set of associated values of the case.",
@@ -839,7 +771,7 @@ public let DECL_NODES: [Node] = [
     documentation: "A Swift `enum` declaration.",
     traits: [
       "DeclGroup",
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithGenericParameters",
       "WithModifiers",
@@ -854,7 +786,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "The declaration modifiers applied to the enum declaration.",
         isOptional: true
@@ -865,7 +797,8 @@ public let DECL_NODES: [Node] = [
         documentation: "The `enum` keyword for this declaration."
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         documentation: "Declares the name of this enum. If the name matches a reserved keyword use backticks to escape it."
       ),
@@ -879,7 +812,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "InheritanceClause",
-        kind: .node(kind: .typeInheritanceClause),
+        kind: .node(kind: .inheritanceClause),
         nameForDiagnostics: "inheritance clause",
         documentation: "The inheritance clause describing conformances or raw values for this enum declaration.",
         isOptional: true
@@ -893,7 +826,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "MemberBlock",
-        kind: .node(kind: .memberDeclBlock),
+        kind: .node(kind: .memberBlock),
         documentation:
           "The cases and other members associated with this enum declaration. Because enum extension declarations may declare additional members the contents of this member block isn't guaranteed to be a complete list of members for this type."
       ),
@@ -924,7 +857,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -938,7 +871,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "InheritanceClause",
-        kind: .node(kind: .typeInheritanceClause),
+        kind: .node(kind: .inheritanceClause),
         nameForDiagnostics: "inheritance clause",
         isOptional: true
       ),
@@ -951,7 +884,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "MemberBlock",
-        kind: .node(kind: .memberDeclBlock)
+        kind: .node(kind: .memberBlock)
       ),
     ]
   ),
@@ -961,7 +894,7 @@ public let DECL_NODES: [Node] = [
     base: .decl,
     nameForDiagnostics: "function",
     traits: [
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithGenericParameters",
       "WithModifiers",
@@ -975,7 +908,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -984,7 +917,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.keyword(text: "func")])
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [
           .token(tokenKind: "IdentifierToken"),
           .token(tokenKind: "BinaryOperatorToken"),
@@ -1044,7 +978,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -1075,9 +1009,10 @@ public let DECL_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "DefaultArgument",
+        name: "DefaultValue",
+        deprecatedName: "DefaultArgument",
         kind: .node(kind: .initializerClause),
-        nameForDiagnostics: "default argument",
+        nameForDiagnostics: "default value",
         isOptional: true
       ),
       Child(
@@ -1098,7 +1033,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "ParameterClause",
         deprecatedName: "Input",
-        kind: .node(kind: .parameterClause)
+        kind: .node(kind: .functionParameterClause)
       ),
       Child(
         name: "EffectSpecifiers",
@@ -1130,15 +1065,13 @@ public let DECL_NODES: [Node] = [
     children: [
       Child(
         name: "PoundKeyword",
-        kind: .token(choices: [.token(tokenKind: "PoundIfToken"), .token(tokenKind: "PoundElseifToken"), .token(tokenKind: "PoundElseToken")]),
-        classification: "BuildConfigId"
+        kind: .token(choices: [.token(tokenKind: "PoundIfToken"), .token(tokenKind: "PoundElseifToken"), .token(tokenKind: "PoundElseToken")])
       ),
       Child(
         name: "Condition",
         kind: .node(kind: .expr),
         nameForDiagnostics: "condition",
-        isOptional: true,
-        classification: "BuildConfigId"
+        isOptional: true
       ),
       Child(
         name: "Elements",
@@ -1153,7 +1086,7 @@ public let DECL_NODES: [Node] = [
           ),
           Child(
             name: "Decls",
-            kind: .node(kind: .memberDeclList)
+            kind: .node(kind: .memberBlockItemList)
           ),
           Child(
             name: "PostfixExpression",
@@ -1182,8 +1115,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "PoundEndif",
-        kind: .token(choices: [.token(tokenKind: "PoundEndifToken")]),
-        classification: "BuildConfigId"
+        kind: .token(choices: [.token(tokenKind: "PoundEndifToken")])
       ),
     ]
   ),
@@ -1213,7 +1145,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "Modifiers attached to the import declaration. Currently, no modifiers are supported by Swift.",
         isOptional: true
@@ -1243,7 +1175,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Path",
-        kind: .collection(kind: .importPath, collectionElementName: "PathComponent"),
+        kind: .collection(kind: .importPathComponentList, collectionElementName: "PathComponent"),
         documentation: "The path to the module, submodule or symbol being imported."
       ),
     ]
@@ -1265,7 +1197,8 @@ public let DECL_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "TypeName",
+        name: "Type",
+        deprecatedName: "TypeName",
         kind: .node(kind: .type)
       ),
       Child(
@@ -1322,7 +1255,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "Modifiers attached to the initializer",
         isOptional: true
@@ -1376,7 +1309,7 @@ public let DECL_NODES: [Node] = [
     base: .decl,
     nameForDiagnostics: "macro",
     traits: [
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithGenericParameters",
       "WithModifiers",
@@ -1390,7 +1323,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -1399,7 +1332,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.keyword(text: "macro")])
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")])
       ),
       Child(
@@ -1449,7 +1383,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -1460,7 +1394,8 @@ public let DECL_NODES: [Node] = [
         documentation: "The `#` sign."
       ),
       Child(
-        name: "Macro",
+        name: "MacroName",
+        deprecatedName: "Macro",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")])
       ),
       Child(
@@ -1475,8 +1410,9 @@ public let DECL_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "ArgumentList",
-        kind: .collection(kind: .tupleExprElementList, collectionElementName: "Argument")
+        name: "Arguments",
+        deprecatedName: "ArgumentList",
+        kind: .collection(kind: .labeledExprList, collectionElementName: "Argument")
       ),
       Child(
         name: "RightParen",
@@ -1497,10 +1433,10 @@ public let DECL_NODES: [Node] = [
   ),
 
   Node(
-    kind: .memberDeclBlock,
+    kind: .memberBlock,
     base: .syntax,
     nameForDiagnostics: "member block",
-    parserFunction: "parseMemberDeclList",
+    parserFunction: "parseMemberBlock",
     traits: ["Braced"],
     children: [
       Child(
@@ -1509,8 +1445,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Members",
-        kind: .collection(kind: .memberDeclList, collectionElementName: "Member"),
-        isIndented: true
+        kind: .collection(kind: .memberBlockItemList, collectionElementName: "Member")
       ),
       Child(
         name: "RightBrace",
@@ -1521,7 +1456,7 @@ public let DECL_NODES: [Node] = [
 
   // member-decl = decl ';'?
   Node(
-    kind: .memberDeclListItem,
+    kind: .memberBlockItem,
     base: .syntax,
     nameForDiagnostics: nil,
     documentation: "A member declaration of a type consisting of a declaration and an optional semicolon;",
@@ -1542,10 +1477,10 @@ public let DECL_NODES: [Node] = [
 
   // member-decl-list = member-decl member-decl-list?
   Node(
-    kind: .memberDeclList,
+    kind: .memberBlockItemList,
     base: .syntaxCollection,
     nameForDiagnostics: nil,
-    elementChoices: [.memberDeclListItem]
+    elementChoices: [.memberBlockItem]
   ),
 
   // declaration-modifier -> access-level-modifier
@@ -1571,7 +1506,7 @@ public let DECL_NODES: [Node] = [
   //                       | 'weak'
   // mutation-modifier -> 'mutating' | 'nonmutating'
   Node(
-    kind: .modifierList,
+    kind: .declModifierList,
     base: .syntaxCollection,
     nameForDiagnostics: nil,
     elementChoices: [.declModifier]
@@ -1584,7 +1519,7 @@ public let DECL_NODES: [Node] = [
     nameForDiagnostics: "operator declaration",
     documentation: "A Swift `operator` declaration.",
     traits: [
-      "IdentifiedDecl"
+      "NamedDecl"
     ],
     children: [
       Child(
@@ -1599,9 +1534,9 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.keyword(text: "operator")])
       ),
       Child(
-        name: "Identifier",
-        kind: .token(choices: [.token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "PrefixOperatorToken"), .token(tokenKind: "PostfixOperatorToken")]),
-        classification: "OperatorIdentifier"
+        name: "Name",
+        deprecatedName: "Identifier",
+        kind: .token(choices: [.token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "PrefixOperatorToken"), .token(tokenKind: "PostfixOperatorToken")])
       ),
       Child(
         name: "OperatorPrecedenceAndTypes",
@@ -1638,7 +1573,7 @@ public let DECL_NODES: [Node] = [
   ),
 
   Node(
-    kind: .parameterClause,
+    kind: .functionParameterClause,
     base: .syntax,
     nameForDiagnostics: "parameter clause",
     traits: [
@@ -1650,10 +1585,10 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
       ),
       Child(
-        name: "ParameterList",
+        name: "Parameters",
+        deprecatedName: "ParameterList",
         kind: .collection(kind: .functionParameterList, collectionElementName: "Parameter"),
-        nameForDiagnostics: "parameters",
-        isIndented: true
+        nameForDiagnostics: "parameters"
       ),
       Child(
         name: "RightParen",
@@ -1694,7 +1629,8 @@ public let DECL_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "Accessor",
+        name: "Accessors",
+        deprecatedName: "Accessor",
         kind: .nodeChoices(choices: [
           Child(
             name: "Accessors",
@@ -1716,7 +1652,7 @@ public let DECL_NODES: [Node] = [
   ),
 
   Node(
-    kind: .poundSourceLocationArgs,
+    kind: .poundSourceLocationArguments,
     base: .syntax,
     nameForDiagnostics: "'#sourceLocation' arguments",
     children: [
@@ -1774,8 +1710,9 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
       ),
       Child(
-        name: "Args",
-        kind: .node(kind: .poundSourceLocationArgs),
+        name: "Arguments",
+        deprecatedName: "Args",
+        kind: .node(kind: .poundSourceLocationArguments),
         nameForDiagnostics: "arguments",
         isOptional: true
       ),
@@ -1824,8 +1761,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "AssociativityLabel",
         deprecatedName: "AssociativityKeyword",
-        kind: .token(choices: [.keyword(text: "associativity")]),
-        classification: "Keyword"
+        kind: .token(choices: [.keyword(text: "associativity")])
       ),
       Child(
         name: "Colon",
@@ -1858,7 +1794,7 @@ public let DECL_NODES: [Node] = [
     nameForDiagnostics: "precedencegroup",
     documentation: "A Swift `precedencegroup` declaration.",
     traits: [
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithModifiers",
     ],
@@ -1872,7 +1808,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "The declaration modifiers applied to the 'precedencegroup' declaration.",
         isOptional: true
@@ -1882,7 +1818,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.keyword(text: "precedencegroup")])
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         documentation: "The name of this precedence group."
       ),
@@ -1903,7 +1840,7 @@ public let DECL_NODES: [Node] = [
   ),
 
   Node(
-    kind: .precedenceGroupNameElement,
+    kind: .precedenceGroupName,
     base: .syntax,
     nameForDiagnostics: nil,
     traits: ["WithTrailingComma"],
@@ -1927,7 +1864,7 @@ public let DECL_NODES: [Node] = [
     kind: .precedenceGroupNameList,
     base: .syntaxCollection,
     nameForDiagnostics: nil,
-    elementChoices: [.precedenceGroupNameElement]
+    elementChoices: [.precedenceGroupName]
   ),
 
   // precedence-group-relation ->
@@ -1942,15 +1879,15 @@ public let DECL_NODES: [Node] = [
         name: "HigherThanOrLowerThanLabel",
         deprecatedName: "HigherThanOrLowerThan",
         kind: .token(choices: [.keyword(text: "higherThan"), .keyword(text: "lowerThan")]),
-        documentation: "The relation to specified other precedence groups.",
-        classification: "Keyword"
+        documentation: "The relation to specified other precedence groups."
       ),
       Child(
         name: "Colon",
         kind: .token(choices: [.token(tokenKind: "ColonToken")])
       ),
       Child(
-        name: "OtherNames",
+        name: "PrecedenceGroups",
+        deprecatedName: "OtherNames",
         kind: .collection(kind: .precedenceGroupNameList, collectionElementName: "OtherName"),
         documentation: "The name of other precedence group to which this precedence group relates."
       ),
@@ -1972,7 +1909,7 @@ public let DECL_NODES: [Node] = [
       """,
     traits: [
       "DeclGroup",
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithModifiers",
     ],
@@ -1986,7 +1923,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "Modifiers attached to the protocol declaration, such as `public`.",
         isOptional: true
@@ -1997,7 +1934,8 @@ public let DECL_NODES: [Node] = [
         documentation: "The `protocol` keyword for this declaration."
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         documentation: "The name of the protocol."
       ),
@@ -2010,7 +1948,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "InheritanceClause",
-        kind: .node(kind: .typeInheritanceClause),
+        kind: .node(kind: .inheritanceClause),
         nameForDiagnostics: "inheritance clause",
         documentation: "The inheritance clause describing one or more conformances for this protocol declaration.",
         isOptional: true
@@ -2024,7 +1962,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "MemberBlock",
-        kind: .node(kind: .memberDeclBlock),
+        kind: .node(kind: .memberBlock),
         documentation: "The members of the protocol declaration."
       ),
     ]
@@ -2042,7 +1980,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "ArrowToken")])
       ),
       Child(
-        name: "ReturnType",
+        name: "Type",
+        deprecatedName: "ReturnType",
         kind: .node(kind: .type),
         nameForDiagnostics: "return type"
       ),
@@ -2139,7 +2078,7 @@ public let DECL_NODES: [Node] = [
       """,
     traits: [
       "DeclGroup",
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithGenericParameters",
       "WithModifiers",
@@ -2154,7 +2093,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         documentation: "Modifiers that are attached to the struct declaration.",
         isOptional: true
@@ -2165,7 +2104,8 @@ public let DECL_NODES: [Node] = [
         documentation: "The `struct` keyword for this declaration."
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
         documentation: "Declares the name of this struct. If the name matches a reserved keyword use backticks to escape it."
       ),
@@ -2178,8 +2118,8 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "InheritanceClause",
-        kind: .node(kind: .typeInheritanceClause),
-        nameForDiagnostics: "type inheritance clause",
+        kind: .node(kind: .inheritanceClause),
+        nameForDiagnostics: "inheritance clause",
         documentation: "The struct declaration inheritance clause describing one or more conformances for this struct declaration.",
         isOptional: true
       ),
@@ -2192,7 +2132,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "MemberBlock",
-        kind: .node(kind: .memberDeclBlock),
+        kind: .node(kind: .memberBlock),
         documentation:
           "The members of the struct declaration. Because struct extension declarations may declare additional members the contents of this member block isn't guaranteed to be a complete list of members for this type."
       ),
@@ -2217,7 +2157,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -2235,7 +2175,7 @@ public let DECL_NODES: [Node] = [
       Child(
         name: "ParameterClause",
         deprecatedName: "Indices",
-        kind: .node(kind: .parameterClause)
+        kind: .node(kind: .functionParameterClause)
       ),
       Child(
         name: "ReturnClause",
@@ -2250,7 +2190,8 @@ public let DECL_NODES: [Node] = [
         isOptional: true
       ),
       Child(
-        name: "Accessor",
+        name: "Accessors",
+        deprecatedName: "Accessor",
         kind: .nodeChoices(choices: [
           Child(
             name: "Accessors",
@@ -2268,7 +2209,7 @@ public let DECL_NODES: [Node] = [
 
   // type-inheritance-clause -> ':' type
   Node(
-    kind: .typeInheritanceClause,
+    kind: .inheritanceClause,
     base: .syntax,
     nameForDiagnostics: "inheritance clause",
     children: [
@@ -2277,7 +2218,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.token(tokenKind: "ColonToken")])
       ),
       Child(
-        name: "InheritedTypeCollection",
+        name: "InheritedTypes",
+        deprecatedName: "InheritedTypeCollection",
         kind: .collection(kind: .inheritedTypeList, collectionElementName: "InheritedType")
       ),
     ]
@@ -2306,11 +2248,11 @@ public let DECL_NODES: [Node] = [
   //                            type-assignment
   // typealias-name -> identifier
   Node(
-    kind: .typealiasDecl,
+    kind: .typeAliasDecl,
     base: .decl,
     nameForDiagnostics: "typealias declaration",
     traits: [
-      "IdentifiedDecl",
+      "NamedDecl",
       "WithAttributes",
       "WithGenericParameters",
       "WithModifiers",
@@ -2324,7 +2266,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),
@@ -2333,7 +2275,8 @@ public let DECL_NODES: [Node] = [
         kind: .token(choices: [.keyword(text: "typealias")])
       ),
       Child(
-        name: "Identifier",
+        name: "Name",
+        deprecatedName: "Identifier",
         kind: .token(choices: [.token(tokenKind: "IdentifierToken")])
       ),
       Child(
@@ -2374,7 +2317,7 @@ public let DECL_NODES: [Node] = [
       ),
       Child(
         name: "Modifiers",
-        kind: .collection(kind: .modifierList, collectionElementName: "Modifier"),
+        kind: .collection(kind: .declModifierList, collectionElementName: "Modifier"),
         nameForDiagnostics: "modifiers",
         isOptional: true
       ),

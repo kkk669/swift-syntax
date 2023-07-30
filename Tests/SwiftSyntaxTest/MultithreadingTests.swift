@@ -46,7 +46,7 @@ public class MultithreadingTests: XCTestCase {
         name: .identifier("member")
       ),
       leftParen: .leftParenToken(),
-      argumentList: TupleExprElementListSyntax([]),
+      arguments: LabeledExprListSyntax([]),
       rightParen: .rightParenToken()
     )
 

@@ -164,7 +164,7 @@ extension Parser {
   private func reclassifyNewlineOfLastSegmentAsTrivia(
     rawStringDelimitersToken: RawTokenSyntax?,
     openQuoteHasTrailingNewline: Bool,
-    middleSegments: inout [RawStringLiteralSegmentsSyntax.Element]
+    middleSegments: inout [RawStringLiteralSegmentListSyntax.Element]
   ) -> Bool {
     switch middleSegments.last {
     case .stringSegment(let lastMiddleSegment):
@@ -229,7 +229,7 @@ extension Parser {
   /// attached to the string segment token.
   private func postProcessIndentationAndEscapedNewlineOfMiddleSegments(
     rawStringDelimitersToken: RawTokenSyntax?,
-    middleSegments: inout [RawStringLiteralSegmentsSyntax.Element],
+    middleSegments: inout [RawStringLiteralSegmentListSyntax.Element],
     isFirstSegmentOnNewLine: Bool,
     indentation: SyntaxText
   ) {
@@ -303,14 +303,14 @@ extension Parser {
   private func postProcessMultilineStringLiteral(
     rawStringDelimitersToken: RawTokenSyntax?,
     openQuote: RawTokenSyntax,
-    segments allSegments: [RawStringLiteralSegmentsSyntax.Element],
+    segments allSegments: [RawStringLiteralSegmentListSyntax.Element],
     closeQuote: RawTokenSyntax
   ) -> (
-    unexpectedBeforeOpenQuote: [RawTokenSyntax],
-    openQuote: RawTokenSyntax,
-    segments: [RawStringLiteralSegmentsSyntax.Element],
-    unexpectedBeforeCloseQuote: [RawTokenSyntax],
-    closeQuote: RawTokenSyntax
+    unexpectedBeforeOpeningQuote: [RawTokenSyntax],
+    openingQuote: RawTokenSyntax,
+    segments: [RawStringLiteralSegmentListSyntax.Element],
+    unexpectedBeforeClosingQuote: [RawTokenSyntax],
+    closingQuote: RawTokenSyntax
   ) {
     // -------------------------------------------------------------------------
     // Precondition
@@ -470,24 +470,24 @@ extension Parser {
   /// Parse a string literal expression.
   mutating func parseStringLiteral() -> RawStringLiteralExprSyntax {
     /// Parse opening raw string delimiter if exist.
-    let openDelimiter = self.consume(if: .rawStringDelimiter)
+    let openingPounds = self.consume(if: .rawStringPoundDelimiter)
 
     /// Try to parse @ in order to recover from Objective-C style literals
     let unexpectedAtSign = self.consume(if: .atSign)
 
     /// Parse open quote.
-    var (unexpectedBeforeOpenQuote, openQuote) = self.expect(.stringQuote, .multilineStringQuote, default: .stringQuote)
-    unexpectedBeforeOpenQuote = RawUnexpectedNodesSyntax(combining: unexpectedAtSign, unexpectedBeforeOpenQuote, arena: self.arena)
+    var (unexpectedBeforeOpeningQuote, openQuote) = self.expect(.stringQuote, .multilineStringQuote, default: .stringQuote)
+    unexpectedBeforeOpeningQuote = RawUnexpectedNodesSyntax(combining: unexpectedAtSign, unexpectedBeforeOpeningQuote, arena: self.arena)
     var openQuoteKind: RawTokenKind = openQuote.tokenKind
     if openQuote.isMissing, let singleQuote = self.consume(if: .singleQuote) {
-      unexpectedBeforeOpenQuote = RawUnexpectedNodesSyntax(combining: unexpectedBeforeOpenQuote, singleQuote, arena: self.arena)
+      unexpectedBeforeOpeningQuote = RawUnexpectedNodesSyntax(combining: unexpectedBeforeOpeningQuote, singleQuote, arena: self.arena)
       openQuoteKind = .singleQuote
     }
 
     /// Parse segments.
-    var segments: [RawStringLiteralSegmentsSyntax.Element] = []
+    var segments: [RawStringLiteralSegmentListSyntax.Element] = []
     var loopProgress = LoopProgressCondition()
-    while loopProgress.evaluate(self.currentToken) {
+    while self.hasProgressed(&loopProgress) {
       // If we encounter a token with leading trivia, we're no longer in the
       // string literal.
       guard currentToken.leadingTriviaText.isEmpty else { break }
@@ -495,16 +495,16 @@ extension Parser {
       if let stringSegment = self.consume(if: .stringSegment, TokenSpec(.identifier, remapping: .stringSegment)) {
         segments.append(.stringSegment(RawStringSegmentSyntax(content: stringSegment, arena: self.arena)))
       } else if let backslash = self.consume(if: .backslash) {
-        let (unexpectedBeforeDelimiter, delimiter) = self.parsePoundDelimiter(.rawStringDelimiter, matching: openDelimiter)
+        let (unexpectedBeforeDelimiter, delimiter) = self.parsePoundDelimiter(.rawStringPoundDelimiter, matching: openingPounds)
         let leftParen = self.expectWithoutRecoveryOrLeadingTrivia(.leftParen)
-        let expressions = RawTupleExprElementListSyntax(elements: self.parseArgumentListElements(pattern: .none), arena: self.arena)
+        let expressions = RawLabeledExprListSyntax(elements: self.parseArgumentListElements(pattern: .none), arena: self.arena)
 
         // For recovery, eat anything up to the next token that either starts a new string segment or terminates the string.
         // This allows us to skip over extraneous identifiers etc. in an unterminated string interpolation.
         var unexpectedBeforeRightParen: [RawTokenSyntax] = []
         var unexpectedProgress = LoopProgressCondition()
         while !self.at(.rightParen, .stringSegment, .backslash) && !self.at(TokenSpec(openQuoteKind), .endOfFile)
-          && unexpectedProgress.evaluate(self.currentToken)
+          && self.hasProgressed(&unexpectedProgress)
         {
           unexpectedBeforeRightParen.append(self.consumeAnyToken())
         }
@@ -512,7 +512,7 @@ extension Parser {
         // line if this is a single-line literal. Leading trivia is fine as
         // we allow e.g "\(foo )".
         let rightParen: Token
-        if self.at(.rightParen) && self.currentToken.isAtStartOfLine && openQuote.tokenKind != .multilineStringQuote {
+        if self.at(.rightParen) && self.atStartOfLine && openQuote.tokenKind != .multilineStringQuote {
           rightParen = missingToken(.rightParen)
         } else {
           rightParen = self.expectWithoutRecovery(.rightParen)
@@ -535,7 +535,7 @@ extension Parser {
             RawExpressionSegmentSyntax(
               backslash: backslash,
               unexpectedBeforeDelimiter,
-              rawStringDelimiter: delimiter,
+              pounds: delimiter,
               leftParen: leftParen,
               expressions: expressions,
               RawUnexpectedNodesSyntax(unexpectedBeforeRightParen, arena: self.arena),
@@ -550,47 +550,47 @@ extension Parser {
     }
 
     /// Parse close quote.
-    let unexpectedBeforeCloseQuote: RawUnexpectedNodesSyntax?
-    let closeQuote: RawTokenSyntax
+    let unexpectedBeforeClosingQuote: RawUnexpectedNodesSyntax?
+    let closingQuote: RawTokenSyntax
     if openQuoteKind == .singleQuote {
       let singleQuote = self.expectWithoutRecoveryOrLeadingTrivia(.singleQuote)
-      unexpectedBeforeCloseQuote = RawUnexpectedNodesSyntax([singleQuote], arena: self.arena)
-      closeQuote = missingToken(.stringQuote)
+      unexpectedBeforeClosingQuote = RawUnexpectedNodesSyntax([singleQuote], arena: self.arena)
+      closingQuote = missingToken(.stringQuote)
     } else {
-      unexpectedBeforeCloseQuote = nil
-      closeQuote = self.expectWithoutRecoveryOrLeadingTrivia(TokenSpec(openQuote.tokenKind))
+      unexpectedBeforeClosingQuote = nil
+      closingQuote = self.expectWithoutRecoveryOrLeadingTrivia(TokenSpec(openQuote.tokenKind))
     }
 
-    let (unexpectedBeforeCloseDelimiter, closeDelimiter) = self.parsePoundDelimiter(.rawStringDelimiter, matching: openDelimiter)
+    let (unexpectedBeforeClosingPounds, closingPounds) = self.parsePoundDelimiter(.rawStringPoundDelimiter, matching: openingPounds)
 
-    if openQuote.tokenKind == .multilineStringQuote, !openQuote.isMissing, !closeQuote.isMissing {
+    if openQuote.tokenKind == .multilineStringQuote, !openQuote.isMissing, !closingQuote.isMissing {
       let postProcessed = postProcessMultilineStringLiteral(
-        rawStringDelimitersToken: openDelimiter,
+        rawStringDelimitersToken: openingPounds,
         openQuote: openQuote,
         segments: segments,
-        closeQuote: closeQuote
+        closeQuote: closingQuote
       )
       return RawStringLiteralExprSyntax(
-        openDelimiter: openDelimiter,
-        RawUnexpectedNodesSyntax(combining: unexpectedBeforeOpenQuote, postProcessed.unexpectedBeforeOpenQuote, arena: self.arena),
-        openQuote: postProcessed.openQuote,
-        segments: RawStringLiteralSegmentsSyntax(elements: postProcessed.segments, arena: self.arena),
-        RawUnexpectedNodesSyntax(combining: postProcessed.unexpectedBeforeCloseQuote, unexpectedBeforeCloseQuote, arena: self.arena),
-        closeQuote: postProcessed.closeQuote,
-        unexpectedBeforeCloseDelimiter,
-        closeDelimiter: closeDelimiter,
+        openingPounds: openingPounds,
+        RawUnexpectedNodesSyntax(combining: unexpectedBeforeOpeningQuote, postProcessed.unexpectedBeforeOpeningQuote, arena: self.arena),
+        openingQuote: postProcessed.openingQuote,
+        segments: RawStringLiteralSegmentListSyntax(elements: postProcessed.segments, arena: self.arena),
+        RawUnexpectedNodesSyntax(combining: postProcessed.unexpectedBeforeClosingQuote, unexpectedBeforeClosingQuote, arena: self.arena),
+        closingQuote: postProcessed.closingQuote,
+        unexpectedBeforeClosingPounds,
+        closingPounds: closingPounds,
         arena: self.arena
       )
     } else {
       return RawStringLiteralExprSyntax(
-        openDelimiter: openDelimiter,
-        unexpectedBeforeOpenQuote,
-        openQuote: openQuote,
-        segments: RawStringLiteralSegmentsSyntax(elements: segments, arena: self.arena),
-        unexpectedBeforeCloseQuote,
-        closeQuote: closeQuote,
-        unexpectedBeforeCloseDelimiter,
-        closeDelimiter: closeDelimiter,
+        openingPounds: openingPounds,
+        unexpectedBeforeOpeningQuote,
+        openingQuote: openQuote,
+        segments: RawStringLiteralSegmentListSyntax(elements: segments, arena: self.arena),
+        unexpectedBeforeClosingQuote,
+        closingQuote: closingQuote,
+        unexpectedBeforeClosingPounds,
+        closingPounds: closingPounds,
         arena: self.arena
       )
     }

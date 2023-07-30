@@ -142,7 +142,7 @@ fileprivate struct SourceLocationDirectiveArguments {
   /// The `line` argument of the `#sourceLocation` directive.
   let line: Int
 
-  init(_ args: PoundSourceLocationArgsSyntax) throws {
+  init(_ args: PoundSourceLocationArgumentsSyntax) throws {
     guard args.fileName.segments.count == 1,
       case .stringSegment(let segment) = args.fileName.segments.first!
     else {
@@ -192,11 +192,11 @@ public final class SourceLocationConverter {
     self.file = file
     self.source = tree.syntaxTextBytes
     (self.lines, endOfFile) = computeLines(tree: Syntax(tree))
-    precondition(tree.byteSize == endOfFile.utf8Offset)
+    precondition(tree.totalLength.utf8Length == endOfFile.utf8Offset)
 
     for directive in SourceLocationCollector.collectSourceLocations(in: tree) {
       let location = self.physicalLocation(for: directive.positionAfterSkippingLeadingTrivia)
-      if let args = directive.args {
+      if let args = directive.arguments {
         if let parsedArgs = try? SourceLocationDirectiveArguments(args) {
           // Ignore any malformed `#sourceLocation` directives.
           sourceLocationDirectives.append((sourceLine: location.line, arguments: parsedArgs))
@@ -400,7 +400,7 @@ public extension Syntax {
   ) -> SourceLocation {
     var pos = data.position
     pos += raw.leadingTriviaLength
-    pos += raw.contentLength
+    pos += raw.trimmedLength
     if afterTrailingTrivia {
       pos += raw.trailingTriviaLength
     }

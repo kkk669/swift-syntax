@@ -7,8 +7,9 @@
 # See http://swift.org/CONTRIBUTORS.txt for Swift project authors
 
 add_swift_host_library(SwiftIDEUtils
-  generated/SyntaxClassification.swift
+  SwiftIDEUtilsCompatibility.swift
   Syntax+Classifications.swift
+  SyntaxClassification.swift
   SyntaxClassifier.swift
 )
 

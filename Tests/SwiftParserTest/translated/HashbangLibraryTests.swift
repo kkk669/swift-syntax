@@ -40,9 +40,9 @@ final class HashbangLibraryTests: XCTestCase {
                       ],
                       trailingTrivia: .space
                     ),
-                    identifier: .identifier("Foo", trailingTrivia: .space),
-                    memberBlock: MemberDeclBlockSyntax(
-                      members: MemberDeclListSyntax([])
+                    name: .identifier("Foo", trailingTrivia: .space),
+                    memberBlock: MemberBlockSyntax(
+                      members: MemberBlockItemListSyntax([])
                     )
                   )
                 )

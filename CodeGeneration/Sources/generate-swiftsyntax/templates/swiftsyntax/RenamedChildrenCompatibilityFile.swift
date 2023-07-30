@@ -25,13 +25,13 @@ let renamedChildrenCompatibilityFile = try! SourceFileSyntax(leadingTrivia: copy
 
           DeclSyntax(
             """
-            @available(*, deprecated, renamed: "\(raw: child.varName)")
+            @available(*, deprecated, renamed: "\(child.varOrCaseName)")
             public var \(raw: deprecatedVarName): \(raw: type) {
               get {
-                return \(raw: child.varName.backtickedIfNeeded)
+                return \(child.varOrCaseName.backtickedIfNeeded)
               }
               set {
-                \(raw: child.varName.backtickedIfNeeded) = newValue
+                \(child.varOrCaseName.backtickedIfNeeded) = newValue
               }
             }
             """
@@ -57,7 +57,7 @@ let renamedChildrenCompatibilityFile = try! SourceFileSyntax(leadingTrivia: copy
 
       let deprecatedNames = layoutNode.children
         .filter { !$0.isUnexpectedNodes && $0.deprecatedName != nil }
-        .map { $0.varName }
+        .map { $0.varOrCaseName.description }
         .joined(separator: ", ")
 
       try! InitializerDeclSyntax(
@@ -68,15 +68,19 @@ let renamedChildrenCompatibilityFile = try! SourceFileSyntax(leadingTrivia: copy
         """
       ) {
         FunctionCallExprSyntax(callee: ExprSyntax("self.init")) {
-          TupleExprElementSyntax(label: "leadingTrivia", expression: ExprSyntax("leadingTrivia"))
+          LabeledExprSyntax(label: "leadingTrivia", expression: ExprSyntax("leadingTrivia"))
           for child in layoutNode.children {
             if child.isUnexpectedNodes {
-              TupleExprElementSyntax(expression: ExprSyntax("\(raw: child.deprecatedVarName ?? child.varName)"))
+              LabeledExprSyntax(expression: ExprSyntax("\(raw: child.deprecatedVarName ?? child.varOrCaseName)"))
             } else {
-              TupleExprElementSyntax(label: "\(child.varName)", expression: ExprSyntax("\(raw: child.deprecatedVarName ?? child.varName)"))
+              LabeledExprSyntax(
+                label: child.varOrCaseName,
+                colon: .colonToken(),
+                expression: IdentifierExprSyntax(identifier: child.deprecatedVarName ?? child.varOrCaseName)
+              )
             }
           }
-          TupleExprElementSyntax(label: "trailingTrivia", expression: ExprSyntax("trailingTrivia"))
+          LabeledExprSyntax(label: "trailingTrivia", expression: ExprSyntax("trailingTrivia"))
         }
       }
     }

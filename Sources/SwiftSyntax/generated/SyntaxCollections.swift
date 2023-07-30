@@ -15,24 +15,32 @@
 /// ### Children
 /// 
 /// ``AccessorDeclSyntax`` `*`
-public struct AccessorListSyntax: SyntaxCollection, SyntaxHashable {
+///
+/// ### Contained in
+/// 
+///  - ``AccessorBlockSyntax``.``AccessorBlockSyntax/accessors``
+public struct AccessorDeclListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = AccessorDeclSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .accessorList else {
+    guard node.raw.kind == .accessorDeclList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.accessorList
+  public static let syntaxKind = SyntaxKind.accessorDeclList
 }
 
 /// ### Children
 /// 
 /// ``ArrayElementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``ArrayExprSyntax``.``ArrayExprSyntax/elements``
 public struct ArrayElementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = ArrayElementSyntax
   
@@ -51,6 +59,36 @@ public struct ArrayElementListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// (``AttributeSyntax`` | ``IfConfigDeclSyntax``) `*`
+///
+/// ### Contained in
+/// 
+///  - ``AccessorDeclSyntax``.``AccessorDeclSyntax/attributes``
+///  - ``ActorDeclSyntax``.``ActorDeclSyntax/attributes``
+///  - ``AssociatedTypeDeclSyntax``.``AssociatedTypeDeclSyntax/attributes``
+///  - ``AttributedTypeSyntax``.``AttributedTypeSyntax/attributes``
+///  - ``ClassDeclSyntax``.``ClassDeclSyntax/attributes``
+///  - ``ClosureParameterSyntax``.``ClosureParameterSyntax/attributes``
+///  - ``ClosureSignatureSyntax``.``ClosureSignatureSyntax/attributes``
+///  - ``DeinitializerDeclSyntax``.``DeinitializerDeclSyntax/attributes``
+///  - ``EditorPlaceholderDeclSyntax``.``EditorPlaceholderDeclSyntax/attributes``
+///  - ``EnumCaseDeclSyntax``.``EnumCaseDeclSyntax/attributes``
+///  - ``EnumDeclSyntax``.``EnumDeclSyntax/attributes``
+///  - ``ExtensionDeclSyntax``.``ExtensionDeclSyntax/attributes``
+///  - ``FunctionDeclSyntax``.``FunctionDeclSyntax/attributes``
+///  - ``FunctionParameterSyntax``.``FunctionParameterSyntax/attributes``
+///  - ``GenericParameterSyntax``.``GenericParameterSyntax/attributes``
+///  - ``IfConfigClauseSyntax``.``IfConfigClauseSyntax/elements``
+///  - ``ImportDeclSyntax``.``ImportDeclSyntax/attributes``
+///  - ``InitializerDeclSyntax``.``InitializerDeclSyntax/attributes``
+///  - ``MacroDeclSyntax``.``MacroDeclSyntax/attributes``
+///  - ``MacroExpansionDeclSyntax``.``MacroExpansionDeclSyntax/attributes``
+///  - ``MissingDeclSyntax``.``MissingDeclSyntax/attributes``
+///  - ``PrecedenceGroupDeclSyntax``.``PrecedenceGroupDeclSyntax/attributes``
+///  - ``ProtocolDeclSyntax``.``ProtocolDeclSyntax/attributes``
+///  - ``StructDeclSyntax``.``StructDeclSyntax/attributes``
+///  - ``SubscriptDeclSyntax``.``SubscriptDeclSyntax/attributes``
+///  - ``TypeAliasDeclSyntax``.``TypeAliasDeclSyntax/attributes``
+///  - ``VariableDeclSyntax``.``VariableDeclSyntax/attributes``
 public struct AttributeListSyntax: SyntaxCollection, SyntaxHashable {
   public enum Element: SyntaxChildChoices {
     case `attribute`(AttributeSyntax)
@@ -111,60 +149,34 @@ public struct AttributeListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``AvailabilityArgumentSyntax`` `*`
-public struct AvailabilitySpecListSyntax: SyntaxCollection, SyntaxHashable {
+///
+/// ### Contained in
+/// 
+///  - ``AttributeSyntax``.``AttributeSyntax/arguments``
+///  - ``AvailabilityConditionSyntax``.``AvailabilityConditionSyntax/availabilityArguments``
+///  - ``SpecializeAvailabilityArgumentSyntax``.``SpecializeAvailabilityArgumentSyntax/availabilityArguments``
+public struct AvailabilityArgumentListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = AvailabilityArgumentSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .availabilitySpecList else {
+    guard node.raw.kind == .availabilityArgumentList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.availabilitySpecList
-}
-
-/// ### Children
-/// 
-/// ``AvailabilityVersionRestrictionListEntrySyntax`` `*`
-public struct AvailabilityVersionRestrictionListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = AvailabilityVersionRestrictionListEntrySyntax
-  
-  public let _syntaxNode: Syntax
-  
-  public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .availabilityVersionRestrictionList else {
-      return nil
-    }
-    self._syntaxNode = node._syntaxNode
-  }
-  
-  public static let syntaxKind = SyntaxKind.availabilityVersionRestrictionList
-}
-
-/// ### Children
-/// 
-/// ``CaseItemSyntax`` `*`
-public struct CaseItemListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = CaseItemSyntax
-  
-  public let _syntaxNode: Syntax
-  
-  public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .caseItemList else {
-      return nil
-    }
-    self._syntaxNode = node._syntaxNode
-  }
-  
-  public static let syntaxKind = SyntaxKind.caseItemList
+  public static let syntaxKind = SyntaxKind.availabilityArgumentList
 }
 
 /// ### Children
 /// 
 /// ``CatchClauseSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``DoStmtSyntax``.``DoStmtSyntax/catchClauses``
 public struct CatchClauseListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = CatchClauseSyntax
   
@@ -183,6 +195,10 @@ public struct CatchClauseListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``CatchItemSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``CatchClauseSyntax``.``CatchClauseSyntax/catchItems``
 public struct CatchItemListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = CatchItemSyntax
   
@@ -200,43 +216,33 @@ public struct CatchItemListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
-/// ``ClosureCaptureItemSyntax`` `*`
-public struct ClosureCaptureItemListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = ClosureCaptureItemSyntax
-  
-  public let _syntaxNode: Syntax
-  
-  public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .closureCaptureItemList else {
-      return nil
-    }
-    self._syntaxNode = node._syntaxNode
-  }
-  
-  public static let syntaxKind = SyntaxKind.closureCaptureItemList
-}
-
-/// ### Children
+/// ``ClosureCaptureSyntax`` `*`
+///
+/// ### Contained in
 /// 
-/// ``ClosureParamSyntax`` `*`
-public struct ClosureParamListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = ClosureParamSyntax
+///  - ``ClosureCaptureClauseSyntax``.``ClosureCaptureClauseSyntax/items``
+public struct ClosureCaptureListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = ClosureCaptureSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .closureParamList else {
+    guard node.raw.kind == .closureCaptureList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.closureParamList
+  public static let syntaxKind = SyntaxKind.closureCaptureList
 }
 
 /// ### Children
 /// 
 /// ``ClosureParameterSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``ClosureParameterClauseSyntax``.``ClosureParameterClauseSyntax/parameters``
 public struct ClosureParameterListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = ClosureParameterSyntax
   
@@ -254,7 +260,37 @@ public struct ClosureParameterListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
+/// ``ClosureShorthandParameterSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``ClosureSignatureSyntax``.``ClosureSignatureSyntax/parameterClause``
+public struct ClosureShorthandParameterListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = ClosureShorthandParameterSyntax
+  
+  public let _syntaxNode: Syntax
+  
+  public init?(_ node: some SyntaxProtocol) {
+    guard node.raw.kind == .closureShorthandParameterList else {
+      return nil
+    }
+    self._syntaxNode = node._syntaxNode
+  }
+  
+  public static let syntaxKind = SyntaxKind.closureShorthandParameterList
+}
+
+/// ### Children
+/// 
 /// ``CodeBlockItemSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``ClosureExprSyntax``.``ClosureExprSyntax/statements``
+///  - ``CodeBlockSyntax``.``CodeBlockSyntax/statements``
+///  - ``IfConfigClauseSyntax``.``IfConfigClauseSyntax/elements``
+///  - ``SourceFileSyntax``.``SourceFileSyntax/statements``
+///  - ``SwitchCaseSyntax``.``SwitchCaseSyntax/statements``
 public struct CodeBlockItemListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = CodeBlockItemSyntax
   
@@ -273,6 +309,10 @@ public struct CodeBlockItemListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``CompositionTypeElementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``CompositionTypeSyntax``.``CompositionTypeSyntax/elements``
 public struct CompositionTypeElementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = CompositionTypeElementSyntax
   
@@ -291,6 +331,12 @@ public struct CompositionTypeElementListSyntax: SyntaxCollection, SyntaxHashable
 /// ### Children
 /// 
 /// ``ConditionElementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``GuardStmtSyntax``.``GuardStmtSyntax/conditions``
+///  - ``IfExprSyntax``.``IfExprSyntax/conditions``
+///  - ``WhileStmtSyntax``.``WhileStmtSyntax/conditions``
 public struct ConditionElementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = ConditionElementSyntax
   
@@ -308,7 +354,55 @@ public struct ConditionElementListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
+/// ``DeclModifierSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``ActorDeclSyntax``.``ActorDeclSyntax/modifiers``
+///  - ``AssociatedTypeDeclSyntax``.``AssociatedTypeDeclSyntax/modifiers``
+///  - ``ClassDeclSyntax``.``ClassDeclSyntax/modifiers``
+///  - ``ClosureParameterSyntax``.``ClosureParameterSyntax/modifiers``
+///  - ``DeinitializerDeclSyntax``.``DeinitializerDeclSyntax/modifiers``
+///  - ``EditorPlaceholderDeclSyntax``.``EditorPlaceholderDeclSyntax/modifiers``
+///  - ``EnumCaseDeclSyntax``.``EnumCaseDeclSyntax/modifiers``
+///  - ``EnumCaseParameterSyntax``.``EnumCaseParameterSyntax/modifiers``
+///  - ``EnumDeclSyntax``.``EnumDeclSyntax/modifiers``
+///  - ``ExtensionDeclSyntax``.``ExtensionDeclSyntax/modifiers``
+///  - ``FunctionDeclSyntax``.``FunctionDeclSyntax/modifiers``
+///  - ``FunctionParameterSyntax``.``FunctionParameterSyntax/modifiers``
+///  - ``ImportDeclSyntax``.``ImportDeclSyntax/modifiers``
+///  - ``InitializerDeclSyntax``.``InitializerDeclSyntax/modifiers``
+///  - ``MacroDeclSyntax``.``MacroDeclSyntax/modifiers``
+///  - ``MacroExpansionDeclSyntax``.``MacroExpansionDeclSyntax/modifiers``
+///  - ``MissingDeclSyntax``.``MissingDeclSyntax/modifiers``
+///  - ``PrecedenceGroupDeclSyntax``.``PrecedenceGroupDeclSyntax/modifiers``
+///  - ``ProtocolDeclSyntax``.``ProtocolDeclSyntax/modifiers``
+///  - ``StructDeclSyntax``.``StructDeclSyntax/modifiers``
+///  - ``SubscriptDeclSyntax``.``SubscriptDeclSyntax/modifiers``
+///  - ``TypeAliasDeclSyntax``.``TypeAliasDeclSyntax/modifiers``
+///  - ``VariableDeclSyntax``.``VariableDeclSyntax/modifiers``
+public struct DeclModifierListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = DeclModifierSyntax
+  
+  public let _syntaxNode: Syntax
+  
+  public init?(_ node: some SyntaxProtocol) {
+    guard node.raw.kind == .declModifierList else {
+      return nil
+    }
+    self._syntaxNode = node._syntaxNode
+  }
+  
+  public static let syntaxKind = SyntaxKind.declModifierList
+}
+
+/// ### Children
+/// 
 /// ``DeclNameArgumentSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``DeclNameArgumentsSyntax``.``DeclNameArgumentsSyntax/arguments``
 public struct DeclNameArgumentListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = DeclNameArgumentSyntax
   
@@ -326,9 +420,13 @@ public struct DeclNameArgumentListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
-/// ``DesignatedTypeElementSyntax`` `*`
+/// ``DesignatedTypeSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``OperatorPrecedenceAndTypesSyntax``.``OperatorPrecedenceAndTypesSyntax/designatedTypes``
 public struct DesignatedTypeListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = DesignatedTypeElementSyntax
+  public typealias Element = DesignatedTypeSyntax
   
   public let _syntaxNode: Syntax
   
@@ -345,6 +443,10 @@ public struct DesignatedTypeListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``DictionaryElementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``DictionaryExprSyntax``.``DictionaryExprSyntax/content``
 public struct DictionaryElementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = DictionaryElementSyntax
   
@@ -362,20 +464,24 @@ public struct DictionaryElementListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
-/// ``DifferentiabilityParamSyntax`` `*`
-public struct DifferentiabilityParamListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = DifferentiabilityParamSyntax
+/// ``DifferentiabilityArgumentSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``DifferentiabilityArgumentsSyntax``.``DifferentiabilityArgumentsSyntax/arguments``
+public struct DifferentiabilityArgumentListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = DifferentiabilityArgumentSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .differentiabilityParamList else {
+    guard node.raw.kind == .differentiabilityArgumentList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.differentiabilityParamList
+  public static let syntaxKind = SyntaxKind.differentiabilityArgumentList
 }
 
 /// The arguments of the '@_documentation' attribute
@@ -383,39 +489,47 @@ public struct DifferentiabilityParamListSyntax: SyntaxCollection, SyntaxHashable
 /// ### Children
 /// 
 /// ``DocumentationAttributeArgumentSyntax`` `*`
-public struct DocumentationAttributeArgumentsSyntax: SyntaxCollection, SyntaxHashable {
+///
+/// ### Contained in
+/// 
+///  - ``AttributeSyntax``.``AttributeSyntax/arguments``
+public struct DocumentationAttributeArgumentListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = DocumentationAttributeArgumentSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .documentationAttributeArguments else {
+    guard node.raw.kind == .documentationAttributeArgumentList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.documentationAttributeArguments
+  public static let syntaxKind = SyntaxKind.documentationAttributeArgumentList
 }
 
-/// The arguments of the '@_effect' attribute. These will be parsed during the SIL stage.
+/// The arguments of the '@_effects' attribute. These will be parsed during the SIL stage.
 ///
 /// ### Children
 /// 
 /// ``TokenSyntax`` `*`
-public struct EffectsArgumentsSyntax: SyntaxCollection, SyntaxHashable {
+///
+/// ### Contained in
+/// 
+///  - ``AttributeSyntax``.``AttributeSyntax/arguments``
+public struct EffectsAttributeArgumentListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = TokenSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .effectsArguments else {
+    guard node.raw.kind == .effectsAttributeArgumentList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.effectsArguments
+  public static let syntaxKind = SyntaxKind.effectsAttributeArgumentList
 }
 
 /// A collection of 0 or more `EnumCaseElement`s.
@@ -423,6 +537,10 @@ public struct EffectsArgumentsSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``EnumCaseElementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``EnumCaseDeclSyntax``.``EnumCaseDeclSyntax/elements``
 public struct EnumCaseElementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = EnumCaseElementSyntax
   
@@ -441,6 +559,10 @@ public struct EnumCaseElementListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``EnumCaseParameterSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``EnumCaseParameterClauseSyntax``.``EnumCaseParameterClauseSyntax/parameters``
 public struct EnumCaseParameterListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = EnumCaseParameterSyntax
   
@@ -461,6 +583,10 @@ public struct EnumCaseParameterListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``ExprSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``SequenceExprSyntax``.``SequenceExprSyntax/elements``
 public struct ExprListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = ExprSyntax
   
@@ -479,6 +605,10 @@ public struct ExprListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``FunctionParameterSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``FunctionParameterClauseSyntax``.``FunctionParameterClauseSyntax/parameters``
 public struct FunctionParameterListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = FunctionParameterSyntax
   
@@ -497,6 +627,10 @@ public struct FunctionParameterListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``GenericArgumentSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``GenericArgumentClauseSyntax``.``GenericArgumentClauseSyntax/arguments``
 public struct GenericArgumentListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = GenericArgumentSyntax
   
@@ -515,6 +649,10 @@ public struct GenericArgumentListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``GenericParameterSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``GenericParameterClauseSyntax``.``GenericParameterClauseSyntax/parameters``
 public struct GenericParameterListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = GenericParameterSyntax
   
@@ -533,6 +671,10 @@ public struct GenericParameterListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``GenericRequirementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``GenericWhereClauseSyntax``.``GenericWhereClauseSyntax/requirements``
 public struct GenericRequirementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = GenericRequirementSyntax
   
@@ -551,6 +693,10 @@ public struct GenericRequirementListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``IfConfigClauseSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``IfConfigDeclSyntax``.``IfConfigDeclSyntax/clauses``
 public struct IfConfigClauseListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = IfConfigClauseSyntax
   
@@ -569,24 +715,32 @@ public struct IfConfigClauseListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``ImportPathComponentSyntax`` `*`
-public struct ImportPathSyntax: SyntaxCollection, SyntaxHashable {
+///
+/// ### Contained in
+/// 
+///  - ``ImportDeclSyntax``.``ImportDeclSyntax/path``
+public struct ImportPathComponentListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = ImportPathComponentSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .importPath else {
+    guard node.raw.kind == .importPathComponentList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.importPath
+  public static let syntaxKind = SyntaxKind.importPathComponentList
 }
 
 /// ### Children
 /// 
 /// ``InheritedTypeSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``InheritanceClauseSyntax``.``InheritanceClauseSyntax/inheritedTypes``
 public struct InheritedTypeListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = InheritedTypeSyntax
   
@@ -605,6 +759,10 @@ public struct InheritedTypeListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``KeyPathComponentSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``KeyPathExprSyntax``.``KeyPathExprSyntax/components``
 public struct KeyPathComponentListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = KeyPathComponentSyntax
   
@@ -622,43 +780,66 @@ public struct KeyPathComponentListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
-/// ``MemberDeclListItemSyntax`` `*`
-public struct MemberDeclListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = MemberDeclListItemSyntax
+/// ``LabeledExprSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``AttributeSyntax``.``AttributeSyntax/arguments``
+///  - ``ExpressionSegmentSyntax``.``ExpressionSegmentSyntax/expressions``
+///  - ``FunctionCallExprSyntax``.``FunctionCallExprSyntax/arguments``
+///  - ``KeyPathSubscriptComponentSyntax``.``KeyPathSubscriptComponentSyntax/arguments``
+///  - ``MacroExpansionDeclSyntax``.``MacroExpansionDeclSyntax/arguments``
+///  - ``MacroExpansionExprSyntax``.``MacroExpansionExprSyntax/arguments``
+///  - ``SubscriptCallExprSyntax``.``SubscriptCallExprSyntax/arguments``
+///  - ``TupleExprSyntax``.``TupleExprSyntax/elements``
+public struct LabeledExprListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = LabeledExprSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .memberDeclList else {
+    guard node.raw.kind == .labeledExprList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.memberDeclList
+  public static let syntaxKind = SyntaxKind.labeledExprList
 }
 
 /// ### Children
 /// 
-/// ``DeclModifierSyntax`` `*`
-public struct ModifierListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = DeclModifierSyntax
+/// ``MemberBlockItemSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``IfConfigClauseSyntax``.``IfConfigClauseSyntax/elements``
+///  - ``MemberBlockSyntax``.``MemberBlockSyntax/members``
+public struct MemberBlockItemListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = MemberBlockItemSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .modifierList else {
+    guard node.raw.kind == .memberBlockItemList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.modifierList
+  public static let syntaxKind = SyntaxKind.memberBlockItemList
 }
 
 /// ### Children
 /// 
 /// ``MultipleTrailingClosureElementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``FunctionCallExprSyntax``.``FunctionCallExprSyntax/additionalTrailingClosures``
+///  - ``MacroExpansionDeclSyntax``.``MacroExpansionDeclSyntax/additionalTrailingClosures``
+///  - ``MacroExpansionExprSyntax``.``MacroExpansionExprSyntax/additionalTrailingClosures``
+///  - ``SubscriptCallExprSyntax``.``SubscriptCallExprSyntax/additionalTrailingClosures``
 public struct MultipleTrailingClosureElementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = MultipleTrailingClosureElementSyntax
   
@@ -677,24 +858,32 @@ public struct MultipleTrailingClosureElementListSyntax: SyntaxCollection, Syntax
 /// ### Children
 /// 
 /// ``ObjCSelectorPieceSyntax`` `*`
-public struct ObjCSelectorSyntax: SyntaxCollection, SyntaxHashable {
+///
+/// ### Contained in
+/// 
+///  - ``AttributeSyntax``.``AttributeSyntax/arguments``
+public struct ObjCSelectorPieceListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = ObjCSelectorPieceSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .objCSelector else {
+    guard node.raw.kind == .objCSelectorPieceList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.objCSelector
+  public static let syntaxKind = SyntaxKind.objCSelectorPieceList
 }
 
 /// ### Children
 /// 
 /// ``PatternBindingSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``VariableDeclSyntax``.``VariableDeclSyntax/bindings``
 public struct PatternBindingListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = PatternBindingSyntax
   
@@ -712,7 +901,34 @@ public struct PatternBindingListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
+/// ``PlatformVersionItemSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``BackDeployedAttributeArgumentsSyntax``.``BackDeployedAttributeArgumentsSyntax/platforms``
+///  - ``OriginallyDefinedInAttributeArgumentsSyntax``.``OriginallyDefinedInAttributeArgumentsSyntax/platforms``
+public struct PlatformVersionItemListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = PlatformVersionItemSyntax
+  
+  public let _syntaxNode: Syntax
+  
+  public init?(_ node: some SyntaxProtocol) {
+    guard node.raw.kind == .platformVersionItemList else {
+      return nil
+    }
+    self._syntaxNode = node._syntaxNode
+  }
+  
+  public static let syntaxKind = SyntaxKind.platformVersionItemList
+}
+
+/// ### Children
+/// 
 /// (``PrecedenceGroupRelationSyntax`` | ``PrecedenceGroupAssignmentSyntax`` | ``PrecedenceGroupAssociativitySyntax``) `*`
+///
+/// ### Contained in
+/// 
+///  - ``PrecedenceGroupDeclSyntax``.``PrecedenceGroupDeclSyntax/groupAttributes``
 public struct PrecedenceGroupAttributeListSyntax: SyntaxCollection, SyntaxHashable {
   public enum Element: SyntaxChildChoices {
     case `precedenceGroupRelation`(PrecedenceGroupRelationSyntax)
@@ -784,9 +1000,13 @@ public struct PrecedenceGroupAttributeListSyntax: SyntaxCollection, SyntaxHashab
 
 /// ### Children
 /// 
-/// ``PrecedenceGroupNameElementSyntax`` `*`
+/// ``PrecedenceGroupNameSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``PrecedenceGroupRelationSyntax``.``PrecedenceGroupRelationSyntax/precedenceGroups``
 public struct PrecedenceGroupNameListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = PrecedenceGroupNameElementSyntax
+  public typealias Element = PrecedenceGroupNameSyntax
   
   public let _syntaxNode: Syntax
   
@@ -803,6 +1023,10 @@ public struct PrecedenceGroupNameListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``PrimaryAssociatedTypeSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``PrimaryAssociatedTypeClauseSyntax``.``PrimaryAssociatedTypeClauseSyntax/primaryAssociatedTypes``
 public struct PrimaryAssociatedTypeListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = PrimaryAssociatedTypeSyntax
   
@@ -822,21 +1046,25 @@ public struct PrimaryAssociatedTypeListSyntax: SyntaxCollection, SyntaxHashable 
 ///
 /// ### Children
 /// 
-/// (``LabeledSpecializeEntrySyntax`` | ``AvailabilityEntrySyntax`` | ``TargetFunctionEntrySyntax`` | ``GenericWhereClauseSyntax``) `*`
-public struct SpecializeAttributeSpecListSyntax: SyntaxCollection, SyntaxHashable {
+/// (``LabeledSpecializeArgumentSyntax`` | ``SpecializeAvailabilityArgumentSyntax`` | ``SpecializeTargetFunctionArgumentSyntax`` | ``GenericWhereClauseSyntax``) `*`
+///
+/// ### Contained in
+/// 
+///  - ``AttributeSyntax``.``AttributeSyntax/arguments``
+public struct SpecializeAttributeArgumentListSyntax: SyntaxCollection, SyntaxHashable {
   public enum Element: SyntaxChildChoices {
-    case `labeledSpecializeEntry`(LabeledSpecializeEntrySyntax)
-    case `availabilityEntry`(AvailabilityEntrySyntax)
-    case `targetFunctionEntry`(TargetFunctionEntrySyntax)
+    case `labeledSpecializeArgument`(LabeledSpecializeArgumentSyntax)
+    case `specializeAvailabilityArgument`(SpecializeAvailabilityArgumentSyntax)
+    case `specializeTargetFunctionArgument`(SpecializeTargetFunctionArgumentSyntax)
     case `genericWhereClause`(GenericWhereClauseSyntax)
     
     public var _syntaxNode: Syntax {
       switch self {
-      case .labeledSpecializeEntry(let node):
+      case .labeledSpecializeArgument(let node):
         return node._syntaxNode
-      case .availabilityEntry(let node):
+      case .specializeAvailabilityArgument(let node):
         return node._syntaxNode
-      case .targetFunctionEntry(let node):
+      case .specializeTargetFunctionArgument(let node):
         return node._syntaxNode
       case .genericWhereClause(let node):
         return node._syntaxNode
@@ -847,16 +1075,16 @@ public struct SpecializeAttributeSpecListSyntax: SyntaxCollection, SyntaxHashabl
       self.init(Syntax(data))!
     }
     
-    public init(_ node: LabeledSpecializeEntrySyntax) {
-      self = .labeledSpecializeEntry(node)
+    public init(_ node: LabeledSpecializeArgumentSyntax) {
+      self = .labeledSpecializeArgument(node)
     }
     
-    public init(_ node: AvailabilityEntrySyntax) {
-      self = .availabilityEntry(node)
+    public init(_ node: SpecializeAvailabilityArgumentSyntax) {
+      self = .specializeAvailabilityArgument(node)
     }
     
-    public init(_ node: TargetFunctionEntrySyntax) {
-      self = .targetFunctionEntry(node)
+    public init(_ node: SpecializeTargetFunctionArgumentSyntax) {
+      self = .specializeTargetFunctionArgument(node)
     }
     
     public init(_ node: GenericWhereClauseSyntax) {
@@ -864,16 +1092,16 @@ public struct SpecializeAttributeSpecListSyntax: SyntaxCollection, SyntaxHashabl
     }
     
     public init?(_ node: some SyntaxProtocol) {
-      if let node = node.as(LabeledSpecializeEntrySyntax.self) {
-        self = .labeledSpecializeEntry(node)
+      if let node = node.as(LabeledSpecializeArgumentSyntax.self) {
+        self = .labeledSpecializeArgument(node)
         return
       }
-      if let node = node.as(AvailabilityEntrySyntax.self) {
-        self = .availabilityEntry(node)
+      if let node = node.as(SpecializeAvailabilityArgumentSyntax.self) {
+        self = .specializeAvailabilityArgument(node)
         return
       }
-      if let node = node.as(TargetFunctionEntrySyntax.self) {
-        self = .targetFunctionEntry(node)
+      if let node = node.as(SpecializeTargetFunctionArgumentSyntax.self) {
+        self = .specializeTargetFunctionArgument(node)
         return
       }
       if let node = node.as(GenericWhereClauseSyntax.self) {
@@ -885,9 +1113,9 @@ public struct SpecializeAttributeSpecListSyntax: SyntaxCollection, SyntaxHashabl
     
     public static var structure: SyntaxNodeStructure {
       return .choices([
-            .node(LabeledSpecializeEntrySyntax.self),
-            .node(AvailabilityEntrySyntax.self),
-            .node(TargetFunctionEntrySyntax.self),
+            .node(LabeledSpecializeArgumentSyntax.self),
+            .node(SpecializeAvailabilityArgumentSyntax.self),
+            .node(SpecializeTargetFunctionArgumentSyntax.self),
             .node(GenericWhereClauseSyntax.self)
           ])
     }
@@ -896,19 +1124,23 @@ public struct SpecializeAttributeSpecListSyntax: SyntaxCollection, SyntaxHashabl
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .specializeAttributeSpecList else {
+    guard node.raw.kind == .specializeAttributeArgumentList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.specializeAttributeSpecList
+  public static let syntaxKind = SyntaxKind.specializeAttributeArgumentList
 }
 
 /// ### Children
 /// 
 /// (``StringSegmentSyntax`` | ``ExpressionSegmentSyntax``) `*`
-public struct StringLiteralSegmentsSyntax: SyntaxCollection, SyntaxHashable {
+///
+/// ### Contained in
+/// 
+///  - ``StringLiteralExprSyntax``.``StringLiteralExprSyntax/segments``
+public struct StringLiteralSegmentListSyntax: SyntaxCollection, SyntaxHashable {
   public enum Element: SyntaxChildChoices {
     case `stringSegment`(StringSegmentSyntax)
     case `expressionSegment`(ExpressionSegmentSyntax)
@@ -956,18 +1188,45 @@ public struct StringLiteralSegmentsSyntax: SyntaxCollection, SyntaxHashable {
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .stringLiteralSegments else {
+    guard node.raw.kind == .stringLiteralSegmentList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.stringLiteralSegments
+  public static let syntaxKind = SyntaxKind.stringLiteralSegmentList
+}
+
+/// ### Children
+/// 
+/// ``SwitchCaseItemSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``SwitchCaseLabelSyntax``.``SwitchCaseLabelSyntax/caseItems``
+public struct SwitchCaseItemListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = SwitchCaseItemSyntax
+  
+  public let _syntaxNode: Syntax
+  
+  public init?(_ node: some SyntaxProtocol) {
+    guard node.raw.kind == .switchCaseItemList else {
+      return nil
+    }
+    self._syntaxNode = node._syntaxNode
+  }
+  
+  public static let syntaxKind = SyntaxKind.switchCaseItemList
 }
 
 /// ### Children
 /// 
 /// (``SwitchCaseSyntax`` | ``IfConfigDeclSyntax``) `*`
+///
+/// ### Contained in
+/// 
+///  - ``IfConfigClauseSyntax``.``IfConfigClauseSyntax/elements``
+///  - ``SwitchExprSyntax``.``SwitchExprSyntax/cases``
 public struct SwitchCaseListSyntax: SyntaxCollection, SyntaxHashable {
   public enum Element: SyntaxChildChoices {
     case `switchCase`(SwitchCaseSyntax)
@@ -1027,25 +1286,11 @@ public struct SwitchCaseListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
-/// ``TupleExprElementSyntax`` `*`
-public struct TupleExprElementListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = TupleExprElementSyntax
-  
-  public let _syntaxNode: Syntax
-  
-  public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .tupleExprElementList else {
-      return nil
-    }
-    self._syntaxNode = node._syntaxNode
-  }
-  
-  public static let syntaxKind = SyntaxKind.tupleExprElementList
-}
-
-/// ### Children
-/// 
 /// ``TuplePatternElementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``TuplePatternSyntax``.``TuplePatternSyntax/elements``
 public struct TuplePatternElementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = TuplePatternElementSyntax
   
@@ -1064,6 +1309,11 @@ public struct TuplePatternElementListSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``TupleTypeElementSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``FunctionTypeSyntax``.``FunctionTypeSyntax/parameters``
+///  - ``TupleTypeSyntax``.``TupleTypeSyntax/elements``
 public struct TupleTypeElementListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = TupleTypeElementSyntax
   
@@ -1102,6 +1352,10 @@ public struct UnexpectedNodesSyntax: SyntaxCollection, SyntaxHashable {
 /// ### Children
 /// 
 /// ``VersionComponentSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``VersionTupleSyntax``.``VersionTupleSyntax/components``
 public struct VersionComponentListSyntax: SyntaxCollection, SyntaxHashable {
   public typealias Element = VersionComponentSyntax
   
@@ -1119,18 +1373,22 @@ public struct VersionComponentListSyntax: SyntaxCollection, SyntaxHashable {
 
 /// ### Children
 /// 
-/// ``YieldExprListElementSyntax`` `*`
-public struct YieldExprListSyntax: SyntaxCollection, SyntaxHashable {
-  public typealias Element = YieldExprListElementSyntax
+/// ``YieldedExpressionSyntax`` `*`
+///
+/// ### Contained in
+/// 
+///  - ``YieldedExpressionsClauseSyntax``.``YieldedExpressionsClauseSyntax/elements``
+public struct YieldedExpressionListSyntax: SyntaxCollection, SyntaxHashable {
+  public typealias Element = YieldedExpressionSyntax
   
   public let _syntaxNode: Syntax
   
   public init?(_ node: some SyntaxProtocol) {
-    guard node.raw.kind == .yieldExprList else {
+    guard node.raw.kind == .yieldedExpressionList else {
       return nil
     }
     self._syntaxNode = node._syntaxNode
   }
   
-  public static let syntaxKind = SyntaxKind.yieldExprList
+  public static let syntaxKind = SyntaxKind.yieldedExpressionList
 }

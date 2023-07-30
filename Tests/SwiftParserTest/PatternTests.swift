@@ -20,23 +20,23 @@ final class PatternTests: XCTestCase {
     Syntax(
       ValueBindingPatternSyntax(
         bindingSpecifier: .keyword(.let),
-        valuePattern: ExpressionPatternSyntax(
+        pattern: ExpressionPatternSyntax(
           expression: FunctionCallExprSyntax(
             calledExpression: MemberAccessExprSyntax(
-              base: SpecializeExprSyntax(
+              base: GenericSpecializationExprSyntax(
                 expression: IdentifierExprSyntax(identifier: .identifier("E")),
                 genericArgumentClause: GenericArgumentClauseSyntax(
                   arguments: .init([
-                    .init(argumentType: SimpleTypeIdentifierSyntax(name: .identifier("Int")))
+                    .init(argument: IdentifierTypeSyntax(name: .identifier("Int")))
                   ])
                 )
               ),
               name: .identifier("e")
             ),
             leftParen: .leftParenToken(),
-            argumentList: TupleExprElementListSyntax([
+            arguments: LabeledExprListSyntax([
               .init(
-                expression: UnresolvedPatternExprSyntax(
+                expression: PatternExprSyntax(
                   pattern: IdentifierPatternSyntax(identifier: .identifier("y"))
                 )
               )
@@ -74,22 +74,22 @@ final class PatternTests: XCTestCase {
     Syntax(
       ValueBindingPatternSyntax(
         bindingSpecifier: .keyword(.let),
-        valuePattern: ExpressionPatternSyntax(
+        pattern: ExpressionPatternSyntax(
           expression: TupleExprSyntax(
             elements: .init([
               .init(
-                expression: SubscriptExprSyntax(
+                expression: SubscriptCallExprSyntax(
                   calledExpression: IdentifierExprSyntax(identifier: .identifier("y")),
                   leftSquare: .leftSquareToken(),
-                  argumentList: TupleExprElementListSyntax([
-                    .init(expression: IntegerLiteralExprSyntax(digits: .integerLiteral("0")))
+                  arguments: LabeledExprListSyntax([
+                    .init(expression: IntegerLiteralExprSyntax(literal: .integerLiteral("0")))
                   ]),
                   rightSquare: .rightSquareToken()
                 ),
                 trailingComma: .commaToken()
               ),
               .init(
-                expression: UnresolvedPatternExprSyntax(
+                expression: PatternExprSyntax(
                   pattern: IdentifierPatternSyntax(identifier: .identifier("z"))
                 )
               ),
@@ -126,13 +126,13 @@ final class PatternTests: XCTestCase {
     Syntax(
       ValueBindingPatternSyntax(
         bindingSpecifier: .keyword(.let),
-        valuePattern: ExpressionPatternSyntax(
-          expression: SubscriptExprSyntax(
+        pattern: ExpressionPatternSyntax(
+          expression: SubscriptCallExprSyntax(
             calledExpression: IdentifierExprSyntax(identifier: .identifier("y")),
             leftSquare: .leftSquareToken(),
-            argumentList: TupleExprElementListSyntax([
+            arguments: LabeledExprListSyntax([
               .init(
-                expression: UnresolvedPatternExprSyntax(
+                expression: PatternExprSyntax(
                   pattern: IdentifierPatternSyntax(identifier: .identifier("z"))
                 )
               )

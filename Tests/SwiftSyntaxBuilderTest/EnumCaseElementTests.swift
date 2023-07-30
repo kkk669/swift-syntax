@@ -19,24 +19,24 @@ final class EnumCaseElementTests: XCTestCase {
     let leadingTrivia = Trivia.unexpectedText("␣")
     let buildable = EnumDeclSyntax(
       leadingTrivia: leadingTrivia,
-      identifier: "Greeting",
-      inheritanceClause: TypeInheritanceClauseSyntax {
-        InheritedTypeSyntax(typeName: TypeSyntax("String"))
-        InheritedTypeSyntax(typeName: TypeSyntax("Codable"))
-        InheritedTypeSyntax(typeName: TypeSyntax("Equatable"))
+      name: "Greeting",
+      inheritanceClause: InheritanceClauseSyntax {
+        InheritedTypeSyntax(type: TypeSyntax("String"))
+        InheritedTypeSyntax(type: TypeSyntax("Codable"))
+        InheritedTypeSyntax(type: TypeSyntax("Equatable"))
       }
     ) {
-      MemberDeclListItemSyntax(
+      MemberBlockItemSyntax(
         decl: EnumCaseDeclSyntax {
           EnumCaseElementSyntax(
-            identifier: "goodMorning",
+            name: "goodMorning",
             rawValue: InitializerClauseSyntax(value: StringLiteralExprSyntax(content: "Good Morning"))
           )
           EnumCaseElementSyntax(
-            identifier: "helloWorld",
+            name: "helloWorld",
             rawValue: InitializerClauseSyntax(value: StringLiteralExprSyntax(content: "Hello World"))
           )
-          EnumCaseElementSyntax(identifier: "hi")
+          EnumCaseElementSyntax(name: "hi")
         }
       )
     }

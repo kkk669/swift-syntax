@@ -23,6 +23,13 @@ protocol TokenConsumer {
   /// Consume the current token and change its token kind to `remappedTokenKind`.
   mutating func consumeAnyToken(remapping remappedTokenKind: RawTokenKind) -> Token
 
+  /// Consumes a given token, or splits the current token into a leading token
+  /// matching the given token and a trailing token and consumes the leading
+  /// token.
+  ///
+  ///     <TOKEN> ... -> consumePrefix(<TOK>) -> [ <TOK> ] <EN> ...
+  mutating func consumePrefix(_ prefix: SyntaxText, as tokenKind: RawTokenKind) -> Token
+
   /// Synthesize a missing token with `kind`.
   /// If `text` is not `nil`, use it for the token's text, otherwise use the token's default text.
   mutating func missingToken(_ kind: RawTokenKind, text: SyntaxText?) -> Token
@@ -121,7 +128,7 @@ extension TokenConsumer {
   /// If this is the case, return the `Subset` case that the parser is positioned in
   /// as well as a handle to consume that token.
   @inline(__always)
-  mutating func at<SpecSet: TokenSpecSet>(anyIn specSet: SpecSet.Type) -> (SpecSet, TokenConsumptionHandle)? {
+  mutating func at<SpecSet: TokenSpecSet>(anyIn specSet: SpecSet.Type) -> (spec: SpecSet, handle: TokenConsumptionHandle)? {
     #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
     if shouldRecordAlternativeTokenChoices {
       recordAlternativeTokenChoice(for: self.currentToken, choices: specSet.allCases.map(\.spec))
@@ -137,6 +144,18 @@ extension TokenConsumer {
     return nil
   }
 
+  /// Whether the current token’s text starts with the given prefix.
+  @inline(__always)
+  mutating func at(prefix: SyntaxText) -> Bool {
+    return self.currentToken.tokenText.hasPrefix(prefix)
+  }
+
+  /// Whether the current token is at the start of a line.
+  @inline(__always)
+  var atStartOfLine: Bool {
+    return self.currentToken.isAtStartOfLine
+  }
+
   /// Eat a token that we know we are currently positioned at, based on `at(anyIn:)`.
   @inline(__always)
   mutating func eat(_ handle: TokenConsumptionHandle) -> Token {
@@ -150,6 +169,57 @@ extension TokenConsumer {
   func withLookahead<T>(_ body: (_: inout Parser.Lookahead) -> T) -> T {
     var lookahead = lookahead()
     return body(&lookahead)
+  }
+}
+
+extension TokenConsumer {
+  /// Returns whether the next (peeked) token matches `spec`
+  @inline(__always)
+  mutating func peek(isAt spec: TokenSpec) -> Bool {
+    #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
+    if shouldRecordAlternativeTokenChoices {
+      recordAlternativeTokenChoice(for: self.peek(), choices: [spec])
+    }
+    #endif
+    return spec ~= self.peek()
+  }
+
+  /// Returns whether the next (peeked) token matches one of the two specs.
+  @inline(__always)
+  mutating func peek(
+    isAt spec1: TokenSpec,
+    _ spec2: TokenSpec
+  ) -> Bool {
+    #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
+    if shouldRecordAlternativeTokenChoices {
+      recordAlternativeTokenChoice(for: self.peek(), choices: [spec1, spec2])
+    }
+    #endif
+    switch self.peek() {
+    case spec1: return true
+    case spec2: return true
+    default: return false
+    }
+  }
+
+  /// Returns whether the next (peeked) token matches one of the three specs.
+  @inline(__always)
+  mutating func peek(
+    isAt spec1: TokenSpec,
+    _ spec2: TokenSpec,
+    _ spec3: TokenSpec
+  ) -> Bool {
+    #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
+    if shouldRecordAlternativeTokenChoices {
+      recordAlternativeTokenChoice(for: self.peek(), choices: [spec1, spec2, spec3])
+    }
+    #endif
+    switch self.peek() {
+    case spec1: return true
+    case spec2: return true
+    case spec3: return true
+    default: return false
+    }
   }
 }
 
@@ -248,6 +318,17 @@ extension TokenConsumer {
       return nil
     }
   }
+
+  /// If the current token starts with the given prefix, consume the prefis as the given token kind.
+  ///
+  /// Otherwise, return `nil`.
+  mutating func consume(ifPrefix prefix: SyntaxText, as tokenKind: RawTokenKind) -> Token? {
+    if self.at(prefix: prefix) {
+      return consumePrefix(prefix, as: tokenKind)
+    } else {
+      return nil
+    }
+  }
 }
 
 // MARK: Convenience functions
@@ -277,5 +358,10 @@ extension TokenConsumer {
     default:
       return false
     }
+  }
+
+  /// Whether the current token can be a function argument label.
+  func atArgumentLabel(allowDollarIdentifier: Bool = false) -> Bool {
+    return self.currentToken.isArgumentLabel(allowDollarIdentifier: allowDollarIdentifier)
   }
 }

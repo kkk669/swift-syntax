@@ -59,8 +59,8 @@ extension FunctionCallExprSyntax {
       return nil
     }
 
-    var closures = [(original: TupleExprElementSyntax, closure: ClosureExprSyntax)]()
-    for arg in argumentList.dropFirst(startAtArgument) {
+    var closures = [(original: LabeledExprSyntax, closure: ClosureExprSyntax)]()
+    for arg in arguments.dropFirst(startAtArgument) {
       guard var closure = arg.expression.as(ClosureExprSyntax.self) else {
         closures.removeAll()
         continue
@@ -99,7 +99,7 @@ extension FunctionCallExprSyntax {
 
     // Remove parens if there's no non-closure arguments left and remove the
     // last comma otherwise. Makes sure to keep the trivia of any removed node.
-    var argList = Array(argumentList.dropLast(closures.count))
+    var argList = Array(arguments.dropLast(closures.count))
     if argList.isEmpty {
       converted =
         converted
@@ -132,7 +132,7 @@ extension FunctionCallExprSyntax {
     // Update arguments and trailing closures
     converted =
       converted
-      .with(\.argumentList, TupleExprElementListSyntax(argList))
+      .with(\.arguments, LabeledExprListSyntax(argList))
       .with(\.trailingClosure, trailingClosure)
     if !additionalTrailingClosures.isEmpty {
       converted = converted.with(\.additionalTrailingClosures, MultipleTrailingClosureElementListSyntax(additionalTrailingClosures))

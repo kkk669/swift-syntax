@@ -25,15 +25,15 @@ public class SyntaxTests: XCTestCase {
     XCTAssertTrue(
       FunctionDeclSyntax(
         funcKeyword: TokenSyntax.keyword(.func, presence: .missing),
-        identifier: .identifier("foo"),
-        signature: FunctionSignatureSyntax(parameterClause: ParameterClauseSyntax(parameterList: []))
+        name: .identifier("foo"),
+        signature: FunctionSignatureSyntax(parameterClause: FunctionParameterClauseSyntax(parameters: []))
       ).hasError
     )
     XCTAssertFalse(
       FunctionDeclSyntax(
         funcKeyword: TokenSyntax.keyword(.func, presence: .present),
-        identifier: .identifier("foo"),
-        signature: FunctionSignatureSyntax(parameterClause: ParameterClauseSyntax(parameterList: []))
+        name: .identifier("foo"),
+        signature: FunctionSignatureSyntax(parameterClause: FunctionParameterClauseSyntax(parameters: []))
       ).hasError
     )
   }
@@ -41,8 +41,8 @@ public class SyntaxTests: XCTestCase {
   public func testDetached() {
     let s = StructDeclSyntax(
       structKeyword: .keyword(.struct),
-      identifier: .identifier("someStruct"),
-      memberBlock: MemberDeclBlockSyntax(leftBrace: .leftBraceToken(), members: [], rightBrace: .rightBraceToken())
+      name: .identifier("someStruct"),
+      memberBlock: MemberBlockSyntax(leftBrace: .leftBraceToken(), members: [], rightBrace: .rightBraceToken())
     )
 
     XCTAssertEqual(Syntax(s), s.memberBlock.parent)
@@ -51,7 +51,7 @@ public class SyntaxTests: XCTestCase {
 
   public func testCasting() {
     let integerExpr = IntegerLiteralExprSyntax(
-      digits: .integerLiteral("1", trailingTrivia: .space)
+      literal: .integerLiteral("1", trailingTrivia: .space)
     )
 
     let expr = ExprSyntax(integerExpr)
@@ -91,7 +91,7 @@ public class SyntaxTests: XCTestCase {
 
   public func testNodeType() {
     let integerExpr = IntegerLiteralExprSyntax(
-      digits: TokenSyntax.integerLiteral("1", trailingTrivia: .space)
+      literal: TokenSyntax.integerLiteral("1", trailingTrivia: .space)
     )
     let expr = ExprSyntax(integerExpr)
     let node = Syntax(expr)
@@ -103,7 +103,7 @@ public class SyntaxTests: XCTestCase {
 
   public func testConstructFromSyntaxProtocol() {
     let integerExpr = IntegerLiteralExprSyntax(
-      digits: .integerLiteral("1", trailingTrivia: .space)
+      literal: .integerLiteral("1", trailingTrivia: .space)
     )
 
     XCTAssertEqual(Syntax(integerExpr), Syntax(fromProtocol: integerExpr as SyntaxProtocol))
@@ -123,6 +123,6 @@ public class SyntaxTests: XCTestCase {
     XCTAssertEqual(funcKW.positionAfterSkippingLeadingTrivia, AbsolutePosition(utf8Offset: 2))
     XCTAssertEqual(funcKW.endPositionBeforeTrailingTrivia, AbsolutePosition(utf8Offset: 6))
     XCTAssertEqual(funcKW.endPosition, AbsolutePosition(utf8Offset: 7))
-    XCTAssertEqual(funcKW.contentLength, SourceLength(utf8Length: 4))
+    XCTAssertEqual(funcKW.trimmedLength, SourceLength(utf8Length: 4))
   }
 }

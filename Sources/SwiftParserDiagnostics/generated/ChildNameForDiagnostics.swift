@@ -16,15 +16,13 @@ import SwiftSyntax
 
 private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
   switch keyPath {
-  case \AccessesEffectSyntax.propertyList:
-    return "properties"
   case \AccessorDeclSyntax.attributes:
     return "attributes"
   case \AccessorDeclSyntax.modifier:
     return "modifiers"
-  case \AccessorDeclSyntax.parameter:
+  case \AccessorDeclSyntax.parameters:
     return "parameter"
-  case \AccessorParameterSyntax.name:
+  case \AccessorParametersSyntax.name:
     return "name"
   case \ActorDeclSyntax.attributes:
     return "attributes"
@@ -33,31 +31,25 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
   case \ActorDeclSyntax.genericParameterClause:
     return "generic parameter clause"
   case \ActorDeclSyntax.inheritanceClause:
-    return "type inheritance clause"
+    return "inheritance clause"
   case \ActorDeclSyntax.genericWhereClause:
     return "generic where clause"
   case \ArrayElementSyntax.expression:
     return "value"
-  case \AssociatedtypeDeclSyntax.attributes:
+  case \AssociatedTypeDeclSyntax.attributes:
     return "attributes"
-  case \AssociatedtypeDeclSyntax.modifiers:
+  case \AssociatedTypeDeclSyntax.modifiers:
     return "modifiers"
-  case \AssociatedtypeDeclSyntax.inheritanceClause:
+  case \AssociatedTypeDeclSyntax.inheritanceClause:
     return "inheritance clause"
-  case \AssociatedtypeDeclSyntax.genericWhereClause:
+  case \AssociatedTypeDeclSyntax.genericWhereClause:
     return "generic where clause"
   case \AttributeSyntax.attributeName:
     return "name"
-  case \AvailabilityEntrySyntax.availabilityLabel:
-    return "label"
   case \AvailabilityLabeledArgumentSyntax.label:
     return "label"
   case \AvailabilityLabeledArgumentSyntax.value:
     return "value"
-  case \AvailabilityVersionRestrictionSyntax.platform:
-    return "platform"
-  case \AvailabilityVersionRestrictionSyntax.version:
-    return "version"
   case \BreakStmtSyntax.label:
     return "label"
   case \ClassDeclSyntax.attributes:
@@ -70,9 +62,7 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "inheritance clause"
   case \ClassDeclSyntax.genericWhereClause:
     return "generic where clause"
-  case \ClosureParamSyntax.name:
-    return "name"
-  case \ClosureParameterClauseSyntax.parameterList:
+  case \ClosureParameterClauseSyntax.parameters:
     return "parameters"
   case \ClosureParameterSyntax.attributes:
     return "attributes"
@@ -80,6 +70,8 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "modifiers"
   case \ClosureParameterSyntax.type:
     return "type"
+  case \ClosureShorthandParameterSyntax.name:
+    return "name"
   case \ClosureSignatureSyntax.attributes:
     return "attributes"
   case \CodeBlockSyntax.statements:
@@ -94,16 +86,16 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "attributes"
   case \DeinitializerDeclSyntax.modifiers:
     return "modifiers"
-  case \DictionaryElementSyntax.keyExpression:
+  case \DictionaryElementSyntax.key:
     return "key"
-  case \DictionaryElementSyntax.valueExpression:
+  case \DictionaryElementSyntax.value:
     return "value"
-  case \DictionaryTypeSyntax.keyType:
+  case \DictionaryTypeSyntax.key:
     return "key type"
-  case \DictionaryTypeSyntax.valueType:
+  case \DictionaryTypeSyntax.value:
     return "value type"
-  case \DifferentiabilityParamsClauseSyntax.parameters:
-    return "parameters"
+  case \DifferentiabilityWithRespectToArgumentSyntax.arguments:
+    return "arguments"
   case \DoStmtSyntax.body:
     return "body"
   case \DocumentationAttributeArgumentSyntax.label:
@@ -114,16 +106,16 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "modifiers"
   case \EnumCaseDeclSyntax.elements:
     return "elements"
-  case \EnumCaseElementSyntax.associatedValue:
+  case \EnumCaseElementSyntax.parameterClause:
     return "associated values"
-  case \EnumCaseParameterClauseSyntax.parameterList:
+  case \EnumCaseParameterClauseSyntax.parameters:
     return "parameters"
   case \EnumCaseParameterSyntax.modifiers:
     return "modifiers"
   case \EnumCaseParameterSyntax.type:
     return "type"
-  case \EnumCaseParameterSyntax.defaultArgument:
-    return "default argument"
+  case \EnumCaseParameterSyntax.defaultValue:
+    return "default value"
   case \EnumDeclSyntax.attributes:
     return "attributes"
   case \EnumDeclSyntax.modifiers:
@@ -142,11 +134,11 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "inheritance clause"
   case \ExtensionDeclSyntax.genericWhereClause:
     return "generic where clause"
-  case \ForInStmtSyntax.body:
+  case \ForStmtSyntax.body:
     return "body"
   case \FunctionCallExprSyntax.calledExpression:
     return "called expression"
-  case \FunctionCallExprSyntax.argumentList:
+  case \FunctionCallExprSyntax.arguments:
     return "arguments"
   case \FunctionCallExprSyntax.trailingClosure:
     return "trailing closure"
@@ -162,6 +154,8 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "function signature"
   case \FunctionDeclSyntax.genericWhereClause:
     return "generic where clause"
+  case \FunctionParameterClauseSyntax.parameters:
+    return "parameters"
   case \FunctionParameterSyntax.attributes:
     return "attributes"
   case \FunctionParameterSyntax.modifiers:
@@ -170,8 +164,8 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "internal name"
   case \FunctionParameterSyntax.type:
     return "type"
-  case \FunctionParameterSyntax.defaultArgument:
-    return "default argument"
+  case \FunctionParameterSyntax.defaultValue:
+    return "default value"
   case \GenericParameterSyntax.eachKeyword:
     return "parameter pack specifier"
   case \GenericParameterSyntax.name:
@@ -210,19 +204,21 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "function signature"
   case \InitializerDeclSyntax.genericWhereClause:
     return "generic where clause"
-  case \InitializesEffectSyntax.propertyList:
-    return "properties"
   case \KeyPathExprSyntax.root:
     return "root"
-  case \KeyPathSubscriptComponentSyntax.argumentList:
+  case \KeyPathSubscriptComponentSyntax.arguments:
     return "arguments"
-  case \LabeledSpecializeEntrySyntax.label:
+  case \LabeledExprSyntax.label:
     return "label"
-  case \LabeledSpecializeEntrySyntax.value:
+  case \LabeledExprSyntax.expression:
+    return "value"
+  case \LabeledSpecializeArgumentSyntax.label:
+    return "label"
+  case \LabeledSpecializeArgumentSyntax.value:
     return "value"
   case \LabeledStmtSyntax.label:
     return "label name"
-  case \LayoutRequirementSyntax.typeIdentifier:
+  case \LayoutRequirementSyntax.type:
     return "constrained type"
   case \LayoutRequirementSyntax.size:
     return "size"
@@ -248,9 +244,9 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "base"
   case \MemberAccessExprSyntax.name:
     return "name"
-  case \MemberTypeIdentifierSyntax.baseType:
+  case \MemberTypeSyntax.baseType:
     return "base type"
-  case \MemberTypeIdentifierSyntax.name:
+  case \MemberTypeSyntax.name:
     return "name"
   case \MetatypeTypeSyntax.baseType:
     return "base type"
@@ -262,21 +258,23 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "fixity"
   case \OperatorPrecedenceAndTypesSyntax.precedenceGroup:
     return "precedence group"
-  case \ParameterClauseSyntax.parameterList:
-    return "parameters"
   case \PatternBindingSyntax.typeAnnotation:
     return "type annotation"
-  case \PoundSourceLocationArgsSyntax.fileName:
+  case \PlatformVersionSyntax.platform:
+    return "platform"
+  case \PlatformVersionSyntax.version:
+    return "version"
+  case \PoundSourceLocationArgumentsSyntax.fileName:
     return "file name"
-  case \PoundSourceLocationArgsSyntax.lineNumber:
+  case \PoundSourceLocationArgumentsSyntax.lineNumber:
     return "line number"
-  case \PoundSourceLocationSyntax.args:
+  case \PoundSourceLocationSyntax.arguments:
     return "arguments"
   case \PrecedenceGroupDeclSyntax.attributes:
     return "attributes"
   case \PrecedenceGroupDeclSyntax.modifiers:
     return "modifiers"
-  case \PrecedenceGroupNameElementSyntax.name:
+  case \PrecedenceGroupNameSyntax.name:
     return "name"
   case \PrimaryAssociatedTypeSyntax.name:
     return "name"
@@ -296,16 +294,22 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "base name"
   case \QualifiedDeclNameSyntax.arguments:
     return "arguments"
-  case \RepeatWhileStmtSyntax.body:
+  case \RepeatStmtSyntax.body:
     return "body"
-  case \RepeatWhileStmtSyntax.condition:
+  case \RepeatStmtSyntax.condition:
     return "condition"
-  case \ReturnClauseSyntax.returnType:
+  case \ReturnClauseSyntax.type:
     return "return type"
-  case \SameTypeRequirementSyntax.leftTypeIdentifier:
+  case \SameTypeRequirementSyntax.leftType:
     return "left-hand type"
-  case \SameTypeRequirementSyntax.rightTypeIdentifier:
+  case \SameTypeRequirementSyntax.rightType:
     return "right-hand type"
+  case \SpecializeAvailabilityArgumentSyntax.availabilityLabel:
+    return "label"
+  case \SpecializeTargetFunctionArgumentSyntax.targetLabel:
+    return "label"
+  case \SpecializeTargetFunctionArgumentSyntax.declName:
+    return "declaration name"
   case \StructDeclSyntax.attributes:
     return "attributes"
   case \StructDeclSyntax.modifiers:
@@ -313,9 +317,17 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
   case \StructDeclSyntax.genericParameterClause:
     return "generic parameter clause"
   case \StructDeclSyntax.inheritanceClause:
-    return "type inheritance clause"
+    return "inheritance clause"
   case \StructDeclSyntax.genericWhereClause:
     return "generic where clause"
+  case \SubscriptCallExprSyntax.calledExpression:
+    return "called expression"
+  case \SubscriptCallExprSyntax.arguments:
+    return "arguments"
+  case \SubscriptCallExprSyntax.trailingClosure:
+    return "trailing closure"
+  case \SubscriptCallExprSyntax.additionalTrailingClosures:
+    return "trailing closures"
   case \SubscriptDeclSyntax.attributes:
     return "attributes"
   case \SubscriptDeclSyntax.modifiers:
@@ -324,46 +336,30 @@ private func childNameForDiagnostics(_ keyPath: AnyKeyPath) -> String? {
     return "generic parameter clause"
   case \SubscriptDeclSyntax.genericWhereClause:
     return "generic where clause"
-  case \SubscriptExprSyntax.calledExpression:
-    return "called expression"
-  case \SubscriptExprSyntax.argumentList:
-    return "arguments"
-  case \SubscriptExprSyntax.trailingClosure:
-    return "trailing closure"
-  case \SubscriptExprSyntax.additionalTrailingClosures:
-    return "trailing closures"
   case \SwitchCaseSyntax.label:
     return "label"
-  case \TargetFunctionEntrySyntax.targetLabel:
-    return "label"
-  case \TargetFunctionEntrySyntax.declname:
-    return "declaration name"
-  case \TernaryExprSyntax.conditionExpression:
+  case \TernaryExprSyntax.condition:
     return "condition"
-  case \TernaryExprSyntax.firstChoice:
+  case \TernaryExprSyntax.thenExpression:
     return "first choice"
-  case \TernaryExprSyntax.secondChoice:
+  case \TernaryExprSyntax.elseExpression:
     return "second choice"
-  case \TupleExprElementSyntax.label:
-    return "label"
-  case \TupleExprElementSyntax.expression:
-    return "value"
   case \TuplePatternElementSyntax.label:
     return "label"
-  case \TupleTypeElementSyntax.name:
+  case \TupleTypeElementSyntax.firstName:
     return "name"
   case \TupleTypeElementSyntax.secondName:
     return "internal name"
+  case \TypeAliasDeclSyntax.attributes:
+    return "attributes"
+  case \TypeAliasDeclSyntax.modifiers:
+    return "modifiers"
+  case \TypeAliasDeclSyntax.genericParameterClause:
+    return "generic parameter clause"
+  case \TypeAliasDeclSyntax.genericWhereClause:
+    return "generic where clause"
   case \TypeInitializerClauseSyntax.value:
     return "type"
-  case \TypealiasDeclSyntax.attributes:
-    return "attributes"
-  case \TypealiasDeclSyntax.modifiers:
-    return "modifiers"
-  case \TypealiasDeclSyntax.genericParameterClause:
-    return "generic parameter clause"
-  case \TypealiasDeclSyntax.genericWhereClause:
-    return "generic where clause"
   case \VariableDeclSyntax.attributes:
     return "attributes"
   case \VariableDeclSyntax.modifiers:

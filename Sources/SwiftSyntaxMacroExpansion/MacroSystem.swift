@@ -105,7 +105,7 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
           return true
         }
 
-        guard let attributeName = attribute.attributeName.as(SimpleTypeIdentifierSyntax.self)?.name.text,
+        guard let attributeName = attribute.attributeName.as(IdentifierTypeSyntax.self)?.name.text,
           let macro = macroSystem.macros[attributeName]
         else {
           return true
@@ -200,12 +200,12 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
     return CodeBlockItemListSyntax(newItems)
   }
 
-  override func visit(_ node: MemberDeclListSyntax) -> MemberDeclListSyntax {
-    var newItems: [MemberDeclListItemSyntax] = []
+  override func visit(_ node: MemberBlockItemListSyntax) -> MemberBlockItemListSyntax {
+    var newItems: [MemberBlockItemSyntax] = []
     for item in node {
       // Expand declaration macros, which produce zero or more declarations.
       if let declExpansion = item.decl.as(MacroExpansionDeclSyntax.self),
-        let macro = macroSystem.macros[declExpansion.macro.text],
+        let macro = macroSystem.macros[declExpansion.macroName.text],
         let freestandingMacro = macro as? DeclarationMacro.Type
       {
         do {
@@ -221,7 +221,7 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
 
           newItems.append(
             contentsOf: expandedList.map { decl in
-              return MemberDeclListItemSyntax(decl: decl)
+              return MemberBlockItemSyntax(decl: decl)
             }
           )
         } catch {
@@ -232,7 +232,7 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
       }
 
       // Expand member attribute members attached to the declaration context.
-      let attributedMember: MemberDeclListSyntax.Element
+      let attributedMember: MemberBlockItemListSyntax.Element
       if let (macroAttributes, decl) = memberAttributeMacros.last {
         attributedMember = expandAttributes(
           for: macroAttributes,
@@ -251,7 +251,7 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
       let peers = expandPeers(of: item.decl)
       newItems.append(
         contentsOf: peers.map {
-          newDecl in MemberDeclListItemSyntax(decl: newDecl)
+          newDecl in MemberBlockItemSyntax(decl: newDecl)
         }
       )
     }
@@ -343,7 +343,7 @@ class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
         visitedVarDecl.bindings.with(
           \.[visitedVarDecl.bindings.startIndex],
           binding.with(
-            \.accessor,
+            \.accessors,
             .accessors(
               .init(
                 leftBrace: .leftBraceToken(leadingTrivia: .space),
@@ -373,7 +373,7 @@ extension MacroApplication {
 
     return attributes.compactMap {
       guard case let .attribute(attribute) = $0,
-        let attributeName = attribute.attributeName.as(SimpleTypeIdentifierSyntax.self)?.name.text,
+        let attributeName = attribute.attributeName.as(IdentifierTypeSyntax.self)?.name.text,
         let macro = macroSystem.macros[attributeName],
         let macroType = macro as? MacroType
       else {
@@ -407,8 +407,8 @@ extension MacroApplication {
   // set of extension declarations.
   private func expandExtensions(of decl: DeclGroupSyntax) -> [DeclSyntax] {
     let extendedType: TypeSyntax
-    if let identified = decl.asProtocol(IdentifiedDeclSyntax.self) {
-      extendedType = "\(identified.identifier.trimmed)"
+    if let named = decl.asProtocol(NamedDeclSyntax.self) {
+      extendedType = "\(named.name.trimmed)"
     } else if let ext = decl.as(ExtensionDeclSyntax.self) {
       extendedType = "\(ext.extendedType.trimmed)"
     } else {
@@ -473,8 +473,8 @@ extension MacroApplication {
   private func expandAttributes(
     for macroAttributes: [(AttributeSyntax, MemberAttributeMacro.Type)],
     attachedTo decl: DeclSyntax,
-    annotating member: MemberDeclListSyntax.Element
-  ) -> MemberDeclListSyntax.Element {
+    annotating member: MemberBlockItemListSyntax.Element
+  ) -> MemberBlockItemListSyntax.Element {
     guard let attributedDecl = member.decl.asProtocol(WithAttributesSyntax.self) else {
       return member
     }
@@ -512,7 +512,7 @@ extension DeclSyntax {
   /// applied.
   func applying(
     attributes: AttributeListSyntax?,
-    modifiers: ModifierListSyntax?
+    modifiers: DeclModifierListSyntax?
   ) -> DeclSyntax {
     func _combine<C: SyntaxCollection>(_ left: C, _ right: C?) -> C? {
       guard let right = right else { return left }

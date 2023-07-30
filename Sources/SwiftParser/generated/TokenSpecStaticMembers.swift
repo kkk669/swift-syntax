@@ -63,10 +63,6 @@ extension TokenSpec {
     return TokenSpec(.exclamationMark)
   }
   
-  static var extendedRegexDelimiter: TokenSpec {
-    return TokenSpec(.extendedRegexDelimiter)
-  }
-  
   static var floatingLiteral: TokenSpec {
     return TokenSpec(.floatingLiteral)
   }
@@ -119,32 +115,32 @@ extension TokenSpec {
     return TokenSpec(.pound)
   }
   
-  static var poundAvailableKeyword: TokenSpec {
-    return TokenSpec(.poundAvailableKeyword)
+  static var poundAvailable: TokenSpec {
+    return TokenSpec(.poundAvailable)
   }
   
-  static var poundElseKeyword: TokenSpec {
-    return TokenSpec(.poundElseKeyword)
+  static var poundElse: TokenSpec {
+    return TokenSpec(.poundElse)
   }
   
-  static var poundElseifKeyword: TokenSpec {
-    return TokenSpec(.poundElseifKeyword)
+  static var poundElseif: TokenSpec {
+    return TokenSpec(.poundElseif)
   }
   
-  static var poundEndifKeyword: TokenSpec {
-    return TokenSpec(.poundEndifKeyword)
+  static var poundEndif: TokenSpec {
+    return TokenSpec(.poundEndif)
   }
   
-  static var poundIfKeyword: TokenSpec {
-    return TokenSpec(.poundIfKeyword)
+  static var poundIf: TokenSpec {
+    return TokenSpec(.poundIf)
   }
   
-  static var poundSourceLocationKeyword: TokenSpec {
-    return TokenSpec(.poundSourceLocationKeyword)
+  static var poundSourceLocation: TokenSpec {
+    return TokenSpec(.poundSourceLocation)
   }
   
-  static var poundUnavailableKeyword: TokenSpec {
-    return TokenSpec(.poundUnavailableKeyword)
+  static var poundUnavailable: TokenSpec {
+    return TokenSpec(.poundUnavailable)
   }
   
   static var prefixAmpersand: TokenSpec {
@@ -155,12 +151,16 @@ extension TokenSpec {
     return TokenSpec(.prefixOperator)
   }
   
-  static var rawStringDelimiter: TokenSpec {
-    return TokenSpec(.rawStringDelimiter)
+  static var rawStringPoundDelimiter: TokenSpec {
+    return TokenSpec(.rawStringPoundDelimiter)
   }
   
   static var regexLiteralPattern: TokenSpec {
     return TokenSpec(.regexLiteralPattern)
+  }
+  
+  static var regexPoundDelimiter: TokenSpec {
+    return TokenSpec(.regexPoundDelimiter)
   }
   
   static var regexSlash: TokenSpec {

@@ -26,7 +26,7 @@ extension Parser {
   /// as unexpected nodes that have the `isMaximumNestingLevelOverflow` bit set.
   /// Check this in places that are likely to cause deep recursion and if this returns non-nil, abort parsing.
   mutating func remainingTokensIfMaximumNestingLevelReached() -> RawUnexpectedNodesSyntax? {
-    if nestingLevel > self.maximumNestingLevel && self.currentToken.rawTokenKind != .endOfFile {
+    if nestingLevel > self.maximumNestingLevel && !self.at(.endOfFile) {
       let remainingTokens = self.consumeRemainingTokens()
       return RawUnexpectedNodesSyntax(elements: remainingTokens, isMaximumNestingLevelOverflow: true, arena: self.arena)
     } else {
@@ -39,11 +39,6 @@ extension Parser {
   /// This function is the true parsing entry point that the high-level
   /// ``Parser/parse(source:parseTransition:filenameForDiagnostics:languageVersion:enableBareSlashRegexLiteral:)-7tndx``
   /// API calls.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     source-file → top-level-declaration?
   mutating func parseSourceFile() -> RawSourceFileSyntax {
     let items = self.parseTopLevelCodeBlockItems()
     let unexpectedBeforeEndOfFileToken = consumeRemainingTokens()
@@ -65,8 +60,8 @@ extension Parser {
   ) -> RawCodeBlockItemListSyntax {
     var elements = [RawCodeBlockItemSyntax]()
     var loopProgress = LoopProgressCondition()
-    while !stopCondition(&self), loopProgress.evaluate(currentToken) {
-      let newItemAtStartOfLine = self.currentToken.isAtStartOfLine
+    while !stopCondition(&self), self.hasProgressed(&loopProgress) {
+      let newItemAtStartOfLine = self.atStartOfLine
       guard let newElement = self.parseCodeBlockItem(isAtTopLevel: isAtTopLevel, allowInitDecl: allowInitDecl) else {
         break
       }
@@ -86,11 +81,6 @@ extension Parser {
   }
 
   /// Parse the top level items in a source file.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     top-level-declaration → statements?
   mutating func parseTopLevelCodeBlockItems() -> RawCodeBlockItemListSyntax {
     return parseCodeBlockItemList(isAtTopLevel: true, until: { _ in false })
   }
@@ -108,11 +98,6 @@ extension Parser {
   }
 
   /// Parse a code block.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     code-block → '{' statements? '}'
   ///
   /// `introducer` is the `while`, `if`, ... keyword that is the cause that the code block is being parsed.
   /// If the left brace is missing, its indentation will be used to judge whether a following `}` was
@@ -136,20 +121,6 @@ extension Parser {
   ///
   /// Returns `nil` if the parser did not consume any tokens while trying to
   /// parse the code block item.
-  ///
-  /// Grammar
-  /// =======
-  ///
-  ///     statement → expression ';'?
-  ///     statement → declaration ';'?
-  ///     statement → loop-statement ';'?
-  ///     statement → branch-statement ';'?
-  ///     statement → labeled-statement ';'?
-  ///     statement → control-transfer-statement ';'?
-  ///     statement → defer-statement ';'?
-  ///     statement → do-statement ';'?
-  ///     statement → compiler-control-statement
-  ///     statements → statement statements?
   mutating func parseCodeBlockItem(isAtTopLevel: Bool, allowInitDecl: Bool) -> RawCodeBlockItemSyntax? {
     let startToken = self.currentToken
     if let syntax = self.loadCurrentSyntaxNodeFromCache(for: .codeBlockItem) {
@@ -238,7 +209,7 @@ extension Parser {
   /// If we are not at the top level, such a closing brace should close the
   /// wrapping declaration instead of being consumed by lookahead.
   private mutating func parseItem(isAtTopLevel: Bool = false, allowInitDecl: Bool = true) -> RawCodeBlockItemSyntax.Item {
-    if self.at(.poundIfKeyword) && !self.withLookahead({ $0.consumeIfConfigOfAttributes() }) {
+    if self.at(.poundIf) && !self.withLookahead({ $0.consumeIfConfigOfAttributes() }) {
       // If config of attributes is parsed as part of declaration parsing as it
       // doesn't constitute its own code block item.
       let directive = self.parsePoundIfDirective { (parser, _) in
@@ -260,7 +231,7 @@ extension Parser {
         return .statements(RawCodeBlockItemListSyntax(elements: items, arena: parser.arena))
       }
       return .decl(RawDeclSyntax(directive))
-    } else if self.at(.poundSourceLocationKeyword) {
+    } else if self.at(.poundSourceLocation) {
       return .decl(RawDeclSyntax(self.parsePoundSourceLocationDirective()))
     } else if self.atStartOfDeclaration(isAtTopLevel: isAtTopLevel, allowInitDecl: allowInitDecl) {
       return .decl(self.parseDeclaration())

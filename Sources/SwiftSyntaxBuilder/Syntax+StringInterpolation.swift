@@ -236,7 +236,7 @@ extension ExpressibleByLiteralSyntax where Self: BinaryInteger {
   public func makeLiteralSyntax() -> IntegerLiteralExprSyntax {
     // TODO: Radix selection? Thousands separators?
     let digits = String(self, radix: 10)
-    return IntegerLiteralExprSyntax(digits: .integerLiteral(digits))
+    return IntegerLiteralExprSyntax(literal: .integerLiteral(digits))
   }
 }
 extension Int: ExpressibleByLiteralSyntax {}
@@ -266,14 +266,14 @@ extension ExpressibleByLiteralSyntax where Self: FloatingPoint, Self: LosslessSt
       return ExprSyntax(
         PrefixOperatorExprSyntax(
           operator: .prefixOperator("-"),
-          postfixExpression: (-self).makeLiteralSyntax()
+          expression: (-self).makeLiteralSyntax()
         )
       )
 
     case .negativeNormal, .negativeSubnormal, .positiveZero, .positiveSubnormal, .positiveNormal:
       // TODO: Thousands separators?
       let digits = String(self)
-      return ExprSyntax(FloatLiteralExprSyntax(digits: .floatingLiteral(digits)))
+      return ExprSyntax(FloatLiteralExprSyntax(literal: .floatingLiteral(digits)))
     }
 
   }
@@ -338,9 +338,9 @@ extension KeyValuePairs: ExpressibleByLiteralSyntax where Key: ExpressibleByLite
     DictionaryExprSyntax(leftSquare: .leftSquareToken(), rightSquare: .rightSquareToken()) {
       for elem in self {
         DictionaryElementSyntax(
-          keyExpression: elem.key.makeLiteralSyntax(),
+          key: elem.key.makeLiteralSyntax(),
           colon: .colonToken(),
-          valueExpression: elem.value.makeLiteralSyntax()
+          value: elem.value.makeLiteralSyntax()
         )
       }
     }
@@ -359,9 +359,9 @@ extension Dictionary: ExpressibleByLiteralSyntax where Key: ExpressibleByLiteral
     return DictionaryExprSyntax(leftSquare: .leftSquareToken(), rightSquare: .rightSquareToken()) {
       for elemSyntax in elemSyntaxes {
         DictionaryElementSyntax(
-          keyExpression: elemSyntax.key,
+          key: elemSyntax.key,
           colon: .colonToken(),
-          valueExpression: elemSyntax.value
+          value: elemSyntax.value
         )
       }
     }
@@ -378,7 +378,7 @@ extension Optional: ExpressibleByLiteralSyntax where Wrapped: ExpressibleByLiter
       if let call = expr.as(FunctionCallExprSyntax.self),
         let memberAccess = call.calledExpression.as(MemberAccessExprSyntax.self),
         memberAccess.name.text == "some",
-        let argument = call.argumentList.first?.expression
+        let argument = call.arguments.first?.expression
       {
         return containsNil(argument)
       }
@@ -399,7 +399,7 @@ extension Optional: ExpressibleByLiteralSyntax where Wrapped: ExpressibleByLiter
       if containsNil(wrappedExpr) {
         return ExprSyntax(
           FunctionCallExprSyntax(callee: MemberAccessExprSyntax(name: "some")) {
-            TupleExprElementSyntax(expression: wrappedExpr)
+            LabeledExprSyntax(expression: wrappedExpr)
           }
         )
       }

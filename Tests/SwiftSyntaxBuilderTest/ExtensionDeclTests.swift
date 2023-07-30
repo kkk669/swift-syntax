@@ -29,15 +29,15 @@ final class ExtensionDeclTests: XCTestCase {
         PatternBindingSyntax(
           pattern: PatternSyntax("`\(raw: keyword)`"),
           typeAnnotation: TypeAnnotationSyntax(type: TypeSyntax("TokenSyntax")),
-          accessor: .getter(body)
+          accessors: .getter(body)
         )
 
       }
     }
-    let members = MemberDeclListSyntax(keywords.map { MemberDeclListItemSyntax(decl: $0) })
+    let members = MemberBlockItemListSyntax(keywords.map { MemberBlockItemSyntax(decl: $0) })
     let buildable = ExtensionDeclSyntax(
       extendedType: TypeSyntax("TokenSyntax"),
-      memberBlock: MemberDeclBlockSyntax(members: members)
+      memberBlock: MemberBlockSyntax(members: members)
     )
 
     assertBuildResult(

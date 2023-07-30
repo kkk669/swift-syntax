@@ -60,13 +60,13 @@ final class SyntaxTransformVisitorTest: XCTestCase {
       }
 
       public func visit(_ node: FunctionDeclSyntax) -> String {
-        let argStrings = node.signature.parameterClause.parameterList
+        let argStrings = node.signature.parameterClause.parameters
           .compactMap { $0.type }
           .compactMap(visit)
 
         let resultString: String
-        if let out = node.signature.returnClause {
-          resultString = visit(out.returnType)
+        if let returnClause = node.signature.returnClause {
+          resultString = visit(returnClause.type)
         } else {
           resultString = "Void"
         }
@@ -74,12 +74,12 @@ final class SyntaxTransformVisitorTest: XCTestCase {
         return "(" + argStrings.joined(separator: ", ") + ") -> " + resultString
       }
 
-      public func visit(_ node: SimpleTypeIdentifierSyntax) -> String {
+      public func visit(_ node: IdentifierTypeSyntax) -> String {
         node.name.text
       }
 
       public func visit(_ node: ArrayTypeSyntax) -> String {
-        "[" + visit(node.elementType) + "]"
+        "[" + visit(node.element) + "]"
       }
     }
     _ = {

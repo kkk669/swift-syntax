@@ -185,22 +185,6 @@ extension TokenSyntax {
     )
   }
   
-  public static func extendedRegexDelimiter(
-    _ text: String,
-    leadingTrivia: Trivia = [],
-    trailingTrivia: Trivia = [],
-    presence: SourcePresence = .present
-    
-  ) -> TokenSyntax {
-    return TokenSyntax(
-      .extendedRegexDelimiter(text),
-      leadingTrivia: leadingTrivia,
-      trailingTrivia: trailingTrivia,
-      presence: presence
-      
-    )
-  }
-  
   public static func floatingLiteral(
     _ text: String,
     leadingTrivia: Trivia = [],
@@ -407,13 +391,13 @@ extension TokenSyntax {
     )
   }
   
-  public static func poundAvailableKeyword(
+  public static func poundAvailableToken(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return TokenSyntax(
-      .poundAvailableKeyword,
+      .poundAvailable,
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
@@ -421,13 +405,13 @@ extension TokenSyntax {
     )
   }
   
-  public static func poundElseKeyword(
+  public static func poundElseToken(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return TokenSyntax(
-      .poundElseKeyword,
+      .poundElse,
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
@@ -435,13 +419,13 @@ extension TokenSyntax {
     )
   }
   
-  public static func poundElseifKeyword(
+  public static func poundElseifToken(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return TokenSyntax(
-      .poundElseifKeyword,
+      .poundElseif,
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
@@ -449,13 +433,13 @@ extension TokenSyntax {
     )
   }
   
-  public static func poundEndifKeyword(
+  public static func poundEndifToken(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return TokenSyntax(
-      .poundEndifKeyword,
+      .poundEndif,
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
@@ -463,13 +447,13 @@ extension TokenSyntax {
     )
   }
   
-  public static func poundIfKeyword(
+  public static func poundIfToken(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return TokenSyntax(
-      .poundIfKeyword,
+      .poundIf,
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
@@ -477,13 +461,13 @@ extension TokenSyntax {
     )
   }
   
-  public static func poundSourceLocationKeyword(
+  public static func poundSourceLocationToken(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return TokenSyntax(
-      .poundSourceLocationKeyword,
+      .poundSourceLocation,
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
@@ -491,13 +475,13 @@ extension TokenSyntax {
     )
   }
   
-  public static func poundUnavailableKeyword(
+  public static func poundUnavailableToken(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
     presence: SourcePresence = .present
   ) -> TokenSyntax {
     return TokenSyntax(
-      .poundUnavailableKeyword,
+      .poundUnavailable,
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
@@ -535,7 +519,7 @@ extension TokenSyntax {
     )
   }
   
-  public static func rawStringDelimiter(
+  public static func rawStringPoundDelimiter(
     _ text: String,
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
@@ -543,7 +527,7 @@ extension TokenSyntax {
     
   ) -> TokenSyntax {
     return TokenSyntax(
-      .rawStringDelimiter(text),
+      .rawStringPoundDelimiter(text),
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence
@@ -560,6 +544,22 @@ extension TokenSyntax {
   ) -> TokenSyntax {
     return TokenSyntax(
       .regexLiteralPattern(text),
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+      
+    )
+  }
+  
+  public static func regexPoundDelimiter(
+    _ text: String,
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+    
+  ) -> TokenSyntax {
+    return TokenSyntax(
+      .regexPoundDelimiter(text),
       leadingTrivia: leadingTrivia,
       trailingTrivia: trailingTrivia,
       presence: presence

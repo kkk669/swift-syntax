@@ -136,8 +136,8 @@ public struct ExpandEditorPlaceholder: EditRefactoringProvider {
 public struct ExpandEditorPlaceholders: EditRefactoringProvider {
   public static func textRefactor(syntax token: TokenSyntax, in context: Void) -> [SourceEdit] {
     guard let placeholder = token.parent?.as(EditorPlaceholderExprSyntax.self),
-      let arg = placeholder.parent?.as(TupleExprElementSyntax.self),
-      let argList = arg.parent?.as(TupleExprElementListSyntax.self),
+      let arg = placeholder.parent?.as(LabeledExprSyntax.self),
+      let argList = arg.parent?.as(LabeledExprListSyntax.self),
       let call = argList.parent?.as(FunctionCallExprSyntax.self)
     else {
       return ExpandEditorPlaceholder.textRefactor(syntax: token)
@@ -170,9 +170,9 @@ extension FunctionTypeSyntax {
   fileprivate var closureExpansion: ClosureExprSyntax {
     let closureSignature: ClosureSignatureSyntax?
     if !parameters.isEmpty {
-      let args = ClosureParamListSyntax {
+      let args = ClosureShorthandParameterListSyntax {
         for arg in parameters {
-          ClosureParamSyntax(name: arg.expansionNameToken())
+          ClosureShorthandParameterSyntax(name: arg.expansionNameToken())
         }
       }
       closureSignature = ClosureSignatureSyntax(parameterClause: .simpleInput(args))
@@ -182,7 +182,7 @@ extension FunctionTypeSyntax {
 
     // Single statement for the body - the placeholder-ed type if non-void and
     // 'code' otherwise.
-    let ret = returnClause.returnType.description
+    let ret = returnClause.type.description
     let placeholder: String
     if ret == "Void" || ret == "()" {
       placeholder = ExpandEditorPlaceholder.wrapInTypePlaceholder("code", type: "Void")
@@ -191,7 +191,7 @@ extension FunctionTypeSyntax {
     }
 
     let statementPlaceholder = EditorPlaceholderExprSyntax(
-      identifier: .identifier(placeholder)
+      placeholder: .identifier(placeholder)
     )
     let closureStatement = CodeBlockItemSyntax(
       item: .expr(ExprSyntax(statementPlaceholder))
@@ -216,8 +216,8 @@ extension TupleTypeElementSyntax {
       return secondName
     }
 
-    if let name = name, name.tokenKind != .wildcard {
-      return name
+    if let firstName, firstName.tokenKind != .wildcard {
+      return firstName
     }
 
     return .identifier(ExpandEditorPlaceholder.wrapInPlaceholder(type.description))
@@ -230,12 +230,12 @@ extension FunctionCallExprSyntax {
   /// closure, then return a replacement of this call with one that uses
   /// closures based on the function types provided by each editor placeholder.
   /// Otherwise return nil.
-  fileprivate func expandTrailingClosurePlaceholders(ifIncluded: TupleExprElementSyntax) -> (expr: FunctionCallExprSyntax, numClosures: Int)? {
+  fileprivate func expandTrailingClosurePlaceholders(ifIncluded: LabeledExprSyntax) -> (expr: FunctionCallExprSyntax, numClosures: Int)? {
     var includedArg = false
     var argsToExpand = 0
-    for arg in argumentList.reversed() {
+    for arg in arguments.reversed() {
       guard let expr = arg.expression.as(EditorPlaceholderExprSyntax.self),
-        let data = EditorPlaceholderData(token: expr.identifier),
+        let data = EditorPlaceholderData(token: expr.placeholder),
         case let .typed(_, type) = data,
         type.is(FunctionTypeSyntax.self)
       else {
@@ -251,9 +251,9 @@ extension FunctionCallExprSyntax {
       return nil
     }
 
-    var expandedArgs = [TupleExprElementSyntax]()
-    for arg in argumentList.suffix(argsToExpand) {
-      let edits = ExpandEditorPlaceholder.textRefactor(syntax: arg.expression.cast(EditorPlaceholderExprSyntax.self).identifier)
+    var expandedArgs = [LabeledExprSyntax]()
+    for arg in arguments.suffix(argsToExpand) {
+      let edits = ExpandEditorPlaceholder.textRefactor(syntax: arg.expression.cast(EditorPlaceholderExprSyntax.self).placeholder)
       guard edits.count == 1, let edit = edits.first, !edit.replacement.isEmpty else {
         return nil
       }
@@ -265,9 +265,9 @@ extension FunctionCallExprSyntax {
       )
     }
 
-    let originalArgs = argumentList.dropLast(argsToExpand)
+    let originalArgs = arguments.dropLast(argsToExpand)
     return (
-      detached.with(\.argumentList, TupleExprElementListSyntax(originalArgs + expandedArgs)),
+      detached.with(\.arguments, LabeledExprListSyntax(originalArgs + expandedArgs)),
       expandedArgs.count
     )
   }
