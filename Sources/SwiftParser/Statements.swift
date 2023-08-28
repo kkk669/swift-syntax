@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-@_spi(RawSyntax) import SwiftSyntax
+@_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) import SwiftSyntax
 
 extension TokenConsumer {
   /// Returns `true` if the current token represents the start of a statement
@@ -25,7 +25,7 @@ extension TokenConsumer {
       // misplaced attributes.
       _ = lookahead.consumeAttributeList()
     }
-    return lookahead.isStartOfStatement(allowRecovery: allowRecovery)
+    return lookahead.atStartOfStatement(allowRecovery: allowRecovery)
   }
 }
 
@@ -93,7 +93,7 @@ extension Parser {
       return label(self.parseContinueStatement(continueHandle: handle), with: optLabel)
     case (.fallthrough, let handle)?:
       return label(self.parseFallThroughStatement(fallthroughHandle: handle), with: optLabel)
-    case (._forget, let handle)?, (.discard, let handle)?:  // NOTE: support for deprecated _forget
+    case (.discard, let handle)?:
       return label(self.parseDiscardStatement(discardHandle: handle), with: optLabel)
     case (.return, let handle)?:
       return label(self.parseReturnStatement(returnHandle: handle), with: optLabel)
@@ -384,7 +384,7 @@ extension Parser {
       unexpectedBeforeDoKeyword,
       doKeyword: doKeyword,
       body: body,
-      catchClauses: elements.isEmpty ? nil : RawCatchClauseListSyntax(elements: elements, arena: self.arena),
+      catchClauses: RawCatchClauseListSyntax(elements: elements, arena: self.arena),
       arena: self.arena
     )
   }
@@ -416,7 +416,7 @@ extension Parser {
     return RawCatchClauseSyntax(
       unexpectedBeforeCatchKeyword,
       catchKeyword: catchKeyword,
-      catchItems: catchItems.isEmpty ? nil : RawCatchItemListSyntax(elements: catchItems, arena: self.arena),
+      catchItems: RawCatchItemListSyntax(elements: catchItems, arena: self.arena),
       body: body,
       arena: self.arena
     )
@@ -808,7 +808,7 @@ extension Parser.Lookahead {
   ///
   /// - Note: This function must be kept in sync with `parseStatement()`.
   /// - Seealso: ``Parser/parseStatement()``
-  mutating func isStartOfStatement(allowRecovery: Bool = false) -> Bool {
+  mutating func atStartOfStatement(allowRecovery: Bool = false) -> Bool {
     if (self.at(anyIn: SwitchCaseStart.self) != nil || self.at(.atSign)) && withLookahead({ $0.atStartOfSwitchCaseItem() }) {
       // We consider SwitchCaseItems statements so we don't parse the start of a new case item as trailing parts of an expression.
       return true
@@ -859,7 +859,7 @@ extension Parser.Lookahead {
         // yield statement of some singular expression.
         return !self.peek().isAtStartOfLine
       }
-    case ._forget?, .discard?:  // NOTE: support for deprecated _forget
+    case .discard?:
       let next = peek()
       // The thing to be discarded must be on the same line as `discard`.
       if next.isAtStartOfLine {
@@ -884,7 +884,7 @@ extension Parser.Lookahead {
 
   /// Returns whether the parser's current position is the start of a switch case,
   /// given that we're in the middle of a switch already.
-  mutating func isAtStartOfSwitchCase(allowRecovery: Bool = false) -> Bool {
+  mutating func atStartOfSwitchCase(allowRecovery: Bool = false) -> Bool {
     // Check for and consume attributes. The only valid attribute is `@unknown`
     // but that's a semantic restriction.
     var lookahead = self.lookahead()
@@ -916,9 +916,9 @@ extension Parser.Lookahead {
     }
   }
 
-  mutating func isStartOfConditionalSwitchCases() -> Bool {
+  mutating func atStartOfConditionalSwitchCases() -> Bool {
     guard self.at(.poundIf) else {
-      return self.isAtStartOfSwitchCase()
+      return self.atStartOfSwitchCase()
     }
 
     var lookahead = self.lookahead()
@@ -928,6 +928,6 @@ extension Parser.Lookahead {
       // just find the end of the line
       lookahead.skipUntilEndOfLine()
     } while lookahead.at(.poundIf, .poundElseif, .poundElse) && lookahead.hasProgressed(&loopProgress)
-    return lookahead.isAtStartOfSwitchCase()
+    return lookahead.atStartOfSwitchCase()
   }
 }

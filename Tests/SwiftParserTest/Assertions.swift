@@ -12,7 +12,7 @@
 
 import XCTest
 @_spi(RawSyntax) import SwiftSyntax
-@_spi(Testing) @_spi(RawSyntax) @_spi(AlternateTokenIntrospection) import SwiftParser
+@_spi(Testing) @_spi(RawSyntax) @_spi(AlternateTokenIntrospection) @_spi(ExperimentalLanguageFeatures) import SwiftParser
 @_spi(RawSyntax) import SwiftParserDiagnostics
 import SwiftDiagnostics
 import _SwiftSyntaxTestSupport
@@ -338,7 +338,7 @@ func assertLocation<T: SyntaxProtocol>(
   line: UInt = #line
 ) {
   if let markerLoc = markerLocations[locationMarker] {
-    let locationConverter = SourceLocationConverter(file: "", tree: tree)
+    let locationConverter = SourceLocationConverter(fileName: "", tree: tree)
     let actualLocation = location
     let expectedLocation = locationConverter.location(for: AbsolutePosition(utf8Offset: markerLoc))
     if actualLocation.line != expectedLocation.line || actualLocation.column != expectedLocation.column {
@@ -362,7 +362,7 @@ func assertNote<T: SyntaxProtocol>(
   expected spec: NoteSpec
 ) {
   XCTAssertEqual(note.message, spec.message, file: spec.file, line: spec.line)
-  let locationConverter = SourceLocationConverter(file: "", tree: tree)
+  let locationConverter = SourceLocationConverter(fileName: "", tree: tree)
   assertLocation(
     note.location(converter: locationConverter),
     in: tree,
@@ -381,7 +381,7 @@ func assertDiagnostic<T: SyntaxProtocol>(
   markerLocations: [String: Int],
   expected spec: DiagnosticSpec
 ) {
-  let locationConverter = SourceLocationConverter(file: "", tree: tree)
+  let locationConverter = SourceLocationConverter(fileName: "", tree: tree)
   assertLocation(
     diag.location(converter: locationConverter),
     in: tree,
@@ -412,6 +412,7 @@ func assertDiagnostic<T: SyntaxProtocol>(
   assertStringsEqualWithDiff(
     diag.highlights.map(\.description).joined().trimmingTrailingWhitespace(),
     highlight.trimmingTrailingWhitespace(),
+    "Highlighted source code did not match",
     file: spec.file,
     line: spec.line
   )
@@ -527,236 +528,228 @@ public struct AssertParseOptions: OptionSet {
   public static let normalizeNewlinesInFixedSource = AssertParseOptions(rawValue: 1 << 1)
 }
 
-/// Same as `assertParse` overload with a `(String) -> S` `parse`,
-/// parsing the resulting `String` as a ``SourceFileSyntax``.
-func assertParse(
-  _ markedSource: String,
-  substructure expectedSubstructure: Syntax? = nil,
-  substructureAfterMarker: String = "START",
-  diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
-  applyFixIts: [String]? = nil,
-  fixedSource expectedFixedSource: String? = nil,
-  options: AssertParseOptions = [],
-  file: StaticString = #file,
-  line: UInt = #line
-) {
-  assertParse(
-    markedSource,
-    { SourceFileSyntax.parse(from: &$0) },
-    substructure: expectedSubstructure,
-    substructureAfterMarker: substructureAfterMarker,
-    diagnostics: expectedDiagnostics,
-    applyFixIts: applyFixIts,
-    fixedSource: expectedFixedSource,
-    options: options,
-    file: file,
-    line: line
-  )
-}
+extension ParserTestCase {
+  /// After a test case has been mutated, assert that the mutated source
+  /// round-trips and doesn’t hit any assertion failures in the parser.
+  fileprivate func assertRoundTrip<S: SyntaxProtocol>(
+    source: [UInt8],
+    _ parse: (inout Parser) -> S,
+    experimentalFeatures: Parser.ExperimentalFeatures,
+    file: StaticString,
+    line: UInt
+  ) {
+    source.withUnsafeBufferPointer { buf in
+      let mutatedSource = String(decoding: buf, as: UTF8.self)
+      // Check that we don't hit any assertions in the parser while parsing
+      // the mutated source and that it round-trips
+      var mutatedParser = Parser(buf, experimentalFeatures: experimentalFeatures)
+      let mutatedTree = parse(&mutatedParser)
+      // Run the diagnostic generator to make sure it doesn’t crash
+      _ = ParseDiagnosticsGenerator.diagnostics(for: mutatedTree)
+      assertStringsEqualWithDiff(
+        "\(mutatedTree)",
+        mutatedSource,
+        additionalInfo: """
+          Mutated source failed to round-trip.
 
-/// After a test case has been mutated, assert that the mutated source
-/// round-trips and doesn’t hit any assertion failures in the parser.
-fileprivate func assertRoundTrip<S: SyntaxProtocol>(
-  source: [UInt8],
-  _ parse: (inout Parser) -> S,
-  file: StaticString,
-  line: UInt
-) {
-  source.withUnsafeBufferPointer { buf in
-    let mutatedSource = String(decoding: buf, as: UTF8.self)
-    // Check that we don't hit any assertions in the parser while parsing
-    // the mutated source and that it round-trips
-    var mutatedParser = Parser(buf)
-    let mutatedTree = parse(&mutatedParser)
-    // Run the diagnostic generator to make sure it doesn’t crash
-    _ = ParseDiagnosticsGenerator.diagnostics(for: mutatedTree)
+          Mutated source:
+          \(mutatedSource)
+
+          Actual syntax tree:
+          \(mutatedTree.debugDescription)
+          """,
+        file: file,
+        line: line
+      )
+    }
+  }
+
+  /// Removes any test markers from `markedSource` (1) and parses the result
+  /// using `parse`. By default it only checks if the parsed syntax tree is
+  /// printable back to the origin source, ie. it round trips.
+  ///
+  /// (1) `markedSource` is source that can include markers of the form `1️⃣`,
+  /// to be used as locations in the following parameters when they exist.
+  ///
+  /// - Parameters:
+  ///   - substructure: Asserts the parsed syntax tree contains this structure.
+  ///   - substructureAfterMarker: Changes the position to start the structure
+  ///     assertion from, ie. allows matching a particular substructure rather
+  ///     than the whole source.
+  ///   - diagnostics: Asserts the given diagnostics were output, by default it
+  ///     asserts the parse was successful (ie. it has no diagnostics). Note
+  ///     that `DiagnosticsSpec` uses the location marked by `1️⃣` by default.
+  ///   - applyFixIts: Applies only the fix-its with these messages.
+  ///   - fixedSource: Asserts that the source after applying fix-its matches
+  ///     this string.
+  ///   - experimentalFeatures: A list of experimental features to enable, or
+  ///     `nil` to enable the default set of features provided by the test case.
+  func assertParse<S: SyntaxProtocol>(
+    _ markedSource: String,
+    _ parse: (inout Parser) -> S = { SourceFileSyntax.parse(from: &$0) },
+    substructure expectedSubstructure: (some SyntaxProtocol)? = Optional<Syntax>.none,
+    substructureAfterMarker: String = "START",
+    diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
+    applyFixIts: [String]? = nil,
+    fixedSource expectedFixedSource: String? = nil,
+    options: AssertParseOptions = [],
+    experimentalFeatures: Parser.ExperimentalFeatures? = nil,
+    file: StaticString = #file,
+    line: UInt = #line
+  ) {
+    let experimentalFeatures = experimentalFeatures ?? self.experimentalFeatures
+
+    // Verify the parser can round-trip the source
+    var (markerLocations, source) = extractMarkers(markedSource)
+    markerLocations["START"] = 0
+
+    let enableLongTests = ProcessInfo.processInfo.environment["SKIP_LONG_TESTS"] != "1"
+
+    var parser = Parser(source, experimentalFeatures: experimentalFeatures)
+    #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
+    if enableLongTests {
+      parser.enableAlternativeTokenChoices()
+    }
+    #endif
+    let tree: S = parse(&parser)
+
+    // Round-trip
     assertStringsEqualWithDiff(
-      "\(mutatedTree)",
-      mutatedSource,
+      "\(tree)",
+      source,
       additionalInfo: """
-        Mutated source failed to round-trip.
-
-        Mutated source:
-        \(mutatedSource)
+        Source failed to round-trip.
 
         Actual syntax tree:
-        \(mutatedTree.debugDescription)
+        \(tree.debugDescription)
         """,
       file: file,
       line: line
     )
-  }
-}
 
-/// Removes any test markers from `markedSource` (1) and parses the result
-/// using `parse`. By default it only checks if the parsed syntax tree is
-/// printable back to the origin source, ie. it round trips.
-///
-/// (1) `markedSource` is source that can include markers of the form `1️⃣`,
-/// to be used as locations in the following parameters when they exist.
-///
-/// - Parameters:
-///   - substructure: Asserts the parsed syntax tree contains this structure.
-///   - substructureAfterMarker: Changes the position to start the structure
-///     assertion from, ie. allows matching a particular substructure rather
-///     than the whole source.
-///   - diagnostics: Asserts the given diagnostics were output, by default it
-///     asserts the parse was successful (ie. it has no diagnostics). Note
-///     that `DiagnosticsSpec` uses the location marked by `1️⃣` by default.
-///   - applyFixIts: Applies only the fix-its with these messages.
-///   - fixedSource: Asserts that the source after applying fix-its matches
-///     this string.
-func assertParse<S: SyntaxProtocol>(
-  _ markedSource: String,
-  _ parse: (inout Parser) -> S,
-  substructure expectedSubstructure: Syntax? = nil,
-  substructureAfterMarker: String = "START",
-  diagnostics expectedDiagnostics: [DiagnosticSpec] = [],
-  applyFixIts: [String]? = nil,
-  fixedSource expectedFixedSource: String? = nil,
-  options: AssertParseOptions = [],
-  file: StaticString = #file,
-  line: UInt = #line
-) {
-  // Verify the parser can round-trip the source
-  var (markerLocations, source) = extractMarkers(markedSource)
-  markerLocations["START"] = 0
+    // Substructure
+    if let expectedSubstructure {
+      let subtreeMatcher = SubtreeMatcher(tree, markers: markerLocations)
+      do {
+        try subtreeMatcher.assertSameStructure(
+          afterMarker: substructureAfterMarker,
+          expectedSubstructure,
+          includeTrivia: options.contains(.substructureCheckTrivia),
+          file: file,
+          line: line
+        )
+      } catch {
+        XCTFail("Matching for a subtree failed with error: \(error)", file: file, line: line)
+      }
+    }
 
-  let enableLongTests = ProcessInfo.processInfo.environment["SKIP_LONG_TESTS"] != "1"
-
-  var parser = Parser(source)
-  #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
-  if enableLongTests {
-    parser.enableAlternativeTokenChoices()
-  }
-  #endif
-  let tree: S = parse(&parser)
-
-  // Round-trip
-  assertStringsEqualWithDiff(
-    "\(tree)",
-    source,
-    additionalInfo: """
-      Source failed to round-trip.
-
-      Actual syntax tree:
-      \(tree.debugDescription)
-      """,
-    file: file,
-    line: line
-  )
-
-  // Substructure
-  if let expectedSubstructure {
-    let subtreeMatcher = SubtreeMatcher(Syntax(tree), markers: markerLocations)
-    do {
-      try subtreeMatcher.assertSameStructure(
-        afterMarker: substructureAfterMarker,
-        Syntax(expectedSubstructure),
-        includeTrivia: options.contains(.substructureCheckTrivia),
+    // Diagnostics
+    let diags = ParseDiagnosticsGenerator.diagnostics(for: tree)
+    if diags.count != expectedDiagnostics.count {
+      XCTFail(
+        """
+        Expected \(expectedDiagnostics.count) diagnostics but received \(diags.count):
+        \(diags.map(\.debugDescription).joined(separator: "\n"))
+        """,
         file: file,
         line: line
       )
-    } catch {
-      XCTFail("Matching for a subtree failed with error: \(error)", file: file, line: line)
+    } else {
+      for (diag, expectedDiag) in zip(diags, expectedDiagnostics) {
+        assertDiagnostic(diag, in: tree, markerLocations: markerLocations, expected: expectedDiag)
+      }
     }
-  }
 
-  // Diagnostics
-  let diags = ParseDiagnosticsGenerator.diagnostics(for: tree)
-  if diags.count != expectedDiagnostics.count {
-    XCTFail(
-      """
-      Expected \(expectedDiagnostics.count) diagnostics but received \(diags.count):
-      \(diags.map(\.debugDescription).joined(separator: "\n"))
-      """,
-      file: file,
-      line: line
-    )
-  } else {
-    for (diag, expectedDiag) in zip(diags, expectedDiagnostics) {
-      assertDiagnostic(diag, in: tree, markerLocations: markerLocations, expected: expectedDiag)
+    // Applying Fix-Its
+    if expectedDiagnostics.contains(where: { !$0.fixIts.isEmpty }) && expectedFixedSource == nil {
+      XCTFail("Expected a fixed source if the test case produces diagnostics with Fix-Its", file: file, line: line)
+    } else if let expectedFixedSource = expectedFixedSource {
+      let fixedTree = FixItApplier.applyFixes(in: diags, withMessages: applyFixIts, to: tree)
+      var fixedTreeDescription = fixedTree.description
+      if options.contains(.normalizeNewlinesInFixedSource) {
+        fixedTreeDescription =
+          fixedTreeDescription
+          .replacingOccurrences(of: "\r\n", with: "\n")
+          .replacingOccurrences(of: "\r", with: "\n")
+      }
+      assertStringsEqualWithDiff(
+        fixedTreeDescription.trimmingTrailingWhitespace(),
+        expectedFixedSource.trimmingTrailingWhitespace(),
+        "Applying all Fix-Its didn’t produce the expected fixed source",
+        file: file,
+        line: line
+      )
     }
-  }
 
-  // Applying Fix-Its
-  if expectedDiagnostics.contains(where: { !$0.fixIts.isEmpty }) && expectedFixedSource == nil {
-    XCTFail("Expected a fixed source if the test case produces diagnostics with Fix-Its", file: file, line: line)
-  } else if let expectedFixedSource = expectedFixedSource {
-    let fixedTree = FixItApplier.applyFixes(in: diags, withMessages: applyFixIts, to: tree)
-    var fixedTreeDescription = fixedTree.description
-    if options.contains(.normalizeNewlinesInFixedSource) {
-      fixedTreeDescription =
-        fixedTreeDescription
-        .replacingOccurrences(of: "\r\n", with: "\n")
-        .replacingOccurrences(of: "\r", with: "\n")
+    if expectedDiagnostics.allSatisfy({ $0.fixIts.isEmpty }) && expectedFixedSource != nil {
+      XCTFail("A fixed source was provided but the test case produces no diagnostics with Fix-Its", file: file, line: line)
     }
-    assertStringsEqualWithDiff(
-      fixedTreeDescription.trimmingTrailingWhitespace(),
-      expectedFixedSource.trimmingTrailingWhitespace(),
-      file: file,
-      line: line
-    )
-  }
 
-  if expectedDiagnostics.allSatisfy({ $0.fixIts.isEmpty }) && expectedFixedSource != nil {
-    XCTFail("A fixed source was provided but the test case produces no diagnostics with Fix-Its", file: file, line: line)
-  }
+    if expectedDiagnostics.isEmpty {
+      assertBasicFormat(source: source, parse: parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
+    }
 
-  if expectedDiagnostics.isEmpty {
-    assertBasicFormat(source: source, parse: parse, file: file, line: line)
-  }
+    if enableLongTests {
+      #if !os(WASI)
+      DispatchQueue.concurrentPerform(iterations: Array(tree.tokens(viewMode: .all)).count) { tokenIndex in
+        let flippedTokenTree = TokenPresenceFlipper(flipTokenAtIndex: tokenIndex).rewrite(Syntax(tree))
+        _ = ParseDiagnosticsGenerator.diagnostics(for: flippedTokenTree)
+        assertRoundTrip(source: flippedTokenTree.syntaxTextBytes, parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
+      }
+      #else
+      for tokenIndex in 0..<Array(tree.tokens(viewMode: .all)).count {
+        let flippedTokenTree = TokenPresenceFlipper(flipTokenAtIndex: tokenIndex).rewrite(Syntax(tree))
+        _ = ParseDiagnosticsGenerator.diagnostics(for: flippedTokenTree)
+        assertRoundTrip(source: flippedTokenTree.syntaxTextBytes, parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
+      }
+      #endif
 
-  if enableLongTests {
-    #if !os(WASI)
-    DispatchQueue.concurrentPerform(iterations: Array(tree.tokens(viewMode: .all)).count) { tokenIndex in
-      let flippedTokenTree = TokenPresenceFlipper(flipTokenAtIndex: tokenIndex).rewrite(Syntax(tree))
-      _ = ParseDiagnosticsGenerator.diagnostics(for: flippedTokenTree)
-      assertRoundTrip(source: flippedTokenTree.syntaxTextBytes, parse, file: file, line: line)
+      #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
+      let mutations: [(offset: Int, replacement: TokenSpec)] = parser.alternativeTokenChoices.flatMap { offset, replacements in
+        return replacements.map { (offset, $0) }
+      }
+      #if !os(WASI)
+      DispatchQueue.concurrentPerform(iterations: mutations.count) { index in
+        let mutation = mutations[index]
+        let alternateSource = MutatedTreePrinter.print(tree: Syntax(tree), mutations: [mutation.offset: mutation.replacement])
+        assertRoundTrip(source: alternateSource, parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
+      }
+      #else
+      for index in 0..<mutations.count {
+        let mutation = mutations[index]
+        let alternateSource = MutatedTreePrinter.print(tree: Syntax(tree), mutations: [mutation.offset: mutation.replacement])
+        assertRoundTrip(source: alternateSource, parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
+      }
+      #endif
+      #endif
     }
-    #else
-    for tokenIndex in 0..<Array(tree.tokens(viewMode: .all)).count {
-      let flippedTokenTree = TokenPresenceFlipper(flipTokenAtIndex: tokenIndex).rewrite(Syntax(tree))
-      _ = ParseDiagnosticsGenerator.diagnostics(for: flippedTokenTree)
-      assertRoundTrip(source: flippedTokenTree.syntaxTextBytes, parse, file: file, line: line)
-    }
-    #endif
-
-    #if SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION
-    let mutations: [(offset: Int, replacement: TokenSpec)] = parser.alternativeTokenChoices.flatMap { offset, replacements in
-      return replacements.map { (offset, $0) }
-    }
-    #if !os(WASI)
-    DispatchQueue.concurrentPerform(iterations: mutations.count) { index in
-      let mutation = mutations[index]
-      let alternateSource = MutatedTreePrinter.print(tree: Syntax(tree), mutations: [mutation.offset: mutation.replacement])
-      assertRoundTrip(source: alternateSource, parse, file: file, line: line)
-    }
-    #else
-    for index in 0..<mutations.count {
-      let mutation = mutations[index]
-      let alternateSource = MutatedTreePrinter.print(tree: Syntax(tree), mutations: [mutation.offset: mutation.replacement])
-      assertRoundTrip(source: alternateSource, parse, file: file, line: line)
-    }
-    #endif
-    #endif
   }
 }
 
+/// Removes trivia from all tokens that don’t occur inside multiline string
+/// literals.
+///
+/// We keep trivia inside multiline string literals because the indentation of
+/// the closing quote of a multi-line string literals has impact on how much
+/// leading trivia is stripped from the literal’s content.
 class TriviaRemover: SyntaxRewriter {
+  override func visit(_ node: StringLiteralExprSyntax) -> ExprSyntax {
+    if node.openingQuote.tokenKind == .multilineStringQuote {
+      return ExprSyntax(node)
+    } else {
+      return super.visit(node)
+    }
+  }
+
+  override func visit(_ node: SimpleStringLiteralExprSyntax) -> ExprSyntax {
+    if node.openingQuote.tokenKind == .multilineStringQuote {
+      return ExprSyntax(node)
+    } else {
+      return super.visit(node)
+    }
+  }
+
   override func visit(_ token: TokenSyntax) -> TokenSyntax {
-    var ancestor = Syntax(token)
-    while let parent = ancestor.parent {
-      ancestor = parent
-      if ancestor.is(StringLiteralExprSyntax.self) || ancestor.is(RegexLiteralExprSyntax.self) {
-        // Don't mess with indentation inside string or regex literals.
-        // BasicFormat doesn't know where to re-apply newlines and how much to indent the string literal contents.
-        return token
-      }
-    }
-    if token.parent?.is(StringSegmentSyntax.self) ?? false {
-      return token
-    }
     return token.with(\.leadingTrivia, []).with(\.trailingTrivia, [])
   }
 }
@@ -764,21 +757,22 @@ class TriviaRemover: SyntaxRewriter {
 func assertBasicFormat<S: SyntaxProtocol>(
   source: String,
   parse: (inout Parser) -> S,
+  experimentalFeatures: Parser.ExperimentalFeatures,
   file: StaticString = #file,
   line: UInt = #line
 ) {
-  var parser = Parser(source)
+  var parser = Parser(source, experimentalFeatures: experimentalFeatures)
   let sourceTree = parse(&parser)
   let withoutTrivia = TriviaRemover(viewMode: .sourceAccurate).rewrite(sourceTree)
   let formatted = withoutTrivia.formatted()
 
-  var formattedParser = Parser(formatted.description)
+  var formattedParser = Parser(formatted.description, experimentalFeatures: experimentalFeatures)
   let formattedReparsed = Syntax(parse(&formattedParser))
 
   do {
-    let subtreeMatcher = SubtreeMatcher(Syntax(formattedReparsed), markers: [:])
+    let subtreeMatcher = SubtreeMatcher(formattedReparsed, markers: [:])
     try subtreeMatcher.assertSameStructure(
-      Syntax(sourceTree),
+      sourceTree,
       includeTrivia: false,
       additionalInfo: """
         Removing trivia, formatting using BasicFormat and re-parsing did not produce the same syntax tree.

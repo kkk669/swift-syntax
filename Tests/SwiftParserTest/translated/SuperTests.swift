@@ -15,7 +15,7 @@
 import SwiftSyntax
 import XCTest
 
-final class SuperTests: XCTestCase {
+final class SuperTests: ParserTestCase {
   func testSuper1() {
     assertParse(
       """
@@ -136,17 +136,15 @@ final class SuperTests: XCTestCase {
         }
       }
       """#,
-      substructure: Syntax(
-        FunctionCallExprSyntax(
-          calledExpression: SuperExprSyntax(superKeyword: .keyword(.super)),
-          leftParen: .leftParenToken(),
-          arguments: LabeledExprListSyntax([
-            LabeledExprSyntax(
-              expression: IntegerLiteralExprSyntax(literal: .integerLiteral("0"))
-            )
-          ]),
-          rightParen: .rightParenToken()
-        )
+      substructure: FunctionCallExprSyntax(
+        calledExpression: SuperExprSyntax(superKeyword: .keyword(.super)),
+        leftParen: .leftParenToken(),
+        arguments: LabeledExprListSyntax([
+          LabeledExprSyntax(
+            expression: IntegerLiteralExprSyntax(literal: .integerLiteral("0"))
+          )
+        ]),
+        rightParen: .rightParenToken()
       )
     )
   }
@@ -161,16 +159,14 @@ final class SuperTests: XCTestCase {
         }
       }
       """#,
-      substructure: Syntax(
-        ArrayExprSyntax(
-          leftSquare: .leftSquareToken(),
-          elements: ArrayElementListSyntax([
-            ArrayElementSyntax(
-              expression: IntegerLiteralExprSyntax(literal: .integerLiteral("1"))
-            )
-          ]),
-          rightSquare: .rightSquareToken()
-        )
+      substructure: ArrayExprSyntax(
+        leftSquare: .leftSquareToken(),
+        elements: ArrayElementListSyntax([
+          ArrayElementSyntax(
+            expression: IntegerLiteralExprSyntax(literal: .integerLiteral("1"))
+          )
+        ]),
+        rightSquare: .rightSquareToken()
       )
     )
   }

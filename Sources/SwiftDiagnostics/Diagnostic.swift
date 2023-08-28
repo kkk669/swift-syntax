@@ -36,17 +36,17 @@ public struct Diagnostic: CustomDebugStringConvertible {
   /// If `highlights` is `nil` then `node` will be highlighted. This is a
   /// reasonable default for almost all diagnostics.
   public init(
-    node: Syntax,
+    node: some SyntaxProtocol,
     position: AbsolutePosition? = nil,
     message: DiagnosticMessage,
     highlights: [Syntax]? = nil,
     notes: [Note] = [],
     fixIts: [FixIt] = []
   ) {
-    self.node = node
+    self.node = Syntax(node)
     self.position = position ?? node.positionAfterSkippingLeadingTrivia
     self.diagMessage = message
-    self.highlights = highlights ?? [node]
+    self.highlights = highlights ?? [Syntax(node)]
     self.notes = notes
     self.fixIts = fixIts
   }
@@ -68,7 +68,7 @@ public struct Diagnostic: CustomDebugStringConvertible {
   }
 
   public var debugDescription: String {
-    let locationConverter = SourceLocationConverter(file: "", tree: node.root)
+    let locationConverter = SourceLocationConverter(fileName: "", tree: node.root)
     let location = location(converter: locationConverter)
     return "\(location.line):\(location.column): \(message)"
   }

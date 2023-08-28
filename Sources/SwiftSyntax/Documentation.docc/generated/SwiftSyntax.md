@@ -17,6 +17,7 @@ allows Swift tools to parse, inspect, generate, and transform Swift source code.
 ### Articles
 
 - <doc:Working-with-SwiftSyntax>
+- <doc:Macro-Versioning>
 - <doc:Glossary>
 
 ### Tutorials
@@ -106,6 +107,7 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/ClosureExprSyntax>
 - <doc:SwiftSyntax/ConsumeExprSyntax>
 - <doc:SwiftSyntax/CopyExprSyntax>
+- <doc:SwiftSyntax/DeclReferenceExprSyntax>
 - <doc:SwiftSyntax/DictionaryExprSyntax>
 - <doc:SwiftSyntax/DiscardAssignmentExprSyntax>
 - <doc:SwiftSyntax/EditorPlaceholderExprSyntax>
@@ -113,7 +115,6 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/ForceUnwrapExprSyntax>
 - <doc:SwiftSyntax/FunctionCallExprSyntax>
 - <doc:SwiftSyntax/GenericSpecializationExprSyntax>
-- <doc:SwiftSyntax/IdentifierExprSyntax>
 - <doc:SwiftSyntax/IfExprSyntax>
 - <doc:SwiftSyntax/InOutExprSyntax>
 - <doc:SwiftSyntax/InfixOperatorExprSyntax>
@@ -132,6 +133,7 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/PrefixOperatorExprSyntax>
 - <doc:SwiftSyntax/RegexLiteralExprSyntax>
 - <doc:SwiftSyntax/SequenceExprSyntax>
+- <doc:SwiftSyntax/SimpleStringLiteralExprSyntax>
 - <doc:SwiftSyntax/StringLiteralExprSyntax>
 - <doc:SwiftSyntax/SubscriptCallExprSyntax>
 - <doc:SwiftSyntax/SuperExprSyntax>
@@ -281,6 +283,8 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/PrecedenceGroupNameSyntax>
 - <doc:SwiftSyntax/PrimaryAssociatedTypeListSyntax>
 - <doc:SwiftSyntax/PrimaryAssociatedTypeSyntax>
+- <doc:SwiftSyntax/SimpleStringLiteralSegmentListSyntax>
+- <doc:SwiftSyntax/StringSegmentSyntax>
 - <doc:SwiftSyntax/SpecializeAttributeArgumentListSyntax>
 - <doc:SwiftSyntax/LabeledSpecializeArgumentSyntax>
 - <doc:SwiftSyntax/SpecializeAvailabilityArgumentSyntax>
@@ -303,6 +307,38 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/YieldedExpressionListSyntax>
 - <doc:SwiftSyntax/YieldedExpressionSyntax>
 
+### Attributes
+
+- <doc:SwiftSyntax/AttributeListSyntax>
+- <doc:SwiftSyntax/AttributeSyntax>
+- <doc:SwiftSyntax/BackDeployedAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/ConventionAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/ConventionWitnessMethodAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/DerivativeAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/DifferentiabilityArgumentListSyntax>
+- <doc:SwiftSyntax/DifferentiabilityArgumentSyntax>
+- <doc:SwiftSyntax/DifferentiabilityArgumentsSyntax>
+- <doc:SwiftSyntax/DifferentiabilityWithRespectToArgumentSyntax>
+- <doc:SwiftSyntax/DifferentiableAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/DocumentationAttributeArgumentListSyntax>
+- <doc:SwiftSyntax/DocumentationAttributeArgumentSyntax>
+- <doc:SwiftSyntax/DynamicReplacementAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/EffectsAttributeArgumentListSyntax>
+- <doc:SwiftSyntax/ExposeAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/ImplementsAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/LabeledSpecializeArgumentSyntax>
+- <doc:SwiftSyntax/ObjCSelectorPieceListSyntax>
+- <doc:SwiftSyntax/ObjCSelectorPieceSyntax>
+- <doc:SwiftSyntax/OpaqueReturnTypeOfAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/OriginallyDefinedInAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/PlatformVersionItemListSyntax>
+- <doc:SwiftSyntax/PlatformVersionItemSyntax>
+- <doc:SwiftSyntax/SpecializeAttributeArgumentListSyntax>
+- <doc:SwiftSyntax/SpecializeAvailabilityArgumentSyntax>
+- <doc:SwiftSyntax/SpecializeTargetFunctionArgumentSyntax>
+- <doc:SwiftSyntax/UnavailableFromAsyncAttributeArgumentsSyntax>
+- <doc:SwiftSyntax/UnderscorePrivateAttributeArgumentsSyntax>
+
 ### Miscellaneous Syntax
 
 - <doc:SwiftSyntax/AccessorBlockSyntax>
@@ -310,32 +346,21 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/AccessorParametersSyntax>
 - <doc:SwiftSyntax/AvailabilityConditionSyntax>
 - <doc:SwiftSyntax/AvailabilityLabeledArgumentSyntax>
-- <doc:SwiftSyntax/BackDeployedAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/ClosureCaptureClauseSyntax>
 - <doc:SwiftSyntax/ClosureCaptureSpecifierSyntax>
 - <doc:SwiftSyntax/ClosureParameterClauseSyntax>
 - <doc:SwiftSyntax/ClosureSignatureSyntax>
 - <doc:SwiftSyntax/CodeBlockSyntax>
 - <doc:SwiftSyntax/ConformanceRequirementSyntax>
-- <doc:SwiftSyntax/ConventionAttributeArgumentsSyntax>
-- <doc:SwiftSyntax/ConventionWitnessMethodAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/DeclModifierDetailSyntax>
 - <doc:SwiftSyntax/DeclNameArgumentsSyntax>
-- <doc:SwiftSyntax/DeclNameSyntax>
 - <doc:SwiftSyntax/DeinitializerEffectSpecifiersSyntax>
-- <doc:SwiftSyntax/DerivativeAttributeArgumentsSyntax>
-- <doc:SwiftSyntax/DifferentiabilityArgumentsSyntax>
-- <doc:SwiftSyntax/DifferentiabilityWithRespectToArgumentSyntax>
-- <doc:SwiftSyntax/DifferentiableAttributeArgumentsSyntax>
-- <doc:SwiftSyntax/DynamicReplacementAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/EnumCaseParameterClauseSyntax>
-- <doc:SwiftSyntax/ExposeAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/FunctionEffectSpecifiersSyntax>
 - <doc:SwiftSyntax/FunctionParameterClauseSyntax>
 - <doc:SwiftSyntax/FunctionSignatureSyntax>
 - <doc:SwiftSyntax/GenericArgumentClauseSyntax>
 - <doc:SwiftSyntax/GenericParameterClauseSyntax>
-- <doc:SwiftSyntax/ImplementsAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/InheritanceClauseSyntax>
 - <doc:SwiftSyntax/InitializerClauseSyntax>
 - <doc:SwiftSyntax/KeyPathOptionalComponentSyntax>
@@ -345,14 +370,11 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/MatchingPatternConditionSyntax>
 - <doc:SwiftSyntax/MemberBlockSyntax>
 - <doc:SwiftSyntax/MissingSyntax>
-- <doc:SwiftSyntax/OpaqueReturnTypeOfAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/OperatorPrecedenceAndTypesSyntax>
 - <doc:SwiftSyntax/OptionalBindingConditionSyntax>
-- <doc:SwiftSyntax/OriginallyDefinedInAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/PlatformVersionSyntax>
 - <doc:SwiftSyntax/PoundSourceLocationArgumentsSyntax>
 - <doc:SwiftSyntax/PrimaryAssociatedTypeClauseSyntax>
-- <doc:SwiftSyntax/QualifiedDeclNameSyntax>
 - <doc:SwiftSyntax/ReturnClauseSyntax>
 - <doc:SwiftSyntax/SameTypeRequirementSyntax>
 - <doc:SwiftSyntax/SourceFileSyntax>
@@ -361,8 +383,6 @@ These articles are intended for developers wishing to contribute to SwiftSyntax
 - <doc:SwiftSyntax/TypeAnnotationSyntax>
 - <doc:SwiftSyntax/TypeEffectSpecifiersSyntax>
 - <doc:SwiftSyntax/TypeInitializerClauseSyntax>
-- <doc:SwiftSyntax/UnavailableFromAsyncAttributeArgumentsSyntax>
-- <doc:SwiftSyntax/UnderscorePrivateAttributeArgumentsSyntax>
 - <doc:SwiftSyntax/VersionTupleSyntax>
 - <doc:SwiftSyntax/WhereClauseSyntax>
 - <doc:SwiftSyntax/YieldedExpressionsClauseSyntax>

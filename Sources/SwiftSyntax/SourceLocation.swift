@@ -15,8 +15,7 @@ public struct SourceLocation: Hashable, Codable {
 
   /// The line in the file where this location resides. 1-based.
   ///
-  /// ### See also
-  /// ``SourceLocation/presumedLine``
+  /// - SeeAlso: ``SourceLocation/presumedLine``
   public var line: Int
 
   /// The UTF-8 byte offset from the beginning of the line where this location
@@ -28,8 +27,7 @@ public struct SourceLocation: Hashable, Codable {
 
   /// The file in which this location resides.
   ///
-  /// ### See also
-  /// ``SourceLocation/presumedFile``
+  /// - SeeAlso: ``SourceLocation/presumedFile``
   public let file: String
 
   /// The line of this location when respecting `#sourceLocation` directives.
@@ -124,7 +122,7 @@ fileprivate class SourceLocationCollector: SyntaxVisitor {
 fileprivate struct SourceLocationDirectiveArguments {
   enum Error: Swift.Error, CustomStringConvertible {
     case nonDecimalLineNumber(TokenSyntax)
-    case stringInterpolationInFileName(StringLiteralExprSyntax)
+    case stringInterpolationInFileName(SimpleStringLiteralExprSyntax)
 
     var description: String {
       switch self {
@@ -144,7 +142,7 @@ fileprivate struct SourceLocationDirectiveArguments {
 
   init(_ args: PoundSourceLocationArgumentsSyntax) throws {
     guard args.fileName.segments.count == 1,
-      case .stringSegment(let segment) = args.fileName.segments.first!
+      let segment = args.fileName.segments.first
     else {
       throw Error.stringInterpolationInFileName(args.fileName)
     }
@@ -160,7 +158,7 @@ fileprivate struct SourceLocationDirectiveArguments {
 /// vice-versa. The ``AbsolutePosition``s must be originating from nodes that are
 /// part of the same tree that was used to initialize this class.
 public final class SourceLocationConverter {
-  private let file: String
+  private let fileName: String
   /// The source of the file, modeled as data so it can contain invalid UTF-8.
   private let source: [UInt8]
   /// Array of lines and the position at the start of the line.
@@ -185,11 +183,11 @@ public final class SourceLocationConverter {
   /// name that contains string interpolation.
   ///
   /// - Parameters:
-  ///   - file: The file path associated with the syntax tree.
+  ///   - fileName: The file path associated with the syntax tree.
   ///   - tree: The root of the syntax tree to convert positions to line/columns for.
-  public init(file: String, tree: some SyntaxProtocol) {
+  public init(fileName: String, tree: some SyntaxProtocol) {
     precondition(tree.parent == nil, "SourceLocationConverter must be passed the root of the syntax tree")
-    self.file = file
+    self.fileName = fileName
     self.source = tree.syntaxTextBytes
     (self.lines, endOfFile) = computeLines(tree: Syntax(tree))
     precondition(tree.totalLength.utf8Length == endOfFile.utf8Offset)
@@ -208,6 +206,23 @@ public final class SourceLocationConverter {
     }
   }
 
+  /// Create a new ``SourceLocationConverter`` to convert between ``AbsolutePosition``
+  /// and ``SourceLocation`` in a syntax tree.
+  ///
+  /// This initializer is deprecated. Please use `init(fileName:source:)` instead.
+  ///
+  /// This converter ignores any malformed `#sourceLocation` directives, e.g.
+  /// `#sourceLocation` directives with a non-decimal line number or with a file
+  /// name that contains string interpolation.
+  ///
+  /// - Parameters:
+  ///   - file: The file path associated with the syntax tree.
+  ///   - tree: The root of the syntax tree to convert positions to line/columns for.
+  @available(*, deprecated, message: "Use init(fileName:tree:) instead")
+  public convenience init(file: String, tree: SyntaxProtocol) {
+    self.init(fileName: file, tree: tree)
+  }
+
   /// - Important: This initializer does not take `#sourceLocation` directives
   ///              into account and doesn’t produce `presumedFile` and
   ///              `presumedLine`.
@@ -215,9 +230,9 @@ public final class SourceLocationConverter {
   /// - Parameters:
   ///   - file: The file path associated with the syntax tree.
   ///   - source: The source code to convert positions to line/columns for.
-  @available(*, deprecated, message: "Use init(file:tree:) instead")
+  @available(*, deprecated, message: "Use init(fileName:tree:) instead")
   public init(file: String, source: String) {
-    self.file = file
+    self.fileName = file
     self.source = Array(source.utf8)
     (self.lines, endOfFile) = self.source.withUnsafeBufferPointer { buf in
       return computeLines(SyntaxText(buffer: buf))
@@ -287,7 +302,7 @@ public final class SourceLocationConverter {
     // Clamp the given position to the end of file if needed.
     let pos = min(position, endOfFile)
     if pos.utf8Offset < 0 {
-      return SourceLocation(line: 1, column: 1, offset: 0, file: self.file)
+      return SourceLocation(line: 1, column: 1, offset: 0, file: self.fileName)
     }
 
     precondition(!lines.isEmpty)
@@ -320,7 +335,7 @@ public final class SourceLocationConverter {
       line: line,
       column: column,
       offset: pos.utf8Offset,
-      file: self.file
+      file: self.fileName
     )
   }
 
@@ -601,8 +616,7 @@ fileprivate extension RawTriviaPiece {
         body(carriageReturnLineLength)
       }
       lineLength = .zero
-    case let .shebang(text),
-      let .lineComment(text),
+    case let .lineComment(text),
       let .docLineComment(text):
       // Line comments are not supposed to contain newlines.
       precondition(!text.containsSwiftNewline(), "line comment created that contained a new-line character")

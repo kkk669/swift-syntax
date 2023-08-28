@@ -37,10 +37,10 @@ struct MetadataMacro: MemberMacro {
     providingMembersOf declaration: Declaration,
     in context: Context
   ) throws -> [DeclSyntax] {
-    guard let type = declaration.asProtocol(IdentifiedDeclSyntax.self) else {
+    guard let type = declaration.asProtocol(NamedDeclSyntax.self) else {
       return []
     }
-    let typeName = type.identifier.trimmedDescription
+    let typeName = type.name.trimmedDescription
     return [
       """
       static var __metadata__: [String: String] { ["name": "\(raw: typeName)"] }
@@ -56,10 +56,10 @@ struct PeerValueWithSuffixNameMacro: PeerMacro {
     providingPeersOf declaration: some DeclSyntaxProtocol,
     in context: some MacroExpansionContext
   ) throws -> [DeclSyntax] {
-    guard let identified = declaration.asProtocol(IdentifiedDeclSyntax.self) else {
+    guard let identified = declaration.asProtocol(NamedDeclSyntax.self) else {
       return []
     }
-    return ["var \(raw: identified.identifier.text)_peer: Int { 1 }"]
+    return ["var \(raw: identified.name.text)_peer: Int { 1 }"]
   }
 }
 
@@ -76,13 +76,16 @@ struct MemberDeprecatedMacro: MemberAttributeMacro {
 }
 
 /// Add 'Equatable' conformance.
-struct EquatableConformanceMacro: ConformanceMacro {
+struct EquatableConformanceMacro: ExtensionMacro {
   static func expansion(
     of node: AttributeSyntax,
-    providingConformancesOf declaration: some DeclGroupSyntax,
+    attachedTo declaration: some DeclGroupSyntax,
+    providingExtensionsOf type: some TypeSyntaxProtocol,
+    conformingTo protocols: [TypeSyntax],
     in context: some MacroExpansionContext
-  ) throws -> [(TypeSyntax, GenericWhereClauseSyntax?)] {
-    return [("Equatable", nil)]
+  ) throws -> [ExtensionDeclSyntax] {
+    let ext: DeclSyntax = "extension \(type.trimmed): Equatable {}"
+    return [ext.cast(ExtensionDeclSyntax.self)]
   }
 }
 

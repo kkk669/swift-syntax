@@ -15,7 +15,7 @@
 import SwiftSyntax
 import XCTest
 
-final class OptionalTests: XCTestCase {
+final class OptionalTests: ParserTestCase {
   func testOptional1() {
     assertParse(
       """
@@ -43,11 +43,9 @@ final class OptionalTests: XCTestCase {
       """
       var c = a?
       """,
-      substructure: Syntax(
-        OptionalChainingExprSyntax(
-          expression: IdentifierExprSyntax(identifier: .identifier("a")),
-          questionMark: .postfixQuestionMarkToken()
-        )
+      substructure: OptionalChainingExprSyntax(
+        expression: DeclReferenceExprSyntax(baseName: .identifier("a")),
+        questionMark: .postfixQuestionMarkToken()
       )
     )
   }

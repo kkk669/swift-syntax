@@ -14,30 +14,28 @@
 @_spi(RawSyntax) import SwiftParser
 import XCTest
 
-final class StatementTests: XCTestCase {
+final class StatementTests: ParserTestCase {
   func testIf() {
     assertParse(
       """
       if let baz {}
       """,
-      substructure: Syntax(
-        IfExprSyntax(
-          ifKeyword: .keyword(.if),
-          conditions: ConditionElementListSyntax([
-            ConditionElementSyntax(
-              condition: .init(
-                OptionalBindingConditionSyntax(
-                  bindingSpecifier: .keyword(.let),
-                  pattern: IdentifierPatternSyntax(identifier: .identifier("baz"))
-                )
+      substructure: IfExprSyntax(
+        ifKeyword: .keyword(.if),
+        conditions: ConditionElementListSyntax([
+          ConditionElementSyntax(
+            condition: .init(
+              OptionalBindingConditionSyntax(
+                bindingSpecifier: .keyword(.let),
+                pattern: IdentifierPatternSyntax(identifier: .identifier("baz"))
               )
             )
-          ]),
-          body: .init(
-            leftBrace: .leftBraceToken(),
-            statements: .init([]),
-            rightBrace: .rightBraceToken()
           )
+        ]),
+        body: .init(
+          leftBrace: .leftBraceToken(),
+          statements: .init([]),
+          rightBrace: .rightBraceToken()
         )
       )
     )
@@ -46,25 +44,23 @@ final class StatementTests: XCTestCase {
       """
       if let self = self {}
       """,
-      substructure: Syntax(
-        IfExprSyntax(
-          ifKeyword: .keyword(.if),
-          conditions: ConditionElementListSyntax([
-            ConditionElementSyntax(
-              condition: .init(
-                OptionalBindingConditionSyntax(
-                  bindingSpecifier: .keyword(.let),
-                  pattern: IdentifierPatternSyntax(identifier: .keyword(.self)),
-                  initializer: InitializerClauseSyntax(equal: .equalToken(), value: IdentifierExprSyntax(identifier: .keyword(.self)))
-                )
+      substructure: IfExprSyntax(
+        ifKeyword: .keyword(.if),
+        conditions: ConditionElementListSyntax([
+          ConditionElementSyntax(
+            condition: .init(
+              OptionalBindingConditionSyntax(
+                bindingSpecifier: .keyword(.let),
+                pattern: IdentifierPatternSyntax(identifier: .keyword(.self)),
+                initializer: InitializerClauseSyntax(equal: .equalToken(), value: DeclReferenceExprSyntax(baseName: .keyword(.self)))
               )
             )
-          ]),
-          body: .init(
-            leftBrace: .leftBraceToken(),
-            statements: .init([]),
-            rightBrace: .rightBraceToken()
           )
+        ]),
+        body: .init(
+          leftBrace: .leftBraceToken(),
+          statements: .init([]),
+          rightBrace: .rightBraceToken()
         )
       )
     )
@@ -142,16 +138,13 @@ final class StatementTests: XCTestCase {
   }
 
   func testReturn() {
-    assertParse("return actor", { StmtSyntax.parse(from: &$0) })
+    assertParse("return actor")
 
     assertParse(
       "{ 1️⃣return 0 }",
-      { ExprSyntax.parse(from: &$0) },
-      substructure: Syntax(
-        ReturnStmtSyntax(
-          returnKeyword: .keyword(.return),
-          expression: IntegerLiteralExprSyntax(literal: .integerLiteral("0"))
-        )
+      substructure: ReturnStmtSyntax(
+        returnKeyword: .keyword(.return),
+        expression: IntegerLiteralExprSyntax(literal: .integerLiteral("0"))
       ),
       substructureAfterMarker: "1️⃣"
     )
@@ -351,10 +344,8 @@ final class StatementTests: XCTestCase {
   func testIdentifierPattern() {
     assertParse(
       "switch x { case let .y(z): break }",
-      substructure: Syntax(
-        IdentifierPatternSyntax(
-          identifier: .identifier("z")
-        )
+      substructure: IdentifierPatternSyntax(
+        identifier: .identifier("z")
       )
     )
   }
@@ -364,23 +355,21 @@ final class StatementTests: XCTestCase {
       """
       graphQLMap["clientMutationId"] as? 1️⃣Swift.Optional<String?> ?? Swift.Optional<String?>.none
       """,
-      substructure: Syntax(
-        MemberTypeSyntax(
-          baseType: IdentifierTypeSyntax(name: .identifier("Swift")),
-          period: .periodToken(),
-          name: .identifier("Optional"),
-          genericArgumentClause: GenericArgumentClauseSyntax(
-            leftAngle: .leftAngleToken(),
-            arguments: GenericArgumentListSyntax([
-              GenericArgumentSyntax(
-                argument: OptionalTypeSyntax(
-                  wrappedType: IdentifierTypeSyntax(name: .identifier("String")),
-                  questionMark: .postfixQuestionMarkToken()
-                )
+      substructure: MemberTypeSyntax(
+        baseType: IdentifierTypeSyntax(name: .identifier("Swift")),
+        period: .periodToken(),
+        name: .identifier("Optional"),
+        genericArgumentClause: GenericArgumentClauseSyntax(
+          leftAngle: .leftAngleToken(),
+          arguments: GenericArgumentListSyntax([
+            GenericArgumentSyntax(
+              argument: OptionalTypeSyntax(
+                wrappedType: IdentifierTypeSyntax(name: .identifier("String")),
+                questionMark: .postfixQuestionMarkToken()
               )
-            ]),
-            rightAngle: .rightAngleToken()
-          )
+            )
+          ]),
+          rightAngle: .rightAngleToken()
         )
       ),
       substructureAfterMarker: "1️⃣"
@@ -390,18 +379,16 @@ final class StatementTests: XCTestCase {
       """
       if case 1️⃣Optional<Any>.none = object["anyCol"] { }
       """,
-      substructure: Syntax(
-        GenericSpecializationExprSyntax(
-          expression: IdentifierExprSyntax(identifier: .identifier("Optional")),
-          genericArgumentClause: GenericArgumentClauseSyntax(
-            leftAngle: .leftAngleToken(),
-            arguments: GenericArgumentListSyntax([
-              GenericArgumentSyntax(
-                argument: IdentifierTypeSyntax(name: .keyword(.Any))
-              )
-            ]),
-            rightAngle: .rightAngleToken()
-          )
+      substructure: GenericSpecializationExprSyntax(
+        expression: DeclReferenceExprSyntax(baseName: .identifier("Optional")),
+        genericArgumentClause: GenericArgumentClauseSyntax(
+          leftAngle: .leftAngleToken(),
+          arguments: GenericArgumentListSyntax([
+            GenericArgumentSyntax(
+              argument: IdentifierTypeSyntax(name: .keyword(.Any))
+            )
+          ]),
+          rightAngle: .rightAngleToken()
         )
       ),
       substructureAfterMarker: "1️⃣"
@@ -414,7 +401,7 @@ final class StatementTests: XCTestCase {
       1️⃣yield
       print("huh")
       """,
-      substructure: Syntax(IdentifierExprSyntax(identifier: .identifier("yield"))),
+      substructure: DeclReferenceExprSyntax(baseName: .identifier("yield")),
       substructureAfterMarker: "1️⃣"
     )
   }
@@ -429,14 +416,12 @@ final class StatementTests: XCTestCase {
         }
       }
       """,
-      substructure: Syntax(
-        YieldStmtSyntax(
-          yieldKeyword: .keyword(.yield),
-          yieldedExpressions: .init(
-            InOutExprSyntax(
-              ampersand: .prefixAmpersandToken(),
-              expression: IdentifierExprSyntax(identifier: .identifier("x"))
-            )
+      substructure: YieldStmtSyntax(
+        yieldKeyword: .keyword(.yield),
+        yieldedExpressions: .init(
+          InOutExprSyntax(
+            ampersand: .prefixAmpersandToken(),
+            expression: DeclReferenceExprSyntax(baseName: .identifier("x"))
           )
         )
       ),
@@ -463,28 +448,26 @@ final class StatementTests: XCTestCase {
         }
       }
       """,
-      substructure: Syntax(
-        YieldStmtSyntax(
-          yieldKeyword: .keyword(.yield),
-          yieldedExpressions: .init(
-            InOutExprSyntax(
-              ampersand: .prefixAmpersandToken(),
-              expression: SubscriptCallExprSyntax(
-                calledExpression: IdentifierExprSyntax(identifier: .identifier("native")),
-                leftSquare: .leftSquareToken(),
-                arguments: LabeledExprListSyntax([
-                  LabeledExprSyntax(
-                    expression: IdentifierExprSyntax(identifier: .identifier("key")),
-                    trailingComma: .commaToken()
-                  ),
-                  LabeledExprSyntax(
-                    label: .identifier("isUnique"),
-                    colon: .colonToken(),
-                    expression: BooleanLiteralExprSyntax(literal: .keyword(.true))
-                  ),
-                ]),
-                rightSquare: .rightSquareToken()
-              )
+      substructure: YieldStmtSyntax(
+        yieldKeyword: .keyword(.yield),
+        yieldedExpressions: .init(
+          InOutExprSyntax(
+            ampersand: .prefixAmpersandToken(),
+            expression: SubscriptCallExprSyntax(
+              calledExpression: DeclReferenceExprSyntax(baseName: .identifier("native")),
+              leftSquare: .leftSquareToken(),
+              arguments: LabeledExprListSyntax([
+                LabeledExprSyntax(
+                  expression: DeclReferenceExprSyntax(baseName: .identifier("key")),
+                  trailingComma: .commaToken()
+                ),
+                LabeledExprSyntax(
+                  label: .identifier("isUnique"),
+                  colon: .colonToken(),
+                  expression: BooleanLiteralExprSyntax(literal: .keyword(.true))
+                ),
+              ]),
+              rightSquare: .rightSquareToken()
             )
           )
         )
@@ -501,13 +484,11 @@ final class StatementTests: XCTestCase {
         }
       }
       """,
-      substructure: Syntax(
-        FunctionCallExprSyntax(
-          calledExpression: IdentifierExprSyntax(identifier: .identifier("yield")),
-          leftParen: .leftParenToken(),
-          arguments: LabeledExprListSyntax([]),
-          rightParen: .rightParenToken()
-        )
+      substructure: FunctionCallExprSyntax(
+        calledExpression: DeclReferenceExprSyntax(baseName: .identifier("yield")),
+        leftParen: .leftParenToken(),
+        arguments: LabeledExprListSyntax([]),
+        rightParen: .rightParenToken()
       ),
       substructureAfterMarker: "1️⃣"
     )
@@ -520,13 +501,11 @@ final class StatementTests: XCTestCase {
         }
       }
       """,
-      substructure: Syntax(
-        FunctionCallExprSyntax(
-          calledExpression: IdentifierExprSyntax(identifier: .identifier("yield")),
-          leftParen: .leftParenToken(),
-          arguments: LabeledExprListSyntax([]),
-          rightParen: .rightParenToken()
-        )
+      substructure: FunctionCallExprSyntax(
+        calledExpression: DeclReferenceExprSyntax(baseName: .identifier("yield")),
+        leftParen: .leftParenToken(),
+        arguments: LabeledExprListSyntax([]),
+        rightParen: .rightParenToken()
       ),
       substructureAfterMarker: "1️⃣"
     )
@@ -535,21 +514,19 @@ final class StatementTests: XCTestCase {
       """
       yield([])
       """,
-      substructure: Syntax(
-        FunctionCallExprSyntax(
-          calledExpression: IdentifierExprSyntax(identifier: .identifier("yield")),
-          leftParen: .leftParenToken(),
-          arguments: LabeledExprListSyntax([
-            LabeledExprSyntax(
-              expression: ArrayExprSyntax(
-                leftSquare: .leftSquareToken(),
-                elements: ArrayElementListSyntax([]),
-                rightSquare: .rightSquareToken()
-              )
+      substructure: FunctionCallExprSyntax(
+        calledExpression: DeclReferenceExprSyntax(baseName: .identifier("yield")),
+        leftParen: .leftParenToken(),
+        arguments: LabeledExprListSyntax([
+          LabeledExprSyntax(
+            expression: ArrayExprSyntax(
+              leftSquare: .leftSquareToken(),
+              elements: ArrayElementListSyntax([]),
+              rightSquare: .rightSquareToken()
             )
-          ]),
-          rightParen: .rightParenToken()
-        )
+          )
+        ]),
+        rightParen: .rightParenToken()
       )
     )
 
@@ -559,15 +536,11 @@ final class StatementTests: XCTestCase {
         1️⃣yield & 5
       }
       """,
-      substructure: Syntax(
-        SequenceExprSyntax(
-          elements: ExprListSyntax([
-            IdentifierExprSyntax(identifier: .identifier("yield")),
-            BinaryOperatorExprSyntax(operator: .binaryOperator("&")),
-            IntegerLiteralExprSyntax(5),
-          ])
-        )
-      ),
+      substructure: SequenceExprSyntax {
+        DeclReferenceExprSyntax(baseName: .identifier("yield"))
+        BinaryOperatorExprSyntax(operator: .binaryOperator("&"))
+        IntegerLiteralExprSyntax(5)
+      },
       substructureAfterMarker: "1️⃣"
     )
 
@@ -577,42 +550,23 @@ final class StatementTests: XCTestCase {
         1️⃣yield&5
       }
       """,
-      substructure: Syntax(
-        SequenceExprSyntax(
-          elements: ExprListSyntax([
-            IdentifierExprSyntax(identifier: .identifier("yield")),
-            BinaryOperatorExprSyntax(operator: .binaryOperator("&")),
-            IntegerLiteralExprSyntax(5),
-          ])
-        )
-      ),
+      substructure: SequenceExprSyntax {
+        DeclReferenceExprSyntax(baseName: .identifier("yield"))
+        BinaryOperatorExprSyntax(operator: .binaryOperator("&"))
+        IntegerLiteralExprSyntax(5)
+      },
       substructureAfterMarker: "1️⃣"
     )
   }
 
   func testDiscard() {
-    // ensure the old spelling '_forget' can be parsed for now.
-    assertParse(
-      """
-      _forget self
-      """,
-      substructure: Syntax(
-        DiscardStmtSyntax(
-          discardKeyword: .keyword(._forget),
-          expression: IdentifierExprSyntax(identifier: .keyword(.`self`))
-        )
-      )
-    )
-
     assertParse(
       """
       discard self
       """,
-      substructure: Syntax(
-        DiscardStmtSyntax(
-          discardKeyword: .keyword(.discard),
-          expression: IdentifierExprSyntax(identifier: .keyword(.`self`))
-        )
+      substructure: DiscardStmtSyntax(
+        discardKeyword: .keyword(.discard),
+        expression: DeclReferenceExprSyntax(baseName: .keyword(.`self`))
       )
     )
 
@@ -620,11 +574,9 @@ final class StatementTests: XCTestCase {
       """
       discard Self
       """,
-      substructure: Syntax(
-        DiscardStmtSyntax(
-          discardKeyword: .keyword(.discard),
-          expression: IdentifierExprSyntax(identifier: .keyword(.Self))
-        )
+      substructure: DiscardStmtSyntax(
+        discardKeyword: .keyword(.discard),
+        expression: DeclReferenceExprSyntax(baseName: .keyword(.Self))
       )
     )
 
@@ -632,11 +584,9 @@ final class StatementTests: XCTestCase {
       """
       discard SarahMarshall
       """,
-      substructure: Syntax(
-        DiscardStmtSyntax(
-          discardKeyword: .keyword(.discard),
-          expression: IdentifierExprSyntax(identifier: .identifier("SarahMarshall"))
-        )
+      substructure: DiscardStmtSyntax(
+        discardKeyword: .keyword(.discard),
+        expression: DeclReferenceExprSyntax(baseName: .identifier("SarahMarshall"))
       )
     )
 
@@ -662,19 +612,17 @@ final class StatementTests: XCTestCase {
         discard(self)
       }
       """,
-      substructure: Syntax(
-        FunctionCallExprSyntax(
-          callee: IdentifierExprSyntax(
-            identifier: .identifier("discard")
-          ),
-          argumentList: {
-            LabeledExprListSyntax([
-              LabeledExprSyntax(
-                expression: IdentifierExprSyntax(identifier: .keyword(.`self`))
-              )
-            ])
-          }
-        )
+      substructure: FunctionCallExprSyntax(
+        callee: DeclReferenceExprSyntax(
+          baseName: .identifier("discard")
+        ),
+        argumentList: {
+          LabeledExprListSyntax([
+            LabeledExprSyntax(
+              expression: DeclReferenceExprSyntax(baseName: .keyword(.`self`))
+            )
+          ])
+        }
       )
     )
   }
@@ -688,23 +636,21 @@ final class StatementTests: XCTestCase {
       """
       data[position, default: 0]
       """,
-      substructure: Syntax(
-        SubscriptCallExprSyntax(
-          calledExpression: IdentifierExprSyntax(identifier: .identifier("data")),
-          leftSquare: .leftSquareToken(),
-          arguments: LabeledExprListSyntax([
-            LabeledExprSyntax(
-              expression: IdentifierExprSyntax(identifier: .identifier("position")),
-              trailingComma: .commaToken()
-            ),
-            LabeledExprSyntax(
-              label: .identifier("default"),
-              colon: .colonToken(),
-              expression: IntegerLiteralExprSyntax(0)
-            ),
-          ]),
-          rightSquare: .rightSquareToken()
-        )
+      substructure: SubscriptCallExprSyntax(
+        calledExpression: DeclReferenceExprSyntax(baseName: .identifier("data")),
+        leftSquare: .leftSquareToken(),
+        arguments: LabeledExprListSyntax([
+          LabeledExprSyntax(
+            expression: DeclReferenceExprSyntax(baseName: .identifier("position")),
+            trailingComma: .commaToken()
+          ),
+          LabeledExprSyntax(
+            label: .identifier("default"),
+            colon: .colonToken(),
+            expression: IntegerLiteralExprSyntax(0)
+          ),
+        ]),
+        rightSquare: .rightSquareToken()
       )
     )
   }

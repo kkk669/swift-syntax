@@ -63,6 +63,12 @@ extension SyntaxStringInterpolation: StringInterpolationProtocol {
   }
 
   /// Append a syntax node to the interpolation.
+  ///
+  /// This method accepts a syntax node and appends it to the interpolation.
+  /// If there was a previous indentation value, the method will indent the
+  /// syntax node with that value. If not, it will use the syntax node as-is.
+  ///
+  /// - Parameter node: A syntax node that conforms to `SyntaxProtocol`.
   public mutating func appendInterpolation<Node: SyntaxProtocol>(
     _ node: Node
   ) {
@@ -84,6 +90,20 @@ extension SyntaxStringInterpolation: StringInterpolationProtocol {
     self.lastIndentation = nil
   }
 
+  /// Append an optional syntax node to the interpolation.
+  ///
+  /// This method accepts an optional syntax node and appends it to the interpolation
+  /// if it exists. If the syntax node is nil, this method does nothing.
+  ///
+  /// - Parameter node: An optional syntax node that conforms to `SyntaxProtocol`.
+  public mutating func appendInterpolation<Node: SyntaxProtocol>(
+    _ node: Node?
+  ) {
+    if let node {
+      appendInterpolation(node)
+    }
+  }
+
   public mutating func appendInterpolation<T>(raw value: T) {
     sourceText.append(contentsOf: String(describing: value).utf8)
     self.lastIndentation = nil
@@ -102,6 +122,12 @@ extension SyntaxStringInterpolation: StringInterpolationProtocol {
     format: BasicFormat = BasicFormat()
   ) {
     self.appendInterpolation(buildable.formatted(using: format))
+  }
+
+  public mutating func appendInterpolation(
+    _ trivia: Trivia
+  ) {
+    self.appendInterpolation(raw: trivia.description)
   }
 
   /// Interpolates a literal or similar expression syntax equivalent to `value`.
@@ -273,7 +299,7 @@ extension ExpressibleByLiteralSyntax where Self: FloatingPoint, Self: LosslessSt
     case .negativeNormal, .negativeSubnormal, .positiveZero, .positiveSubnormal, .positiveNormal:
       // TODO: Thousands separators?
       let digits = String(self)
-      return ExprSyntax(FloatLiteralExprSyntax(literal: .floatingLiteral(digits)))
+      return ExprSyntax(FloatLiteralExprSyntax(literal: .floatLiteral(digits)))
     }
 
   }
@@ -377,7 +403,7 @@ extension Optional: ExpressibleByLiteralSyntax where Wrapped: ExpressibleByLiter
 
       if let call = expr.as(FunctionCallExprSyntax.self),
         let memberAccess = call.calledExpression.as(MemberAccessExprSyntax.self),
-        memberAccess.name.text == "some",
+        memberAccess.declName.baseName.text == "some",
         let argument = call.arguments.first?.expression
       {
         return containsNil(argument)

@@ -16,7 +16,7 @@ import SwiftSyntax
 
 import XCTest
 
-final class HashbangLibraryTests: XCTestCase {
+final class HashbangLibraryTests: ParserTestCase {
   func testHashbangLibrary1() {
     // Check that we diagnose and skip the hashbang at the beginning of the file
     // when compiling in library mode.
@@ -25,32 +25,30 @@ final class HashbangLibraryTests: XCTestCase {
       #!/usr/bin/swift
       class Foo {}
       """,
-      substructure: Syntax(
-        SourceFileSyntax(
-          statements: CodeBlockItemListSyntax([
-            CodeBlockItemSyntax(
-              item: .decl(
-                DeclSyntax(
-                  ClassDeclSyntax(
-                    classKeyword: .keyword(
-                      .class,
-                      leadingTrivia: [
-                        .shebang("#!/usr/bin/swift"),
-                        .newlines(1),
-                      ],
-                      trailingTrivia: .space
-                    ),
-                    name: .identifier("Foo", trailingTrivia: .space),
-                    memberBlock: MemberBlockSyntax(
-                      members: MemberBlockItemListSyntax([])
-                    )
+      substructure: SourceFileSyntax(
+        shebang: .shebang("#!/usr/bin/swift"),
+        statements: CodeBlockItemListSyntax([
+          CodeBlockItemSyntax(
+            item: .decl(
+              DeclSyntax(
+                ClassDeclSyntax(
+                  classKeyword: .keyword(
+                    .class,
+                    leadingTrivia: [
+                      .newlines(1)
+                    ],
+                    trailingTrivia: .space
+                  ),
+                  name: .identifier("Foo", trailingTrivia: .space),
+                  memberBlock: MemberBlockSyntax(
+                    members: MemberBlockItemListSyntax([])
                   )
                 )
               )
             )
-          ]),
-          endOfFileToken: .endOfFileToken()
-        )
+          )
+        ]),
+        endOfFileToken: .endOfFileToken()
       ),
       options: [.substructureCheckTrivia]
     )

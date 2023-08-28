@@ -19,7 +19,7 @@ import SwiftSyntaxBuilder
 ///
 /// Most tests are expressed by a single function call that compares the
 /// run-time String value against the parsed node's `representedLiteralValue`.
-public class StringLiteralRepresentedLiteralValueTests: XCTestCase {
+public class StringLiteralRepresentedLiteralValueTests: ParserTestCase {
 
   func testIntro() {
     test(
@@ -302,7 +302,7 @@ public class StringLiteralRepresentedLiteralValueTests: XCTestCase {
 
       super.init(viewMode: .sourceAccurate)
 
-      self.locationConverter = SourceLocationConverter(file: "", tree: syntax)
+      self.locationConverter = SourceLocationConverter(fileName: "", tree: syntax)
       self.walk(syntax)
       self.locationConverter = nil
     }

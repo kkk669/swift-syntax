@@ -16,7 +16,7 @@ import SwiftSyntax
 
 import XCTest
 
-final class InitDeinitTests: XCTestCase {
+final class InitDeinitTests: ParserTestCase {
   func testInitDeinit1() {
     assertParse(
       """
@@ -435,7 +435,7 @@ final class InitDeinitTests: XCTestCase {
         final func foo()
       }
       """,
-      substructure: Syntax(DeinitializerDeclSyntax())
+      substructure: DeinitializerDeclSyntax()
     )
   }
 

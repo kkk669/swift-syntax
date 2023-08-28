@@ -15,14 +15,11 @@
 extension Parser {
   /// Parse a pattern.
   mutating func parsePattern() -> RawPatternSyntax {
-    enum ExpectedTokens: TokenSpecSet {
+    enum PatternOnlyExpectedTokens: TokenSpecSet {
       case leftParen
       case wildcard
       case identifier
       case dollarIdentifier  // For recovery
-      case `let`
-      case `var`
-      case `inout`
 
       init?(lexeme: Lexer.Lexeme) {
         switch PrepareForKeywordMatch(lexeme) {
@@ -30,9 +27,6 @@ extension Parser {
         case TokenSpec(.wildcard): self = .wildcard
         case TokenSpec(.identifier): self = .identifier
         case TokenSpec(.dollarIdentifier): self = .dollarIdentifier
-        case TokenSpec(.let): self = .let
-        case TokenSpec(.var): self = .var
-        case TokenSpec(.inout): self = .inout
         default: return nil
         }
       }
@@ -43,15 +37,16 @@ extension Parser {
         case .wildcard: return .wildcard
         case .identifier: return .identifier
         case .dollarIdentifier: return .dollarIdentifier
-        case .let: return .keyword(.let)
-        case .var: return .keyword(.var)
-        case .inout: return .keyword(.inout)
         }
       }
     }
+    typealias ExpectedTokens = EitherTokenSpecSet<
+      PatternOnlyExpectedTokens,
+      ValueBindingPatternSyntax.BindingSpecifierOptions
+    >
 
     switch self.at(anyIn: ExpectedTokens.self) {
-    case (.leftParen, let handle)?:
+    case (.lhs(.leftParen), let handle)?:
       let lparen = self.eat(handle)
       let elements = self.parsePatternTupleElements()
       let (unexpectedBeforeRParen, rparen) = self.expect(.rightParen)
@@ -64,7 +59,7 @@ extension Parser {
           arena: self.arena
         )
       )
-    case (.wildcard, let handle)?:
+    case (.lhs(.wildcard), let handle)?:
       let wildcard = self.eat(handle)
       return RawPatternSyntax(
         RawWildcardPatternSyntax(
@@ -73,7 +68,7 @@ extension Parser {
           arena: self.arena
         )
       )
-    case (.identifier, let handle)?:
+    case (.lhs(.identifier), let handle)?:
       let identifier = self.eat(handle)
       return RawPatternSyntax(
         RawIdentifierPatternSyntax(
@@ -81,7 +76,7 @@ extension Parser {
           arena: self.arena
         )
       )
-    case (.dollarIdentifier, let handle)?:
+    case (.lhs(.dollarIdentifier), let handle)?:
       let dollarIdent = self.eat(handle)
       let unexpectedBeforeIdentifier = RawUnexpectedNodesSyntax(elements: [RawSyntax(dollarIdent)], arena: self.arena)
       return RawPatternSyntax(
@@ -91,32 +86,39 @@ extension Parser {
           arena: self.arena
         )
       )
-    case (.let, let handle)?,
-      (.var, let handle)?,
-      (.inout, let handle)?:
-      let bindingSpecifier = self.eat(handle)
-      let value = self.parsePattern()
-      return RawPatternSyntax(
-        RawValueBindingPatternSyntax(
-          bindingSpecifier: bindingSpecifier,
-          pattern: value,
-          arena: self.arena
-        )
-      )
-    case nil:
-      if self.currentToken.isLexerClassifiedKeyword, !self.atStartOfLine {
-        // Recover if a keyword was used instead of an identifier
-        let keyword = self.consumeAnyToken()
+    case (.rhs(let binding), let handle)?:
+      switch binding {
+      case ._mutating, ._borrowing, ._consuming:
+        guard experimentalFeatures.contains(.referenceBindings) else {
+          break
+        }
+        fallthrough
+      case .let, .var, .inout:
+        let bindingSpecifier = self.eat(handle)
+        let value = self.parsePattern()
         return RawPatternSyntax(
-          RawIdentifierPatternSyntax(
-            RawUnexpectedNodesSyntax([keyword], arena: self.arena),
-            identifier: missingToken(.identifier),
+          RawValueBindingPatternSyntax(
+            bindingSpecifier: bindingSpecifier,
+            pattern: value,
             arena: self.arena
           )
         )
-      } else {
-        return RawPatternSyntax(RawMissingPatternSyntax(arena: self.arena))
       }
+    case nil:
+      break
+    }
+    if self.currentToken.isLexerClassifiedKeyword, !self.atStartOfLine {
+      // Recover if a keyword was used instead of an identifier
+      let keyword = self.consumeAnyToken()
+      return RawPatternSyntax(
+        RawIdentifierPatternSyntax(
+          RawUnexpectedNodesSyntax([keyword], arena: self.arena),
+          identifier: missingToken(.identifier),
+          arena: self.arena
+        )
+      )
+    } else {
+      return RawPatternSyntax(RawMissingPatternSyntax(arena: self.arena))
     }
   }
 
@@ -215,19 +217,7 @@ extension Parser {
   mutating func parseMatchingPattern(context: PatternContext) -> RawPatternSyntax {
     // Parse productions that can only be patterns.
     switch self.at(anyIn: MatchingPatternStart.self) {
-    case (.var, let handle)?,
-      (.let, let handle)?,
-      (.inout, let handle)?:
-      let bindingSpecifier = self.eat(handle)
-      let value = self.parseMatchingPattern(context: .bindingIntroducer)
-      return RawPatternSyntax(
-        RawValueBindingPatternSyntax(
-          bindingSpecifier: bindingSpecifier,
-          pattern: value,
-          arena: self.arena
-        )
-      )
-    case (.is, let handle)?:
+    case (.lhs(.is), let handle)?:
       let isKeyword = self.eat(handle)
       let type = self.parseType()
       return RawPatternSyntax(
@@ -237,23 +227,43 @@ extension Parser {
           arena: self.arena
         )
       )
-    case nil:
-      // matching-pattern ::= expr
-      // Fall back to expression parsing for ambiguous forms. Name lookup will
-      // disambiguate.
-      let patternSyntax = self.parseSequenceExpression(.basic, pattern: context)
-      if let pat = patternSyntax.as(RawPatternExprSyntax.self) {
-        // The most common case here is to parse something that was a lexically
-        // obvious pattern, which will come back wrapped in an immediate
-        // RawUnresolvedPatternExprSyntax.
-        //
-        // FIXME: This is pretty gross. Let's find a way to disambiguate let
-        // binding patterns much earlier.
-        return RawPatternSyntax(pat.pattern)
+    case (.rhs(let binding), let handle)?:
+      switch binding {
+      case ._mutating, ._borrowing, ._consuming:
+        guard experimentalFeatures.contains(.referenceBindings) else {
+          break
+        }
+        fallthrough
+      case .let, .var, .inout:
+        let bindingSpecifier = self.eat(handle)
+        let value = self.parseMatchingPattern(context: .bindingIntroducer)
+        return RawPatternSyntax(
+          RawValueBindingPatternSyntax(
+            bindingSpecifier: bindingSpecifier,
+            pattern: value,
+            arena: self.arena
+          )
+        )
       }
-      let expr = RawExprSyntax(patternSyntax)
-      return RawPatternSyntax(RawExpressionPatternSyntax(expression: expr, arena: self.arena))
+    case nil:
+      break
     }
+
+    // matching-pattern ::= expr
+    // Fall back to expression parsing for ambiguous forms. Name lookup will
+    // disambiguate.
+    let patternSyntax = self.parseSequenceExpression(.basic, pattern: context)
+    if let pat = patternSyntax.as(RawPatternExprSyntax.self) {
+      // The most common case here is to parse something that was a lexically
+      // obvious pattern, which will come back wrapped in an immediate
+      // RawUnresolvedPatternExprSyntax.
+      //
+      // FIXME: This is pretty gross. Let's find a way to disambiguate let
+      // binding patterns much earlier.
+      return RawPatternSyntax(pat.pattern)
+    }
+    let expr = RawExprSyntax(patternSyntax)
+    return RawPatternSyntax(RawExpressionPatternSyntax(expression: expr, arena: self.arena))
   }
 }
 
@@ -267,22 +277,16 @@ extension Parser.Lookahead {
   ///   pattern ::= 'let' pattern
   ///   pattern ::= 'inout' pattern
   mutating func canParsePattern() -> Bool {
-    enum PatternStartTokens: TokenSpecSet {
+    enum PurePatternStartTokens: TokenSpecSet {
       case identifier
       case wildcard
-      case `let`
-      case `var`
       case leftParen
-      case `inout`
 
       init?(lexeme: Lexer.Lexeme) {
         switch PrepareForKeywordMatch(lexeme) {
         case TokenSpec(.identifier): self = .identifier
         case TokenSpec(.wildcard): self = .wildcard
-        case TokenSpec(.let): self = .let
-        case TokenSpec(.var): self = .var
         case TokenSpec(.leftParen): self = .leftParen
-        case TokenSpec(.inout): self = .inout
         default: return nil
         }
       }
@@ -291,26 +295,33 @@ extension Parser.Lookahead {
         switch self {
         case .identifier: return .identifier
         case .wildcard: return .wildcard
-        case .let: return .keyword(.let)
-        case .var: return .keyword(.var)
         case .leftParen: return .leftParen
-        case .inout: return .keyword(.inout)
         }
       }
     }
+    typealias PatternStartTokens = EitherTokenSpecSet<
+      PurePatternStartTokens,
+      ValueBindingPatternSyntax.BindingSpecifierOptions
+    >
 
     switch self.at(anyIn: PatternStartTokens.self) {
-    case (.identifier, let handle)?,
-      (.wildcard, let handle)?:
+    case (.lhs(.identifier), let handle)?,
+      (.lhs(.wildcard), let handle)?:
       self.eat(handle)
       return true
-    case (.let, let handle)?,
-      (.var, let handle)?,
-      (.inout, let handle)?:
-      self.eat(handle)
-      return self.canParsePattern()
-    case (.leftParen, _)?:
+    case (.lhs(.leftParen), _)?:
       return self.canParsePatternTuple()
+    case (.rhs(let binding), let handle)?:
+      switch binding {
+      case ._mutating, ._borrowing, ._consuming:
+        guard experimentalFeatures.contains(.referenceBindings) else {
+          return false
+        }
+        fallthrough
+      case .let, .var, .inout:
+        self.eat(handle)
+        return self.canParsePattern()
+      }
     case nil:
       return false
     }

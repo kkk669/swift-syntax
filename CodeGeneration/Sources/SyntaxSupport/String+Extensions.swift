@@ -14,8 +14,8 @@ public extension StringProtocol {
   var withFirstCharacterLowercased: String { prefix(1).lowercased() + dropFirst() }
   var withFirstCharacterUppercased: String { prefix(1).uppercased() + dropFirst() }
   var backtickedIfNeeded: String {
-    if KEYWORDS.contains(where: {
-      $0.name == self && $0.isLexerClassified
+    if Keyword.allCases.map(\.spec).contains(where: {
+      $0.name == self && ($0.isLexerClassified || $0.name == "Type" || $0.name == "Protocol")
     }) {
       return "`\(self)`"
     } else {

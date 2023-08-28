@@ -14,7 +14,7 @@ import SwiftSyntax
 import SwiftParser
 import XCTest
 
-final class TypeMetatypeTests: XCTestCase {
+final class TypeMetatypeTests: ParserTestCase {
   func testBaseType() {
     let cases: [UInt: String] = [
       // Identifiers and member types
@@ -56,11 +56,9 @@ final class TypeMetatypeTests: XCTestCase {
         assertParse(
           "\(baseType).\(metaKind)",
           TypeSyntax.parse,
-          substructure: Syntax(
-            MetatypeTypeSyntax(
-              baseType: baseTypeSyntax,
-              metatypeSpecifier: .keyword(metaKind)
-            )
+          substructure: MetatypeTypeSyntax(
+            baseType: baseTypeSyntax,
+            metatypeSpecifier: .keyword(metaKind)
           ),
           line: line
         )

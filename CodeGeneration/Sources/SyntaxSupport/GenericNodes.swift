@@ -18,17 +18,17 @@ public let GENERIC_NODES: [Node] = [
     nameForDiagnostics: "conformance requirement",
     children: [
       Child(
-        name: "LeftType",
-        deprecatedName: "LeftTypeIdentifier",
+        name: "leftType",
+        deprecatedName: "leftTypeIdentifier",
         kind: .node(kind: .type)
       ),
       Child(
-        name: "Colon",
-        kind: .token(choices: [.token(tokenKind: "ColonToken")])
+        name: "colon",
+        kind: .token(choices: [.token(.colon)])
       ),
       Child(
-        name: "RightType",
-        deprecatedName: "RightTypeIdentifier",
+        name: "rightType",
+        deprecatedName: "rightTypeIdentifier",
         kind: .node(kind: .type)
       ),
     ]
@@ -43,27 +43,27 @@ public let GENERIC_NODES: [Node] = [
     parserFunction: "parseGenericParameters",
     children: [
       Child(
-        name: "LeftAngle",
-        deprecatedName: "LeftAngleBracket",
-        kind: .token(choices: [.token(tokenKind: "LeftAngleToken")]),
+        name: "leftAngle",
+        deprecatedName: "leftAngleBracket",
+        kind: .token(choices: [.token(.leftAngle)]),
         documentation: "The opening angle bracket (`<`) of the generic parameter clause."
       ),
       Child(
-        name: "Parameters",
-        deprecatedName: "GenericParameterList",
+        name: "parameters",
+        deprecatedName: "genericParameterList",
         kind: .collection(kind: .genericParameterList, collectionElementName: "Parameter", deprecatedCollectionElementName: "GenericParameter"),
         documentation: "The list of generic parameters in the clause."
       ),
       Child(
-        name: "GenericWhereClause",
+        name: "genericWhereClause",
         kind: .node(kind: .genericWhereClause),
         documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
         isOptional: true
       ),
       Child(
-        name: "RightAngle",
-        deprecatedName: "RightAngleBracket",
-        kind: .token(choices: [.token(tokenKind: "RightAngleToken")]),
+        name: "rightAngle",
+        deprecatedName: "rightAngleBracket",
+        kind: .token(choices: [.token(.rightAngle)]),
         documentation: "The closing angle bracket (`>`) of the generic parameter clause."
       ),
     ]
@@ -89,36 +89,35 @@ public let GENERIC_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "Attributes",
-        kind: .collection(kind: .attributeList, collectionElementName: "Attribute"),
-        isOptional: true
+        name: "attributes",
+        kind: .collection(kind: .attributeList, collectionElementName: "Attribute", defaultsToEmpty: true)
       ),
       Child(
-        name: "EachKeyword",
-        deprecatedName: "Each",
-        kind: .token(choices: [.keyword(text: "each")]),
+        name: "eachKeyword",
+        deprecatedName: "each",
+        kind: .token(choices: [.keyword(.each)]),
         nameForDiagnostics: "parameter pack specifier",
         isOptional: true
       ),
       Child(
-        name: "Name",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
+        name: "name",
+        kind: .token(choices: [.token(.identifier)]),
         nameForDiagnostics: "name"
       ),
       Child(
-        name: "Colon",
-        kind: .token(choices: [.token(tokenKind: "ColonToken")]),
+        name: "colon",
+        kind: .token(choices: [.token(.colon)]),
         isOptional: true
       ),
       Child(
-        name: "InheritedType",
+        name: "inheritedType",
         kind: .node(kind: .type),
         nameForDiagnostics: "inherited type",
         isOptional: true
       ),
       Child(
-        name: "TrailingComma",
-        kind: .token(choices: [.token(tokenKind: "CommaToken")]),
+        name: "trailingComma",
+        kind: .token(choices: [.token(.comma)]),
         isOptional: true
       ),
     ]
@@ -142,26 +141,26 @@ public let GENERIC_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "Requirement",
-        deprecatedName: "Body",
+        name: "requirement",
+        deprecatedName: "body",
         kind: .nodeChoices(choices: [
           Child(
-            name: "SameTypeRequirement",
+            name: "sameTypeRequirement",
             kind: .node(kind: .sameTypeRequirement)
           ),
           Child(
-            name: "ConformanceRequirement",
+            name: "conformanceRequirement",
             kind: .node(kind: .conformanceRequirement)
           ),
           Child(
-            name: "LayoutRequirement",
+            name: "layoutRequirement",
             kind: .node(kind: .layoutRequirement)
           ),
         ])
       ),
       Child(
-        name: "TrailingComma",
-        kind: .token(choices: [.token(tokenKind: "CommaToken")]),
+        name: "trailingComma",
+        kind: .token(choices: [.token(.comma)]),
         isOptional: true
       ),
     ]
@@ -175,13 +174,13 @@ public let GENERIC_NODES: [Node] = [
     documentation: "A `where` clause that places additional constraints on generic parameters like `where Element: Hashable`.",
     children: [
       Child(
-        name: "WhereKeyword",
-        kind: .token(choices: [.keyword(text: "where")]),
+        name: "whereKeyword",
+        kind: .token(choices: [.keyword(.where)]),
         documentation: "The `where` keyword in the clause."
       ),
       Child(
-        name: "Requirements",
-        deprecatedName: "RequirementList",
+        name: "requirements",
+        deprecatedName: "requirementList",
         kind: .collection(kind: .genericRequirementList, collectionElementName: "Requirement"),
         documentation: "The list of requirements in the clause."
       ),
@@ -196,53 +195,53 @@ public let GENERIC_NODES: [Node] = [
     nameForDiagnostics: "layout requirement",
     children: [
       Child(
-        name: "Type",
-        deprecatedName: "TypeIdentifier",
+        name: "type",
+        deprecatedName: "typeIdentifier",
         kind: .node(kind: .type),
         nameForDiagnostics: "constrained type"
       ),
       Child(
-        name: "Colon",
-        kind: .token(choices: [.token(tokenKind: "ColonToken")])
+        name: "colon",
+        kind: .token(choices: [.token(.colon)])
       ),
       Child(
-        name: "LayoutSpecifier",
-        deprecatedName: "LayoutConstraint",
+        name: "layoutSpecifier",
+        deprecatedName: "layoutConstraint",
         kind: .token(choices: [
-          .keyword(text: "_Trivial"),
-          .keyword(text: "_TrivialAtMost"),
-          .keyword(text: "_UnknownLayout"),
-          .keyword(text: "_RefCountedObject"),
-          .keyword(text: "_NativeRefCountedObject"),
-          .keyword(text: "_Class"),
-          .keyword(text: "_NativeClass"),
+          .keyword(._Trivial),
+          .keyword(._TrivialAtMost),
+          .keyword(._UnknownLayout),
+          .keyword(._RefCountedObject),
+          .keyword(._NativeRefCountedObject),
+          .keyword(._Class),
+          .keyword(._NativeClass),
         ])
       ),
       Child(
-        name: "LeftParen",
-        kind: .token(choices: [.token(tokenKind: "LeftParenToken")]),
+        name: "leftParen",
+        kind: .token(choices: [.token(.leftParen)]),
         isOptional: true
       ),
       Child(
-        name: "Size",
-        kind: .token(choices: [.token(tokenKind: "IntegerLiteralToken")]),
+        name: "size",
+        kind: .token(choices: [.token(.integerLiteral)]),
         nameForDiagnostics: "size",
         isOptional: true
       ),
       Child(
-        name: "Comma",
-        kind: .token(choices: [.token(tokenKind: "CommaToken")]),
+        name: "comma",
+        kind: .token(choices: [.token(.comma)]),
         isOptional: true
       ),
       Child(
-        name: "Alignment",
-        kind: .token(choices: [.token(tokenKind: "IntegerLiteralToken")]),
+        name: "alignment",
+        kind: .token(choices: [.token(.integerLiteral)]),
         nameForDiagnostics: "alignment",
         isOptional: true
       ),
       Child(
-        name: "RightParen",
-        kind: .token(choices: [.token(tokenKind: "RightParenToken")]),
+        name: "rightParen",
+        kind: .token(choices: [.token(.rightParen)]),
         isOptional: true
       ),
     ]
@@ -255,19 +254,19 @@ public let GENERIC_NODES: [Node] = [
     nameForDiagnostics: "primary associated type clause",
     children: [
       Child(
-        name: "LeftAngle",
-        deprecatedName: "LeftAngleBracket",
-        kind: .token(choices: [.token(tokenKind: "LeftAngleToken")])
+        name: "leftAngle",
+        deprecatedName: "leftAngleBracket",
+        kind: .token(choices: [.token(.leftAngle)])
       ),
       Child(
-        name: "PrimaryAssociatedTypes",
-        deprecatedName: "PrimaryAssociatedTypeList",
+        name: "primaryAssociatedTypes",
+        deprecatedName: "primaryAssociatedTypeList",
         kind: .collection(kind: .primaryAssociatedTypeList, collectionElementName: "PrimaryAssociatedType")
       ),
       Child(
-        name: "RightAngle",
-        deprecatedName: "RightAngleBracket",
-        kind: .token(choices: [.token(tokenKind: "RightAngleToken")])
+        name: "rightAngle",
+        deprecatedName: "rightAngleBracket",
+        kind: .token(choices: [.token(.rightAngle)])
       ),
     ]
   ),
@@ -289,13 +288,13 @@ public let GENERIC_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "Name",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
+        name: "name",
+        kind: .token(choices: [.token(.identifier)]),
         nameForDiagnostics: "name"
       ),
       Child(
-        name: "TrailingComma",
-        kind: .token(choices: [.token(tokenKind: "CommaToken")]),
+        name: "trailingComma",
+        kind: .token(choices: [.token(.comma)]),
         isOptional: true
       ),
     ]
@@ -308,19 +307,19 @@ public let GENERIC_NODES: [Node] = [
     nameForDiagnostics: "same type requirement",
     children: [
       Child(
-        name: "LeftType",
-        deprecatedName: "LeftTypeIdentifier",
+        name: "leftType",
+        deprecatedName: "leftTypeIdentifier",
         kind: .node(kind: .type),
         nameForDiagnostics: "left-hand type"
       ),
       Child(
-        name: "Equal",
-        deprecatedName: "EqualityToken",
-        kind: .token(choices: [.token(tokenKind: "BinaryOperatorToken"), .token(tokenKind: "PrefixOperatorToken"), .token(tokenKind: "PostfixOperatorToken")])
+        name: "equal",
+        deprecatedName: "equalityToken",
+        kind: .token(choices: [.token(.binaryOperator), .token(.prefixOperator), .token(.postfixOperator)])
       ),
       Child(
-        name: "RightType",
-        deprecatedName: "RightTypeIdentifier",
+        name: "rightType",
+        deprecatedName: "rightTypeIdentifier",
         kind: .node(kind: .type),
         nameForDiagnostics: "right-hand type"
       ),

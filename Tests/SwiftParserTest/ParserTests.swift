@@ -23,14 +23,14 @@ import WASILibc
 import WASIHelpers
 #endif
 
-public class ParserTests: XCTestCase {
+public class ParserTests: ParserTestCase {
   /// Run a single parse test.
   func runParseTest(fileURL: URL, checkDiagnostics: Bool) throws {
     let fileContents = try Data(contentsOf: fileURL)
     let parsed = fileContents.withUnsafeBytes({ buffer in
       // Release builds are fine with the default maximum nesting level of 256.
-      // Debug builds overflow with any stack size bigger than 25-ish.
-      Parser.parse(source: buffer.bindMemory(to: UInt8.self), maximumNestingLevel: 25)
+      // Debug builds overflow with any stack size bigger than 20-ish.
+      Parser.parse(source: buffer.bindMemory(to: UInt8.self), maximumNestingLevel: 20)
     })
     assertDataEqualWithDiff(
       Data(parsed.syntaxTextBytes),
@@ -45,7 +45,7 @@ public class ParserTests: XCTestCase {
     let diagnostics = ParseDiagnosticsGenerator.diagnostics(for: parsed)
     if !diagnostics.isEmpty {
       var locationAndDiagnostics: [String] = []
-      let locationConverter = SourceLocationConverter(file: fileURL.lastPathComponent, tree: parsed)
+      let locationConverter = SourceLocationConverter(fileName: fileURL.lastPathComponent, tree: parsed)
       for diag in diagnostics {
         let location = diag.location(converter: locationConverter)
         let message = diag.message

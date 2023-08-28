@@ -12,7 +12,7 @@
 
 import _SwiftSyntaxTestSupport
 import SwiftSyntax
-import SwiftSyntaxBuilder
+@_spi(Testing) import SwiftSyntaxBuilder
 import SwiftParser
 import SwiftBasicFormat
 
@@ -70,6 +70,22 @@ final class StringInterpolationTests: XCTestCase {
       fnTypeSyntax.description,
       "(String) async throws -> (Int, name: String)"
     )
+  }
+
+  func testOptionalInterpolationWithNil() {
+    let tokenSyntax: TokenSyntax? = nil
+
+    let funcSyntax: DeclSyntax = "func foo\(tokenSyntax)()"
+    XCTAssertTrue(funcSyntax.is(FunctionDeclSyntax.self))
+    XCTAssertEqual(funcSyntax.description, "func foo()")
+  }
+
+  func testOptionalInterpolationWithValue() {
+    let tokenSyntax: TokenSyntax? = .identifier("Bar")
+
+    let funcSyntax: DeclSyntax = "func foo\(tokenSyntax)()"
+    XCTAssertTrue(funcSyntax.is(FunctionDeclSyntax.self))
+    XCTAssertEqual(funcSyntax.description, "func fooBar()")
   }
 
   func testPatternInterpolation() {
@@ -499,5 +515,17 @@ final class StringInterpolationTests: XCTestCase {
         """
       )
     }
+  }
+
+  func testExtensionDeclFromStringInterpolation() throws {
+    let extensionDecl = try ExtensionDeclSyntax("extension Foo {}")
+    XCTAssertFalse(extensionDecl.hasError)
+
+    try withStringInterpolationParsingErrorsSuppressed {
+      let extensionWithError = try ExtensionDeclSyntax("extension Foo {")
+      XCTAssert(extensionWithError.hasError)
+    }
+
+    XCTAssertThrowsError(try ExtensionDeclSyntax("class Foo {}"))
   }
 }

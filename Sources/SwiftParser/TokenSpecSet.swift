@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-@_spi(RawSyntax) import SwiftSyntax
+@_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) import SwiftSyntax
 
 /// A set of `TokenSpecs`. We expect to consume one of the sets specs in the
 /// parser.
@@ -19,6 +19,38 @@ protocol TokenSpecSet: CaseIterable {
 
   /// Creates an instance if `lexeme` satisfy the condition of this subset.
   init?(lexeme: Lexer.Lexeme)
+}
+
+/// A way to combine two token spec sets into an aggregate token spec set.
+enum EitherTokenSpecSet<LHS: TokenSpecSet, RHS: TokenSpecSet>: TokenSpecSet {
+  case lhs(LHS)
+  case rhs(RHS)
+
+  init?(lexeme: Lexer.Lexeme) {
+    if let x = LHS(lexeme: lexeme) {
+      self = .lhs(x)
+      return
+    }
+    if let y = RHS(lexeme: lexeme) {
+      self = .rhs(y)
+      return
+    }
+
+    return nil
+  }
+
+  var spec: TokenSpec {
+    switch self {
+    case .lhs(let x):
+      return x.spec
+    case .rhs(let y):
+      return y.spec
+    }
+  }
+
+  static var allCases: [EitherTokenSpecSet] {
+    return LHS.allCases.map(Self.lhs) + RHS.allCases.map(Self.rhs)
+  }
 }
 
 // MARK: - Subsets
@@ -53,7 +85,6 @@ enum AccessorModifier: TokenSpecSet {
 }
 
 enum CanBeStatementStart: TokenSpecSet {
-  case _forget  // NOTE: support for deprecated _forget
   case `break`
   case `continue`
   case `defer`
@@ -72,7 +103,6 @@ enum CanBeStatementStart: TokenSpecSet {
 
   init?(lexeme: Lexer.Lexeme) {
     switch PrepareForKeywordMatch(lexeme) {
-    case TokenSpec(._forget): self = ._forget
     case TokenSpec(.break): self = .break
     case TokenSpec(.continue): self = .continue
     case TokenSpec(.defer): self = .defer
@@ -94,7 +124,6 @@ enum CanBeStatementStart: TokenSpecSet {
 
   var spec: TokenSpec {
     switch self {
-    case ._forget: return TokenSpec(._forget, recoveryPrecedence: .stmtKeyword)
     case .break: return .keyword(.break)
     case .continue: return .keyword(.continue)
     case .defer: return .keyword(.defer)
@@ -230,7 +259,11 @@ enum ContextualDeclKeyword: TokenSpecSet {
   }
 }
 
-enum DeclarationKeyword: TokenSpecSet {
+/// A `DeclarationKeyword` that is not a `ValueBindingPatternSyntax.BindingSpecifierOptions`.
+///
+/// `ValueBindingPatternSyntax.BindingSpecifierOptions` are injected into
+/// `DeclarationKeyword` via an `EitherTokenSpecSet`.
+enum PureDeclarationKeyword: TokenSpecSet {
   case actor
   case `associatedtype`
   case `case`
@@ -241,7 +274,6 @@ enum DeclarationKeyword: TokenSpecSet {
   case `func`
   case `import`
   case `init`
-  case `let`
   case macro
   case `operator`
   case `precedencegroup`
@@ -249,8 +281,6 @@ enum DeclarationKeyword: TokenSpecSet {
   case `struct`
   case `subscript`
   case `typealias`
-  case `var`
-  case `inout`
   case pound
 
   init?(lexeme: Lexer.Lexeme) {
@@ -266,15 +296,12 @@ enum DeclarationKeyword: TokenSpecSet {
     case TokenSpec(.func): self = .func
     case TokenSpec(.import): self = .import
     case TokenSpec(.`init`): self = .`init`
-    case TokenSpec(.let): self = .let
     case TokenSpec(.operator): self = .operator
     case TokenSpec(.precedencegroup): self = .precedencegroup
     case TokenSpec(.protocol): self = .protocol
     case TokenSpec(.struct): self = .struct
     case TokenSpec(.subscript): self = .subscript
     case TokenSpec(.typealias): self = .typealias
-    case TokenSpec(.var): self = .var
-    case TokenSpec(.inout): self = .inout
     case TokenSpec(.pound): self = .pound
     default: return nil
     }
@@ -292,7 +319,6 @@ enum DeclarationKeyword: TokenSpecSet {
     case .func: return .keyword(.func)
     case .import: return .keyword(.import)
     case .`init`: return .keyword(.`init`)
-    case .let: return .keyword(.let)
     case .macro: return TokenSpec(.macro, recoveryPrecedence: .declKeyword)
     case .operator: return .keyword(.operator)
     case .precedencegroup: return .keyword(.precedencegroup)
@@ -300,12 +326,15 @@ enum DeclarationKeyword: TokenSpecSet {
     case .struct: return .keyword(.struct)
     case .subscript: return .keyword(.subscript)
     case .typealias: return .keyword(.typealias)
-    case .var: return .keyword(.var)
-    case .inout: return TokenSpec(.inout, recoveryPrecedence: .declKeyword)
     case .pound: return TokenSpec(.pound, recoveryPrecedence: .openingPoundIf)
     }
   }
 }
+
+typealias DeclarationKeyword = EitherTokenSpecSet<
+  PureDeclarationKeyword,
+  ValueBindingPatternSyntax.BindingSpecifierOptions
+>
 
 enum DeclarationModifier: TokenSpecSet {
   case __consuming
@@ -722,18 +751,16 @@ enum ExpressionPrefixOperator: TokenSpecSet {
   }
 }
 
-enum MatchingPatternStart: TokenSpecSet {
+/// A `MatchingPatternStart` that is not a `ValueBindingPatternSyntax.BindingSpecifierOptions`.
+///
+/// We use an `EitherTokenSpecSet` to inject `ValueBindingPatternSyntax.BindingSpecifierOptions` into
+/// `MatchingPatternStart`.
+enum PureMatchingPatternStart: TokenSpecSet {
   case `is`
-  case `let`
-  case `var`
-  case `inout`
 
   init?(lexeme: Lexer.Lexeme) {
     switch PrepareForKeywordMatch(lexeme) {
     case TokenSpec(.is): self = .is
-    case TokenSpec(.let): self = .let
-    case TokenSpec(.var): self = .var
-    case TokenSpec(.inout): self = .inout
     default: return nil
     }
   }
@@ -741,12 +768,14 @@ enum MatchingPatternStart: TokenSpecSet {
   var spec: TokenSpec {
     switch self {
     case .is: return .keyword(.is)
-    case .let: return .keyword(.let)
-    case .var: return .keyword(.var)
-    case .inout: return .keyword(.inout)
     }
   }
 }
+
+typealias MatchingPatternStart = EitherTokenSpecSet<
+  PureMatchingPatternStart,
+  ValueBindingPatternSyntax.BindingSpecifierOptions
+>
 
 enum ParameterModifier: TokenSpecSet {
   case _const
@@ -774,7 +803,7 @@ enum PrimaryExpressionStart: TokenSpecSet {
   case `Self`
   case dollarIdentifier
   case `false`
-  case floatingLiteral
+  case floatLiteral
   case identifier
   case `init`
   case integerLiteral
@@ -804,7 +833,7 @@ enum PrimaryExpressionStart: TokenSpecSet {
     case TokenSpec(.Self): self = .Self
     case TokenSpec(.dollarIdentifier): self = .dollarIdentifier
     case TokenSpec(.false): self = .false
-    case TokenSpec(.floatingLiteral): self = .floatingLiteral
+    case TokenSpec(.floatLiteral): self = .floatLiteral
     case TokenSpec(.identifier): self = .identifier
     case TokenSpec(.`init`): self = .`init`
     case TokenSpec(.integerLiteral): self = .integerLiteral
@@ -837,7 +866,7 @@ enum PrimaryExpressionStart: TokenSpecSet {
     case .Self: return .keyword(.Self)
     case .dollarIdentifier: return .dollarIdentifier
     case .false: return .keyword(.false)
-    case .floatingLiteral: return .floatingLiteral
+    case .floatLiteral: return .floatLiteral
     case .identifier: return .identifier
     case .`init`: return .keyword(.`init`)
     case .integerLiteral: return .integerLiteral

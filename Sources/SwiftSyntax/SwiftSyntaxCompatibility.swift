@@ -21,6 +21,11 @@ extension AttributeSyntax {
 @available(*, deprecated, renamed: "WithAttributesSyntax")
 public typealias AttributedSyntax = WithAttributesSyntax
 
+extension AvailabilityArgumentSyntax {
+  @available(*, deprecated, renamed: "Argument")
+  public typealias Entry = Argument
+}
+
 extension ClosureSignatureSyntax {
   @available(*, deprecated, renamed: "ParameterClause")
   public typealias Input = ParameterClause
@@ -62,11 +67,33 @@ extension GenericRequirementSyntax {
   public typealias Body = Requirement
 }
 
-@available(*, deprecated, renamed: "NamedDecl")
+@available(*, deprecated, renamed: "NamedDeclSyntax")
 public typealias IdentifiedDeclSyntax = NamedDeclSyntax
 
-@available(*, deprecated, renamed: "NamedDecl")
-extension IdentifiedDeclSyntax where Self: NamedDeclSyntax {
+extension KeyPathPropertyComponentSyntax {
+  @available(*, deprecated, renamed: "declName.baseName")
+  public var identifier: TokenSyntax {
+    get {
+      return declName.baseName
+    }
+    set {
+      declName.baseName = newValue
+    }
+  }
+
+  @available(*, deprecated, renamed: "declName.argumentNames")
+  public var declNameArguments: DeclNameArgumentsSyntax? {
+    get {
+      return declName.argumentNames
+    }
+    set {
+      declName.argumentNames = newValue
+    }
+  }
+}
+
+extension NamedDeclSyntax {
+  @available(*, deprecated, renamed: "name")
   public var identifier: TokenSyntax {
     get {
       return self.name
@@ -77,14 +104,59 @@ extension IdentifiedDeclSyntax where Self: NamedDeclSyntax {
   }
 }
 
-extension PatternBindingSyntax {
-  @available(*, deprecated, renamed: "Accessors")
-  public typealias Accessor = Accessors
-}
+extension MemberAccessExprSyntax {
+  @available(*, deprecated, renamed: "declName.baseName")
+  public var name: TokenSyntax {
+    get {
+      return declName.baseName
+    }
+    set {
+      declName.baseName = newValue
+    }
+  }
 
-extension SubscriptDeclSyntax {
-  @available(*, deprecated, renamed: "Accessors")
-  public typealias Accessor = Accessors
+  @available(*, deprecated, renamed: "declName.argumentNames")
+  public var declNameArguments: DeclNameArgumentsSyntax? {
+    get {
+      return declName.argumentNames
+    }
+    set {
+      declName.argumentNames = newValue
+    }
+  }
+
+  @available(*, deprecated, message: "Use initializer taking `DeclReferenceExprSyntax` instead")
+  @_disfavoredOverload
+  public init(
+    leadingTrivia: Trivia? = nil,
+    _ unexpectedBeforeBase: UnexpectedNodesSyntax? = nil,
+    base: (some ExprSyntaxProtocol)? = ExprSyntax?.none,
+    _ unexpectedBetweenBaseAndPeriod: UnexpectedNodesSyntax? = nil,
+    dot: TokenSyntax = .periodToken(),
+    _ unexpectedBetweenPeriodAndName: UnexpectedNodesSyntax? = nil,
+    name: TokenSyntax,
+    _ unexpectedBetweenNameAndDeclNameArguments: UnexpectedNodesSyntax? = nil,
+    declNameArguments: DeclNameArgumentsSyntax? = nil,
+    _ unexpectedAfterDeclNameArguments: UnexpectedNodesSyntax? = nil,
+    trailingTrivia: Trivia? = nil
+  ) {
+    let declName = DeclReferenceExprSyntax(
+      baseName: name,
+      unexpectedBetweenNameAndDeclNameArguments,
+      argumentNames: declNameArguments
+    )
+    self.init(
+      leadingTrivia: leadingTrivia,
+      unexpectedBeforeBase,
+      base: base,
+      unexpectedBetweenBaseAndPeriod,
+      period: dot,
+      unexpectedBetweenPeriodAndName,
+      declName: declName,
+      unexpectedAfterDeclNameArguments,
+      trailingTrivia: trailingTrivia
+    )
+  }
 }
 
 public extension SyntaxProtocol {
@@ -98,6 +170,11 @@ public extension TokenKind {
   @available(*, deprecated, renamed: "regexPoundDelimiter")
   static func extendedRegexDelimiter(_ text: String) -> TokenKind {
     return .regexPoundDelimiter(text)
+  }
+
+  @available(*, deprecated, renamed: "floatLiteral")
+  static func floatingLiteral(_ text: String) -> TokenKind {
+    return .floatLiteral(text)
   }
 
   @available(*, deprecated, renamed: "leftSquare")
@@ -170,6 +247,21 @@ public extension TokenSyntax {
     )
   }
 
+  @available(*, deprecated, renamed: "floatLiteral")
+  static func floatingLiteral(
+    _ text: String,
+    leadingTrivia: Trivia = [],
+    trailingTrivia: Trivia = [],
+    presence: SourcePresence = .present
+  ) -> TokenSyntax {
+    return floatLiteral(
+      text,
+      leadingTrivia: leadingTrivia,
+      trailingTrivia: trailingTrivia,
+      presence: presence
+    )
+  }
+
   @available(*, deprecated, renamed: "leftSquareToken")
   static func leftSquareBracketToken(
     leadingTrivia: Trivia = [],
@@ -210,7 +302,7 @@ public extension TokenSyntax {
   }
 
   @available(*, deprecated, renamed: "poundElseifToken")
-  static func poundElseIfKeyword(
+  static func poundElseifKeyword(
     leadingTrivia: Trivia = [],
     trailingTrivia: Trivia = [],
     presence: SourcePresence = .present

@@ -84,10 +84,10 @@ public enum SyntaxNodeKind: String, CaseIterable {
   case declModifier
   case declModifierDetail
   case declModifierList
-  case declName
   case declNameArgument
   case declNameArgumentList
   case declNameArguments
+  case declReferenceExpr
   case deferStmt
   case deinitializerDecl
   case deinitializerEffectSpecifiers
@@ -149,7 +149,6 @@ public enum SyntaxNodeKind: String, CaseIterable {
   case genericSpecializationExpr
   case genericWhereClause
   case guardStmt
-  case identifierExpr
   case identifierPattern
   case identifierType
   case ifConfigClause
@@ -238,7 +237,6 @@ public enum SyntaxNodeKind: String, CaseIterable {
   case primaryAssociatedTypeClause
   case primaryAssociatedTypeList
   case protocolDecl
-  case qualifiedDeclName
   case regexLiteralExpr
   case repeatStmt
   case returnClause
@@ -251,6 +249,8 @@ public enum SyntaxNodeKind: String, CaseIterable {
   case specializeAvailabilityArgument
   case specializeTargetFunctionArgument
   case stmt
+  case simpleStringLiteralExpr
+  case simpleStringLiteralSegmentList
   case stringLiteralExpr
   case stringLiteralSegmentList
   case stringSegment
@@ -384,6 +384,7 @@ public enum SyntaxNodeKind: String, CaseIterable {
     case .closureShorthandParameterList: return "closureParamList"
     case .consumeExpr: return "moveExpr"
     case .declModifierList: return "modifierList"
+    case .declReferenceExpr: return "identifierExpr"
     case .deinitializerEffectSpecifiers: return "deinitEffectSpecifiers"
     case .derivativeAttributeArguments: return "derivativeRegistrationAttributeArguments"
     case .designatedType: return "designatedTypeElement"
@@ -416,7 +417,7 @@ public enum SyntaxNodeKind: String, CaseIterable {
     case .packElementType: return "packReferenceType"
     case .patternExpr: return "unresolvedPatternExpr"
     case .platformVersion: return "availabilityVersionRestriction"
-    case .platformVersionItem: return " availabilityVersionRestrictionListEntry"
+    case .platformVersionItem: return "availabilityVersionRestrictionListEntry"
     case .platformVersionItemList: return "availabilityVersionRestrictionList"
     case .postfixOperatorExpr: return "postfixUnaryExpr"
     case .poundSourceLocationArguments: return "poundSourceLocationArgs"

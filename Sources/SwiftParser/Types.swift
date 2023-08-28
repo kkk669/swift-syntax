@@ -45,7 +45,7 @@ extension Parser {
   mutating func parseTypeScalar(misplacedSpecifiers: [RawTokenSyntax] = []) -> RawTypeSyntax {
     let (specifier, unexpectedBeforeAttrList, attrList) = self.parseTypeAttributeList(misplacedSpecifiers: misplacedSpecifiers)
     var base = RawTypeSyntax(self.parseSimpleOrCompositionType())
-    if self.withLookahead({ $0.isAtFunctionTypeArrow() }) {
+    if self.withLookahead({ $0.atFunctionTypeArrow() }) {
       var effectSpecifiers = self.parseTypeEffectSpecifiers()
       let returnClause = self.parseFunctionReturnClause(effectSpecifiers: &effectSpecifiers, allowNamedOpaqueResultType: false)
 
@@ -100,7 +100,7 @@ extension Parser {
       )
     }
 
-    if unexpectedBeforeAttrList != nil || specifier != nil || attrList != nil {
+    if unexpectedBeforeAttrList != nil || specifier != nil || !attrList.isEmpty {
       return RawTypeSyntax(
         RawAttributedTypeSyntax(
           specifier: specifier,
@@ -270,7 +270,20 @@ extension Parser {
             )
           )
         } else {
-          let (name, generics) = self.parseTypeNameWithGenerics(allowKeywordAsName: true)
+          let name: RawTokenSyntax
+          if let handle = self.at(anyIn: MemberTypeSyntax.NameOptions.self)?.handle {
+            name = self.eat(handle)
+          } else if self.currentToken.isLexerClassifiedKeyword {
+            name = self.consumeAnyToken(remapping: .identifier)
+          } else {
+            name = missingToken(.identifier)
+          }
+          let generics: RawGenericArgumentClauseSyntax?
+          if self.atContextualPunctuator("<") {
+            generics = self.parseGenericArguments()
+          } else {
+            generics = nil
+          }
           base = RawTypeSyntax(
             RawMemberTypeSyntax(
               baseType: base,
@@ -322,30 +335,23 @@ extension Parser {
     )
   }
 
-  mutating func parseTypeNameWithGenerics(allowKeywordAsName: Bool) -> (RawTokenSyntax, RawGenericArgumentClauseSyntax?) {
-    let name: RawTokenSyntax
-    if let identOrSelf = self.consume(if: .identifier, .keyword(.self), .keyword(.Self)) {
-      name = identOrSelf
-    } else if allowKeywordAsName && self.currentToken.isLexerClassifiedKeyword {
-      name = self.consumeAnyToken(remapping: .identifier)
-    } else {
-      name = missingToken(.identifier)
-    }
-    if self.atContextualPunctuator("<") {
-      return (name, self.parseGenericArguments())
-    }
-    return (name, nil)
-  }
-
   /// Parse a type identifier.
   mutating func parseTypeIdentifier() -> RawTypeSyntax {
     if self.at(.keyword(.Any)) {
       return RawTypeSyntax(self.parseAnyType())
     }
 
-    let (name, generics) = parseTypeNameWithGenerics(allowKeywordAsName: false)
+    let (unexpectedBeforeName, name) = self.expect(anyIn: IdentifierTypeSyntax.NameOptions.self, default: .identifier)
+    let generics: RawGenericArgumentClauseSyntax?
+    if self.atContextualPunctuator("<") {
+      generics = self.parseGenericArguments()
+    } else {
+      generics = nil
+    }
+
     return RawTypeSyntax(
       RawIdentifierTypeSyntax(
+        unexpectedBeforeName,
         name: name,
         genericArgumentClause: generics,
         arena: self.arena
@@ -479,6 +485,7 @@ extension Parser {
         if let first,
           second == nil,
           colon?.isMissing == true,
+          first.tokenKind == .identifier,
           first.tokenText.isStartingWithUppercase
         {
           elements.append(
@@ -623,7 +630,7 @@ extension Parser.Lookahead {
       return false
     }
 
-    if self.isAtFunctionTypeArrow() {
+    if self.atFunctionTypeArrow() {
       // Handle type-function if we have an '->' with optional
       // 'async' and/or 'throws'.
       var loopProgress = LoopProgressCondition()
@@ -781,7 +788,7 @@ extension Parser.Lookahead {
     return self.consume(if: .rightParen) != nil
   }
 
-  mutating func isAtFunctionTypeArrow() -> Bool {
+  mutating func atFunctionTypeArrow() -> Bool {
     if self.at(.arrow) {
       return true
     }
@@ -795,7 +802,7 @@ extension Parser.Lookahead {
         var backtrack = self.lookahead()
         backtrack.consumeAnyToken()
         backtrack.consumeAnyToken()
-        return backtrack.isAtFunctionTypeArrow()
+        return backtrack.atFunctionTypeArrow()
       }
 
       return false
@@ -862,7 +869,7 @@ extension Parser.Lookahead {
 
 extension Parser {
   mutating func parseTypeAttributeList(misplacedSpecifiers: [RawTokenSyntax] = []) -> (
-    specifier: RawTokenSyntax?, unexpectedBeforeAttributes: RawUnexpectedNodesSyntax?, attributes: RawAttributeListSyntax?
+    specifier: RawTokenSyntax?, unexpectedBeforeAttributes: RawUnexpectedNodesSyntax?, attributes: RawAttributeListSyntax
   ) {
     var specifier: RawTokenSyntax? = nil
     if canHaveParameterSpecifier {
@@ -889,7 +896,7 @@ extension Parser {
       return (specifier, unexpectedBeforeAttributeList, self.parseTypeAttributeListPresent())
     }
 
-    return (specifier, unexpectedBeforeAttributeList, nil)
+    return (specifier, unexpectedBeforeAttributeList, self.emptyCollection(RawAttributeListSyntax.self))
   }
 
   mutating func parseTypeAttributeListPresent() -> RawAttributeListSyntax {

@@ -12,7 +12,7 @@
 
 import SwiftDiagnostics
 @_spi(Diagnostics) import SwiftParser
-@_spi(RawSyntax) import SwiftSyntax
+@_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) import SwiftSyntax
 
 fileprivate func getTokens(between first: TokenSyntax, and second: TokenSyntax) -> [TokenSyntax] {
   var first = first
@@ -1034,17 +1034,16 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     return .visitChildren
   }
 
-  public override func visit(_ node: IdentifierExprSyntax) -> SyntaxVisitorContinueKind {
+  public override func visit(_ node: DeclReferenceExprSyntax) -> SyntaxVisitorContinueKind {
     if shouldSkip(node) {
       return .skipChildren
     }
-    if node.identifier.isMissing, let unexpected = node.unexpectedBeforeIdentifier {
+    if node.baseName.isMissing, let unexpected = node.unexpectedBeforeBaseName {
       if unexpected.first?.as(TokenSyntax.self)?.tokenKind == .pound {
-        addDiagnostic(unexpected, UnknownDirectiveError(unexpected: unexpected), handledNodes: [unexpected.id, node.identifier.id])
+        addDiagnostic(unexpected, UnknownDirectiveError(unexpected: unexpected), handledNodes: [unexpected.id, node.baseName.id])
       } else if let availability = unexpected.first?.as(AvailabilityConditionSyntax.self) {
         if let prefixOperatorExpr = node.parent?.as(PrefixOperatorExprSyntax.self),
-          let operatorToken = prefixOperatorExpr.operator,
-          operatorToken.text == "!",
+          prefixOperatorExpr.operator.text == "!",
           let conditionElement = prefixOperatorExpr.parent?.as(ConditionElementSyntax.self)
         {
           // Diagnose !#available(...) and !#unavailable(...)
@@ -1059,16 +1058,19 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
             NegatedAvailabilityCondition(availabilityCondition: availability, negatedAvailabilityKeyword: negatedAvailabilityKeyword),
             fixIts: [
               FixIt(
-                message: ReplaceTokensFixIt(replaceTokens: [operatorToken, availability.availabilityKeyword], replacements: [negatedAvailabilityKeyword]),
+                message: ReplaceTokensFixIt(
+                  replaceTokens: [prefixOperatorExpr.operator, availability.availabilityKeyword],
+                  replacements: [negatedAvailabilityKeyword]
+                ),
                 changes: [
                   .replace(oldNode: Syntax(conditionElement), newNode: Syntax(negatedConditionElement))
                 ]
               )
             ],
-            handledNodes: [unexpected.id, node.identifier.id]
+            handledNodes: [unexpected.id, node.baseName.id]
           )
         } else {
-          addDiagnostic(unexpected, AvailabilityConditionInExpression(availabilityCondition: availability), handledNodes: [unexpected.id, node.identifier.id])
+          addDiagnostic(unexpected, AvailabilityConditionInExpression(availabilityCondition: availability), handledNodes: [unexpected.id, node.baseName.id])
         }
       }
     }
@@ -1220,6 +1222,25 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         unexpectedOutput,
         .initializerCannotHaveResultType,
         handledNodes: [unexpectedOutput.id]
+      )
+    }
+
+    return .visitChildren
+  }
+
+  public override func visit(_ node: LabeledSpecializeArgumentSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    if let unexpectedIdentifier = node.unexpectedBeforeLabel?.onlyPresentToken(where: { $0.tokenKind.isIdentifier }) {
+      addDiagnostic(
+        unexpectedIdentifier,
+        UnknownParameterError(
+          parameter: unexpectedIdentifier,
+          validParameters: LabeledSpecializeArgumentSyntax.LabelOptions.allCases.map { $0.tokenSyntax }
+        ),
+        handledNodes: [unexpectedIdentifier.id, node.label.id]
       )
     }
 
@@ -1482,6 +1503,56 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
         handledNodes: [node.equal.id, node.rightType.id]
       )
     }
+    return .visitChildren
+  }
+
+  public override func visit(_ node: SimpleStringLiteralExprSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    var rawDelimiters: [TokenSyntax] = []
+
+    if let unexpectedBeforeOpenQuote = node.unexpectedBeforeOpeningQuote?.onlyPresentToken(where: { $0.tokenKind.isRawStringDelimiter }) {
+      rawDelimiters += [unexpectedBeforeOpenQuote]
+    }
+
+    if let unexpectedAfterCloseQuote = node.unexpectedAfterClosingQuote?.onlyPresentToken(where: { $0.tokenKind.isRawStringDelimiter }) {
+      rawDelimiters += [unexpectedAfterCloseQuote]
+    }
+
+    if !rawDelimiters.isEmpty {
+      addDiagnostic(
+        node,
+        .forbiddenExtendedEscapingString,
+        fixIts: [
+          FixIt(
+            message: RemoveNodesFixIt(rawDelimiters),
+            changes: rawDelimiters.map { .makeMissing($0) }
+          )
+        ],
+        handledNodes: rawDelimiters.map { $0.id }
+      )
+    }
+
+    return .visitChildren
+  }
+
+  public override func visit(_ node: SimpleStringLiteralSegmentListSyntax) -> SyntaxVisitorContinueKind {
+    if shouldSkip(node) {
+      return .skipChildren
+    }
+
+    for segment in node {
+      if let unexpectedAfterContent = segment.unexpectedAfterContent {
+        addDiagnostic(
+          node,
+          .forbiddenInterpolatedString,
+          handledNodes: [unexpectedAfterContent.id]
+        )
+      }
+    }
+
     return .visitChildren
   }
 
@@ -1855,8 +1926,8 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
 
-    if let modifiers = node.modifiers, modifiers.hasError {
-      for modifier in modifiers {
+    if node.modifiers.hasError {
+      for modifier in node.modifiers {
         guard let detail = modifier.detail else {
           continue
         }
@@ -1915,19 +1986,17 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
 
     if let unexpectedAfterComponents = node.unexpectedAfterComponents {
-      if let components = node.components,
-        unexpectedAfterComponents.allSatisfy({ $0.is(VersionComponentSyntax.self) })
-      {
+      if unexpectedAfterComponents.allSatisfy({ $0.is(VersionComponentSyntax.self) }) {
         addDiagnostic(
           unexpectedAfterComponents,
-          TrailingVersionAreIgnored(major: node.major, components: components),
+          TrailingVersionAreIgnored(major: node.major, components: node.components),
           handledNodes: [unexpectedAfterComponents.id]
         )
       } else {
         addDiagnostic(
           unexpectedAfterComponents,
           CannotParseVersionTuple(versionTuple: unexpectedAfterComponents),
-          handledNodes: [node.major.id, node.components?.id, unexpectedAfterComponents.id].compactMap { $0 }
+          handledNodes: [node.major.id, node.components.id, unexpectedAfterComponents.id]
         )
       }
     }

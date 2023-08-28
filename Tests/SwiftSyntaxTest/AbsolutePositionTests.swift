@@ -36,9 +36,10 @@ public class AbsolutePositionTests: XCTestCase {
       statements: CodeBlockItemListSyntax(l),
       endOfFileToken: .endOfFileToken()
     )
-    _ = root.statements[idx].position
-    _ = root.statements[idx].totalLength.utf8Length
-    _ = root.statements[idx].positionAfterSkippingLeadingTrivia
+    let statements = root.statements
+    _ = statements[statements.index(at: idx)].position
+    _ = statements[statements.index(at: idx)].totalLength.utf8Length
+    _ = statements[statements.index(at: idx)].positionAfterSkippingLeadingTrivia
   }
 
   static let leadingTrivia = Trivia(pieces: [
@@ -79,7 +80,7 @@ public class AbsolutePositionTests: XCTestCase {
     let root = self.createSourceFile(idx + 1)
     XCTAssertEqual(3, root.leadingTrivia.count)
     XCTAssertEqual(0, root.trailingTrivia.count)
-    let state = root.statements[idx]
+    let state = root.statements[root.statements.index(at: idx)]
     XCTAssertEqual(3, state.leadingTrivia.count)
     XCTAssertEqual(2, state.trailingTrivia.count)
     XCTAssertEqual(
@@ -139,8 +140,8 @@ public class AbsolutePositionTests: XCTestCase {
   public func testSourceLocation() {
     let filePath = "/tmp/test.swift"
     let root = self.createSourceFile(2)
-    let converter = SourceLocationConverter(file: filePath, tree: root)
-    let secondReturnStmt = root.statements[1]
+    let converter = SourceLocationConverter(fileName: filePath, tree: root)
+    let secondReturnStmt = root.statements[root.statements.index(at: 1)]
     let startLoc = secondReturnStmt.startLocation(converter: converter)
     XCTAssertEqual(startLoc.line, 8)
     XCTAssertEqual(startLoc.column, 1)

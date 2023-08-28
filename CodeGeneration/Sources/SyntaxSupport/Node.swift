@@ -40,6 +40,10 @@ public class Node {
   /// The kind of node’s supertype. This kind must have `isBase == true`
   public let base: SyntaxNodeKind
 
+  /// If `true`, this is for an experimental language feature, and any public
+  /// API generated should be SPI.
+  public let isExperimental: Bool
+
   /// When the node name is printed for diagnostics, this name is used.
   /// If `nil`, `nameForDiagnostics` will print the parent node’s name.
   public let nameForDiagnostics: String?
@@ -51,7 +55,7 @@ public class Node {
 
   /// If the syntax node can be constructed by parsing a string, the parser
   /// function that should be invoked to create this node.
-  public let parserFunction: String?
+  public let parserFunction: TokenSyntax?
 
   /// A name for this node that is suitable to be used as a variables or enum
   /// case's name.
@@ -85,13 +89,28 @@ public class Node {
     }
   }
 
+  /// Retrieve the attributes that should be printed on any API for the
+  /// generated node. If `forRaw` is true, this is for the raw syntax node.
+  public func apiAttributes(forRaw: Bool = false) -> AttributeListSyntax {
+    let attrList = AttributeListSyntax {
+      if isExperimental {
+        "@_spi(ExperimentalLanguageFeatures)"
+      }
+      if forRaw {
+        "@_spi(RawSyntax)"
+      }
+    }
+    return attrList.with(\.trailingTrivia, attrList.isEmpty ? [] : .newline)
+  }
+
   /// Construct the specification for a layout syntax node.
   init(
     kind: SyntaxNodeKind,
     base: SyntaxNodeKind,
+    isExperimental: Bool = false,
     nameForDiagnostics: String?,
     documentation: String? = nil,
-    parserFunction: String? = nil,
+    parserFunction: TokenSyntax? = nil,
     traits: [String] = [],
     children: [Child] = []
   ) {
@@ -100,6 +119,7 @@ public class Node {
 
     self.kind = kind
     self.base = base
+    self.isExperimental = isExperimental
     self.nameForDiagnostics = nameForDiagnostics
     self.documentation = docCommentTrivia(from: documentation)
     self.parserFunction = parserFunction
@@ -107,25 +127,27 @@ public class Node {
     let childrenWithUnexpected: [Child]
     if children.isEmpty {
       childrenWithUnexpected = [
-        Child(name: "Unexpected", kind: .collection(kind: .unexpectedNodes, collectionElementName: "Unexpected"), isOptional: true)
+        Child(name: "unexpected", kind: .collection(kind: .unexpectedNodes, collectionElementName: "Unexpected"), isOptional: true)
       ]
     } else {
       // Add implicitly generated UnexpectedNodes children between
       // any two defined children
       childrenWithUnexpected =
         children.enumerated().flatMap { (i, child) -> [Child] in
+          let childName = child.name.withFirstCharacterUppercased
+
           let unexpectedName: String
           let unexpectedDeprecatedName: String?
 
           if i == 0 {
-            unexpectedName = "UnexpectedBefore\(child.name)"
-            unexpectedDeprecatedName = child.deprecatedName.map { "UnexpectedBefore\($0)" }
+            unexpectedName = "unexpectedBefore\(childName)"
+            unexpectedDeprecatedName = child.deprecatedName.map { "unexpectedBefore\($0.withFirstCharacterUppercased)" }
           } else {
-            unexpectedName = "UnexpectedBetween\(children[i - 1].name)And\(child.name)"
-            if let deprecatedName = children[i - 1].deprecatedName {
-              unexpectedDeprecatedName = "UnexpectedBetween\(deprecatedName)And\(child.deprecatedName ?? child.name)"
-            } else if let deprecatedName = child.deprecatedName {
-              unexpectedDeprecatedName = "UnexpectedBetween\(children[i - 1].name)And\(deprecatedName)"
+            unexpectedName = "unexpectedBetween\(children[i - 1].name.withFirstCharacterUppercased)And\(childName)"
+            if let deprecatedName = children[i - 1].deprecatedName?.withFirstCharacterUppercased {
+              unexpectedDeprecatedName = "unexpectedBetween\(deprecatedName)And\(child.deprecatedName?.withFirstCharacterUppercased ?? childName)"
+            } else if let deprecatedName = child.deprecatedName?.withFirstCharacterUppercased {
+              unexpectedDeprecatedName = "unexpectedBetween\(children[i - 1].name.withFirstCharacterUppercased)And\(deprecatedName)"
             } else {
               unexpectedDeprecatedName = nil
             }
@@ -139,9 +161,9 @@ public class Node {
           return [unexpectedBefore, child]
         } + [
           Child(
-            name: "UnexpectedAfter\(children.last!.name)",
-            deprecatedName: children.last!.deprecatedName.map { "UnexpectedAfter\($0)" },
-            kind: .collection(kind: .unexpectedNodes, collectionElementName: "UnexpectedAfter\(children.last!.name)"),
+            name: "unexpectedAfter\(children.last!.name.withFirstCharacterUppercased)",
+            deprecatedName: children.last!.deprecatedName.map { "unexpectedAfter\($0.withFirstCharacterUppercased)" },
+            kind: .collection(kind: .unexpectedNodes, collectionElementName: "UnexpectedAfter\(children.last!.name.withFirstCharacterUppercased)"),
             isOptional: true
           )
         ]
@@ -204,14 +226,16 @@ public class Node {
   init(
     kind: SyntaxNodeKind,
     base: SyntaxNodeKind,
+    isExperimental: Bool = false,
     nameForDiagnostics: String?,
     documentation: String? = nil,
-    parserFunction: String? = nil,
+    parserFunction: TokenSyntax? = nil,
     elementChoices: [SyntaxNodeKind]
   ) {
     self.kind = kind
     precondition(base == .syntaxCollection)
     self.base = base
+    self.isExperimental = isExperimental
     self.nameForDiagnostics = nameForDiagnostics
     self.documentation = docCommentTrivia(from: documentation)
     self.parserFunction = parserFunction
@@ -345,7 +369,7 @@ fileprivate extension Child {
       return [kind]
     case .nodeChoices(let choices):
       return choices.flatMap(\.kinds)
-    case .collection(let kind, _, _):
+    case .collection(kind: let kind, _, _, _):
       return [kind]
     case .token:
       return [.token]

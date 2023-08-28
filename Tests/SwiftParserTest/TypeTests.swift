@@ -14,7 +14,7 @@
 @_spi(RawSyntax) import SwiftParser
 import XCTest
 
-final class TypeTests: XCTestCase {
+final class TypeTests: ParserTestCase {
   func testMissingColonInType() {
     assertParse(
       """
@@ -30,28 +30,22 @@ final class TypeTests: XCTestCase {
   }
 
   func testClosureParsing() {
-    assertParse(
-      "(a, b) -> c",
-      { TypeSyntax.parse(from: &$0) }
-    )
+    assertParse("let a: (a, b) -> c")
 
-    assertParse(
-      "@MainActor (a, b) async throws -> c",
-      { TypeSyntax.parse(from: &$0) }
-    )
+    assertParse("let a: @MainActor (a, b) async throws -> c")
 
     assertParse("() -> (\u{feff})")
   }
 
   func testGenericTypeWithTrivia() {
-    // N.B. Whitespace is significant here.
+    // Whitespace is significant here.
     assertParse(
       """
+      let a:
               Foo<Bar<
                   V, Baz<Quux>
               >>
-      """,
-      { TypeSyntax.parse(from: &$0) }
+      """
     )
   }
 
@@ -82,20 +76,17 @@ final class TypeTests: XCTestCase {
       """
       { ()
       throws -> Void in }
-      """,
-      { ExprSyntax.parse(from: &$0) }
+      """
     )
 
     assertParse(
       """
       { [weak a, unowned(safe) self, b = 3] (a: Int, b: Int, _: Int) -> Int in }
-      """,
-      { ExprSyntax.parse(from: &$0) }
+      """
     )
 
     assertParse(
       "ℹ️{[1️⃣class]in2️⃣",
-      { ExprSyntax.parse(from: &$0) },
       diagnostics: [
         DiagnosticSpec(
           locationMarker: "1️⃣",
@@ -121,7 +112,6 @@ final class TypeTests: XCTestCase {
 
     assertParse(
       "{[n1️⃣`]in}",
-      { ExprSyntax.parse(from: &$0) },
       diagnostics: [
         DiagnosticSpec(message: "unexpected code '`' in closure capture clause")
       ]
@@ -129,7 +119,6 @@ final class TypeTests: XCTestCase {
 
     assertParse(
       "{[weak1️⃣^]in}",
-      { ExprSyntax.parse(from: &$0) },
       diagnostics: [
         DiagnosticSpec(message: "expected identifier in closure capture", fixIts: ["insert identifier"]),
         DiagnosticSpec(message: "unexpected code '^' in closure capture clause"),
@@ -190,6 +179,41 @@ final class TypeTests: XCTestCase {
         var prop2: <U, V> (U, V) = ("hello", 5)
       }
       """
+    )
+  }
+
+  func testLowercaseSelf() {
+    assertParse(
+      "let a: 1️⃣self",
+      diagnostics: [
+        DiagnosticSpec(message: "expected type in type annotation", fixIts: ["insert type"]),
+        DiagnosticSpec(message: "expected '=' in variable", fixIts: ["insert '='"]),
+      ],
+      fixedSource: "let a: <#type#> = self"
+    )
+  }
+
+  func testUppercaseSelf() {
+    assertParse(
+      "let a: 1️⃣Self",
+      substructure: Syntax(TokenSyntax.keyword(.Self)),
+      substructureAfterMarker: "1️⃣"
+    )
+  }
+
+  func testNestedLowercaseSelf() {
+    assertParse(
+      "let a: Foo.1️⃣self",
+      substructure: Syntax(TokenSyntax.keyword(.`self`)),
+      substructureAfterMarker: "1️⃣"
+    )
+  }
+
+  func testNestedUppercaseSelf() {
+    assertParse(
+      "let a: Foo.1️⃣Self",
+      substructure: Syntax(TokenSyntax.identifier("Self")),
+      substructureAfterMarker: "1️⃣"
     )
   }
 }

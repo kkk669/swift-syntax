@@ -165,6 +165,12 @@ extension DiagnosticMessage where Self == StaticParserError {
   public static var extraRightBracket: Self {
     .init("unexpected ']' in type; did you mean to write an array type?")
   }
+  public static var forbiddenExtendedEscapingString: Self {
+    .init("argument cannot be an extended escaping string literal")
+  }
+  public static var forbiddenInterpolatedString: Self {
+    return .init("argument cannot be an interpolated string literal")
+  }
   public static var initializerInPattern: Self {
     .init("unexpected initializer in pattern; did you mean to use '='?")
   }
@@ -355,7 +361,7 @@ public struct InvalidIdentifierError: ParserError {
 
   public var message: String {
     switch invalidIdentifier.tokenKind {
-    case .floatingLiteral(let text), .integerLiteral(let text):
+    case .floatLiteral(let text), .integerLiteral(let text):
       fallthrough
     case .unknown(let text) where text.first?.isNumber == true:
       let name = missingIdentifier.childNameInParent ?? "identifier"
@@ -505,7 +511,7 @@ public struct UnexpectedNodesError: ParserError {
     var message = "unexpected \(unexpectedNodes.shortSingleLineContentDescription)"
     if let parent = unexpectedNodes.parent {
       if let parentTypeName = parent.nodeTypeNameForDiagnostics(allowBlockNames: false),
-        parent.children(viewMode: .sourceAccurate).first?.id == unexpectedNodes.id
+        parent.children(viewMode: .sourceAccurate).first(where: { $0.totalLength.utf8Length > 0 })?.id == unexpectedNodes.id
       {
         message += " before \(parentTypeName)"
       } else if let parentTypeName = parent.ancestorOrSelf(mapping: { $0.nodeTypeNameForDiagnostics(allowBlockNames: false) }) {
@@ -521,6 +527,23 @@ public struct UnknownDirectiveError: ParserError {
 
   public var message: String {
     return "use of unknown directive \(nodesDescription([unexpected], format: false))"
+  }
+}
+
+public struct UnknownParameterError: ParserError {
+  public let parameter: TokenSyntax
+  public let validParameters: [TokenSyntax]
+
+  public var message: String {
+    var message = "unknown parameter '\(parameter.text)'"
+
+    if let parentTypeName = parameter.parent?.ancestorOrSelf(mapping: { $0.nodeTypeNameForDiagnostics(allowBlockNames: false) }) {
+      message += " in \(parentTypeName)"
+    }
+
+    message += "; valid parameters are \(nodesDescription(validParameters, format: true))"
+
+    return message
   }
 }
 

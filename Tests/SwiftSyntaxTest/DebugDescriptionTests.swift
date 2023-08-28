@@ -183,7 +183,7 @@ public class DebugDescriptionTests: XCTestCase {
       SourceFileSyntax(
           statements: CodeBlockItemListSyntax([
                 CodeBlockItemSyntax(item: CodeBlockItemSyntax.Item(FunctionCallExprSyntax(
-                        calledExpression: ExprSyntax(IdentifierExprSyntax(identifier: .identifier("test"))),
+                        calledExpression: ExprSyntax(DeclReferenceExprSyntax(baseName: .identifier("test"))),
                         leftParen: .leftParenToken(),
                         arguments: LabeledExprListSyntax([
                               LabeledExprSyntax(
@@ -192,7 +192,8 @@ public class DebugDescriptionTests: XCTestCase {
                                 ),
                               LabeledExprSyntax(expression: ExprSyntax(IntegerLiteralExprSyntax(literal: .integerLiteral("2"))))
                             ]),
-                        rightParen: .rightParenToken()
+                        rightParen: .rightParenToken(),
+                        additionalTrailingClosures: MultipleTrailingClosureElementListSyntax([])
                       )))
               ]),
           endOfFileToken: .endOfFileToken()
@@ -206,7 +207,7 @@ public class DebugDescriptionTests: XCTestCase {
       SourceFileSyntax(
           statements: CodeBlockItemListSyntax([
                 CodeBlockItemSyntax(item: CodeBlockItemSyntax.Item(FunctionCallExprSyntax(
-                        calledExpression: ExprSyntax(IdentifierExprSyntax(identifier: .identifier("test"))),
+                        calledExpression: ExprSyntax(DeclReferenceExprSyntax(baseName: .identifier("test"))),
                         leftParen: .leftParenToken(),
                         arguments: LabeledExprListSyntax([
                               LabeledExprSyntax(
@@ -215,7 +216,8 @@ public class DebugDescriptionTests: XCTestCase {
                                 ),
                               LabeledExprSyntax(expression: ExprSyntax(IntegerLiteralExprSyntax(literal: .integerLiteral("2"))))
                             ]),
-                        rightParen: .rightParenToken()
+                        rightParen: .rightParenToken(),
+                        additionalTrailingClosures: MultipleTrailingClosureElementListSyntax([])
                       )))
               ]),
           endOfFileToken: .endOfFileToken()

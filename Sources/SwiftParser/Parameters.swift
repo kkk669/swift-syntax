@@ -97,7 +97,11 @@ extension Parser {
 
     let type: RawTypeSyntax
 
-    if colon.presence == .missing, let secondName = names.secondName, secondName.tokenText.isStartingWithUppercase {
+    if colon.presence == .missing,
+      let secondName = names.secondName,
+      secondName.tokenKind == .identifier,
+      secondName.tokenText.isStartingWithUppercase
+    {
       // Synthesize the secondName parameter as a type node.
       type = RawTypeSyntax(
         RawIdentifierTypeSyntax(
@@ -234,7 +238,7 @@ extension Parser {
 // MARK: - Parameter Modifiers
 
 extension Parser {
-  mutating func parseParameterModifiers(isClosure: Bool) -> RawDeclModifierListSyntax? {
+  mutating func parseParameterModifiers(isClosure: Bool) -> RawDeclModifierListSyntax {
     var elements = [RawDeclModifierSyntax]()
     var loopProgress = LoopProgressCondition()
     MODIFIER_LOOP: while self.hasProgressed(&loopProgress) {
@@ -248,7 +252,7 @@ extension Parser {
       }
     }
     if elements.isEmpty {
-      return nil
+      return self.emptyCollection(RawDeclModifierListSyntax.self)
     } else {
       return RawDeclModifierListSyntax(elements: elements, arena: self.arena)
     }

@@ -625,6 +625,10 @@ extension Lexer.Cursor {
     case .arrow, .ellipsis, .period, .atSign, .pound, .backtick, .backslash:
       return false
 
+    // Shebang does not sequence expressions.
+    case .shebang:
+      return false
+
     case .keyword:
       // There are a handful of keywords that are expressions, handle them.
       // Otherwise, a regex literal can generally be parsed after a keyword.
@@ -640,7 +644,7 @@ extension Lexer.Cursor {
       return false
 
     // Literals are themselves expressions and therefore don't sequence expressions.
-    case .floatingLiteral, .integerLiteral:
+    case .floatLiteral, .integerLiteral:
       return false
 
     // Pound keywords that do not generally sequence expressions.

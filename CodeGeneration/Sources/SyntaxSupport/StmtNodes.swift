@@ -18,21 +18,21 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "availability condition",
     children: [
       Child(
-        name: "AvailabilityKeyword",
-        kind: .token(choices: [.token(tokenKind: "PoundAvailableToken"), .token(tokenKind: "PoundUnavailableToken")])
+        name: "availabilityKeyword",
+        kind: .token(choices: [.token(.poundAvailable), .token(.poundUnavailable)])
       ),
       Child(
-        name: "LeftParen",
-        kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
+        name: "leftParen",
+        kind: .token(choices: [.token(.leftParen)])
       ),
       Child(
-        name: "AvailabilityArguments",
-        deprecatedName: "AvailabilitySpec",
+        name: "availabilityArguments",
+        deprecatedName: "availabilitySpec",
         kind: .collection(kind: .availabilityArgumentList, collectionElementName: "AvailabilityArgument")
       ),
       Child(
-        name: "RightParen",
-        kind: .token(choices: [.token(tokenKind: "RightParenToken")])
+        name: "rightParen",
+        kind: .token(choices: [.token(.rightParen)])
       ),
     ]
   ),
@@ -44,12 +44,12 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'break' statement",
     children: [
       Child(
-        name: "BreakKeyword",
-        kind: .token(choices: [.keyword(text: "break")], requiresTrailingSpace: false)
+        name: "breakKeyword",
+        kind: .token(choices: [.keyword(.break)], requiresTrailingSpace: false)
       ),
       Child(
-        name: "Label",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
+        name: "label",
+        kind: .token(choices: [.token(.identifier)]),
         nameForDiagnostics: "label",
         isOptional: true
       ),
@@ -81,16 +81,15 @@ public let STMT_NODES: [Node] = [
     traits: ["WithCodeBlock"],
     children: [
       Child(
-        name: "CatchKeyword",
-        kind: .token(choices: [.keyword(text: "catch")])
+        name: "catchKeyword",
+        kind: .token(choices: [.keyword(.catch)])
       ),
       Child(
-        name: "CatchItems",
-        kind: .collection(kind: .catchItemList, collectionElementName: "CatchItem"),
-        isOptional: true
+        name: "catchItems",
+        kind: .collection(kind: .catchItemList, collectionElementName: "CatchItem", defaultsToEmpty: true)
       ),
       Child(
-        name: "Body",
+        name: "body",
         kind: .node(kind: .codeBlock)
       ),
     ]
@@ -114,18 +113,18 @@ public let STMT_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "Pattern",
+        name: "pattern",
         kind: .node(kind: .pattern),
         isOptional: true
       ),
       Child(
-        name: "WhereClause",
+        name: "whereClause",
         kind: .node(kind: .whereClause),
         isOptional: true
       ),
       Child(
-        name: "TrailingComma",
-        kind: .token(choices: [.token(tokenKind: "CommaToken")]),
+        name: "trailingComma",
+        kind: .token(choices: [.token(.comma)]),
         isOptional: true
       ),
     ]
@@ -153,29 +152,29 @@ public let STMT_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "Condition",
+        name: "condition",
         kind: .nodeChoices(choices: [
           Child(
-            name: "Expression",
+            name: "expression",
             kind: .node(kind: .expr)
           ),
           Child(
-            name: "Availability",
+            name: "availability",
             kind: .node(kind: .availabilityCondition)
           ),
           Child(
-            name: "MatchingPattern",
+            name: "matchingPattern",
             kind: .node(kind: .matchingPatternCondition)
           ),
           Child(
-            name: "OptionalBinding",
+            name: "optionalBinding",
             kind: .node(kind: .optionalBindingCondition)
           ),
         ])
       ),
       Child(
-        name: "TrailingComma",
-        kind: .token(choices: [.token(tokenKind: "CommaToken")]),
+        name: "trailingComma",
+        kind: .token(choices: [.token(.comma)]),
         isOptional: true
       ),
     ]
@@ -188,12 +187,12 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'continue' statement",
     children: [
       Child(
-        name: "ContinueKeyword",
-        kind: .token(choices: [.keyword(text: "continue")])
+        name: "continueKeyword",
+        kind: .token(choices: [.keyword(.continue)])
       ),
       Child(
-        name: "Label",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
+        name: "label",
+        kind: .token(choices: [.token(.identifier)]),
         nameForDiagnostics: "label",
         isOptional: true
       ),
@@ -210,11 +209,11 @@ public let STMT_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "DeferKeyword",
-        kind: .token(choices: [.keyword(text: "defer")])
+        name: "deferKeyword",
+        kind: .token(choices: [.keyword(.defer)])
       ),
       Child(
-        name: "Body",
+        name: "body",
         kind: .node(kind: .codeBlock)
       ),
     ]
@@ -230,18 +229,17 @@ public let STMT_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "DoKeyword",
-        kind: .token(choices: [.keyword(text: "do")])
+        name: "doKeyword",
+        kind: .token(choices: [.keyword(.do)])
       ),
       Child(
-        name: "Body",
+        name: "body",
         kind: .node(kind: .codeBlock),
         nameForDiagnostics: "body"
       ),
       Child(
-        name: "CatchClauses",
-        kind: .collection(kind: .catchClauseList, collectionElementName: "CatchClause"),
-        isOptional: true
+        name: "catchClauses",
+        kind: .collection(kind: .catchClauseList, collectionElementName: "CatchClause", defaultsToEmpty: true)
       ),
     ]
   ),
@@ -253,7 +251,7 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "expression",
     children: [
       Child(
-        name: "Expression",
+        name: "expression",
         kind: .node(kind: .expr)
       )
     ]
@@ -266,8 +264,8 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'fallthrough' statement",
     children: [
       Child(
-        name: "FallthroughKeyword",
-        kind: .token(choices: [.keyword(text: "fallthrough")])
+        name: "fallthroughKeyword",
+        kind: .token(choices: [.keyword(.fallthrough)])
       )
     ]
   ),
@@ -284,49 +282,49 @@ public let STMT_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "ForKeyword",
-        kind: .token(choices: [.keyword(text: "for")])
+        name: "forKeyword",
+        kind: .token(choices: [.keyword(.for)])
       ),
       Child(
-        name: "TryKeyword",
-        kind: .token(choices: [.keyword(text: "try")]),
+        name: "tryKeyword",
+        kind: .token(choices: [.keyword(.try)]),
         isOptional: true
       ),
       Child(
-        name: "AwaitKeyword",
-        kind: .token(choices: [.keyword(text: "await")]),
+        name: "awaitKeyword",
+        kind: .token(choices: [.keyword(.await)]),
         isOptional: true
       ),
       Child(
-        name: "CaseKeyword",
-        kind: .token(choices: [.keyword(text: "case")]),
+        name: "caseKeyword",
+        kind: .token(choices: [.keyword(.case)]),
         isOptional: true
       ),
       Child(
-        name: "Pattern",
+        name: "pattern",
         kind: .node(kind: .pattern)
       ),
       Child(
-        name: "TypeAnnotation",
+        name: "typeAnnotation",
         kind: .node(kind: .typeAnnotation),
         isOptional: true
       ),
       Child(
-        name: "InKeyword",
-        kind: .token(choices: [.keyword(text: "in")])
+        name: "inKeyword",
+        kind: .token(choices: [.keyword(.in)])
       ),
       Child(
-        name: "Sequence",
-        deprecatedName: "SequenceExpr",
+        name: "sequence",
+        deprecatedName: "sequenceExpr",
         kind: .node(kind: .expr)
       ),
       Child(
-        name: "WhereClause",
+        name: "whereClause",
         kind: .node(kind: .whereClause),
         isOptional: true
       ),
       Child(
-        name: "Body",
+        name: "body",
         kind: .node(kind: .codeBlock),
         nameForDiagnostics: "body"
       ),
@@ -340,14 +338,11 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'discard' statement",
     children: [
       Child(
-        name: "DiscardKeyword",
-        kind: .token(choices: [
-          .keyword(text: "_forget"),  // NOTE: support for deprecated _forget
-          .keyword(text: "discard"),
-        ])
+        name: "discardKeyword",
+        kind: .token(choices: [.keyword(.discard)])
       ),
       Child(
-        name: "Expression",
+        name: "expression",
         kind: .node(kind: .expr)
       ),
     ]
@@ -363,20 +358,20 @@ public let STMT_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "GuardKeyword",
-        kind: .token(choices: [.keyword(text: "guard")])
+        name: "guardKeyword",
+        kind: .token(choices: [.keyword(.guard)])
       ),
       Child(
-        name: "Conditions",
+        name: "conditions",
         kind: .collection(kind: .conditionElementList, collectionElementName: "Condition"),
         nameForDiagnostics: "condition"
       ),
       Child(
-        name: "ElseKeyword",
-        kind: .token(choices: [.keyword(text: "else")])
+        name: "elseKeyword",
+        kind: .token(choices: [.keyword(.else)])
       ),
       Child(
-        name: "Body",
+        name: "body",
         kind: .node(kind: .codeBlock),
         nameForDiagnostics: "body"
       ),
@@ -390,18 +385,18 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "labeled statement",
     children: [
       Child(
-        name: "Label",
-        deprecatedName: "LabelName",
-        kind: .token(choices: [.token(tokenKind: "IdentifierToken")]),
+        name: "label",
+        deprecatedName: "labelName",
+        kind: .token(choices: [.token(.identifier)]),
         nameForDiagnostics: "label name"
       ),
       Child(
-        name: "Colon",
-        deprecatedName: "LabelColon",
-        kind: .token(choices: [.token(tokenKind: "ColonToken")])
+        name: "colon",
+        deprecatedName: "labelColon",
+        kind: .token(choices: [.token(.colon)])
       ),
       Child(
-        name: "Statement",
+        name: "statement",
         kind: .node(kind: .stmt)
       ),
     ]
@@ -413,20 +408,20 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "pattern matching",
     children: [
       Child(
-        name: "CaseKeyword",
-        kind: .token(choices: [.keyword(text: "case")])
+        name: "caseKeyword",
+        kind: .token(choices: [.keyword(.case)])
       ),
       Child(
-        name: "Pattern",
+        name: "pattern",
         kind: .node(kind: .pattern)
       ),
       Child(
-        name: "TypeAnnotation",
+        name: "typeAnnotation",
         kind: .node(kind: .typeAnnotation),
         isOptional: true
       ),
       Child(
-        name: "Initializer",
+        name: "initializer",
         kind: .node(kind: .initializerClause)
       ),
     ]
@@ -438,21 +433,24 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "optional binding",
     children: [
       Child(
-        name: "BindingSpecifier",
-        deprecatedName: "BindingKeyword",
-        kind: .token(choices: [.keyword(text: "let"), .keyword(text: "var"), .keyword(text: "inout")])
+        name: "bindingSpecifier",
+        deprecatedName: "bindingKeyword",
+        kind: .token(choices: [
+          .keyword(.let), .keyword(.var), .keyword(.inout), .keyword(._mutating), .keyword(._borrowing),
+          .keyword(._consuming),
+        ])
       ),
       Child(
-        name: "Pattern",
+        name: "pattern",
         kind: .node(kind: .pattern)
       ),
       Child(
-        name: "TypeAnnotation",
+        name: "typeAnnotation",
         kind: .node(kind: .typeAnnotation),
         isOptional: true
       ),
       Child(
-        name: "Initializer",
+        name: "initializer",
         kind: .node(kind: .initializerClause),
         isOptional: true
       ),
@@ -469,20 +467,20 @@ public let STMT_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "RepeatKeyword",
-        kind: .token(choices: [.keyword(text: "repeat")])
+        name: "repeatKeyword",
+        kind: .token(choices: [.keyword(.repeat)])
       ),
       Child(
-        name: "Body",
+        name: "body",
         kind: .node(kind: .codeBlock),
         nameForDiagnostics: "body"
       ),
       Child(
-        name: "WhileKeyword",
-        kind: .token(choices: [.keyword(text: "while")])
+        name: "whileKeyword",
+        kind: .token(choices: [.keyword(.while)])
       ),
       Child(
-        name: "Condition",
+        name: "condition",
         kind: .node(kind: .expr),
         nameForDiagnostics: "condition"
       ),
@@ -496,11 +494,11 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'return' statement",
     children: [
       Child(
-        name: "ReturnKeyword",
-        kind: .token(choices: [.keyword(text: "return")])
+        name: "returnKeyword",
+        kind: .token(choices: [.keyword(.return)])
       ),
       Child(
-        name: "Expression",
+        name: "expression",
         kind: .node(kind: .expr),
         isOptional: true
       ),
@@ -514,11 +512,11 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'throw' statement",
     children: [
       Child(
-        name: "ThrowKeyword",
-        kind: .token(choices: [.keyword(text: "throw")])
+        name: "throwKeyword",
+        kind: .token(choices: [.keyword(.throw)])
       ),
       Child(
-        name: "Expression",
+        name: "expression",
         kind: .node(kind: .expr)
       ),
     ]
@@ -530,12 +528,12 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'where' clause",
     children: [
       Child(
-        name: "WhereKeyword",
-        kind: .token(choices: [.keyword(text: "where")])
+        name: "whereKeyword",
+        kind: .token(choices: [.keyword(.where)])
       ),
       Child(
-        name: "Condition",
-        deprecatedName: "GuardResult",
+        name: "condition",
+        deprecatedName: "guardResult",
         kind: .node(kind: .expr)
       ),
     ]
@@ -551,15 +549,15 @@ public let STMT_NODES: [Node] = [
     ],
     children: [
       Child(
-        name: "WhileKeyword",
-        kind: .token(choices: [.keyword(text: "while")])
+        name: "whileKeyword",
+        kind: .token(choices: [.keyword(.while)])
       ),
       Child(
-        name: "Conditions",
+        name: "conditions",
         kind: .collection(kind: .conditionElementList, collectionElementName: "Condition")
       ),
       Child(
-        name: "Body",
+        name: "body",
         kind: .node(kind: .codeBlock)
       ),
     ]
@@ -571,17 +569,17 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: nil,
     children: [
       Child(
-        name: "LeftParen",
-        kind: .token(choices: [.token(tokenKind: "LeftParenToken")])
+        name: "leftParen",
+        kind: .token(choices: [.token(.leftParen)])
       ),
       Child(
-        name: "Elements",
-        deprecatedName: "ElementList",
+        name: "elements",
+        deprecatedName: "elementList",
         kind: .collection(kind: .yieldedExpressionList, collectionElementName: "Element")
       ),
       Child(
-        name: "RightParen",
-        kind: .token(choices: [.token(tokenKind: "RightParenToken")])
+        name: "rightParen",
+        kind: .token(choices: [.token(.rightParen)])
       ),
     ]
   ),
@@ -593,21 +591,21 @@ public let STMT_NODES: [Node] = [
     nameForDiagnostics: "'yield' statement",
     children: [
       Child(
-        name: "YieldKeyword",
-        kind: .token(choices: [.keyword(text: "yield")])
+        name: "yieldKeyword",
+        kind: .token(choices: [.keyword(.yield)])
       ),
       Child(
-        name: "YieldedExpressions",
-        deprecatedName: "Yields",
+        name: "yieldedExpressions",
+        deprecatedName: "yields",
         kind: .nodeChoices(choices: [
           Child(
-            name: "Multiple",
-            deprecatedName: "YieldList",
+            name: "multiple",
+            deprecatedName: "yieldList",
             kind: .node(kind: .yieldedExpressionsClause)
           ),
           Child(
-            name: "Single",
-            deprecatedName: "SimpleYield",
+            name: "single",
+            deprecatedName: "simpleYield",
             kind: .node(kind: .expr)
           ),
         ])

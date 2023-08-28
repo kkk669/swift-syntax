@@ -14,7 +14,7 @@
 @_spi(RawSyntax) import SwiftParser
 import XCTest
 
-final class AvailabilityTests: XCTestCase {
+final class AvailabilityTests: ParserTestCase {
   func testAvailableMember() {
     assertParse(
       """
@@ -106,10 +106,9 @@ final class AvailabilityTests: XCTestCase {
       @available(OSX 10)
       func test() {}
       """,
-      substructure: Syntax(
-        VersionTupleSyntax(
-          major: .integerLiteral("10")
-        )
+      substructure: VersionTupleSyntax(
+        major: .integerLiteral("10"),
+        components: []
       )
     )
 
@@ -118,11 +117,9 @@ final class AvailabilityTests: XCTestCase {
       @available(OSX 10.0)
       func test() {}
       """,
-      substructure: Syntax(
-        VersionTupleSyntax(
-          major: .integerLiteral("10"),
-          components: VersionComponentListSyntax([VersionComponentSyntax(number: .integerLiteral("0"))])
-        )
+      substructure: VersionTupleSyntax(
+        major: .integerLiteral("10"),
+        components: VersionComponentListSyntax([VersionComponentSyntax(number: .integerLiteral("0"))])
       )
     )
 
@@ -131,14 +128,12 @@ final class AvailabilityTests: XCTestCase {
       @available(OSX 10.0.1)
       func test() {}
       """,
-      substructure: Syntax(
-        VersionTupleSyntax(
-          major: .integerLiteral("10"),
-          components: VersionComponentListSyntax([
-            VersionComponentSyntax(number: .integerLiteral("0")),
-            VersionComponentSyntax(number: .integerLiteral("1")),
-          ])
-        )
+      substructure: VersionTupleSyntax(
+        major: .integerLiteral("10"),
+        components: VersionComponentListSyntax([
+          VersionComponentSyntax(number: .integerLiteral("0")),
+          VersionComponentSyntax(number: .integerLiteral("1")),
+        ])
       )
     )
 

@@ -22,7 +22,7 @@ fileprivate func findCommonAncestor(_ nodes: [Syntax]) -> Syntax? {
 }
 
 class NoNewlinesFormat: BasicFormat {
-  override var inferInitialTokenIndentaiton: Bool { false }
+  override var inferInitialTokenIndentation: Bool { false }
 
   override func requiresNewline(between first: TokenSyntax?, and second: TokenSyntax?) -> Bool {
     return false
@@ -251,9 +251,9 @@ public struct MissingNodesError: ParserError {
       return nil
     }
     if let missingDecl = firstMissingNode.as(MissingDeclSyntax.self) {
-      if let lastModifier = missingDecl.modifiers?.last {
+      if let lastModifier = missingDecl.modifiers.last {
         return "after '\(lastModifier.name.text)' modifier"
-      } else if missingDecl.attributes != nil {
+      } else if !missingDecl.attributes.isEmpty {
         return "after attribute"
       }
     }

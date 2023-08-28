@@ -39,8 +39,8 @@ public class MultithreadingTests: XCTestCase {
     // 'base.member()'
     let methodCall = FunctionCallExprSyntax(
       calledExpression: MemberAccessExprSyntax(
-        base: IdentifierExprSyntax(
-          identifier: .identifier("base")
+        base: DeclReferenceExprSyntax(
+          baseName: .identifier("base")
         ),
         period: .periodToken(),
         name: .identifier("member")
@@ -54,8 +54,8 @@ public class MultithreadingTests: XCTestCase {
       var copied = methodCall
       copied
         .calledExpression[as: MemberAccessExprSyntax.self]
-        .base![as: IdentifierExprSyntax.self]
-        .identifier = .identifier("ident\(i)")
+        .base![as: DeclReferenceExprSyntax.self]
+        .baseName = .identifier("ident\(i)")
       copied = copied.with(\.leadingTrivia, [.newlines(1)])
 
       XCTAssertEqual(copied.description, "\nident\(i).member()")

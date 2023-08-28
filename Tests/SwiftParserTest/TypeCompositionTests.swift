@@ -14,7 +14,7 @@ import SwiftSyntax
 import SwiftParser
 import XCTest
 
-final class TypeCompositionTests: XCTestCase {
+final class TypeCompositionTests: ParserTestCase {
   func testComponents() {
     let cases: [UInt: String] = [
       // Identifiers and member types
@@ -52,14 +52,12 @@ final class TypeCompositionTests: XCTestCase {
       assertParse(
         "\(component) & \(component) & \(component)",
         TypeSyntax.parse,
-        substructure: Syntax(
-          CompositionTypeSyntax(
-            elements: .init([
-              CompositionTypeElementSyntax(type: componentSyntax, ampersand: .binaryOperator("&")),
-              CompositionTypeElementSyntax(type: componentSyntax, ampersand: .binaryOperator("&")),
-              CompositionTypeElementSyntax(type: componentSyntax),
-            ])
-          )
+        substructure: CompositionTypeSyntax(
+          elements: .init([
+            CompositionTypeElementSyntax(type: componentSyntax, ampersand: .binaryOperator("&")),
+            CompositionTypeElementSyntax(type: componentSyntax, ampersand: .binaryOperator("&")),
+            CompositionTypeElementSyntax(type: componentSyntax),
+          ])
         ),
         line: line
       )

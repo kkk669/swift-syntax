@@ -12,7 +12,7 @@
 
 import SwiftBasicFormat
 import SwiftParser
-import SwiftSyntaxBuilder
+@_spi(Testing) import SwiftSyntaxBuilder
 import SwiftSyntax
 
 import XCTest
@@ -250,6 +250,117 @@ final class BasicFormatTest: XCTestCase {
     )
   }
 
+  func testMultilineStringLiteralWithBlankLines() {
+    let source = #"""
+      assertionFailure("""
+
+        First line
+
+        Second line
+
+        """)
+      """#
+    assertFormatted(source: source, expected: source)
+  }
+
+  func testMultilineStringLiteralWithFirstLineBlank() {
+    let source = #"""
+      assertionFailure("""
+
+        """)
+      """#
+    assertFormatted(source: source, expected: source)
+  }
+
+  func testNestedMultilineStringLiterals() {
+    let source = #"""
+      assertionFailure("""
+
+        \("""
+          First Line
+        """)
+      """)
+      """#
+
+    assertFormatted(source: source, expected: source)
+  }
+
+  func testIndentNestedMultilineStringLiterals() throws {
+    let stringLiteral: ExprSyntax = #"""
+      """
+
+        \("""
+          First Line
+        """)
+      """
+      """#
+
+    assertFormatted(tree: stringLiteral, expected: stringLiteral.description)
+
+    let tree = try FunctionDeclSyntax("func test()") {
+      stringLiteral
+    }
+
+    assertFormatted(
+      tree: tree,
+      expected: #"""
+        func test() {
+            """
+
+              \("""
+                First Line
+              """)
+            """
+        }
+        """#
+    )
+  }
+
+  func testIndentNestedIndentedMultilineStringLiterals() throws {
+    let stringLiteral: ExprSyntax = #"""
+      _ = """
+
+            \("""
+              First Line
+            """)
+          """
+      """#
+
+    assertFormatted(tree: stringLiteral, expected: stringLiteral.description)
+
+    let tree = try FunctionDeclSyntax("func test()") {
+      stringLiteral
+    }
+
+    assertFormatted(
+      tree: tree,
+      expected: #"""
+        func test() {
+            _ = """
+
+                  \("""
+                    First Line
+                  """)
+                """
+        }
+        """#
+    )
+  }
+
+  func testClosureInStringInterpolation() {
+    let source = #"""
+      """
+      \(gen { (x) in
+          return """
+          case
+      """
+      })
+      """
+      """#
+
+    assertFormatted(source: source, expected: source)
+  }
+
   func testNestedUserDefinedIndentation() {
     assertFormatted(
       source: """
@@ -285,12 +396,10 @@ final class BasicFormatTest: XCTestCase {
             colon: .colonToken(trailingTrivia: .space),
             type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int")))
           ),
-          accessors: PatternBindingSyntax.Accessors(
-            AccessorBlockSyntax(
-              leftBrace: .leftBraceToken(leadingTrivia: .space),
-              accessors: AccessorDeclListSyntax([]),
-              rightBrace: .rightBraceToken(leadingTrivia: .newline)
-            )
+          accessorBlock: AccessorBlockSyntax(
+            leftBrace: .leftBraceToken(leadingTrivia: .space),
+            accessors: .accessors(AccessorDeclListSyntax([])),
+            rightBrace: .rightBraceToken(leadingTrivia: .newline)
           )
         )
       ])
@@ -382,15 +491,17 @@ final class BasicFormatTest: XCTestCase {
   }
 
   func testUnexpectedIsNotFormatted() {
-    let expr: ExprSyntax = """
-      let foo=1
-      """
-
-    assertFormatted(
-      tree: expr,
-      expected: """
+    withStringInterpolationParsingErrorsSuppressed {
+      let expr: ExprSyntax = """
         let foo=1
         """
-    )
+
+      assertFormatted(
+        tree: expr,
+        expected: """
+          let foo=1
+          """
+      )
+    }
   }
 }

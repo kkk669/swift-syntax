@@ -15,7 +15,7 @@
 import XCTest
 import SwiftSyntax
 
-final class IfconfigExprTests: XCTestCase {
+final class IfconfigExprTests: ParserTestCase {
   func testIfconfigExpr1() {
     assertParse(
       """
@@ -653,20 +653,18 @@ final class IfconfigExprTests: XCTestCase {
       #if compiler(<10.0) || hasGreeble(blah)
       #endif
       """,
-      substructure: Syntax(
-        FunctionCallExprSyntax(
-          calledExpression: IdentifierExprSyntax(identifier: .identifier("compiler")),
-          leftParen: .leftParenToken(),
-          arguments: LabeledExprListSyntax([
-            LabeledExprSyntax(
-              expression: PrefixOperatorExprSyntax(
-                operator: .prefixOperator("<"),
-                expression: FloatLiteralExprSyntax(literal: .floatingLiteral("10.0"))
-              )
+      substructure: FunctionCallExprSyntax(
+        calledExpression: DeclReferenceExprSyntax(baseName: .identifier("compiler")),
+        leftParen: .leftParenToken(),
+        arguments: LabeledExprListSyntax([
+          LabeledExprSyntax(
+            expression: PrefixOperatorExprSyntax(
+              operator: .prefixOperator("<"),
+              expression: FloatLiteralExprSyntax(literal: .floatLiteral("10.0"))
             )
-          ]),
-          rightParen: .rightParenToken(trailingTrivia: .space)
-        )
+          )
+        ]),
+        rightParen: .rightParenToken(trailingTrivia: .space)
       )
     )
   }
@@ -707,21 +705,19 @@ final class IfconfigExprTests: XCTestCase {
       #if hasFeature(17)
       #endif
       """,
-      substructure: Syntax(
-        IfConfigClauseSyntax(
-          poundKeyword: .poundIfToken(),
-          condition: FunctionCallExprSyntax(
-            calledExpression: IdentifierExprSyntax(identifier: .identifier("hasFeature")),
-            leftParen: .leftParenToken(),
-            arguments: LabeledExprListSyntax([
-              LabeledExprSyntax(
-                expression: IntegerLiteralExprSyntax(literal: .integerLiteral("17"))
-              )
-            ]),
-            rightParen: .rightParenToken()
-          ),
-          elements: .init(CodeBlockItemListSyntax([]))
-        )
+      substructure: IfConfigClauseSyntax(
+        poundKeyword: .poundIfToken(),
+        condition: FunctionCallExprSyntax(
+          calledExpression: DeclReferenceExprSyntax(baseName: .identifier("hasFeature")),
+          leftParen: .leftParenToken(),
+          arguments: LabeledExprListSyntax([
+            LabeledExprSyntax(
+              expression: IntegerLiteralExprSyntax(literal: .integerLiteral("17"))
+            )
+          ]),
+          rightParen: .rightParenToken()
+        ),
+        elements: .init(CodeBlockItemListSyntax([]))
       )
     )
   }

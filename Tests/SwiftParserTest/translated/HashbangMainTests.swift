@@ -14,7 +14,7 @@
 
 import XCTest
 
-final class HashbangMainTests: XCTestCase {
+final class HashbangMainTests: ParserTestCase {
   func testHashbangMain1() {
     assertParse(
       """

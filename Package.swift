@@ -146,7 +146,7 @@ let package = Package(
 
     .target(
       name: "SwiftSyntax",
-      dependencies: [],
+      dependencies: ["SwiftSyntax509"],
       exclude: ["CMakeLists.txt"],
       swiftSettings: swiftSyntaxSwiftSettings
     ),
@@ -154,6 +154,13 @@ let package = Package(
     .testTarget(
       name: "SwiftSyntaxTest",
       dependencies: ["_SwiftSyntaxTestSupport", "SwiftSyntax", "SwiftSyntaxBuilder"]
+    ),
+
+    // MARK: Verison marker modules
+
+    .target(
+      name: "SwiftSyntax509",
+      dependencies: []
     ),
 
     // MARK: SwiftSyntaxBuilder
@@ -182,7 +189,7 @@ let package = Package(
 
     .target(
       name: "SwiftSyntaxMacroExpansion",
-      dependencies: ["SwiftSyntax", "SwiftSyntaxMacros", "SwiftDiagnostics"],
+      dependencies: ["SwiftSyntax", "SwiftSyntaxBuilder", "SwiftSyntaxMacros", "SwiftDiagnostics"],
       exclude: ["CMakeLists.txt"]
     ),
 
@@ -261,16 +268,6 @@ let package = Package(
     // MARK: - Executable targets
 
     // MARK: - Deprecated targets
-
-    // MARK: lit-test-helper
-    // TODO: All the lit-based tests should be migrated to XCTest so we don't have a
-    // dependency on FileCheck
-
-    .executableTarget(
-      name: "lit-test-helper",
-      dependencies: ["SwiftIDEUtils", "SwiftSyntax", "SwiftParser",
-                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))]
-    ),
 
     // MARK: PerformanceTest
     // TODO: Should be included in SwiftParserTest/SwiftSyntaxTest

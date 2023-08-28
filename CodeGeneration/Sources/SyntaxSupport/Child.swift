@@ -15,8 +15,8 @@ import SwiftSyntax
 /// The kind of token a node can contain. Either a token of a specific kind or a
 /// keyword with the given text.
 public enum TokenChoice: Equatable {
-  case keyword(text: String)
-  case token(tokenKind: String)
+  case keyword(Keyword)
+  case token(Token)
 
   public var isKeyword: Bool {
     switch self {
@@ -32,7 +32,7 @@ public enum ChildKind {
   /// The child always contains a node that matches one of the `choices`.
   case nodeChoices(choices: [Child])
   /// The child is a collection of `kind`.
-  case collection(kind: SyntaxNodeKind, collectionElementName: String, deprecatedCollectionElementName: String? = nil)
+  case collection(kind: SyntaxNodeKind, collectionElementName: String, defaultsToEmpty: Bool = false, deprecatedCollectionElementName: String? = nil)
   /// The child is a token that matches one of the given `choices`.
   /// If `requiresLeadingSpace` or `requiresTrailingSpace` is not `nil`, it
   /// overrides the default leading/trailing space behavior of the token.
@@ -40,6 +40,14 @@ public enum ChildKind {
 
   public var isNodeChoices: Bool {
     if case .nodeChoices = self {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  public var isToken: Bool {
+    if case .token = self {
       return true
     } else {
       return false
@@ -91,7 +99,7 @@ public class Child {
       return kind
     case .nodeChoices:
       return .syntax
-    case .collection(kind: let kind, _, _):
+    case .collection(kind: let kind, _, _, _):
       return kind
     case .token:
       return .token
@@ -103,6 +111,22 @@ public class Child {
     return .identifier(lowercaseFirstWord(name: name))
   }
 
+  /// If this child has node choices, the type that the nested `SyntaxChildChoices` type should get.
+  ///
+  /// For any other kind of child nodes, accessing this property crashes.
+  public var syntaxChoicesType: TypeSyntax {
+    precondition(kind.isNodeChoices, "Cannot get `syntaxChoicesType` for node that doesn’t have nodeChoices")
+    return "\(raw: name.withFirstCharacterUppercased)"
+  }
+
+  /// If this child only has tokens, the type that the generated `TokenSpecSet` should get.
+  ///
+  /// For any other kind of child nodes, accessing this property crashes.
+  public var tokenSpecSetType: TypeSyntax {
+    precondition(kind.isToken, "Cannot get `tokenSpecSetType` for node that isn’t a token")
+    return "\(raw: name.withFirstCharacterUppercased)Options"
+  }
+
   /// The deprecated name of this child that's suitable to be used for variable or enum case names.
   public var deprecatedVarName: TokenSyntax? {
     guard let deprecatedName = deprecatedName else {
@@ -111,22 +135,32 @@ public class Child {
     return .identifier(lowercaseFirstWord(name: deprecatedName))
   }
 
+  /// Determines if this child has a deprecated name
+  public var hasDeprecatedName: Bool {
+    return deprecatedName != nil
+  }
+
   /// If the child ends with "token" in the kind, it's considered a token node.
   /// Grab the existing reference to that token from the global list.
-  public var tokenKind: String? {
+  public var tokenKind: Token? {
     switch kind {
-    case .token(choices: let choices, requiresLeadingSpace: _, requiresTrailingSpace: _):
+    case .token(let choices, _, _):
       if choices.count == 1 {
         switch choices.first! {
-        case .keyword: return "KeywordToken"
-        case .token(tokenKind: let tokenKind): return tokenKind
+        case .keyword: return .keyword
+        case .token(let token): return token
         }
+      } else if choices.allSatisfy(\.isKeyword) {
+        return .keyword
       } else {
-        if choices.allSatisfy({ $0.isKeyword }) {
-          return "KeywordToken"
-        } else {
-          return "Token"
-        }
+        /*
+       FIXME: Technically, returning `.unknown` is not correct here.
+       The old string-based implementation returned "Token" to ensure that `tokenKind` is not nil
+       and that `isToken` computed-property will return true, but the value "Token" had never been
+       used in other cases. We should try to remove this computed property altogether in the issue:
+       https://github.com/apple/swift-syntax/issues/2010
+       */
+        return .unknown
       }
     default:
       return nil
@@ -135,18 +169,17 @@ public class Child {
 
   /// Returns `true` if this child has a token kind.
   public var isToken: Bool {
-    return tokenKind != nil
+    tokenKind != nil
   }
 
   public var token: TokenSpec? {
-    guard let tokenKind = tokenKind else { return nil }
-    return SYNTAX_TOKEN_MAP[tokenKind]
+    tokenKind?.spec
   }
 
   /// Whether this child has syntax kind `UnexpectedNodes`.
   public var isUnexpectedNodes: Bool {
     switch kind {
-    case .collection(kind: .unexpectedNodes, _, _):
+    case .collection(kind: .unexpectedNodes, _, _, _):
       return true
     default:
       return false
@@ -161,7 +194,7 @@ public class Child {
       return choices.isEmpty
     case .node(let kind):
       return kind.isBase
-    case .collection(let kind, _, _):
+    case .collection(kind: let kind, _, _, _):
       return kind.isBase
     case .token:
       return false
@@ -181,9 +214,8 @@ public class Child {
     documentation: String? = nil,
     isOptional: Bool = false
   ) {
-    if let firstCharInName = name.first {
-      precondition(firstCharInName.isUppercase == true, "The first letter of a child’s name should be uppercase")
-    }
+    precondition(name.first?.isLowercase ?? true, "The first letter of a child’s name should be lowercase")
+    precondition(deprecatedName?.first?.isLowercase ?? true, "The first letter of a child’s deprecatedName should be lowercase")
     self.name = name
     self.deprecatedName = deprecatedName
     self.kind = kind

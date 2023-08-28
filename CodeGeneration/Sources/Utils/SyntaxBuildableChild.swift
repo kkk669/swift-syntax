@@ -18,7 +18,7 @@ import SyntaxSupport
 /// given token kind.
 public enum SyntaxOrTokenNodeKind: Hashable {
   case node(kind: SyntaxNodeKind)
-  case token(tokenKind: String)
+  case token(Token)
 }
 
 /// Extension to the ``Child`` type to provide functionality specific to
@@ -26,17 +26,17 @@ public enum SyntaxOrTokenNodeKind: Hashable {
 public extension Child {
   /// The type of this child, represented by a ``SyntaxBuildableType``, which can
   /// be used to create the corresponding `Buildable` and `ExpressibleAs` types.
-  var type: SyntaxBuildableType {
+  var buildableType: SyntaxBuildableType {
     let buildableKind: SyntaxOrTokenNodeKind
     switch kind {
     case .node(kind: let kind):
       buildableKind = .node(kind: kind)
     case .nodeChoices:
       buildableKind = .node(kind: .syntax)
-    case .collection(let kind, _, _):
+    case .collection(kind: let kind, _, _, _):
       buildableKind = .node(kind: kind)
     case .token:
-      buildableKind = .token(tokenKind: self.tokenKind!)
+      buildableKind = .token(self.tokenKind!)
     }
     return SyntaxBuildableType(
       kind: buildableKind,
@@ -44,45 +44,42 @@ public extension Child {
     )
   }
 
-  var parameterBaseType: String {
+  var parameterBaseType: TypeSyntax {
     switch kind {
     case .nodeChoices:
-      return self.name
+      return self.syntaxChoicesType
     default:
-      return type.parameterBaseType
+      return buildableType.parameterBaseType
     }
   }
 
   var parameterType: TypeSyntax {
-    return self.type.optionalWrapped(type: IdentifierTypeSyntax(name: .identifier(parameterBaseType)))
+    return self.buildableType.optionalWrapped(type: parameterBaseType)
   }
 
   var defaultValue: ExprSyntax? {
     if isOptional || isUnexpectedNodes {
-      if type.isBaseType && kind.isNodeChoicesEmpty {
-        return ExprSyntax("\(type.buildable).none")
+      if buildableType.isBaseType && kind.isNodeChoicesEmpty {
+        return ExprSyntax("\(buildableType.buildable).none")
       } else {
         return ExprSyntax("nil")
       }
     }
+    if case .collection(_, _, defaultsToEmpty: true, _) = kind {
+      return ExprSyntax("[]")
+    }
     guard let token = token, isToken else {
-      return type.defaultValue
+      return buildableType.defaultValue
     }
     if token.text != nil {
       return ExprSyntax(".\(token.varOrCaseName)Token()")
     }
-    guard case .token(let choices, _, _) = kind, choices.count == 1, token.kind == .keyword else {
-      return nil
+    if case .token(let choices, _, _) = kind,
+      case .keyword(let keyword) = choices.only
+    {
+      return ExprSyntax(".\(token.varOrCaseName)(.\(keyword.spec.varOrCaseName))")
     }
-    var textChoice: String
-    switch choices[0] {
-    case .keyword(let text), .token(let text):
-      textChoice = text
-    }
-    if textChoice == "init" {
-      textChoice = "`init`"
-    }
-    return ExprSyntax(".\(token.varOrCaseName)(.\(raw: textChoice))")
+    return nil
   }
 
   /// If the child node has a default value, return an expression of the form
@@ -106,8 +103,10 @@ public extension Child {
 
     let tokenCanContainArbitraryText = choices.contains {
       switch $0 {
-      case .token(tokenKind: let tokenKind): return SYNTAX_TOKEN_MAP["\(tokenKind)Token"]?.text == nil
-      case .keyword: return false
+      case .token(let token):
+        return token.spec.text == nil
+      case .keyword:
+        return false
       }
     }
 
@@ -118,8 +117,10 @@ public extension Child {
     } else if !choices.isEmpty {
       choicesTexts = choices.compactMap {
         switch $0 {
-        case .token(tokenKind: let tokenKind): return SYNTAX_TOKEN_MAP["\(tokenKind)Token"]?.text
-        case .keyword(text: let text): return text
+        case .token(let token):
+          return token.spec.text
+        case .keyword(let keyword):
+          return keyword.spec.name
         }
       }
     } else {
@@ -127,11 +128,11 @@ public extension Child {
     }
 
     var preconditionChoices: [ExprSyntax] = []
-    if type.isOptional {
+    if buildableType.isOptional {
       preconditionChoices.append(
         ExprSyntax(
           SequenceExprSyntax {
-            IdentifierExprSyntax(identifier: .identifier(varName))
+            DeclReferenceExprSyntax(baseName: .identifier(varName))
             BinaryOperatorExprSyntax(text: "==")
             NilLiteralExprSyntax()
           }
@@ -142,7 +143,7 @@ public extension Child {
       preconditionChoices.append(
         ExprSyntax(
           SequenceExprSyntax {
-            MemberAccessExprSyntax(base: type.forceUnwrappedIfNeeded(expr: IdentifierExprSyntax(identifier: .identifier(varName))), name: "text")
+            MemberAccessExprSyntax(base: buildableType.forceUnwrappedIfNeeded(expr: DeclReferenceExprSyntax(baseName: .identifier(varName))), name: "text")
             BinaryOperatorExprSyntax(text: "==")
             StringLiteralExprSyntax(content: textChoice)
           }

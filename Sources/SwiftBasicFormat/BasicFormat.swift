@@ -10,7 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftSyntax
+@_spi(RawSyntax) import SwiftSyntax
 
 /// A rewriter that performs a "basic" format of the passed tree.
 ///
@@ -48,12 +48,23 @@ open class BasicFormat: SyntaxRewriter {
   /// been visited yet.
   private var previousToken: TokenSyntax? = nil
 
+  /// The number of ancestors that are `StringLiteralExprSyntax`.
+  private var stringLiteralNestingLevel = 0
+
+  /// Whether we are currently visiting the subtree of a `StringLiteralExprSyntax`.
+  private var isInsideStringLiteral: Bool {
+    return stringLiteralNestingLevel > 0
+  }
+
   public init(
-    indentationWidth: Trivia = .spaces(4),
+    indentationWidth: Trivia? = nil,
     initialIndentation: Trivia = [],
     viewMode: SyntaxTreeViewMode = .sourceAccurate
   ) {
-    self.indentationWidth = indentationWidth
+    // Default to 4 spaces if no indentation was passed.
+    // In the future, we could consider inferring the indentation width from the
+    // source file to format in case it is already partially formatted.
+    self.indentationWidth = indentationWidth ?? .spaces(4)
     self.indentationStack = [(indentation: initialIndentation, isUserDefined: false)]
     super.init(viewMode: viewMode)
   }
@@ -83,6 +94,9 @@ open class BasicFormat: SyntaxRewriter {
   }
 
   open override func visitPre(_ node: Syntax) {
+    if node.is(StringLiteralExprSyntax.self) {
+      stringLiteralNestingLevel += 1
+    }
     if requiresIndent(node) {
       if let firstToken = node.firstToken(viewMode: viewMode),
         let tokenIndentation = firstToken.leadingTrivia.indentation(isOnNewline: false),
@@ -98,6 +112,9 @@ open class BasicFormat: SyntaxRewriter {
   }
 
   open override func visitPost(_ node: Syntax) {
+    if node.is(StringLiteralExprSyntax.self) {
+      stringLiteralNestingLevel -= 1
+    }
     if requiresIndent(node) {
       decreaseIndentationLevel()
     }
@@ -160,7 +177,7 @@ open class BasicFormat: SyntaxRewriter {
   ///         print(1)
   ///     }
   /// ```
-  open var inferInitialTokenIndentaiton: Bool { true }
+  open var inferInitialTokenIndentation: Bool { true }
 
   /// Whether a leading newline on `token` should be added.
   open func requiresIndent(_ node: some SyntaxProtocol) -> Bool {
@@ -271,7 +288,7 @@ open class BasicFormat: SyntaxRewriter {
       (.keyword(.`init`), .leftParen),  // init()
       (.keyword(.self), .period),  // self.someProperty
       (.keyword(.Self), .period),  // self.someProperty
-      (.keyword(.set), .leftParen),  // var mYar: Int { set(value) {} }
+      (.keyword(.set), .leftParen),  // var mVar: Int { set(value) {} }
       (.keyword(.subscript), .leftParen),  // subscript(x: Int)
       (.keyword(.super), .period),  // super.someProperty
       (.leftBrace, .rightBrace),  // {}
@@ -330,6 +347,7 @@ open class BasicFormat: SyntaxRewriter {
     case \ExpressionSegmentSyntax.backslash,
       \ExpressionSegmentSyntax.rightParen,
       \DeclNameArgumentSyntax.colon,
+      \SimpleStringLiteralExprSyntax.openingQuote,
       \StringLiteralExprSyntax.openingQuote,
       \RegexLiteralExprSyntax.openingSlash:
       return false
@@ -348,6 +366,26 @@ open class BasicFormat: SyntaxRewriter {
     return true
   }
 
+  /// Change the text of a token during formatting.
+  ///
+  /// This allows formats to e.g. replace missing tokens by placeholder tokens.
+  ///
+  /// - Parameter token: The token whose text should be changed
+  /// - Returns: The new text or `nil` if the text should not be changed
+  open func transformTokenText(_ token: TokenSyntax) -> String? {
+    return nil
+  }
+
+  /// Change the presence of a token during formatting.
+  ///
+  /// This allows formats to e.g. replace missing tokens by placeholder tokens.
+  ///
+  /// - Parameter token: The token whose presence should be changed
+  /// - Returns: The new presence or `nil` if the presence should not be changed
+  open func transformTokenPresence(_ token: TokenSyntax) -> SourcePresence? {
+    return nil
+  }
+
   // MARK: - Formatting a token
 
   open override func visit(_ token: TokenSyntax) -> TokenSyntax {
@@ -357,6 +395,8 @@ open class BasicFormat: SyntaxRewriter {
     let isInitialToken = self.previousToken == nil
     let previousToken = self.previousToken ?? token.previousToken(viewMode: viewMode)
     let nextToken = token.nextToken(viewMode: viewMode)
+    let transformedTokenText = self.transformTokenText(token)
+    let transformedTokenPresence = self.transformTokenPresence(token)
 
     /// In addition to existing trivia of `previousToken`, also considers
     /// `previousToken` as ending with whitespace if it and `token` should be
@@ -372,7 +412,7 @@ open class BasicFormat: SyntaxRewriter {
         || (requiresWhitespace(between: previousToken, and: token) && isMutable(previousToken))
     }()
 
-    /// This method does not consider any posssible mutations to `previousToken`
+    /// This method does not consider any possible mutations to `previousToken`
     /// because newlines should be added to the next token's leading trivia.
     let previousTokenWillEndWithNewline: Bool = {
       guard let previousToken = previousToken else {
@@ -416,6 +456,14 @@ open class BasicFormat: SyntaxRewriter {
       if nextToken.leadingTrivia.startsWithNewline {
         return true
       }
+      if nextToken.leadingTrivia.isEmpty {
+        if nextToken.text.first?.isNewline ?? false {
+          return true
+        }
+        if nextToken.text.isEmpty && nextToken.trailingTrivia.startsWithNewline {
+          return true
+        }
+      }
       if requiresNewline(between: token, and: nextToken),
         isMutable(nextToken),
         !token.trailingTrivia.endsWithNewline,
@@ -434,6 +482,19 @@ open class BasicFormat: SyntaxRewriter {
     let combinedTrailingTrivia: Trivia = {
       let nextTokenLeadingWhitespace = nextToken?.leadingTrivia.prefix(while: { $0.isSpaceOrTab }) ?? []
       return trailingTrivia + Trivia(pieces: nextTokenLeadingWhitespace)
+    }()
+
+    /// Whether the leading trivia of the token is followed by a newline.
+    let leadingTriviaIsFollowedByNewline: Bool = {
+      if (transformedTokenText ?? token.text).isEmpty && token.trailingTrivia.startsWithNewline {
+        return true
+      } else if token.text.first?.isNewline ?? false {
+        return true
+      } else if (transformedTokenText ?? token.text).isEmpty && token.trailingTrivia.isEmpty && nextTokenWillStartWithNewline {
+        return true
+      } else {
+        return false
+      }
     }()
 
     if requiresNewline(between: previousToken, and: token) {
@@ -455,13 +516,16 @@ open class BasicFormat: SyntaxRewriter {
       }
     }
 
-    if leadingTrivia.indentation(isOnNewline: isInitialToken || previousTokenWillEndWithNewline) == [] {
+    if leadingTrivia.indentation(isOnNewline: isInitialToken || previousTokenWillEndWithNewline) == [] && !token.isStringSegment {
       // If the token starts on a new line and does not have indentation, this
-      // is the last non-indented token. Store its indentation level
+      // is the last non-indented token. Store its indentation level.
+      // But never consider string segments as anchor points since you can’t
+      // indent individual lines of a multi-line string literals without breaking
+      // their integrity.
       anchorPoints[token] = currentIndentationLevel
     }
 
-    if inferInitialTokenIndentaiton
+    if inferInitialTokenIndentation
       && isInitialToken
       && token.presence == .present
     {
@@ -485,14 +549,17 @@ open class BasicFormat: SyntaxRewriter {
     var leadingTriviaIndentation = self.currentIndentationLevel
     var trailingTriviaIndentation = self.currentIndentationLevel
 
-    // If the trivia contain user-defined indentation, find their anchor point
+    // If the trivia contains user-defined indentation, find their anchor point
     // and indent the token relative to that anchor point.
-    if leadingTrivia.containsIndentation(isOnNewline: previousTokenWillEndWithNewline),
+    // Always indent string literals relative to their anchor point because
+    // their indentation has structural meaning and we just want to maintain
+    // what the user wrote.
+    if leadingTrivia.containsIndentation(isOnNewline: previousTokenWillEndWithNewline) || isInsideStringLiteral,
       let anchorPointIndentation = self.anchorPointIndentation(for: token)
     {
       leadingTriviaIndentation = anchorPointIndentation
     }
-    if combinedTrailingTrivia.containsIndentation(isOnNewline: previousTokenWillEndWithNewline),
+    if combinedTrailingTrivia.containsIndentation(isOnNewline: previousTokenWillEndWithNewline) || isInsideStringLiteral,
       let anchorPointIndentation = self.anchorPointIndentation(for: token)
     {
       trailingTriviaIndentation = anchorPointIndentation
@@ -501,18 +568,36 @@ open class BasicFormat: SyntaxRewriter {
     leadingTrivia = leadingTrivia.indented(indentation: leadingTriviaIndentation, isOnNewline: previousTokenIsStringLiteralEndingInNewline)
     trailingTrivia = trailingTrivia.indented(indentation: trailingTriviaIndentation, isOnNewline: false)
 
-    leadingTrivia = leadingTrivia.trimmingTrailingWhitespaceBeforeNewline(isBeforeNewline: false)
+    leadingTrivia = leadingTrivia.trimmingTrailingWhitespaceBeforeNewline(isBeforeNewline: leadingTriviaIsFollowedByNewline)
     trailingTrivia = trailingTrivia.trimmingTrailingWhitespaceBeforeNewline(isBeforeNewline: nextTokenWillStartWithNewline)
 
-    if leadingTrivia == token.leadingTrivia && trailingTrivia == token.trailingTrivia {
-      return token
+    var result = token.detached
+    if leadingTrivia != result.leadingTrivia {
+      result = result.with(\.leadingTrivia, leadingTrivia)
     }
-
-    return token.detached.with(\.leadingTrivia, leadingTrivia).with(\.trailingTrivia, trailingTrivia)
+    if trailingTrivia != result.trailingTrivia {
+      result = result.with(\.trailingTrivia, trailingTrivia)
+    }
+    if let transformedTokenText {
+      let newKind = TokenKind.fromRaw(kind: token.tokenKind.decomposeToRaw().rawKind, text: transformedTokenText)
+      result = result.with(\.tokenKind, newKind).with(\.presence, .present)
+    }
+    if let transformedTokenPresence {
+      result = result.with(\.presence, transformedTokenPresence)
+    }
+    return result
   }
 }
 
 fileprivate extension TokenSyntax {
+  var isStringSegment: Bool {
+    if case .stringSegment = self.tokenKind {
+      return true
+    } else {
+      return false
+    }
+  }
+
   var isStringSegmentWithLastCharacterBeingNewline: Bool {
     switch self.tokenKind {
     case .stringSegment(let segment):

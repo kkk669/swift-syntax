@@ -17,8 +17,6 @@ public enum SyntaxClassification {
   case attribute
   /// A block comment starting with `/**` and ending with `*/.
   case blockComment
-  /// A build configuration directive like `#if`, `#elseif`, `#else`.
-  case buildConfigId
   /// A doc block comment starting with `/**` and ending with `*/.
   case docBlockComment
   /// A doc line comment starting with `///`.
@@ -28,9 +26,11 @@ public enum SyntaxClassification {
   /// An editor placeholder of the form `<#content#>`
   case editorPlaceholder
   /// A floating point literal.
-  case floatingLiteral
+  case floatLiteral
   /// A generic identifier.
   case identifier
+  /// A directive starting with `#if`, `#elseif`or `#else`.
+  case ifConfigDirective
   /// An integer literal.
   case integerLiteral
   /// A Swift keyword, including contextual keywords.
@@ -39,20 +39,14 @@ public enum SyntaxClassification {
   case lineComment
   /// The token should not receive syntax coloring.
   case none
-  /// An image, color, etc. literal.
-  case objectLiteral
   /// An identifier referring to an operator.
-  case operatorIdentifier
-  /// A `#` token like `#warning`.
-  case poundDirective
+  case `operator`
   /// A regex literal, including multiline regex literals.
   case regexLiteral
-  /// The opening and closing parenthesis of string interpolation.
-  case stringInterpolationAnchor
   /// A string literal including multiline string literals.
   case stringLiteral
   /// An identifier referring to a type.
-  case typeIdentifier
+  case type
 }
 
 extension SyntaxClassification {
@@ -66,33 +60,29 @@ extension SyntaxClassification {
   internal static func classify(_ keyPath: AnyKeyPath) -> (SyntaxClassification, Bool)? {
     switch keyPath {
     case \AttributeSyntax.attributeName:
-      return (.attribute, false)
-    case \PlatformVersionItemSyntax.availabilityVersionRestriction:
+      return (.attribute, true)
+    case \PlatformVersionItemSyntax.platformVersion:
       return (.keyword, false)
     case \AvailabilityVersionRestrictionSyntax.platform:
       return (.keyword, false)
     case \DeclModifierSyntax.name:
       return (.attribute, false)
-    case \ExpressionSegmentSyntax.leftParen:
-      return (.stringInterpolationAnchor, true)
-    case \ExpressionSegmentSyntax.rightParen:
-      return (.stringInterpolationAnchor, true)
     case \IfConfigClauseSyntax.poundKeyword:
-      return (.buildConfigId, false)
+      return (.ifConfigDirective, false)
     case \IfConfigClauseSyntax.condition:
-      return (.buildConfigId, false)
+      return (.ifConfigDirective, false)
     case \IfConfigDeclSyntax.poundEndif:
-      return (.buildConfigId, false)
+      return (.ifConfigDirective, false)
     case \MemberTypeIdentifierSyntax.name:
-      return (.typeIdentifier, false)
+      return (.type, false)
     case \OperatorDeclSyntax.name:
-      return (.operatorIdentifier, false)
+      return (.operator, false)
     case \PrecedenceGroupAssociativitySyntax.associativityLabel:
       return (.keyword, false)
     case \PrecedenceGroupRelationSyntax.higherThanOrLowerThanLabel:
       return (.keyword, false)
     case \SimpleTypeIdentifierSyntax.name:
-      return (.typeIdentifier, false)
+      return (.type, false)
     default:
       return nil
     }
@@ -111,7 +101,7 @@ extension RawTokenKind {
     case .backtick:
       return .none
     case .binaryOperator:
-      return .operatorIdentifier
+      return .operator
     case .colon:
       return .none
     case .comma:
@@ -126,8 +116,8 @@ extension RawTokenKind {
       return .none
     case .exclamationMark:
       return .none
-    case .floatingLiteral:
-      return .floatingLiteral
+    case .floatLiteral:
+      return .floatLiteral
     case .identifier:
       return .identifier
     case .infixQuestionMark:
@@ -149,7 +139,7 @@ extension RawTokenKind {
     case .period:
       return .none
     case .postfixOperator:
-      return .operatorIdentifier
+      return .operator
     case .postfixQuestionMark:
       return .none
     case .pound:
@@ -157,21 +147,21 @@ extension RawTokenKind {
     case .poundAvailable:
       return .none
     case .poundElse:
-      return .poundDirective
+      return .ifConfigDirective
     case .poundElseif:
-      return .poundDirective
+      return .ifConfigDirective
     case .poundEndif:
-      return .poundDirective
+      return .ifConfigDirective
     case .poundIf:
-      return .poundDirective
+      return .ifConfigDirective
     case .poundSourceLocation:
-      return .poundDirective
+      return .keyword
     case .poundUnavailable:
       return .none
     case .prefixAmpersand:
       return .none
     case .prefixOperator:
-      return .operatorIdentifier
+      return .operator
     case .rawStringPoundDelimiter:
       return .none
     case .regexLiteralPattern:
@@ -189,6 +179,8 @@ extension RawTokenKind {
     case .rightSquare:
       return .none
     case .semicolon:
+      return .none
+    case .shebang:
       return .none
     case .singleQuote:
       return .stringLiteral

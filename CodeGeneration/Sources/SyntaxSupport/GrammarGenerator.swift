@@ -16,14 +16,14 @@ import SwiftSyntax
 struct GrammarGenerator {
   private func grammar(for tokenChoice: TokenChoice) -> String {
     switch tokenChoice {
-    case .keyword(text: let text):
-      return "`'\(text)'`"
-    case .token(tokenKind: let tokenKind):
-      let token = SYNTAX_TOKEN_MAP[tokenKind]!
-      if let tokenText = token.text {
+    case .keyword(let keyword):
+      return "`'\(keyword.spec.name)'`"
+    case .token(let token):
+      let tokenSpec = token.spec
+      if let tokenText = tokenSpec.text {
         return "`'\(tokenText)'`"
       } else {
-        return "`<\(token.varOrCaseName)>`"
+        return "`<\(tokenSpec.varOrCaseName)>`"
       }
     }
   }
@@ -36,8 +36,8 @@ struct GrammarGenerator {
     case .nodeChoices(let choices):
       let choicesDescriptions = choices.map { grammar(for: $0) }
       return "(\(choicesDescriptions.joined(separator: " | ")))\(optionality)"
-    case .collection(let kind, _, _):
-      return "``\(kind.syntaxType)``"
+    case .collection(kind: let kind, _, _, _):
+      return "``\(kind.syntaxType)``\(optionality)"
     case .token(let choices, _, _):
       if choices.count == 1 {
         return "\(grammar(for: choices.first!))\(optionality)"

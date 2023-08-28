@@ -14,7 +14,7 @@
 @_spi(RawSyntax) import SwiftParser
 import XCTest
 
-final class ExpressionTests: XCTestCase {
+final class ExpressionTests: ParserTestCase {
   func testTernary() {
     assertParse(
       "let a =1️⃣",
@@ -113,35 +113,33 @@ final class ExpressionTests: XCTestCase {
       #"""
       \.?.foo
       """#,
-      substructure: Syntax(
-        CodeBlockItemListSyntax([
-          CodeBlockItemSyntax(
-            item: .init(
-              KeyPathExprSyntax(
-                backslash: .backslashToken(),
-                components: KeyPathComponentListSyntax([
-                  KeyPathComponentSyntax(
-                    period: .periodToken(),
-                    component: .init(
-                      KeyPathOptionalComponentSyntax(
-                        questionOrExclamationMark: .postfixQuestionMarkToken()
-                      )
+      substructure: CodeBlockItemListSyntax([
+        CodeBlockItemSyntax(
+          item: .init(
+            KeyPathExprSyntax(
+              backslash: .backslashToken(),
+              components: KeyPathComponentListSyntax([
+                KeyPathComponentSyntax(
+                  period: .periodToken(),
+                  component: .init(
+                    KeyPathOptionalComponentSyntax(
+                      questionOrExclamationMark: .postfixQuestionMarkToken()
                     )
-                  ),
-                  KeyPathComponentSyntax(
-                    period: .periodToken(),
-                    component: .init(
-                      KeyPathPropertyComponentSyntax(
-                        property: .identifier("foo")
-                      )
+                  )
+                ),
+                KeyPathComponentSyntax(
+                  period: .periodToken(),
+                  component: .init(
+                    KeyPathPropertyComponentSyntax(
+                      declName: DeclReferenceExprSyntax(baseName: .identifier("foo"))
                     )
-                  ),
-                ])
-              )
+                  )
+                ),
+              ])
             )
           )
-        ])
-      )
+        )
+      ])
     )
 
     assertParse(
@@ -274,18 +272,18 @@ final class ExpressionTests: XCTestCase {
       assertParse(
         "\\\(rootType).y",
         ExprSyntax.parse,
-        substructure: Syntax(
-          KeyPathExprSyntax(
-            root: TypeSyntax.parse(from: &parser),
-            components: KeyPathComponentListSyntax([
-              KeyPathComponentSyntax(
-                period: .periodToken(),
-                component: .init(
-                  KeyPathPropertyComponentSyntax(property: .identifier("y"))
+        substructure: KeyPathExprSyntax(
+          root: TypeSyntax.parse(from: &parser),
+          components: KeyPathComponentListSyntax([
+            KeyPathComponentSyntax(
+              period: .periodToken(),
+              component: .init(
+                KeyPathPropertyComponentSyntax(
+                  declName: DeclReferenceExprSyntax(baseName: .identifier("y"))
                 )
               )
-            ])
-          )
+            )
+          ])
         ),
         line: line
       )
@@ -387,31 +385,29 @@ final class ExpressionTests: XCTestCase {
         1️⃣#line : Calendar(identifier: .buddhist),
       ]
       """,
-      substructure: Syntax(
-        DictionaryElementSyntax.init(
-          key: MacroExpansionExprSyntax(
-            pound: .poundToken(),
-            macroName: .identifier("line"),
-            arguments: LabeledExprListSyntax([])
-          ),
-          colon: .colonToken(),
-          value: FunctionCallExprSyntax(
-            calledExpression: IdentifierExprSyntax(identifier: .identifier("Calendar")),
-            leftParen: .leftParenToken(),
-            arguments: LabeledExprListSyntax([
-              LabeledExprSyntax(
-                label: .identifier("identifier"),
-                colon: .colonToken(),
-                expression: MemberAccessExprSyntax(
-                  period: .periodToken(),
-                  name: .identifier("buddhist")
-                )
+      substructure: DictionaryElementSyntax.init(
+        key: MacroExpansionExprSyntax(
+          pound: .poundToken(),
+          macroName: .identifier("line"),
+          arguments: LabeledExprListSyntax([])
+        ),
+        colon: .colonToken(),
+        value: FunctionCallExprSyntax(
+          calledExpression: DeclReferenceExprSyntax(baseName: .identifier("Calendar")),
+          leftParen: .leftParenToken(),
+          arguments: LabeledExprListSyntax([
+            LabeledExprSyntax(
+              label: .identifier("identifier"),
+              colon: .colonToken(),
+              expression: MemberAccessExprSyntax(
+                period: .periodToken(),
+                name: .identifier("buddhist")
               )
-            ]),
-            rightParen: .rightParenToken()
-          ),
-          trailingComma: .commaToken()
-        )
+            )
+          ]),
+          rightParen: .rightParenToken()
+        ),
+        trailingComma: .commaToken()
       ),
       substructureAfterMarker: "1️⃣"
     )
@@ -812,7 +808,7 @@ final class ExpressionTests: XCTestCase {
       ##"""
       "1️⃣\#(1)"
       """##,
-      substructure: Syntax(StringSegmentSyntax(content: .stringSegment(##"\#(1)"##))),
+      substructure: StringSegmentSyntax(content: .stringSegment(##"\#(1)"##)),
       diagnostics: [
         DiagnosticSpec(message: "invalid escape sequence in literal")
       ]
@@ -1026,8 +1022,7 @@ final class ExpressionTests: XCTestCase {
   func testParseArrowExpr() {
     assertParse(
       "Foo 1️⃣async ->2️⃣",
-      { ExprSyntax.parse(from: &$0) },
-      substructure: Syntax(TokenSyntax.keyword(.async)),
+      substructure: TokenSyntax.keyword(.async),
       substructureAfterMarker: "1️⃣",
       diagnostics: [
         DiagnosticSpec(locationMarker: "2️⃣", message: "expected expression", fixIts: ["insert expression"])
@@ -1110,7 +1105,7 @@ final class ExpressionTests: XCTestCase {
   func testOperatorReference() {
     assertParse(
       "reduce(0, 1️⃣+)",
-      substructure: Syntax(TokenSyntax.binaryOperator("+")),
+      substructure: TokenSyntax.binaryOperator("+"),
       substructureAfterMarker: "1️⃣"
     )
   }
@@ -1154,12 +1149,10 @@ final class ExpressionTests: XCTestCase {
   func testMacroExpansionExpressionWithKeywordName() {
     assertParse(
       "#case",
-      substructure: Syntax(
-        MacroExpansionExprSyntax(
-          pound: .poundToken(),
-          macroName: .identifier("case"),
-          arguments: LabeledExprListSyntax([])
-        )
+      substructure: MacroExpansionExprSyntax(
+        pound: .poundToken(),
+        macroName: .identifier("case"),
+        arguments: LabeledExprListSyntax([])
       )
     )
   }
@@ -1206,14 +1199,12 @@ final class ExpressionTests: XCTestCase {
       ℹ️"This is unterminated1️⃣
       x
       """,
-      substructure: Syntax(
-        StringLiteralExprSyntax(
-          openingQuote: .stringQuoteToken(),
-          segments: StringLiteralSegmentListSyntax([
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("This is unterminated")))
-          ]),
-          closingQuote: .stringQuoteToken(presence: .missing)
-        )
+      substructure: StringLiteralExprSyntax(
+        openingQuote: .stringQuoteToken(),
+        segments: StringLiteralSegmentListSyntax([
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("This is unterminated")))
+        ]),
+        closingQuote: .stringQuoteToken(presence: .missing)
       ),
       diagnostics: [
         DiagnosticSpec(
@@ -1237,15 +1228,14 @@ final class ExpressionTests: XCTestCase {
         line 2
         """
       """#,
-      substructure: Syntax(
-        StringLiteralExprSyntax(
-          openingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
-          segments: StringLiteralSegmentListSyntax([
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: .spaces(2)))),
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: .spaces(2), trailingTrivia: .newline))),
-          ]),
-          closingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
-        )
+      substructure: StringLiteralExprSyntax(
+        openingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
+        segments: StringLiteralSegmentListSyntax([
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: .spaces(2)))),
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: .spaces(2), trailingTrivia: .newline))),
+        ]),
+        closingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
+
       ),
       options: [.substructureCheckTrivia]
     )
@@ -1257,17 +1247,16 @@ final class ExpressionTests: XCTestCase {
         line 2
         """
       """#,
-      substructure: Syntax(
-        StringLiteralExprSyntax(
-          openingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
-          segments: StringLiteralSegmentListSyntax([
-            .stringSegment(
-              StringSegmentSyntax(content: .stringSegment("line 1 ", leadingTrivia: .spaces(2), trailingTrivia: [.backslashes(1), .newlines(1)]))
-            ),
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: .spaces(2), trailingTrivia: .newline))),
-          ]),
-          closingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
-        )
+      substructure: StringLiteralExprSyntax(
+        openingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
+        segments: StringLiteralSegmentListSyntax([
+          .stringSegment(
+            StringSegmentSyntax(content: .stringSegment("line 1 ", leadingTrivia: .spaces(2), trailingTrivia: [.backslashes(1), .newlines(1)]))
+          ),
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: .spaces(2), trailingTrivia: .newline))),
+        ]),
+        closingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
+
       ),
       options: [.substructureCheckTrivia]
     )
@@ -1279,20 +1268,19 @@ final class ExpressionTests: XCTestCase {
         line 2 1️⃣\
         """
       """#,
-      substructure: Syntax(
-        StringLiteralExprSyntax(
-          openingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
-          segments: StringLiteralSegmentListSyntax([
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: .spaces(2)))),
-            .stringSegment(
-              StringSegmentSyntax(
-                UnexpectedNodesSyntax([Syntax(TokenSyntax.stringSegment("  line 2 ", trailingTrivia: [.backslashes(1), .newlines(1)]))]),
-                content: .stringSegment("line 2 ", leadingTrivia: .spaces(2), trailingTrivia: .newline, presence: .missing)
-              )
-            ),
-          ]),
-          closingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
-        )
+      substructure: StringLiteralExprSyntax(
+        openingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2), trailingTrivia: .newline),
+        segments: StringLiteralSegmentListSyntax([
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: .spaces(2)))),
+          .stringSegment(
+            StringSegmentSyntax(
+              UnexpectedNodesSyntax([Syntax(TokenSyntax.stringSegment("  line 2 ", trailingTrivia: [.backslashes(1), .newlines(1)]))]),
+              content: .stringSegment("line 2 ", leadingTrivia: .spaces(2), trailingTrivia: .newline, presence: .missing)
+            )
+          ),
+        ]),
+        closingQuote: .multilineStringQuoteToken(leadingTrivia: .spaces(2))
+
       ),
       diagnostics: [
         DiagnosticSpec(message: "escaped newline at the last line of a multi-line string literal is not allowed", fixIts: ["remove ''"])
@@ -1327,18 +1315,17 @@ final class ExpressionTests: XCTestCase {
         line 2
         """
       """#,
-      substructure: Syntax(
-        StringLiteralExprSyntax(
-          openingPounds: nil,
-          openingQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)], trailingTrivia: .newline),
-          segments: StringLiteralSegmentListSyntax([
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: [.spaces(2)]))),
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("\n"))),
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: [.spaces(2)], trailingTrivia: .newline))),
-          ]),
-          closingQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)]),
-          closingPounds: nil
-        )
+      substructure: StringLiteralExprSyntax(
+        openingPounds: nil,
+        openingQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)], trailingTrivia: .newline),
+        segments: StringLiteralSegmentListSyntax([
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: [.spaces(2)]))),
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("\n"))),
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("line 2", leadingTrivia: [.spaces(2)], trailingTrivia: .newline))),
+        ]),
+        closingQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)]),
+        closingPounds: nil
+
       ),
       options: [.substructureCheckTrivia]
     )
@@ -1350,17 +1337,16 @@ final class ExpressionTests: XCTestCase {
 
         """
       """#,
-      substructure: Syntax(
-        StringLiteralExprSyntax(
-          openingPounds: nil,
-          openingQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)], trailingTrivia: .newline),
-          segments: StringLiteralSegmentListSyntax([
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: [.spaces(2)]))),
-            .stringSegment(StringSegmentSyntax(content: .stringSegment("", trailingTrivia: .newline))),
-          ]),
-          closingQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)]),
-          closingPounds: nil
-        )
+      substructure: StringLiteralExprSyntax(
+        openingPounds: nil,
+        openingQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)], trailingTrivia: .newline),
+        segments: StringLiteralSegmentListSyntax([
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("line 1\n", leadingTrivia: [.spaces(2)]))),
+          .stringSegment(StringSegmentSyntax(content: .stringSegment("", trailingTrivia: .newline))),
+        ]),
+        closingQuote: .multilineStringQuoteToken(leadingTrivia: [.spaces(2)]),
+        closingPounds: nil
+
       ),
       options: [.substructureCheckTrivia]
     )
@@ -1487,7 +1473,7 @@ final class ExpressionTests: XCTestCase {
   }
 }
 
-final class MemberExprTests: XCTestCase {
+final class MemberExprTests: ParserTestCase {
   func testMissing() {
     let cases: [UInt: String] = [
       #line: "",
@@ -1507,7 +1493,7 @@ final class MemberExprTests: XCTestCase {
   }
 }
 
-final class StatementExpressionTests: XCTestCase {
+final class StatementExpressionTests: ParserTestCase {
   private func ifZeroElseOne() -> ExprSyntax {
     .init(
       IfExprSyntax(
@@ -1539,7 +1525,7 @@ final class StatementExpressionTests: XCTestCase {
       SwitchExprSyntax(
         subject: FunctionCallExprSyntax(
           callee: MemberAccessExprSyntax(
-            base: IdentifierExprSyntax(identifier: .identifier("Bool")),
+            base: DeclReferenceExprSyntax(baseName: .identifier("Bool")),
             name: "random"
           )
         ),
@@ -1579,18 +1565,17 @@ final class StatementExpressionTests: XCTestCase {
         if .random() { 0 } else { 1 } as Int
       }
       """,
-      substructure: Syntax(
-        SequenceExprSyntax(
-          elements: ExprListSyntax([
-            ifZeroElseOne(),
-            ExprSyntax(
-              UnresolvedAsExprSyntax()
-            ),
-            ExprSyntax(
-              TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
-            ),
-          ])
-        )
+      substructure: SequenceExprSyntax(
+        elements: ExprListSyntax([
+          ifZeroElseOne(),
+          ExprSyntax(
+            UnresolvedAsExprSyntax()
+          ),
+          ExprSyntax(
+            TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
+          ),
+        ])
+
       )
     )
   }
@@ -1599,18 +1584,16 @@ final class StatementExpressionTests: XCTestCase {
       """
       switch Bool.random() { case true: 0 case false: 1 } as Int
       """,
-      substructure: Syntax(
-        SequenceExprSyntax(
-          elements: ExprListSyntax([
-            switchRandomZeroOne(),
-            ExprSyntax(
-              UnresolvedAsExprSyntax()
-            ),
-            ExprSyntax(
-              TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
-            ),
-          ])
-        )
+      substructure: SequenceExprSyntax(
+        elements: ExprListSyntax([
+          switchRandomZeroOne(),
+          ExprSyntax(
+            UnresolvedAsExprSyntax()
+          ),
+          ExprSyntax(
+            TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
+          ),
+        ])
       )
     )
   }
@@ -1621,9 +1604,7 @@ final class StatementExpressionTests: XCTestCase {
         return if .random() { 0 } else { 1 }
       }
       """,
-      substructure: Syntax(
-        ReturnStmtSyntax(expression: ifZeroElseOne())
-      )
+      substructure: ReturnStmtSyntax(expression: ifZeroElseOne())
     )
   }
   func testSwitchExprInReturn() {
@@ -1633,9 +1614,7 @@ final class StatementExpressionTests: XCTestCase {
         return switch Bool.random() { case true: 0 case false: 1 }
       }
       """,
-      substructure: Syntax(
-        ReturnStmtSyntax(expression: switchRandomZeroOne())
-      )
+      substructure: ReturnStmtSyntax(expression: switchRandomZeroOne())
     )
   }
   func testTryIf1() {
@@ -1645,9 +1624,7 @@ final class StatementExpressionTests: XCTestCase {
         try if .random() { 0 } else { 1 }
       }
       """,
-      substructure: Syntax(
-        TryExprSyntax(expression: ifZeroElseOne())
-      )
+      substructure: TryExprSyntax(expression: ifZeroElseOne())
     )
   }
   func testTryIf2() {
@@ -1657,9 +1634,7 @@ final class StatementExpressionTests: XCTestCase {
         return try if .random() { 0 } else { 1 }
       }
       """,
-      substructure: Syntax(
-        ReturnStmtSyntax(expression: TryExprSyntax(expression: ifZeroElseOne()))
-      )
+      substructure: ReturnStmtSyntax(expression: TryExprSyntax(expression: ifZeroElseOne()))
     )
   }
   func testTryIf3() {
@@ -1670,9 +1645,7 @@ final class StatementExpressionTests: XCTestCase {
         return x
       }
       """,
-      substructure: Syntax(
-        TryExprSyntax(expression: ifZeroElseOne())
-      )
+      substructure: TryExprSyntax(expression: ifZeroElseOne())
     )
   }
   func testAwaitIf1() {
@@ -1682,9 +1655,7 @@ final class StatementExpressionTests: XCTestCase {
         await if .random() { 0 } else { 1 }
       }
       """,
-      substructure: Syntax(
-        AwaitExprSyntax(expression: ifZeroElseOne())
-      )
+      substructure: AwaitExprSyntax(expression: ifZeroElseOne())
     )
   }
   func testAwaitIf2() {
@@ -1694,9 +1665,7 @@ final class StatementExpressionTests: XCTestCase {
         return await if .random() { 0 } else { 1 }
       }
       """,
-      substructure: Syntax(
-        ReturnStmtSyntax(expression: AwaitExprSyntax(expression: ifZeroElseOne()))
-      )
+      substructure: ReturnStmtSyntax(expression: AwaitExprSyntax(expression: ifZeroElseOne()))
     )
   }
   func testAwaitIf3() {
@@ -1707,9 +1676,7 @@ final class StatementExpressionTests: XCTestCase {
         return x
       }
       """,
-      substructure: Syntax(
-        AwaitExprSyntax(expression: ifZeroElseOne())
-      )
+      substructure: AwaitExprSyntax(expression: ifZeroElseOne())
     )
   }
   func testTrySwitch1() {
@@ -1717,9 +1684,7 @@ final class StatementExpressionTests: XCTestCase {
       """
       try switch Bool.random() { case true: 0 case false: 1 }
       """,
-      substructure: Syntax(
-        TryExprSyntax(expression: switchRandomZeroOne())
-      )
+      substructure: TryExprSyntax(expression: switchRandomZeroOne())
     )
   }
   func testTrySwitch2() {
@@ -1729,9 +1694,7 @@ final class StatementExpressionTests: XCTestCase {
         return try switch Bool.random() { case true: 0 case false: 1 }
       }
       """,
-      substructure: Syntax(
-        ReturnStmtSyntax(expression: TryExprSyntax(expression: switchRandomZeroOne()))
-      )
+      substructure: ReturnStmtSyntax(expression: TryExprSyntax(expression: switchRandomZeroOne()))
     )
   }
   func testTrySwitch3() {
@@ -1742,9 +1705,7 @@ final class StatementExpressionTests: XCTestCase {
         return x
       }
       """,
-      substructure: Syntax(
-        TryExprSyntax(expression: switchRandomZeroOne())
-      )
+      substructure: TryExprSyntax(expression: switchRandomZeroOne())
     )
   }
   func testAwaitSwitch1() {
@@ -1752,9 +1713,7 @@ final class StatementExpressionTests: XCTestCase {
       """
       await switch Bool.random() { case true: 0 case false: 1 }
       """,
-      substructure: Syntax(
-        AwaitExprSyntax(expression: switchRandomZeroOne())
-      )
+      substructure: AwaitExprSyntax(expression: switchRandomZeroOne())
     )
   }
   func testAwaitSwitch2() {
@@ -1764,9 +1723,7 @@ final class StatementExpressionTests: XCTestCase {
         return await switch Bool.random() { case true: 0 case false: 1 }
       }
       """,
-      substructure: Syntax(
-        ReturnStmtSyntax(expression: AwaitExprSyntax(expression: switchRandomZeroOne()))
-      )
+      substructure: ReturnStmtSyntax(expression: AwaitExprSyntax(expression: switchRandomZeroOne()))
     )
   }
   func testAwaitSwitch3() {
@@ -1777,9 +1734,7 @@ final class StatementExpressionTests: XCTestCase {
         return x
       }
       """,
-      substructure: Syntax(
-        AwaitExprSyntax(expression: switchRandomZeroOne())
-      )
+      substructure: AwaitExprSyntax(expression: switchRandomZeroOne())
     )
   }
   func testIfExprMultipleCoerce() {
@@ -1815,18 +1770,16 @@ final class StatementExpressionTests: XCTestCase {
       """
       if .random() { 0 } else { 1 } as? Int
       """,
-      substructure: Syntax(
-        SequenceExprSyntax(
-          elements: ExprListSyntax([
-            ifZeroElseOne(),
-            ExprSyntax(
-              UnresolvedAsExprSyntax(questionOrExclamationMark: .postfixQuestionMarkToken())
-            ),
-            ExprSyntax(
-              TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
-            ),
-          ])
-        )
+      substructure: SequenceExprSyntax(
+        elements: ExprListSyntax([
+          ifZeroElseOne(),
+          ExprSyntax(
+            UnresolvedAsExprSyntax(questionOrExclamationMark: .postfixQuestionMarkToken())
+          ),
+          ExprSyntax(
+            TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
+          ),
+        ])
       )
     )
   }
@@ -1836,18 +1789,16 @@ final class StatementExpressionTests: XCTestCase {
       """
       if .random() { 0 } else { 1 } as! Int
       """,
-      substructure: Syntax(
-        SequenceExprSyntax(
-          elements: ExprListSyntax([
-            ifZeroElseOne(),
-            ExprSyntax(
-              UnresolvedAsExprSyntax(questionOrExclamationMark: .exclamationMarkToken())
-            ),
-            ExprSyntax(
-              TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
-            ),
-          ])
-        )
+      substructure: SequenceExprSyntax(
+        elements: ExprListSyntax([
+          ifZeroElseOne(),
+          ExprSyntax(
+            UnresolvedAsExprSyntax(questionOrExclamationMark: .exclamationMarkToken())
+          ),
+          ExprSyntax(
+            TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
+          ),
+        ])
       )
     )
   }
@@ -1884,18 +1835,16 @@ final class StatementExpressionTests: XCTestCase {
       """
       switch Bool.random() { case true: 0 case false: 1 } as? Int
       """,
-      substructure: Syntax(
-        SequenceExprSyntax(
-          elements: ExprListSyntax([
-            switchRandomZeroOne(),
-            ExprSyntax(
-              UnresolvedAsExprSyntax(questionOrExclamationMark: .postfixQuestionMarkToken())
-            ),
-            ExprSyntax(
-              TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
-            ),
-          ])
-        )
+      substructure: SequenceExprSyntax(
+        elements: ExprListSyntax([
+          switchRandomZeroOne(),
+          ExprSyntax(
+            UnresolvedAsExprSyntax(questionOrExclamationMark: .postfixQuestionMarkToken())
+          ),
+          ExprSyntax(
+            TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
+          ),
+        ])
       )
     )
   }
@@ -1905,18 +1854,16 @@ final class StatementExpressionTests: XCTestCase {
       """
       switch Bool.random() { case true: 0 case false: 1 } as! Int
       """,
-      substructure: Syntax(
-        SequenceExprSyntax(
-          elements: ExprListSyntax([
-            switchRandomZeroOne(),
-            ExprSyntax(
-              UnresolvedAsExprSyntax(questionOrExclamationMark: .exclamationMarkToken())
-            ),
-            ExprSyntax(
-              TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
-            ),
-          ])
-        )
+      substructure: SequenceExprSyntax(
+        elements: ExprListSyntax([
+          switchRandomZeroOne(),
+          ExprSyntax(
+            UnresolvedAsExprSyntax(questionOrExclamationMark: .exclamationMarkToken())
+          ),
+          ExprSyntax(
+            TypeExprSyntax(type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("Int"))))
+          ),
+        ])
       )
     )
   }
@@ -2596,13 +2543,11 @@ final class StatementExpressionTests: XCTestCase {
       }
       }
       """,
-      substructure: Syntax(
-        FunctionCallExprSyntax(
-          calledExpression: IdentifierExprSyntax(identifier: .keyword(.init("init")!)),
-          leftParen: .leftParenToken(),
-          arguments: LabeledExprListSyntax([]),
-          rightParen: .rightParenToken()
-        )
+      substructure: FunctionCallExprSyntax(
+        calledExpression: DeclReferenceExprSyntax(baseName: .keyword(.init("init")!)),
+        leftParen: .leftParenToken(),
+        arguments: LabeledExprListSyntax([]),
+        rightParen: .rightParenToken()
       )
     )
   }
@@ -2686,5 +2631,115 @@ final class StatementExpressionTests: XCTestCase {
     assertParse("_ = { (@_noImplicitCopy _ x: Int) -> () in }")
 
     assertParse("_ = { (@Wrapper x) in }")
+
+    assertParse(
+      """
+      withInvalidOrderings { (comparisonPredicate: @escaping (Int, Int) -> Bool) in
+      }
+      """
+    )
+  }
+
+  func testClosureWithMissingParentheses() {
+    assertParse(
+      """
+      _ = { 1️⃣a: Int, b: Int 2️⃣in
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "expected '(' to start parameter clause",
+          fixIts: ["insert '('"]
+        ),
+        DiagnosticSpec(
+          locationMarker: "2️⃣",
+          message: "expected ')' to end parameter clause",
+          fixIts: ["insert ')'"]
+        ),
+      ],
+      fixedSource: """
+        _ = { (a: Int, b: Int) in
+        }
+        """
+    )
+  }
+
+  func testClosureWithReturnArrowAndMissingParentheses() {
+    assertParse(
+      """
+      _ = { 1️⃣a: Int, b: 2️⃣Int 3️⃣-> Int 4️⃣in
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "expected '(' to start parameter clause",
+          fixIts: ["insert '('"]
+        ),
+        DiagnosticSpec(
+          locationMarker: "2️⃣",
+          message: "expected '(' to start function type",
+          fixIts: ["insert '('"]
+        ),
+        DiagnosticSpec(
+          locationMarker: "3️⃣",
+          message: "expected ')' in function type",
+          fixIts: ["insert ')'"]
+        ),
+        DiagnosticSpec(
+          locationMarker: "4️⃣",
+          message: "expected ')' to end parameter clause",
+          fixIts: ["insert ')'"]
+        ),
+      ],
+      fixedSource: """
+        _ = { (a: Int, b: (Int) -> Int) in
+        }
+        """
+    )
+  }
+
+  func testClosureWithMissingLeftParenthese() {
+    assertParse(
+      """
+      _ = { 1️⃣a: Int, b: Int) in
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "expected '(' to start parameter clause",
+          fixIts: ["insert '('"]
+        )
+      ],
+      fixedSource: """
+        _ = { (a: Int, b: Int) in
+        }
+        """
+    )
+  }
+
+  func testClosureWithDollarIdentifier() {
+    assertParse(
+      """
+      let (ids, (actions, tracking)) = state.withCriticalRegion { ($0.valueObservers(for: keyPath), $0.didSet(keyPath: keyPath)) }
+      """
+    )
+
+    assertParse(
+      """
+      let (ids, (actions, tracking)) = state.withCriticalRegion { ($0.valueObservers(for: keyPath), $0.didSet(keyPath: keyPath)) }
+      """
+    )
+
+    assertParse(
+      """
+      state.withCriticalRegion { (1 + 2) }
+      for action in tracking {
+        action()
+      }
+      """
+    )
   }
 }

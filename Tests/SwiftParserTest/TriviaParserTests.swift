@@ -14,7 +14,7 @@ import XCTest
 @_spi(RawSyntax) import SwiftSyntax
 @_spi(RawSyntax) @_spi(Testing) import SwiftParser
 
-final class TriviaParserTests: XCTestCase {
+final class TriviaParserTests: ParserTestCase {
 
   func testTriviaParsing() {
 
@@ -36,21 +36,6 @@ final class TriviaParserTests: XCTestCase {
         .blockComment("/* /** */ */"),
         .newlines(1),
         .docBlockComment("/** /* */ */"),
-      ]
-    )
-
-    XCTAssertEqual(
-      TriviaParser.parseTrivia(
-        """
-        #!/bin/env swift
-
-
-        """,
-        position: .leading
-      ),
-      [
-        .shebang("#!/bin/env swift"),
-        .newlines(2),
       ]
     )
 

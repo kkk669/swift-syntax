@@ -8,6 +8,7 @@
 
 add_swift_host_library(SwiftSyntaxBuilder
   ConvenienceInitializers.swift
+  DeclSyntaxParseable.swift
   Indenter.swift
   ResultBuilderExtensions.swift
   SwiftSyntaxBuilderCompatibility.swift
@@ -18,7 +19,6 @@ add_swift_host_library(SwiftSyntaxBuilder
   WithTrailingCommaSyntax+EnsuringTrailingComma.swift
 
 
-  generated/BuildableCollectionNodes.swift
   generated/BuildableNodes.swift
   generated/ResultBuilders.swift
   generated/RenamedChildrenBuilderCompatibility.swift

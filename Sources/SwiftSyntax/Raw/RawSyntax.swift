@@ -505,6 +505,16 @@ extension RawSyntax {
     lastToken(viewMode: .sourceAccurate)?.trailingTriviaByteLength ?? 0
   }
 
+  @_spi(RawSyntax)
+  public var leadingTriviaPieces: [RawTriviaPiece]? {
+    firstToken(viewMode: .sourceAccurate)?.leadingRawTriviaPieces
+  }
+
+  @_spi(RawSyntax)
+  public var trailingTriviaPieces: [RawTriviaPiece]? {
+    lastToken(viewMode: .sourceAccurate)?.trailingRawTriviaPieces
+  }
+
   /// The length of this node’s content, without the first leading and the last
   /// trailing trivia. Intermediate trivia inside a layout node is included in
   /// this.
@@ -818,12 +828,14 @@ extension RawSyntax {
     if leadingTrivia != nil || trailingTrivia != nil {
       var layout = Array(collection)
       if let leadingTrivia = leadingTrivia,
-        let idx = layout.firstIndex(where: { $0 != nil })
+        // Find the index of the first non-empty node so we can attach the trivia to it.
+        let idx = layout.firstIndex(where: { $0 != nil && ($0!.isToken || $0!.totalNodes > 1) })
       {
         layout[idx] = layout[idx]!.withLeadingTrivia(leadingTrivia + (layout[idx]?.formLeadingTrivia() ?? []), arena: arena)
       }
       if let trailingTrivia = trailingTrivia,
-        let idx = layout.lastIndex(where: { $0 != nil })
+        // Find the index of the first non-empty node so we can attach the trivia to it.
+        let idx = layout.lastIndex(where: { $0 != nil && ($0!.isToken || $0!.totalNodes > 1) })
       {
         layout[idx] = layout[idx]!.withTrailingTrivia((layout[idx]?.formTrailingTrivia() ?? []) + trailingTrivia, arena: arena)
       }

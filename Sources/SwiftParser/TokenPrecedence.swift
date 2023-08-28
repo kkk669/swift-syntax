@@ -10,11 +10,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-@_spi(RawSyntax) import SwiftSyntax
+@_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) import SwiftSyntax
 
-/// Describes how distinctive a token is for parser recovery. When expecting a
-/// token, tokens with a lower token precedence may be skipped and considered
-/// unexpected.
+/// Describes how distinctive a token is for parser recovery.
+///
+/// When expecting a token, tokens with a lower token precedence may be skipped
+/// and considered unexpected.
+///
+/// - Seealso: <doc:ParserRecovery>
 enum TokenPrecedence: Comparable {
   /// An unknown token. This is known garbage and should always be allowed to be skipped.
   case unknownToken
@@ -117,15 +120,15 @@ enum TokenPrecedence: Comparable {
       self = .unknownToken
     // MARK: Identifier like
     case  // Literals
-    .floatingLiteral, .integerLiteral,
+    .floatLiteral, .integerLiteral,
       // Pound literals
       .poundAvailable, .poundSourceLocation, .poundUnavailable,
       // Identifiers
       .dollarIdentifier, .identifier,
       // '_' can occur in types to replace a type identifier
       .wildcard,
-      // String segment, string interpolation anchor, pound, and regex pattern don't really fit anywhere else
-      .pound, .stringSegment, .regexLiteralPattern:
+      // String segment, string interpolation anchor, pound, shebang and regex pattern don't really fit anywhere else
+      .pound, .stringSegment, .regexLiteralPattern, .shebang:
       self = .identifierLike
 
     // MARK: Expr keyword
@@ -195,12 +198,7 @@ enum TokenPrecedence: Comparable {
       // We don't know much about which contextual keyword it is, be conservative an allow considering it as unexpected.
       // Keywords in function types (we should be allowed to skip them inside parenthesis)
       .rethrows, .throws,
-      // Consider 'any' and 'inout' like a prefix operator to a type and a type is expression-like.
-      //
-      // NOTE: We reuse this for inout bindings and choose the higher precedence level of expr keywords
-      // so we do not break anything.
-      .inout,
-      // Consider 'any' and 'inout' like a prefix operator to a type and a type is expression-like.
+      // Consider 'any' a prefix operator to a type and a type is expression-like.
       .Any,
       // 'where' can only occur in the signature of declarations. Consider the signature expression-like.
       .where,
@@ -228,6 +226,7 @@ enum TokenPrecedence: Comparable {
       // Declaration Modifiers
       .__consuming, .final, .required, .optional, .lazy, .dynamic, .infix, .postfix, .prefix, .mutating, .nonmutating, .convenience, .override, .package, .open,
       .__setter_access, .indirect, .nonisolated, .distributed, ._local,
+      .inout, ._mutating, ._borrowing, ._consuming,
       // Misc
       .import:
       self = .declKeyword

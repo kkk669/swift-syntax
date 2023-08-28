@@ -13,7 +13,7 @@
 import SwiftSyntax
 import XCTest
 
-final class VariadicGenericsTests: XCTestCase {
+final class VariadicGenericsTests: ParserTestCase {
   func testSimpleForwarding() {
     assertParse(
       """
@@ -21,14 +21,12 @@ final class VariadicGenericsTests: XCTestCase {
         return (1️⃣repeat each t)
       }
       """,
-      substructure: Syntax(
-        PackExpansionExprSyntax(
-          repeatKeyword: .keyword(.repeat),
-          repetitionPattern: PackElementExprSyntax(
-            eachKeyword: .keyword(.each),
-            pack: IdentifierExprSyntax(
-              identifier: .identifier("t")
-            )
+      substructure: PackExpansionExprSyntax(
+        repeatKeyword: .keyword(.repeat),
+        repetitionPattern: PackElementExprSyntax(
+          eachKeyword: .keyword(.each),
+          pack: DeclReferenceExprSyntax(
+            baseName: .identifier("t")
           )
         )
       ),
@@ -139,15 +137,15 @@ final class VariadicGenericsTests: XCTestCase {
 
   func testEachExprKeyword() {
     let callExpr = FunctionCallExprSyntax(
-      calledExpression: IdentifierExprSyntax(
-        identifier: .identifier("each")
+      calledExpression: DeclReferenceExprSyntax(
+        baseName: .identifier("each")
       ),
       leftParen: .leftParenToken(),
       arguments: LabeledExprListSyntax([
         .init(
           expression:
-            IdentifierExprSyntax(
-              identifier: .identifier("x")
+            DeclReferenceExprSyntax(
+              baseName: .identifier("x")
             )
         )
       ]),
@@ -160,7 +158,7 @@ final class VariadicGenericsTests: XCTestCase {
       1️⃣each(x)
       }
       """,
-      substructure: Syntax(callExpr),
+      substructure: callExpr,
       substructureAfterMarker: "1️⃣"
     )
 
@@ -170,7 +168,7 @@ final class VariadicGenericsTests: XCTestCase {
       1️⃣each (x)
       }
       """,
-      substructure: Syntax(callExpr),
+      substructure: callExpr,
       substructureAfterMarker: "1️⃣"
     )
 
@@ -180,12 +178,10 @@ final class VariadicGenericsTests: XCTestCase {
       1️⃣each x
       }
       """,
-      substructure: Syntax(
-        PackElementExprSyntax(
-          eachKeyword: .keyword(.each),
-          pack: IdentifierExprSyntax(
-            identifier: .identifier("x")
-          )
+      substructure: PackElementExprSyntax(
+        eachKeyword: .keyword(.each),
+        pack: DeclReferenceExprSyntax(
+          baseName: .identifier("x")
         )
       ),
       substructureAfterMarker: "1️⃣"
@@ -199,27 +195,25 @@ final class VariadicGenericsTests: XCTestCase {
         1️⃣repeat (each t).member()
       }
       """,
-      substructure: Syntax(
-        PackExpansionExprSyntax(
-          repeatKeyword: .keyword(.repeat),
-          repetitionPattern: FunctionCallExprSyntax(
-            callee: MemberAccessExprSyntax(
-              base: ExprSyntax(
-                TupleExprSyntax(
-                  elements: .init([
-                    LabeledExprSyntax(
-                      expression: PackElementExprSyntax(
-                        eachKeyword: .keyword(.each),
-                        pack: IdentifierExprSyntax(
-                          identifier: .identifier("t")
-                        )
+      substructure: PackExpansionExprSyntax(
+        repeatKeyword: .keyword(.repeat),
+        repetitionPattern: FunctionCallExprSyntax(
+          callee: MemberAccessExprSyntax(
+            base: ExprSyntax(
+              TupleExprSyntax(
+                elements: .init([
+                  LabeledExprSyntax(
+                    expression: PackElementExprSyntax(
+                      eachKeyword: .keyword(.each),
+                      pack: DeclReferenceExprSyntax(
+                        baseName: .identifier("t")
                       )
                     )
-                  ])
-                )
-              ),
-              name: "member"
-            )
+                  )
+                ])
+              )
+            ),
+            name: "member"
           )
         )
       ),
@@ -232,19 +226,17 @@ final class VariadicGenericsTests: XCTestCase {
         1️⃣repeat each t.member
       }
       """,
-      substructure: Syntax(
-        PackExpansionExprSyntax(
-          repeatKeyword: .keyword(.repeat),
-          repetitionPattern: PackElementExprSyntax(
-            eachKeyword: .keyword(.each),
-            pack: MemberAccessExprSyntax(
-              base: ExprSyntax(
-                IdentifierExprSyntax(
-                  identifier: .identifier("t")
-                )
-              ),
-              name: "member"
-            )
+      substructure: PackExpansionExprSyntax(
+        repeatKeyword: .keyword(.repeat),
+        repetitionPattern: PackElementExprSyntax(
+          eachKeyword: .keyword(.each),
+          pack: MemberAccessExprSyntax(
+            base: ExprSyntax(
+              DeclReferenceExprSyntax(
+                baseName: .identifier("t")
+              )
+            ),
+            name: "member"
           )
         )
       ),
@@ -257,41 +249,39 @@ final class VariadicGenericsTests: XCTestCase {
         1️⃣repeat x + each t + 10
       }
       """,
-      substructure: Syntax(
-        PackExpansionExprSyntax(
-          repeatKeyword: .keyword(.repeat),
-          repetitionPattern: SequenceExprSyntax(
-            elements: .init([
-              ExprSyntax(
-                IdentifierExprSyntax(
-                  identifier: .identifier("x")
+      substructure: PackExpansionExprSyntax(
+        repeatKeyword: .keyword(.repeat),
+        repetitionPattern: SequenceExprSyntax(
+          elements: .init([
+            ExprSyntax(
+              DeclReferenceExprSyntax(
+                baseName: .identifier("x")
+              )
+            ),
+            ExprSyntax(
+              BinaryOperatorExprSyntax(
+                operator: .binaryOperator("+")
+              )
+            ),
+            ExprSyntax(
+              PackElementExprSyntax(
+                eachKeyword: .keyword(.each),
+                pack: DeclReferenceExprSyntax(
+                  baseName: .identifier("t")
                 )
-              ),
-              ExprSyntax(
-                BinaryOperatorExprSyntax(
-                  operator: .binaryOperator("+")
-                )
-              ),
-              ExprSyntax(
-                PackElementExprSyntax(
-                  eachKeyword: .keyword(.each),
-                  pack: IdentifierExprSyntax(
-                    identifier: .identifier("t")
-                  )
-                )
-              ),
-              ExprSyntax(
-                BinaryOperatorExprSyntax(
-                  operator: .binaryOperator("+")
-                )
-              ),
-              ExprSyntax(
-                IntegerLiteralExprSyntax(
-                  integerLiteral: 10
-                )
-              ),
-            ])
-          )
+              )
+            ),
+            ExprSyntax(
+              BinaryOperatorExprSyntax(
+                operator: .binaryOperator("+")
+              )
+            ),
+            ExprSyntax(
+              IntegerLiteralExprSyntax(
+                integerLiteral: 10
+              )
+            ),
+          ])
         )
       ),
       substructureAfterMarker: "1️⃣"
@@ -307,7 +297,7 @@ final class VariadicGenericsTests: XCTestCase {
   }
 }
 
-final class TypeParameterPackTests: XCTestCase {
+final class TypeParameterPackTests: ParserTestCase {
   func testParameterPacks1() {
     assertParse(
       """
