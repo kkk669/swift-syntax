@@ -47,8 +47,8 @@ struct GeneratedFileSpec {
     self.contentsGenerator = contents
   }
 
-  init(_ pathComponents: [String], _ contents: @escaping @autoclosure () -> SourceFileSyntax) {
-    self.init(pathComponents, "\(contents().formatted(using: CodeGenerationFormat()))\n")
+  init(_ pathComponents: [String], _ contents: @escaping @autoclosure () -> SourceFileSyntax, format: CodeGenerationFormat = CodeGenerationFormat()) {
+    self.init(pathComponents, "\(contents().formatted(using: format))\n")
   }
 }
 
@@ -89,7 +89,7 @@ struct GenerateSwiftSyntax: ParsableCommand {
     var fileSpecs: [GeneratedFileSpec] = [
       // SwiftParser
       GeneratedFileSpec(swiftParserGeneratedDir + ["IsLexerClassified.swift"], isLexerClassifiedFile),
-      GeneratedFileSpec(swiftParserGeneratedDir + ["LayoutNodes+Parsable.swift"], parserEntryFile),
+      GeneratedFileSpec(swiftParserGeneratedDir + ["LayoutNodes+Parsable.swift"], layoutNodesParsableFile),
       GeneratedFileSpec(swiftParserGeneratedDir + ["Parser+TokenSpecSet.swift"], parserTokenSpecSetFile),
       GeneratedFileSpec(swiftParserGeneratedDir + ["TokenSpecStaticMembers.swift"], tokenSpecStaticMembersFile),
 
@@ -112,7 +112,7 @@ struct GenerateSwiftSyntax: ParsableCommand {
       GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxRewriter.swift"], syntaxRewriterFile),
       GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxTraits.swift"], syntaxTraitsFile),
       GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxTransform.swift"], syntaxTransformFile),
-      GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxVisitor.swift"], syntaxVisitorFile),
+      GeneratedFileSpec(swiftSyntaxGeneratedDir + ["SyntaxVisitor.swift"], syntaxVisitorFile, format: CodeGenerationFormat(maxElementsOnSameLine: 4)),
       GeneratedFileSpec(swiftSyntaxGeneratedDir + ["TokenKind.swift"], tokenKindFile),
       GeneratedFileSpec(swiftSyntaxGeneratedDir + ["Tokens.swift"], tokensFile),
       GeneratedFileSpec(swiftSyntaxGeneratedDir + ["TriviaPieces.swift"], triviaPiecesFile),

@@ -127,7 +127,7 @@ let syntaxRewriterFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
           ///   - Returns: the rewritten node
           \(node.apiAttributes())\
           open func visit(_ node: \(node.kind.syntaxType)) -> \(node.kind.syntaxType) {
-            return Syntax(visitChildren(node)).cast(\(node.kind.syntaxType).self)
+            return visitChildren(node)
           }
           """
         )
@@ -210,7 +210,7 @@ let syntaxRewriterFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
                 /// we need to switch through a huge switch statement that covers all syntax
                 /// types. In debug builds, the cases of this switch statement do not share
                 /// stack space (rdar://55929175). Because of this, the switch statement
-                /// requires allocates about 15KB of stack space. In scenarios with reduced
+                /// requires about 15KB of stack space. In scenarios with reduced
                 /// stack size (in particular dispatch queues), this often results in a stack
                 /// overflow during syntax tree rewriting.
                 ///
