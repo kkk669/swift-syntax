@@ -10,12 +10,12 @@
 //
 //===----------------------------------------------------------------------===//
 
-import _SwiftSyntaxTestSupport
 import SwiftSyntax
-import XCTest
 #if os(WASI)
 import WASIHelpers
 #endif
+import XCTest
+import _SwiftSyntaxTestSupport
 
 public class AbsolutePositionTests: XCTestCase {
   public func testRecursion() {

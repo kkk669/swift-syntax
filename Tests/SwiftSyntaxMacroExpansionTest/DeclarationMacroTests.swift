@@ -20,8 +20,8 @@
 
 import SwiftDiagnostics
 import SwiftSyntax
-import SwiftSyntaxMacros
 import SwiftSyntaxMacroExpansion
+import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
@@ -31,7 +31,7 @@ fileprivate struct DeclsFromStringsMacro: DeclarationMacro {
     in context: some MacroExpansionContext
   ) throws -> [DeclSyntax] {
     var strings: [String] = []
-    for arg in node.argumentList {
+    for arg in node.arguments {
       guard let value = arg.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue else {
         continue
       }
@@ -51,7 +51,7 @@ final class DeclarationMacroTests: XCTestCase {
         of node: some FreestandingMacroExpansionSyntax,
         in context: some MacroExpansionContext
       ) throws -> [DeclSyntax] {
-        guard let firstElement = node.argumentList.first,
+        guard let firstElement = node.arguments.first,
           let stringLiteral = firstElement.expression
             .as(StringLiteralExprSyntax.self),
           stringLiteral.segments.count == 1,
@@ -106,7 +106,7 @@ final class DeclarationMacroTests: XCTestCase {
         of node: some FreestandingMacroExpansionSyntax,
         in context: some MacroExpansionContext
       ) throws -> [DeclSyntax] {
-        guard let stringLiteral = node.argumentList.first?.expression.as(StringLiteralExprSyntax.self),
+        guard let stringLiteral = node.arguments.first?.expression.as(StringLiteralExprSyntax.self),
           stringLiteral.segments.count == 1,
           case let .stringSegment(prefix) = stringLiteral.segments.first
         else {
@@ -153,7 +153,7 @@ final class DeclarationMacroTests: XCTestCase {
         in context: some MacroExpansionContext
       ) throws -> [DeclSyntax] {
         var strings: [String] = []
-        for arg in node.argumentList {
+        for arg in node.arguments {
           guard let value = arg.expression.as(StringLiteralExprSyntax.self)?.representedLiteralValue else {
             continue
           }
@@ -347,4 +347,46 @@ final class DeclarationMacroTests: XCTestCase {
       indentationWidth: indentationWidth
     )
   }
+
+  func testThrowErrorFromDeclMacro() {
+    struct MyError: Error, CustomStringConvertible {
+      let description: String = "my error"
+    }
+
+    struct TestMacro: DeclarationMacro {
+      static func expansion(
+        of node: some FreestandingMacroExpansionSyntax,
+        in context: some MacroExpansionContext
+      ) throws -> [DeclSyntax] {
+        throw MyError()
+      }
+    }
+
+    assertMacroExpansion(
+      "#test",
+      expandedSource: "#test",
+      diagnostics: [
+        DiagnosticSpec(message: "my error", line: 1, column: 1)
+      ],
+      macros: ["test": TestMacro.self]
+    )
+
+    assertMacroExpansion(
+      """
+      struct Foo {
+        #test
+      }
+      """,
+      expandedSource: """
+        struct Foo {
+          #test
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(message: "my error", line: 2, column: 3)
+      ],
+      macros: ["test": TestMacro.self]
+    )
+  }
+
 }

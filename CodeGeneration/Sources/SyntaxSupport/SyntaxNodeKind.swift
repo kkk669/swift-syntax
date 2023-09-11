@@ -111,6 +111,8 @@ public enum SyntaxNodeKind: String, CaseIterable {
   case dynamicReplacementAttributeArguments
   case editorPlaceholderDecl
   case editorPlaceholderExpr
+  case editorPlaceholderPattern
+  case editorPlaceholderType
   case effectsAttributeArgumentList
   case enumCaseDecl
   case enumCaseElement
@@ -365,6 +367,19 @@ public enum SyntaxNodeKind: String, CaseIterable {
       return "RawSyntaxNodeProtocol"
     default:
       return "Raw\(raw: rawValue.withFirstCharacterUppercased)SyntaxNodeProtocol"
+    }
+  }
+
+  /// For base node types, generates the name of the protocol to which all
+  /// concrete leaf nodes that derive from this base kind should conform.
+  ///
+  /// - Warning: This property can only be accessed for base node kinds; attempting to
+  /// access it for a non-base kind will result in a runtime error.
+  public var leafProtocolType: TypeSyntax {
+    if isBase {
+      return "_Leaf\(syntaxType)NodeProtocol"
+    } else {
+      fatalError("Only base kind can define leaf protocol")
     }
   }
 

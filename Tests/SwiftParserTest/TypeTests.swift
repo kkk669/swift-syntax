@@ -10,8 +10,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-@_spi(RawSyntax) import SwiftSyntax
 @_spi(RawSyntax) import SwiftParser
+@_spi(RawSyntax) import SwiftSyntax
 import XCTest
 
 final class TypeTests: ParserTestCase {
@@ -214,6 +214,67 @@ final class TypeTests: ParserTestCase {
       "let a: Foo.1️⃣Self",
       substructure: Syntax(TokenSyntax.identifier("Self")),
       substructureAfterMarker: "1️⃣"
+    )
+  }
+
+  func testTypeWithPlaceholder() {
+    assertParse(
+      "let a: 1️⃣<#T#> = x",
+      substructure: VariableDeclSyntax(
+        bindingSpecifier: .keyword(.let),
+        bindings: [
+          PatternBindingSyntax(
+            pattern: IdentifierPatternSyntax(identifier: .identifier("a")),
+            typeAnnotation: TypeAnnotationSyntax(
+              type: EditorPlaceholderTypeSyntax(
+                placeholder: .identifier("<#T#>")
+              )
+            ),
+            initializer: InitializerClauseSyntax(
+              value: DeclReferenceExprSyntax(
+                baseName: .identifier("x")
+              )
+            )
+          )
+        ]
+      ),
+      diagnostics: [
+        DiagnosticSpec(message: "editor placeholder in source file")
+      ]
+    )
+
+    assertParse(
+      "let a: 1️⃣<#T#><Foo> = x",
+      substructure: VariableDeclSyntax(
+        bindingSpecifier: .keyword(.let),
+        bindings: [
+          PatternBindingSyntax(
+            pattern: IdentifierPatternSyntax(identifier: .identifier("a")),
+            typeAnnotation: TypeAnnotationSyntax(
+              type: EditorPlaceholderTypeSyntax(
+                placeholder: .identifier("<#T#>"),
+                genericArgumentClause: GenericArgumentClauseSyntax(
+                  arguments: GenericArgumentListSyntax([
+                    GenericArgumentSyntax(
+                      argument: IdentifierTypeSyntax(
+                        name: .identifier("Foo")
+                      )
+                    )
+                  ])
+                )
+              )
+            ),
+            initializer: InitializerClauseSyntax(
+              value: DeclReferenceExprSyntax(
+                baseName: .identifier("x")
+              )
+            )
+          )
+        ]
+      ),
+      diagnostics: [
+        DiagnosticSpec(message: "editor placeholder in source file")
+      ]
     )
   }
 }

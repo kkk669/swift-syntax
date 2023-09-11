@@ -10,8 +10,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftSyntax
 import SwiftBasicFormat
+import SwiftSyntax
 @_spi(MacroExpansion) import SwiftSyntaxMacros
 
 public enum MacroRole {
@@ -236,6 +236,7 @@ public func expandAttachedMacroWithoutCollapsing<Context: MacroExpansionContext>
       let members = try attachedMacro.expansion(
         of: attributeNode,
         providingMembersOf: declGroup,
+        conformingTo: conformanceList?.map(\.type) ?? [],
         in: context
       )
 

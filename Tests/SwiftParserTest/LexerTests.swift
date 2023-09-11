@@ -10,9 +10,9 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
-@_spi(RawSyntax) import SwiftSyntax
 @_spi(RawSyntax) @_spi(Testing) import SwiftParser
+@_spi(RawSyntax) import SwiftSyntax
+import XCTest
 
 fileprivate func lex(_ sourceBytes: [UInt8], body: ([Lexer.Lexeme]) throws -> Void) rethrows {
   let lookaheadTracker = UnsafeMutablePointer<LookaheadTracker>.allocate(capacity: 1)
@@ -844,6 +844,16 @@ public class LexerTests: ParserTestCase {
       "1️⃣<##>",
       lexemes: [
         LexemeSpec(.identifier, text: "<##>", trailing: "", diagnostic: "editor placeholder in source file")
+      ]
+    )
+
+    assertLexemes(
+      "let 1️⃣<#name#> = 2️⃣<#value#>",
+      lexemes: [
+        LexemeSpec(.keyword, text: "let", trailing: " "),
+        LexemeSpec(.identifier, text: "<#name#>", trailing: " ", errorLocationMarker: "1️⃣", diagnostic: "editor placeholder in source file"),
+        LexemeSpec(.equal, text: "=", trailing: " "),
+        LexemeSpec(.identifier, text: "<#value#>", errorLocationMarker: "2️⃣", diagnostic: "editor placeholder in source file"),
       ]
     )
   }

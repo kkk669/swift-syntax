@@ -37,15 +37,7 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
   /// Otherwise, return `nil`.
   public init?<S: SyntaxProtocol>(_ node: S) {
     guard node.raw.kind == .token else { return nil }
-    self._syntaxNode = node._syntaxNode
-  }
-
-  /// Creates a Syntax node from the given `SyntaxData`. This assumes
-  /// that the `SyntaxData` is of the correct kind. If it is not, the behaviour
-  /// is undefined.
-  internal init(_ data: SyntaxData) {
-    precondition(data.raw.kind == .token)
-    self._syntaxNode = Syntax(data)
+    self._syntaxNode = Syntax(node)
   }
 
   /// Construct a new token with the given `kind`, `leadingTrivia`,
@@ -65,7 +57,7 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
       tokenDiagnostic: nil,
       arena: arena
     )
-    self.init(SyntaxData.forRoot(raw, rawNodeArena: arena))
+    self = Syntax.forRoot(raw, rawNodeArena: arena).cast(TokenSyntax.self)
   }
 
   /// Whether the token is present or missing.
@@ -74,7 +66,7 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
       return tokenView.presence
     }
     set {
-      self = TokenSyntax(data.withPresence(newValue, arena: SyntaxArena()))
+      self = Syntax(self).withPresence(newValue, arena: SyntaxArena()).cast(TokenSyntax.self)
     }
   }
 
@@ -89,7 +81,7 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
       return tokenView.formLeadingTrivia()
     }
     set {
-      self = TokenSyntax(data.withLeadingTrivia(newValue, arena: SyntaxArena()))
+      self = Syntax(self).withLeadingTrivia(newValue, arena: SyntaxArena()).cast(TokenSyntax.self)
     }
   }
 
@@ -99,7 +91,7 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
       return tokenView.formTrailingTrivia()
     }
     set {
-      self = TokenSyntax(data.withTrailingTrivia(newValue, arena: SyntaxArena()))
+      self = Syntax(self).withTrailingTrivia(newValue, arena: SyntaxArena()).cast(TokenSyntax.self)
     }
   }
 
@@ -114,8 +106,7 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
       }
       let arena = SyntaxArena()
       let newRaw = tokenView.withKind(newValue, arena: arena)
-      let newData = data.replacingSelf(newRaw, rawNodeArena: arena, allocationArena: arena)
-      self = TokenSyntax(newData)
+      self = Syntax(self).replacingSelf(newRaw, rawNodeArena: arena, allocationArena: arena).cast(TokenSyntax.self)
     }
   }
 
@@ -153,6 +144,40 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
   /// If the token has a lexical error, the type of the error.
   public var tokenDiagnostic: TokenDiagnostic? {
     return tokenView.tokenDiagnostic
+  }
+
+  /// Checks if the current leaf syntax node can be cast to a different specified type.
+  ///
+  /// - Returns: `false` since the leaf node cannot be cast to a different specified type.
+  ///
+  /// - Note: This method overloads the general `is` method and is marked as deprecated to produce a warning,
+  ///         informing the user that the cast will always fail.
+  @available(*, deprecated, message: "This cast will always fail")
+  public func `is`<S: SyntaxProtocol>(_ syntaxType: S.Type) -> Bool {
+    return false
+  }
+
+  /// Attempts to cast the current leaf syntax node to a different specified type.
+  ///
+  /// - Returns: `nil` since the leaf node cannot be cast to a different specified type.
+  ///
+  /// - Note: This method overloads the general `as` method and is marked as deprecated to produce a warning,
+  ///         informing the user that the cast will always fail.
+  @available(*, deprecated, message: "This cast will always fail")
+  public func `as`<S: SyntaxProtocol>(_ syntaxType: S.Type) -> S? {
+    return nil
+  }
+
+  /// Force-casts the current leaf syntax node to a different specified type.
+  ///
+  /// - Returns: This method will always trigger a runtime crash and never return.
+  ///
+  /// - Note: This method overloads the general `cast` method and is marked as deprecated to produce a warning,
+  ///         informing the user that the cast will always fail.
+  /// - Warning: Invoking this method will lead to a fatal error.
+  @available(*, deprecated, message: "This cast will always fail")
+  public func cast<S: SyntaxProtocol>(_ syntaxType: S.Type) -> S {
+    fatalError("\(Self.self) cannot be cast to \(S.self)")
   }
 }
 

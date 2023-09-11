@@ -789,7 +789,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
     if let unexpected = node.unexpectedBetweenDeinitKeywordAndEffectSpecifiers,
-      let name = unexpected.presentTokens(satisfying: { $0.tokenKind.isIdentifier == true }).only?.as(TokenSyntax.self)
+      let name = unexpected.presentTokens(satisfying: { $0.tokenKind.isIdentifier == true }).only
     {
       addDiagnostic(
         name,
@@ -1146,8 +1146,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
 
-    if node.conditions.count == 1,
-      node.conditions.first?.as(ConditionElementSyntax.self)?.condition.is(MissingExprSyntax.self) == true,
+    if node.conditions.only?.condition.is(MissingExprSyntax.self) == true,
       !node.body.leftBrace.isMissingAllTokens
     {
       addDiagnostic(node.conditions, MissingConditionInStatement(node: node), handledNodes: [node.conditions.id])
@@ -1913,7 +1912,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
           .missingColonAndExprInTernaryExpr,
           fixIts: [
             FixIt(
-              message: InsertTokenFixIt(missingNodes: [Syntax(node.colon), Syntax(nextSibling)]),
+              message: InsertTokenFixIt(missingNodes: [Syntax(node.colon), nextSibling]),
               changes: [
                 .makePresent(node.colon),
                 .makePresent(nextSibling),
@@ -2024,8 +2023,7 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
       return .skipChildren
     }
 
-    if node.conditions.count == 1,
-      node.conditions.first?.as(ConditionElementSyntax.self)?.condition.is(MissingExprSyntax.self) == true,
+    if node.conditions.only?.condition.is(MissingExprSyntax.self) == true,
       !node.body.leftBrace.isMissingAllTokens
     {
       addDiagnostic(node.conditions, MissingConditionInStatement(node: node), handledNodes: [node.conditions.id])

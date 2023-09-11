@@ -11,8 +11,8 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftDiagnostics
-import SwiftParser
 import SwiftOperators
+import SwiftParser
 import SwiftSyntax
 import SwiftSyntaxMacros
 
@@ -85,7 +85,7 @@ class SourceManager {
     case .attribute:
       node = Syntax(AttributeSyntax.parse(from: &parser))
     }
-    if let operatorTable = operatorTable {
+    if let operatorTable {
       node = operatorTable.foldAll(node, errorHandler: { _ in /*ignore*/ })
     }
 

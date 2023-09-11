@@ -470,6 +470,16 @@ public protocol SyntaxTransformVisitor {
   ///   - Returns: the sum of whatever the child visitors return.
   func visit(_ node: EditorPlaceholderExprSyntax) -> ResultType
   
+  /// Visiting ``EditorPlaceholderPatternSyntax`` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: EditorPlaceholderPatternSyntax) -> ResultType
+  
+  /// Visiting ``EditorPlaceholderTypeSyntax`` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: the sum of whatever the child visitors return.
+  func visit(_ node: EditorPlaceholderTypeSyntax) -> ResultType
+  
   /// Visiting ``EffectsAttributeArgumentListSyntax`` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: the sum of whatever the child visitors return.
@@ -2036,6 +2046,20 @@ extension SyntaxTransformVisitor {
     visitAny(Syntax(node))
   }
   
+  /// Visiting ``EditorPlaceholderPatternSyntax`` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: EditorPlaceholderPatternSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
+  
+  /// Visiting ``EditorPlaceholderTypeSyntax`` specifically.
+  ///   - Parameter node: the node we are visiting.
+  ///   - Returns: nil by default.
+  public func visit(_ node: EditorPlaceholderTypeSyntax) -> ResultType {
+    visitAny(Syntax(node))
+  }
+  
   /// Visiting ``EffectsAttributeArgumentListSyntax`` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: nil by default.
@@ -3522,6 +3546,10 @@ extension SyntaxTransformVisitor {
       return visit(derived)
     case .editorPlaceholderExpr(let derived):
       return visit(derived)
+    case .editorPlaceholderPattern(let derived):
+      return visit(derived)
+    case .editorPlaceholderType(let derived):
+      return visit(derived)
     case .effectsAttributeArgumentList(let derived):
       return visit(derived)
     case .enumCaseDecl(let derived):
@@ -3916,7 +3944,7 @@ extension SyntaxTransformVisitor {
   public func visitChildren(_ node: some SyntaxProtocol) -> [ResultType] {
     let syntaxNode = Syntax(node)
     return NonNilRawSyntaxChildren(syntaxNode, viewMode: .sourceAccurate).map { rawChild in
-      let child = Syntax(SyntaxData(rawChild, parent: syntaxNode))
+      let child = Syntax(rawChild, parent: syntaxNode)
       return visit(child)
     }
   }

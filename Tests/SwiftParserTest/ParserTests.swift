@@ -10,18 +10,18 @@
 //
 //===----------------------------------------------------------------------===//
 
-import _SwiftSyntaxTestSupport
 #if !os(WASI)
 import Dispatch
 #endif
-import XCTest
-import SwiftSyntax
 import SwiftParser
 import SwiftParserDiagnostics
+import SwiftSyntax
 #if os(WASI)
-import WASILibc
 import WASIHelpers
+import WASILibc
 #endif
+import XCTest
+import _SwiftSyntaxTestSupport
 
 public class ParserTests: ParserTestCase {
   /// Run a single parse test.

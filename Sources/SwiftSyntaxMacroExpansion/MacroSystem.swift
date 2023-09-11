@@ -11,9 +11,10 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftDiagnostics
+import SwiftOperators
+@_spi(MacroExpansion) import SwiftParser
 import SwiftSyntax
 import SwiftSyntaxBuilder
-@_spi(MacroExpansion) import SwiftParser
 @_spi(MacroExpansion) import SwiftSyntaxMacros
 
 // MARK: - Public entry function
@@ -55,7 +56,7 @@ private func expandFreestandingMemberDeclList(
     let expanded = try expandFreestandingMacro(
       definition: definition,
       macroRole: inferFreestandingMacroRole(definition: definition),
-      node: node.detach(in: context),
+      node: node.detach(in: context, foldingWith: .standardOperators),
       in: context,
       indentationWidth: indentationWidth
     )
@@ -80,7 +81,7 @@ private func expandFreestandingCodeItemList(
     let expanded = try expandFreestandingMacro(
       definition: definition,
       macroRole: inferFreestandingMacroRole(definition: definition),
-      node: node.detach(in: context),
+      node: node.detach(in: context, foldingWith: .standardOperators),
       in: context,
       indentationWidth: indentationWidth
     )
@@ -108,7 +109,7 @@ private func expandFreestandingExpr(
     let expanded = expandFreestandingMacro(
       definition: definition,
       macroRole: .expression,
-      node: node.detach(in: context),
+      node: node.detach(in: context, foldingWith: .standardOperators),
       in: context,
       indentationWidth: indentationWidth
     )
@@ -134,7 +135,7 @@ private func expandMemberMacro(
     let expanded = expandAttachedMacro(
       definition: definition,
       macroRole: .member,
-      attributeNode: attributeNode.detach(in: context),
+      attributeNode: attributeNode.detach(in: context, foldingWith: .standardOperators),
       declarationNode: attachedTo.detach(in: context),
       parentDeclNode: nil,
       extendedType: nil,
@@ -163,7 +164,7 @@ private func expandMemberAttributeMacro(
     let expanded = expandAttachedMacro(
       definition: definition,
       macroRole: .memberAttribute,
-      attributeNode: attributeNode.detach(in: context),
+      attributeNode: attributeNode.detach(in: context, foldingWith: .standardOperators),
       declarationNode: member.detach(in: context),
       parentDeclNode: declaration.detach(in: context),
       extendedType: nil,
@@ -187,11 +188,15 @@ private func expandPeerMacroMember(
   in context: some MacroExpansionContext,
   indentationWidth: Trivia
 ) throws -> MemberBlockItemListSyntax? {
+  if let variable = attachedTo.as(VariableDeclSyntax.self), variable.bindings.count > 1 {
+    throw MacroApplicationError.peerMacroOnVariableWithMultipleBindings
+  }
+
   guard
     let expanded = expandAttachedMacro(
       definition: definition,
       macroRole: .peer,
-      attributeNode: attributeNode.detach(in: context),
+      attributeNode: attributeNode.detach(in: context, foldingWith: .standardOperators),
       declarationNode: attachedTo.detach(in: context),
       parentDeclNode: nil,
       extendedType: nil,
@@ -215,11 +220,15 @@ private func expandPeerMacroCodeItem(
   in context: some MacroExpansionContext,
   indentationWidth: Trivia
 ) throws -> CodeBlockItemListSyntax? {
+  if let variable = attachedTo.as(VariableDeclSyntax.self), variable.bindings.count > 1 {
+    throw MacroApplicationError.peerMacroOnVariableWithMultipleBindings
+  }
+
   guard
     let expanded = expandAttachedMacro(
       definition: definition,
       macroRole: .peer,
-      attributeNode: attributeNode.detach(in: context),
+      attributeNode: attributeNode.detach(in: context, foldingWith: .standardOperators),
       declarationNode: attachedTo.detach(in: context),
       parentDeclNode: nil,
       extendedType: nil,
@@ -251,7 +260,7 @@ private func expandAccessorMacroWithoutExistingAccessors(
     let expanded = expandAttachedMacro(
       definition: definition,
       macroRole: .accessor,
-      attributeNode: attributeNode.detach(in: context),
+      attributeNode: attributeNode.detach(in: context, foldingWith: .standardOperators),
       declarationNode: attachedTo.detach(in: context),
       parentDeclNode: nil,
       extendedType: nil,
@@ -285,7 +294,7 @@ private func expandAccessorMacroWithExistingAccessors(
     let expanded = expandAttachedMacro(
       definition: definition,
       macroRole: .accessor,
-      attributeNode: attributeNode.detach(in: context),
+      attributeNode: attributeNode.detach(in: context, foldingWith: .standardOperators),
       declarationNode: attachedTo.detach(in: context),
       parentDeclNode: nil,
       extendedType: nil,
@@ -322,7 +331,7 @@ private func expandExtensionMacro(
     let expanded = expandAttachedMacro(
       definition: definition,
       macroRole: .extension,
-      attributeNode: attributeNode.detach(in: context),
+      attributeNode: attributeNode.detach(in: context, foldingWith: .standardOperators),
       declarationNode: attachedTo.detach(in: context),
       parentDeclNode: nil,
       extendedType: extendedType.detach(in: context),
@@ -424,6 +433,7 @@ let diagnosticDomain: String = "SwiftSyntaxMacroExpansion"
 
 private enum MacroApplicationError: DiagnosticMessage, Error {
   case accessorMacroOnVariableWithMultipleBindings
+  case peerMacroOnVariableWithMultipleBindings
   case malformedAccessor
 
   var diagnosticID: MessageID {
@@ -435,15 +445,12 @@ private enum MacroApplicationError: DiagnosticMessage, Error {
   var message: String {
     switch self {
     case .accessorMacroOnVariableWithMultipleBindings:
-      return """
-        swift-syntax applies macros syntactically and there is no way to represent a variable \
-        declaration with multiple bindings that have accessors syntactically. \
-        While the compiler allows this expansion, swift-syntax cannot represent it and thus \
-        disallows it.
-        """
+      return "accessor macro can only be applied to a single variable"
+    case .peerMacroOnVariableWithMultipleBindings:
+      return "peer macro can only be applied to a single variable"
     case .malformedAccessor:
       return """
-        Macro returned a malformed accessor. Accessors should start with an introducer like 'get' or 'set'.
+        macro returned a malformed accessor. Accessors should start with an introducer like 'get' or 'set'.
         """
     }
   }
@@ -485,10 +492,14 @@ private class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
     // Note that 'MacroExpansionExpr'/'MacroExpansionExprDecl' at code item
     // position are handled by 'visit(_:CodeBlockItemListSyntax)'.
     // Only expression expansions inside other syntax nodes is handled here.
-    if let expanded = expandExpr(node: node) {
+    switch expandExpr(node: node) {
+    case .success(let expanded):
       return Syntax(visit(expanded))
+    case .failure:
+      return Syntax(node)
+    case .notAMacro:
+      break
     }
-
     if let declSyntax = node.as(DeclSyntax.self),
       let attributedNode = node.asProtocol(WithAttributesSyntax.self),
       !attributedNode.attributes.isEmpty
@@ -510,15 +521,20 @@ private class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
     var newItems: [CodeBlockItemSyntax] = []
     func addResult(_ node: CodeBlockItemSyntax) {
       // Expand freestanding macro.
-      if let expanded = expandCodeBlockItem(node: node) {
+      switch expandCodeBlockItem(node: node) {
+      case .success(let expanded):
         for item in expanded {
           addResult(item)
         }
         return
+      case .failure:
+        // Expanding the macro threw an error. We don't have an expanded source.
+        // Retain the macro node as-is.
+        newItems.append(node)
+      case .notAMacro:
+        // Recurse on the child node
+        newItems.append(visit(node))
       }
-
-      // Recurse on the child node
-      newItems.append(visit(node))
 
       // Expand any peer macro on this item.
       if case .decl(let decl) = node.item {
@@ -552,15 +568,18 @@ private class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
 
     func addResult(_ node: MemberBlockItemSyntax) {
       // Expand freestanding macro.
-      if let expanded = expandMemberDecl(node: node) {
+      switch expandMemberDecl(node: node) {
+      case .success(let expanded):
         for item in expanded {
           addResult(item)
         }
         return
+      case .failure:
+        newItems.append(node)
+      case .notAMacro:
+        // Recurse on the child node.
+        newItems.append(visit(node))
       }
-
-      // Recurse on the child node.
-      newItems.append(visit(node))
 
       // Expand any peer macro on this member.
       for peer in expandMemberDeclPeers(of: node.decl) {
@@ -606,11 +625,12 @@ private class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
   }
 
   override func visit(_ node: VariableDeclSyntax) -> DeclSyntax {
+    var node = super.visit(node).cast(VariableDeclSyntax.self)
+
     guard !macroAttributes(attachedTo: DeclSyntax(node), ofType: AccessorMacro.Type.self).isEmpty else {
-      return super.visit(node).cast(DeclSyntax.self)
+      return DeclSyntax(node)
     }
 
-    var node = super.visit(node).cast(VariableDeclSyntax.self)
     guard node.bindings.count == 1, let binding = node.bindings.first else {
       context.addDiagnostics(from: MacroApplicationError.accessorMacroOnVariableWithMultipleBindings, node: node)
       return DeclSyntax(node)
@@ -846,20 +866,36 @@ extension MacroApplication {
 // MARK: Freestanding macro expansion
 
 extension MacroApplication {
+  enum MacroExpansionResult<ResultType> {
+    /// Expansion of the macro succeeded.
+    case success(ResultType)
+
+    /// Macro system found the macro to expand but running the expansion threw
+    /// an error and thus no expansion result exists.
+    case failure
+
+    /// The node that should be expanded was not a macro known to the macro system.
+    case notAMacro
+  }
+
   private func expandFreestandingMacro<ExpandedMacroType: SyntaxProtocol>(
     _ node: (any FreestandingMacroExpansionSyntax)?,
     expandMacro: (_ macro: Macro.Type, _ node: any FreestandingMacroExpansionSyntax) throws -> ExpandedMacroType?
-  ) -> ExpandedMacroType? {
+  ) -> MacroExpansionResult<ExpandedMacroType> {
     guard let node,
-      let macro = macroSystem.lookup(node.macro.text)
+      let macro = macroSystem.lookup(node.macroName.text)
     else {
-      return nil
+      return .notAMacro
     }
     do {
-      return try expandMacro(macro, node)
+      if let expanded = try expandMacro(macro, node) {
+        return .success(expanded)
+      } else {
+        return .failure
+      }
     } catch {
       context.addDiagnostics(from: error, node: node)
-      return nil
+      return .failure
     }
   }
 
@@ -871,7 +907,7 @@ extension MacroApplication {
   ///   #foo
   /// }
   /// ```
-  func expandCodeBlockItem(node: CodeBlockItemSyntax) -> CodeBlockItemListSyntax? {
+  func expandCodeBlockItem(node: CodeBlockItemSyntax) -> MacroExpansionResult<CodeBlockItemListSyntax> {
     return expandFreestandingMacro(node.item.asProtocol(FreestandingMacroExpansionSyntax.self)) { macro, node in
       return try expandFreestandingCodeItemList(
         definition: macro,
@@ -890,7 +926,7 @@ extension MacroApplication {
   ///   #foo
   /// }
   /// ```
-  func expandMemberDecl(node: MemberBlockItemSyntax) -> MemberBlockItemListSyntax? {
+  func expandMemberDecl(node: MemberBlockItemSyntax) -> MacroExpansionResult<MemberBlockItemListSyntax> {
     return expandFreestandingMacro(node.decl.as(MacroExpansionDeclSyntax.self)) { macro, node in
       return try expandFreestandingMemberDeclList(
         definition: macro,
@@ -908,7 +944,7 @@ extension MacroApplication {
   /// ```swift
   /// let a = #foo
   /// ```
-  func expandExpr(node: Syntax) -> ExprSyntax? {
+  func expandExpr(node: Syntax) -> MacroExpansionResult<ExprSyntax> {
     return expandFreestandingMacro(node.as(MacroExpansionExprSyntax.self)) { macro, node in
       return try expandFreestandingExpr(
         definition: macro,
@@ -982,5 +1018,48 @@ private extension SyntaxProtocol {
     }
 
     return self.detached
+  }
+
+  /// Fold operators in this node using the given operator table, detach the
+  /// node and inform the macro expansion context, if it needs to know.
+  func detach(
+    in context: MacroExpansionContext,
+    foldingWith operatorTable: OperatorTable?
+  ) -> Syntax {
+    let folded: Syntax
+    if let operatorTable {
+      if let basicContext = context as? BasicMacroExpansionContext {
+        folded = basicContext.foldAllOperators(of: self, with: operatorTable)
+      } else {
+        folded = operatorTable.foldAll(self, errorHandler: { _ in /*ignore*/ })
+      }
+    } else {
+      folded = Syntax(self)
+    }
+    return folded.detach(in: context)
+  }
+}
+
+private extension FreestandingMacroExpansionSyntax {
+  /// Same as `SyntaxProtocol.detach(in:foldingWith:)` but returns a node of type
+  /// `Self` since we know that operator folding doesn't change the type of any
+  /// `FreestandingMacroExpansionSyntax`.
+  func detach(
+    in context: MacroExpansionContext,
+    foldingWith operatorTable: OperatorTable?
+  ) -> Self {
+    return (detach(in: context, foldingWith: operatorTable) as Syntax).cast(Self.self)
+  }
+}
+
+private extension AttributeSyntax {
+  /// Same as `SyntaxProtocol.detach(in:foldingWith:)` but returns a node of type
+  /// `Self` since we know that operator folding doesn't change the type of any
+  /// `AttributeSyntax`.
+  func detach(
+    in context: MacroExpansionContext,
+    foldingWith operatorTable: OperatorTable?
+  ) -> Self {
+    return (detach(in: context, foldingWith: operatorTable) as Syntax).cast(Self.self)
   }
 }

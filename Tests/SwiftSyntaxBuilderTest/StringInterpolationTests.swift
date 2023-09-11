@@ -10,13 +10,12 @@
 //
 //===----------------------------------------------------------------------===//
 
-import _SwiftSyntaxTestSupport
+import SwiftBasicFormat
+import SwiftParser
 import SwiftSyntax
 @_spi(Testing) import SwiftSyntaxBuilder
-import SwiftParser
-import SwiftBasicFormat
-
 import XCTest
+import _SwiftSyntaxTestSupport
 
 class TwoSpacesFormat: BasicFormat {
   public init() {
@@ -95,7 +94,6 @@ final class StringInterpolationTests: XCTestCase {
 
   func testAttributeInterpolation() {
     let attrSyntax: AttributeSyntax = "@discardableResult"
-    XCTAssertTrue(attrSyntax.is(AttributeSyntax.self))
     XCTAssertEqual(attrSyntax.description, "@discardableResult")
   }
 
@@ -383,7 +381,6 @@ final class StringInterpolationTests: XCTestCase {
         _storage = newValue
       }
       """
-    XCTAssertTrue(setter.is(AccessorDeclSyntax.self))
     assertStringsEqualWithDiff(
       setter.description,
       """
@@ -432,7 +429,6 @@ final class StringInterpolationTests: XCTestCase {
       }
       """
 
-    XCTAssertTrue(codeBlockItem.is(CodeBlockItemSyntax.self))
     assertStringsEqualWithDiff(
       codeBlockItem.description,
       """

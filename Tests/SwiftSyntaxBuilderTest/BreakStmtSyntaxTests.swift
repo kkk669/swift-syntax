@@ -10,14 +10,14 @@
 //
 //===----------------------------------------------------------------------===//
 
-import XCTest
 import SwiftSyntax
 import SwiftSyntaxBuilder
+import XCTest
 
 final class BreakStmtSyntaxTests: XCTestCase {
   func testBreakStmtSyntax() {
     let testCases: [UInt: (StmtSyntax, String)] = [
-      #line: (BreakStmtSyntax().as(StmtSyntax.self)!, "break"),
+      #line: (StmtSyntax(BreakStmtSyntax()), "break"),
       #line: (StmtSyntax("break"), "break"),
     ]
 

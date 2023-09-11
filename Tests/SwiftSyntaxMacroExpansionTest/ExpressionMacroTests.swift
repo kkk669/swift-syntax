@@ -19,8 +19,8 @@
 //==========================================================================//
 
 import SwiftSyntax
-import SwiftSyntaxMacros
 import SwiftSyntaxMacroExpansion
+import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
@@ -29,7 +29,7 @@ fileprivate struct StringifyMacro: ExpressionMacro {
     of macro: some FreestandingMacroExpansionSyntax,
     in context: some MacroExpansionContext
   ) throws -> ExprSyntax {
-    guard let argument = macro.argumentList.first?.expression else {
+    guard let argument = macro.arguments.first?.expression else {
       throw MacroExpansionErrorMessage("missing argument")
     }
 
@@ -77,7 +77,7 @@ final class ExpressionMacroTests: XCTestCase {
         of macro: some FreestandingMacroExpansionSyntax,
         in context: some MacroExpansionContext
       ) -> ExprSyntax {
-        var argList = macro.argumentList
+        var argList = macro.arguments
         argList[argList.startIndex].label = .identifier("_colorLiteralRed")
         let initSyntax: ExprSyntax = ".init(\(argList))"
         return initSyntax
@@ -198,6 +198,98 @@ final class ExpressionMacroTests: XCTestCase {
       testModuleName: "MyModule",
       testFileName: "taylor.swift",
       indentationWidth: indentationWidth
+    )
+  }
+
+  func testThrowErrorFromExpressionMacro() {
+    struct MyError: Error, CustomStringConvertible {
+      let description: String = "my error"
+    }
+
+    struct TestMacro: ExpressionMacro {
+      public static func expansion(
+        of node: some FreestandingMacroExpansionSyntax,
+        in context: some MacroExpansionContext
+      ) throws -> ExprSyntax {
+        throw MyError()
+      }
+    }
+
+    assertMacroExpansion(
+      "#test",
+      expandedSource: "#test",
+      diagnostics: [
+        DiagnosticSpec(message: "my error", line: 1, column: 1)
+      ],
+      macros: ["test": TestMacro.self]
+    )
+
+    assertMacroExpansion(
+      "1 + #test",
+      expandedSource: "1 + #test",
+      diagnostics: [
+        DiagnosticSpec(message: "my error", line: 1, column: 5)
+      ],
+      macros: ["test": TestMacro.self]
+    )
+  }
+
+  func testFoldOperators() {
+    struct ForceSubtractMacro: ExpressionMacro {
+      static func expansion(
+        of node: some FreestandingMacroExpansionSyntax,
+        in context: some MacroExpansionContext
+      ) throws -> ExprSyntax {
+        guard let argument = node.arguments.first?.expression else {
+          fatalError("Must receive an argument")
+        }
+        guard var node = argument.as(InfixOperatorExprSyntax.self) else {
+          return argument
+        }
+        node.operator = ExprSyntax(BinaryOperatorExprSyntax(text: "-"))
+        return ExprSyntax(node)
+      }
+    }
+    assertMacroExpansion(
+      "#test(1 + 2)",
+      expandedSource: "1 - 2",
+      macros: ["test": ForceSubtractMacro.self]
+    )
+  }
+
+  func testDiagnosticFromFoldedOperators() {
+    struct MyError: Error {}
+
+    struct DiagnoseFirstArgument: ExpressionMacro {
+      static func expansion(
+        of node: some FreestandingMacroExpansionSyntax,
+        in context: some MacroExpansionContext
+      ) throws -> ExprSyntax {
+        guard let argument = node.arguments.first?.expression else {
+          fatalError("Must receive an argument")
+        }
+        context.addDiagnostics(from: MyError(), node: argument)
+        return argument
+      }
+    }
+
+    assertMacroExpansion(
+      """
+      /// Test
+      func test() {
+        #test(1 + 2)
+      }
+      """,
+      expandedSource: """
+        /// Test
+        func test() {
+          1 + 2
+        }
+        """,
+      diagnostics: [
+        DiagnosticSpec(message: "MyError()", line: 3, column: 9, severity: .error)
+      ],
+      macros: ["test": DiagnoseFirstArgument.self]
     )
   }
 }

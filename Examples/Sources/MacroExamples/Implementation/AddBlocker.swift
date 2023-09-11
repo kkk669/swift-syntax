@@ -10,10 +10,10 @@
 //
 //===----------------------------------------------------------------------===//
 
-import SwiftSyntaxMacros
-import SwiftSyntax
-import SwiftOperators
 import SwiftDiagnostics
+import SwiftOperators
+import SwiftSyntax
+import SwiftSyntaxMacros
 
 /// Implementation of the `addBlocker` macro, which demonstrates how to
 /// produce detailed diagnostics from a macro implementation for an utterly
@@ -101,6 +101,6 @@ public struct AddBlocker: ExpressionMacro {
       context.diagnose(diag)
     }
 
-    return result.asProtocol(FreestandingMacroExpansionSyntax.self)!.argumentList.first!.expression
+    return result.asProtocol(FreestandingMacroExpansionSyntax.self)!.arguments.first!.expression
   }
 }
