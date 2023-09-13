@@ -138,6 +138,8 @@ extension TokenConsumer {
       // FIXME: C++ parser returns true if this is a top-level non-"script" files.
       // But we don't have "is library" flag.
       return false
+    case .rhs(._borrowing), .rhs(._consuming), .rhs(._mutating):
+      return experimentalFeatures.contains(.referenceBindings)
     case .some(_):
       // All other decl start keywords unconditionally start a decl.
       return true
@@ -281,9 +283,10 @@ extension Parser {
         )
       }
 
-      let isProbablyFuncDecl = self.at(.identifier, .wildcard) || self.at(anyIn: Operator.self) != nil
-
-      if isProbablyFuncDecl {
+      let isPossibleFuncIdentifier = self.at(.identifier, .wildcard)
+      let isPossibleFuncParen = self.peek(isAt: .leftParen, .binaryOperator)
+      // Treat operators specially because they're likely to be functions.
+      if (isPossibleFuncIdentifier && isPossibleFuncParen) || self.at(anyIn: Operator.self) != nil {
         return RawDeclSyntax(self.parseFuncDeclaration(attrs, .missing(.keyword(.func))))
       }
     }
