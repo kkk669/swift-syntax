@@ -1,6 +1,3 @@
-# This workflow will build a Swift project
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-swift
-
 name: test
 
 on:
@@ -11,23 +8,17 @@ on:
 
 jobs:
   build:
-
-    runs-on: macos-13
-
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Select Xcode
-      run: sudo xcode-select -s /Applications/Xcode_14.3.1.app
+    - uses: swiftwasm/setup-swiftwasm@v1
+      with:
+        swift-version: "wasm-DEVELOPMENT-SNAPSHOT-2023-08-07-a"
     - name: Install wasmtime
-      run: brew install wasmtime
-    - name: Install Wasm Toolchain
       run: |
-        VERSION=swift-wasm-DEVELOPMENT-SNAPSHOT-2023-08-07-a
-        TOOLCHAIN_URL="https://github.com/swiftwasm/swift/releases/download/$VERSION/$VERSION-macos_x86_64.pkg"
-        curl -LO $TOOLCHAIN_URL
-        installer -target CurrentUserHomeDirectory -pkg $VERSION-macos_x86_64.pkg
-        echo "PATH=$HOME/Library/Developer/Toolchains/$VERSION.xctoolchain/usr/bin:${PATH}" >> $GITHUB_ENV
-    - name: Build
-      run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
-    - name: Run tests
-      run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
+        curl https://wasmtime.dev/install.sh -sSf | bash
+        echo "$HOME/.wasmtime/bin" >> $GITHUB_PATH
+    - run: swift --version
+    - run: wasmtime -V
+    - run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
+    - run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
