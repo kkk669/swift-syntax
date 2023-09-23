@@ -1,24 +1,22 @@
 name: test
-
 on:
   push:
-    branches: [ "wasm32-wasi-test" ]
+    branches: ["wasm32-wasi-test"]
   pull_request:
-    branches: [ "wasm32-wasi-test" ]
-
+    branches: ["wasm32-wasi-test"]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: swiftwasm/setup-swiftwasm@v1
-      with:
-        swift-version: "wasm-DEVELOPMENT-SNAPSHOT-2023-08-07-a"
-    - name: Install wasmtime
-      run: |
-        curl https://wasmtime.dev/install.sh -sSf | bash
-        echo "$HOME/.wasmtime/bin" >> $GITHUB_PATH
-    - run: swift --version
-    - run: wasmtime -V
-    - run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
-    - run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
+      - uses: actions/checkout@v3
+      - uses: swiftwasm/setup-swiftwasm@v1
+        with:
+          swift-version: "wasm-DEVELOPMENT-SNAPSHOT-2023-08-07-a"
+      - name: Install wasmtime
+        run: |
+          curl https://wasmtime.dev/install.sh -sSf | bash
+          echo "$HOME/.wasmtime/bin" >> $GITHUB_PATH
+      - run: swift --version
+      - run: wasmtime -V
+      - run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
+      - run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
