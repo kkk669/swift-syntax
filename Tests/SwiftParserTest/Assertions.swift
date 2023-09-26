@@ -695,7 +695,7 @@ extension ParserTestCase {
       for tokenIndex in 0..<Array(tree.tokens(viewMode: .all)).count {
         let flippedTokenTree = TokenPresenceFlipper(flipTokenAtIndex: tokenIndex).rewrite(Syntax(tree))
         _ = ParseDiagnosticsGenerator.diagnostics(for: flippedTokenTree)
-        assertRoundTrip(source: flippedTokenTree.syntaxTextBytes, parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
+        assertMutationRoundTrip(source: flippedTokenTree.syntaxTextBytes, parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
       }
       #endif
 
@@ -713,7 +713,7 @@ extension ParserTestCase {
       for index in 0..<mutations.count {
         let mutation = mutations[index]
         let alternateSource = MutatedTreePrinter.print(tree: Syntax(tree), mutations: [mutation.offset: mutation.replacement])
-        assertRoundTrip(source: alternateSource, parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
+        assertMutationRoundTrip(source: alternateSource, parse, experimentalFeatures: experimentalFeatures, file: file, line: line)
       }
       #endif
       #endif
