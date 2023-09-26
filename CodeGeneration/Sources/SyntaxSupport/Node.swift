@@ -98,13 +98,29 @@ public class Node {
   public func apiAttributes(forRaw: Bool = false) -> AttributeListSyntax {
     let attrList = AttributeListSyntax {
       if isExperimental {
-        "@_spi(ExperimentalLanguageFeatures)"
+        // SPI for enum cases currently requires Swift 5.8 to work correctly.
+        let experimentalSPI: AttributeListSyntax = """
+          #if compiler(>=5.8)
+          @_spi(ExperimentalLanguageFeatures)
+          #endif
+          """
+        experimentalSPI.with(\.trailingTrivia, .newline)
       }
       if forRaw {
         "@_spi(RawSyntax)"
       }
     }
     return attrList.with(\.trailingTrivia, attrList.isEmpty ? [] : .newline)
+  }
+
+  /// The documentation note to print for an experimental feature.
+  public var experimentalDocNote: SwiftSyntax.Trivia {
+    let comment = experimentalFeature.map {
+      """
+      - Experiment: Requires experimental feature `\($0.token)`.
+      """
+    }
+    return SwiftSyntax.Trivia.docCommentTrivia(from: comment)
   }
 
   /// Construct the specification for a layout syntax node.
@@ -218,6 +234,31 @@ public class Node {
     return .docCommentTrivia(
       from: """
         ### Contained in
+
+        \(list)
+        """
+    )
+  }
+
+  /// A doc comment that lists all the subtypes in which this node occurs as a base type in.
+  public var subtypes: SwiftSyntax.Trivia {
+    if kind == .unexpectedNodes {
+      return []
+    }
+
+    let list =
+      SYNTAX_NODES
+      .filter { $0.base == self.kind }
+      .map { "- ``\($0.kind.syntaxType)``" }
+      .joined(separator: "\n")
+
+    guard !list.isEmpty else {
+      return []
+    }
+
+    return .docCommentTrivia(
+      from: """
+        ### Subtypes
 
         \(list)
         """

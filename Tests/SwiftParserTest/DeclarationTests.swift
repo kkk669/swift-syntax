@@ -2015,7 +2015,7 @@ final class DeclarationTests: ParserTestCase {
     assertParse(
       """
       class A {
-        1️⃣^2️⃣
+        1️⃣^
       }
       class B {
       }
@@ -2028,23 +2028,8 @@ final class DeclarationTests: ParserTestCase {
               name: .identifier("A"),
               memberBlock: MemberBlockSyntax(
                 leftBrace: .leftBraceToken(),
-                members: MemberBlockItemListSyntax([
-                  MemberBlockItemSyntax(
-                    decl: DeclSyntax(
-                      FunctionDeclSyntax(
-                        funcKeyword: .keyword(.func, presence: .missing),
-                        name: .binaryOperator("^"),
-                        signature: FunctionSignatureSyntax(
-                          parameterClause: FunctionParameterClauseSyntax(
-                            leftParen: .leftParenToken(presence: .missing),
-                            parameters: FunctionParameterListSyntax([]),
-                            rightParen: .rightParenToken(presence: .missing)
-                          )
-                        )
-                      )
-                    )
-                  )
-                ]),
+                members: MemberBlockItemListSyntax(),
+                UnexpectedNodesSyntax([TokenSyntax.binaryOperator("^")]),
                 rightBrace: .rightBraceToken()
               )
             )
@@ -2057,7 +2042,7 @@ final class DeclarationTests: ParserTestCase {
               name: .identifier("B"),
               memberBlock: MemberBlockSyntax(
                 leftBrace: .leftBraceToken(),
-                members: MemberBlockItemListSyntax([]),
+                members: MemberBlockItemListSyntax(),
                 rightBrace: .rightBraceToken()
               )
             )
@@ -2066,16 +2051,8 @@ final class DeclarationTests: ParserTestCase {
       ]
       ),
       diagnostics: [
-        DiagnosticSpec(locationMarker: "1️⃣", message: "expected 'func' in function", fixIts: ["insert 'func'"]),
-        DiagnosticSpec(locationMarker: "2️⃣", message: "expected parameter clause in function signature", fixIts: ["insert parameter clause"]),
-      ],
-      fixedSource: """
-        class A {
-          func ^ ()
-        }
-        class B {
-        }
-        """
+        DiagnosticSpec(locationMarker: "1️⃣", message: "unexpected code '^' in class")
+      ]
     )
   }
 
@@ -2342,6 +2319,114 @@ final class DeclarationTests: ParserTestCase {
 
     assertParse(
       """
+      let _: any ~Copyable = 0
+      """,
+      substructure: SomeOrAnyTypeSyntax(
+        someOrAnySpecifier: .keyword(.any),
+        constraint: SuppressedTypeSyntax(
+          withoutTilde: .prefixOperator("~"),
+          type: TypeSyntax(stringLiteral: "Copyable")
+        )
+      )
+    )
+
+    assertParse(
+      """
+      typealias Z = ~Copyable.Type
+      """,
+      substructure: SuppressedTypeSyntax(
+        withoutTilde: .prefixOperator("~"),
+        type: MetatypeTypeSyntax(
+          baseType: TypeSyntax(stringLiteral: "Copyable"),
+          metatypeSpecifier: .keyword(.Type)
+        )
+      )
+    )
+
+    assertParse(
+      """
+      typealias Z = ~A.B.C
+      """,
+      substructure: SuppressedTypeSyntax(
+        withoutTilde: .prefixOperator("~"),
+        type: MemberTypeSyntax(
+          baseType: MemberTypeSyntax(
+            baseType: TypeSyntax(stringLiteral: "A"),
+            name: .identifier("B")
+          ),
+          name: .identifier("C")
+        )
+      )
+    )
+
+    assertParse(
+      """
+      typealias Z = ~A?
+      """,
+      substructure: SuppressedTypeSyntax(
+        withoutTilde: .prefixOperator("~"),
+        type: OptionalTypeSyntax(
+          wrappedType: IdentifierTypeSyntax(name: .identifier("A"))
+        )
+      )
+    )
+
+    assertParse(
+      """
+      typealias Z = ~A<T>
+      """,
+      substructure: SuppressedTypeSyntax(
+        withoutTilde: .prefixOperator("~"),
+        type: IdentifierTypeSyntax(
+          name: .identifier("A"),
+          genericArgumentClause: GenericArgumentClauseSyntax(
+            arguments: GenericArgumentListSyntax([
+              GenericArgumentSyntax(
+                argument:
+                  IdentifierTypeSyntax(name: .identifier("T"))
+              )
+            ])
+          )
+        )
+      )
+    )
+
+    assertParse(
+      """
+      struct Hello<T: ~Copyable> {}
+      """,
+      substructure: GenericParameterListSyntax([
+        GenericParameterSyntax(
+          attributes: AttributeListSyntax([]),
+          name: .identifier("T"),
+          colon: .colonToken(),
+          inheritedType: SuppressedTypeSyntax(
+            withoutTilde: .prefixOperator("~"),
+            type: TypeSyntax(stringLiteral: "Copyable")
+          )
+        )
+      ])
+    )
+
+    assertParse(
+      """
+      func henlo<T: ~Copyable>(_ t: T) {}
+      """,
+      substructure: GenericParameterListSyntax([
+        GenericParameterSyntax(
+          attributes: AttributeListSyntax([]),
+          name: .identifier("T"),
+          colon: .colonToken(),
+          inheritedType: SuppressedTypeSyntax(
+            withoutTilde: .prefixOperator("~"),
+            type: TypeSyntax(stringLiteral: "Copyable")
+          )
+        )
+      ])
+    )
+
+    assertParse(
+      """
       enum Whatever: Int, ~ Hashable, Equatable {}
       """,
       substructure: InheritanceClauseSyntax(
@@ -2365,7 +2450,7 @@ final class DeclarationTests: ParserTestCase {
 
     assertParse(
       """
-      typealias T = ~1️⃣Int 2️⃣-> Bool
+      typealias T = 1️⃣~Int 2️⃣-> Bool
       """,
       diagnostics: [
         DiagnosticSpec(
@@ -2380,20 +2465,24 @@ final class DeclarationTests: ParserTestCase {
         ),
       ],
       fixedSource: """
-        typealias T = ~(Int) -> Bool
+        typealias T = (~Int) -> Bool
         """
     )
 
     assertParse(
       """
-      typealias T = ~(Int) -> Bool
+      typealias T = (~Int) -> Bool
       """,
-      substructure: SuppressedTypeSyntax(
-        withoutTilde: .prefixOperator("~"),
-        type: FunctionTypeSyntax(
-          parameters: [TupleTypeElementSyntax(type: TypeSyntax("Int"))],
-          returnClause: ReturnClauseSyntax(type: TypeSyntax("Bool"))
-        )
+      substructure: FunctionTypeSyntax(
+        parameters: [
+          TupleTypeElementSyntax(
+            type: SuppressedTypeSyntax(
+              withoutTilde: .prefixOperator("~"),
+              type: IdentifierTypeSyntax(name: .identifier("Int"))
+            )
+          )
+        ],
+        returnClause: ReturnClauseSyntax(type: TypeSyntax("Bool"))
       )
     )
   }
