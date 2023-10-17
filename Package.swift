@@ -70,7 +70,6 @@ let package = Package(
   ],
   products: [
     .library(name: "SwiftBasicFormat", targets: ["SwiftBasicFormat"]),
-    .library(name: "SwiftCompilerPlugin", targets: ["SwiftCompilerPlugin"]),
     .library(name: "SwiftCompilerPluginMessageHandling", targets: ["SwiftCompilerPluginMessageHandling"]),
     .library(name: "SwiftDiagnostics", targets: ["SwiftDiagnostics"]),
     .library(name: "SwiftIDEUtils", targets: ["SwiftIDEUtils"]),
@@ -120,13 +119,6 @@ let package = Package(
     .testTarget(
       name: "SwiftBasicFormatTest",
       dependencies: ["_SwiftSyntaxTestSupport", "SwiftBasicFormat", "SwiftSyntaxBuilder"]
-    ),
-
-    // MARK: SwiftCompilerPlugin
-
-    .target(
-      name: "SwiftCompilerPlugin",
-      dependencies: ["SwiftCompilerPluginMessageHandling", "SwiftSyntaxMacros"]
     ),
 
     // MARK: SwiftCompilerPluginMessageHandling
