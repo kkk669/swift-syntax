@@ -129,11 +129,6 @@ let package = Package(
       dependencies: ["SwiftCompilerPluginMessageHandling", "SwiftSyntaxMacros"]
     ),
 
-    .testTarget(
-      name: "SwiftCompilerPluginTest",
-      dependencies: ["SwiftCompilerPlugin"]
-    ),
-
     // MARK: SwiftCompilerPluginMessageHandling
 
     .target(
