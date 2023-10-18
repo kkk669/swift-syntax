@@ -922,6 +922,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() async throws(MyError) {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() throws 1️⃣async2️⃣(MyError) {}",
       diagnostics: [
@@ -931,6 +932,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() async throws (MyError) {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() 1️⃣try2️⃣(MyError) async {}",
       diagnostics: [
@@ -940,6 +942,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() throws (MyError) async {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() 1️⃣try 2️⃣async3️⃣(MyError) {}",
       diagnostics: [
@@ -950,6 +953,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() async throws (MyError) {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() throws(MyError) 1️⃣await {}",
       diagnostics: [
@@ -958,6 +962,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() async throws(MyError) {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() throws 1️⃣await2️⃣(MyError) {}",
       diagnostics: [
@@ -967,6 +972,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() async throws (MyError) {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() 1️⃣try2️⃣(MyError) await {}",
       diagnostics: [
@@ -976,6 +982,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() throws (MyError) await {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() 1️⃣try await2️⃣(MyError) {}",
       diagnostics: [
@@ -985,6 +992,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() awaitthrows (MyError) {}",  // FIXME: spacing
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() async1️⃣(MyError) {}",
       diagnostics: [
@@ -992,6 +1000,7 @@ final class DeclarationTests: ParserTestCase {
       ],
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() 1️⃣await2️⃣(MyError) {}",
       diagnostics: [
@@ -1001,6 +1010,7 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() async (MyError) {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() 1️⃣try2️⃣(MyError) {}",
       diagnostics: [
@@ -1010,10 +1020,12 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: "func test() throws (MyError) {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() throws(MyError) {}",
       experimentalFeatures: [.typedThrows]
     )
+
     assertParse(
       "func test() throws(MyError)1️⃣async {}",  // no space between closing parenthesis and `async`
       diagnostics: [
@@ -2932,6 +2944,119 @@ final class DeclarationTests: ParserTestCase {
         DiagnosticSpec(locationMarker: "1️⃣", message: "editor placeholder in source file"),
         DiagnosticSpec(locationMarker: "2️⃣", message: "editor placeholder in source file"),
       ]
+    )
+  }
+
+  // https://github.com/apple/swift-syntax/issues/2273
+  func testEnumCaseWithGenericParameter() {
+    assertParse(
+      """
+      enum Foo {
+        case foo1️⃣<T>(T)
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "generic signature cannot be declared in enum 'case'"
+        )
+      ]
+    )
+
+    assertParse(
+      """
+      enum Foo {
+        case bar1️⃣<T>(param: T)
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "generic signature cannot be declared in enum 'case'"
+        )
+      ]
+    )
+
+    assertParse(
+      """
+      enum Foo {
+        case baz1️⃣<T>
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "generic signature cannot be declared in enum 'case'"
+        )
+      ]
+    )
+
+    assertParse(
+      """
+      enum Foo {
+        case one, two1️⃣<T>
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "generic signature cannot be declared in enum 'case'"
+        )
+      ]
+    )
+
+    assertParse(
+      """
+      enum Foo {
+        case three1️⃣<T>, four
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "generic signature cannot be declared in enum 'case'"
+        )
+      ]
+    )
+
+    assertParse(
+      """
+      enum Foo {
+        case five1️⃣<T>(param: T), six
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "generic signature cannot be declared in enum 'case'"
+        )
+      ]
+    )
+
+    assertParse(
+      """
+      enum Foo {
+        case seven1️⃣<T>, eight2️⃣<U>
+      }
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          locationMarker: "1️⃣",
+          message: "generic signature cannot be declared in enum 'case'"
+        ),
+        DiagnosticSpec(
+          locationMarker: "2️⃣",
+          message: "generic signature cannot be declared in enum 'case'"
+        ),
+      ]
+    )
+
+    assertParse(
+      """
+      enum Foo<T> {
+        case five(param: T), six
+      }
+      """
     )
   }
 }
