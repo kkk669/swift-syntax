@@ -240,6 +240,19 @@ final class DeclarationTests: ParserTestCase {
     )
   }
 
+  func testNonisolatedUnsafeParsing() {
+    assertParse(
+      """
+      nonisolated(unsafe) let a = 0
+
+      struct A {
+        nonisolated(unsafe) let b = 0
+        nonisolated(unsafe) var c: Int { 0 }
+      }
+      """
+    )
+  }
+
   func testProtocolParsing() {
     assertParse("protocol Foo {}")
 
@@ -3057,6 +3070,13 @@ final class DeclarationTests: ParserTestCase {
         case five(param: T), six
       }
       """
+    )
+  }
+
+  func testLiteralInitializerWithTrailingClosure() {
+    assertParse(
+      "let foo = 1 { return 1 }",
+      substructure: AccessorBlockSyntax(accessors: .getter([CodeBlockItemSyntax("return 1")]))
     )
   }
 }

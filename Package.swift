@@ -159,7 +159,7 @@ let package = Package(
 
     .target(
       name: "SwiftSyntax",
-      dependencies: ["SwiftSyntax509", "SwiftSyntax510"],
+      dependencies: ["SwiftSyntax509", "SwiftSyntax510", "SwiftSyntax511"],
       exclude: ["CMakeLists.txt"],
       swiftSettings: swiftSyntaxSwiftSettings
     ),
@@ -179,6 +179,11 @@ let package = Package(
 
     .target(
       name: "SwiftSyntax510",
+      dependencies: []
+    ),
+
+    .target(
+      name: "SwiftSyntax511",
       dependencies: []
     ),
 
