@@ -99,7 +99,7 @@ let package = Package(
     .target(
       name: "WASIHelpers"
     ),
- 
+
     // MARK: - Library targets
     // Formatting style:
     //  - One section for each target and its test target
