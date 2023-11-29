@@ -18,5 +18,5 @@ jobs:
           echo "$HOME/.wasmtime/bin" >> $GITHUB_PATH
       - run: swift --version
       - run: wasmtime -V
-      - run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
+      - run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288 --static-swift-stdlib
       - run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
