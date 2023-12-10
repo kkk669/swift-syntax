@@ -18,7 +18,7 @@ extension DeclarationModifier {
     case .__consuming, .__setter_access, ._const, ._local, .async,
       .borrowing, .class, .consuming, .convenience, .distributed, .dynamic,
       .final, .indirect, .infix, .isolated, .lazy, .mutating, .nonmutating,
-      .optional, .override, .postfix, .prefix, .reasync, ._resultDependsOnSelf, .required,
+      .optional, .override, .postfix, .prefix, .reasync, ._resultDependsOn, ._resultDependsOnSelf, .required,
       .rethrows, .static, .weak:
       return false
     case .fileprivate, .internal, .nonisolated, .package, .open, .private,
@@ -579,14 +579,16 @@ extension Parser {
             var hasArguments: Bool {
               switch layoutSpecifier {
               case ._Trivial,
-                ._TrivialAtMost:
+                ._TrivialAtMost,
+                ._TrivialStride:
                 return true
 
               case ._UnknownLayout,
                 ._RefCountedObject,
                 ._NativeRefCountedObject,
                 ._Class,
-                ._NativeClass:
+                ._NativeClass,
+                ._BridgeObject:
                 return false
               }
             }

@@ -75,6 +75,11 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
     return tokenKind.text
   }
 
+  @_spi(RawSyntax)
+  public var rawText: SyntaxText {
+    return tokenView.rawText
+  }
+
   /// The leading trivia (spaces, newlines, etc.) associated with this token.
   public var leadingTrivia: Trivia {
     get {
@@ -108,6 +113,11 @@ public struct TokenSyntax: SyntaxProtocol, SyntaxHashable {
       let newRaw = tokenView.withKind(newValue, arena: arena)
       self = Syntax(self).replacingSelf(newRaw, rawNodeArena: arena, allocationArena: arena).cast(TokenSyntax.self)
     }
+  }
+
+  @_spi(RawSyntax)
+  public var rawTokenKind: RawTokenKind {
+    return tokenView.rawKind
   }
 
   /// The length this node takes up spelled out in the source, excluding its

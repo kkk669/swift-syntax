@@ -1,3 +1,15 @@
+//===----------------------------------------------------------------------===//
+//
+// This source file is part of the Swift.org open source project
+//
+// Copyright (c) 2014 - 2023 Apple Inc. and the Swift project authors
+// Licensed under Apache License v2.0 with Runtime Library Exception
+//
+// See https://swift.org/LICENSE.txt for license information
+// See https://swift.org/CONTRIBUTORS.txt for the list of Swift project authors
+//
+//===----------------------------------------------------------------------===//
+
 import SwiftSyntax
 
 extension FunctionParameterSyntax {
@@ -9,7 +21,8 @@ extension FunctionParameterSyntax {
   ///
   /// The parameter names for these three parameters are `a`, `b`, and `see`,
   /// respectively.
-  var parameterName: TokenSyntax? {
+  @_spi(Testing)
+  public var parameterName: TokenSyntax? {
     // If there were two names, the second is the parameter name.
     if let secondName {
       if secondName.text == "_" {

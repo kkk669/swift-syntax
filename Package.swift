@@ -146,7 +146,7 @@ let package = Package(
 
     .target(
       name: "SwiftIDEUtils",
-      dependencies: ["SwiftSyntax"],
+      dependencies: ["SwiftSyntax", "SwiftParser"],
       exclude: ["CMakeLists.txt"]
     ),
 
@@ -231,6 +231,11 @@ let package = Package(
     .target(
       name: "SwiftSyntaxMacrosTestSupport",
       dependencies: ["_SwiftSyntaxTestSupport", "SwiftDiagnostics", "SwiftParser", "SwiftSyntaxMacros", "SwiftSyntaxMacroExpansion"]
+    ),
+
+    .testTarget(
+      name: "SwiftSyntaxMacrosTestSupportTests",
+      dependencies: ["SwiftDiagnostics", "SwiftSyntax", "SwiftSyntaxMacros", "SwiftSyntaxMacrosTestSupport"]
     ),
 
     // MARK: SwiftParser

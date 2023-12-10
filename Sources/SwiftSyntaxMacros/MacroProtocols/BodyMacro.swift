@@ -10,16 +10,18 @@
 
 import SwiftSyntax
 
-public protocol PeerMacro: AttachedMacro {
+/// Describes a macro that can create the body for a function that does not
+/// have one.
+@_spi(ExperimentalLanguageFeature)
+public protocol BodyMacro: AttachedMacro {
   /// Expand a macro described by the given custom attribute and
   /// attached to the given declaration and evaluated within a
   /// particular expansion context.
   ///
-  /// The macro expansion can introduce "peer" declarations that sit alongside
-  /// the given declaration.
+  /// The macro expansion can introduce a body for the given function.
   static func expansion(
     of node: AttributeSyntax,
-    providingPeersOf declaration: some DeclSyntaxProtocol,
+    providingBodyFor declaration: some DeclSyntaxProtocol & WithOptionalCodeBlockSyntax,
     in context: some MacroExpansionContext
-  ) throws -> [DeclSyntax]
+  ) throws -> [CodeBlockItemSyntax]
 }

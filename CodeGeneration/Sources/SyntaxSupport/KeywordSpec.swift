@@ -82,6 +82,7 @@ public enum Keyword: CaseIterable {
   case _backDeploy
   case _borrow
   case _borrowing
+  case _BridgeObject
   case _cdecl
   case _Class
   case _compilerInitialized
@@ -119,6 +120,7 @@ public enum Keyword: CaseIterable {
   case _swift_native_objc_runtime_base
   case _Trivial
   case _TrivialAtMost
+  case _TrivialStride
   case _typeEraser
   case _unavailableFromAsync
   case _underlyingVersion
@@ -239,6 +241,7 @@ public enum Keyword: CaseIterable {
   case renamed
   case `repeat`
   case required
+  case _resultDependsOn
   case _resultDependsOnSelf
   case `rethrows`
   case retroactive
@@ -301,6 +304,8 @@ public enum Keyword: CaseIterable {
       return KeywordSpec("_backDeploy")
     case ._borrow:
       return KeywordSpec("_borrow")
+    case ._BridgeObject:
+      return KeywordSpec("_BridgeObject")
     case ._cdecl:
       return KeywordSpec("_cdecl")
     case ._Class:
@@ -371,6 +376,8 @@ public enum Keyword: CaseIterable {
       return KeywordSpec("_Trivial")
     case ._TrivialAtMost:
       return KeywordSpec("_TrivialAtMost")
+    case ._TrivialStride:
+      return KeywordSpec("_TrivialStride")
     case ._typeEraser:
       return KeywordSpec("_typeEraser")
     case ._unavailableFromAsync:
@@ -611,6 +618,8 @@ public enum Keyword: CaseIterable {
       return KeywordSpec("repeat", isLexerClassified: true)
     case .required:
       return KeywordSpec("required")
+    case ._resultDependsOn:
+      return KeywordSpec("_resultDependsOn", experimentalFeature: .nonEscapableTypes)
     case ._resultDependsOnSelf:
       return KeywordSpec("_resultDependsOnSelf", experimentalFeature: .nonEscapableTypes)
     case .rethrows:

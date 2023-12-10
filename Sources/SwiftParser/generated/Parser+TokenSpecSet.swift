@@ -183,6 +183,8 @@ extension AttributedTypeSyntax {
     case _const
     case borrowing
     case consuming
+    @_spi(ExperimentalLanguageFeatures)
+    case _resultDependsOn
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
@@ -200,6 +202,8 @@ extension AttributedTypeSyntax {
         self = .borrowing
       case TokenSpec(.consuming):
         self = .consuming
+      case TokenSpec(._resultDependsOn) where experimentalFeatures.contains(.nonEscapableTypes):
+        self = ._resultDependsOn
       default:
         return nil
       }
@@ -221,6 +225,8 @@ extension AttributedTypeSyntax {
         return .keyword(.borrowing)
       case .consuming:
         return .keyword(.consuming)
+      case ._resultDependsOn:
+        return .keyword(._resultDependsOn)
       }
     }
     
@@ -244,6 +250,8 @@ extension AttributedTypeSyntax {
         return .keyword(.borrowing)
       case .consuming:
         return .keyword(.consuming)
+      case ._resultDependsOn:
+        return .keyword(._resultDependsOn)
       }
     }
   }
@@ -1392,47 +1400,6 @@ extension FunctionEffectSpecifiersSyntax {
   }
 }
 
-extension FunctionEffectSpecifiersSyntax {
-  @_spi(Diagnostics)
-  public enum ThrowsSpecifierOptions: TokenSpecSet {
-    case `throws`
-    case `rethrows`
-    
-    init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
-      switch PrepareForKeywordMatch(lexeme) {
-      case TokenSpec(.throws):
-        self = .throws
-      case TokenSpec(.rethrows):
-        self = .rethrows
-      default:
-        return nil
-      }
-    }
-    
-    var spec: TokenSpec {
-      switch self {
-      case .throws:
-        return .keyword(.throws)
-      case .rethrows:
-        return .keyword(.rethrows)
-      }
-    }
-    
-    /// Returns a token that satisfies the `TokenSpec` of this case.
-    ///
-    /// If the token kind of this spec has variable text, e.g. for an identifier, this returns a token with empty text.
-    @_spi(Diagnostics)
-    public var tokenSyntax: TokenSyntax {
-      switch self {
-      case .throws:
-        return .keyword(.throws)
-      case .rethrows:
-        return .keyword(.rethrows)
-      }
-    }
-  }
-}
-
 extension FunctionParameterSyntax {
   @_spi(Diagnostics)
   public enum FirstNameOptions: TokenSpecSet {
@@ -2020,6 +1987,8 @@ extension LayoutRequirementSyntax {
     case _NativeRefCountedObject
     case _Class
     case _NativeClass
+    case _BridgeObject
+    case _TrivialStride
     
     init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
       switch PrepareForKeywordMatch(lexeme) {
@@ -2037,6 +2006,10 @@ extension LayoutRequirementSyntax {
         self = ._Class
       case TokenSpec(._NativeClass):
         self = ._NativeClass
+      case TokenSpec(._BridgeObject):
+        self = ._BridgeObject
+      case TokenSpec(._TrivialStride):
+        self = ._TrivialStride
       default:
         return nil
       }
@@ -2058,6 +2031,10 @@ extension LayoutRequirementSyntax {
         return .keyword(._Class)
       case ._NativeClass:
         return .keyword(._NativeClass)
+      case ._BridgeObject:
+        return .keyword(._BridgeObject)
+      case ._TrivialStride:
+        return .keyword(._TrivialStride)
       }
     }
     
@@ -2081,6 +2058,10 @@ extension LayoutRequirementSyntax {
         return .keyword(._Class)
       case ._NativeClass:
         return .keyword(._NativeClass)
+      case ._BridgeObject:
+        return .keyword(._BridgeObject)
+      case ._TrivialStride:
+        return .keyword(._TrivialStride)
       }
     }
   }
@@ -2769,6 +2750,47 @@ extension StringLiteralExprSyntax {
         return .multilineStringQuoteToken()
       case .singleQuote:
         return .singleQuoteToken()
+      }
+    }
+  }
+}
+
+extension ThrowsClauseSyntax {
+  @_spi(Diagnostics)
+  public enum ThrowsSpecifierOptions: TokenSpecSet {
+    case `throws`
+    case `rethrows`
+    
+    init?(lexeme: Lexer.Lexeme, experimentalFeatures: Parser.ExperimentalFeatures) {
+      switch PrepareForKeywordMatch(lexeme) {
+      case TokenSpec(.throws):
+        self = .throws
+      case TokenSpec(.rethrows):
+        self = .rethrows
+      default:
+        return nil
+      }
+    }
+    
+    var spec: TokenSpec {
+      switch self {
+      case .throws:
+        return .keyword(.throws)
+      case .rethrows:
+        return .keyword(.rethrows)
+      }
+    }
+    
+    /// Returns a token that satisfies the `TokenSpec` of this case.
+    ///
+    /// If the token kind of this spec has variable text, e.g. for an identifier, this returns a token with empty text.
+    @_spi(Diagnostics)
+    public var tokenSyntax: TokenSyntax {
+      switch self {
+      case .throws:
+        return .keyword(.throws)
+      case .rethrows:
+        return .keyword(.rethrows)
       }
     }
   }
