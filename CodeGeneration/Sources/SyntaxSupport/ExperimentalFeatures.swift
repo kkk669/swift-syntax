@@ -15,10 +15,9 @@ import SwiftSyntax
 public enum ExperimentalFeature: String, CaseIterable {
   case referenceBindings
   case thenStatements
-  case typedThrows
   case doExpressions
-  case nonEscapableTypes
-  case globalConcurrency
+  case nonescapableTypes
+  case transferringArgsAndResults
 
   /// The name of the feature, which is used in the doc comment.
   public var featureName: String {
@@ -27,14 +26,12 @@ public enum ExperimentalFeature: String, CaseIterable {
       return "reference bindings"
     case .thenStatements:
       return "'then' statements"
-    case .typedThrows:
-      return "typed throws"
     case .doExpressions:
       return "'do' expressions"
-    case .nonEscapableTypes:
+    case .nonescapableTypes:
       return "NonEscableTypes"
-    case .globalConcurrency:
-      return "strict concurrency for globals"
+    case .transferringArgsAndResults:
+      return "TransferringArgsAndResults"
     }
   }
 
