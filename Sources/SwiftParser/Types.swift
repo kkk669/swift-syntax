@@ -380,7 +380,6 @@ extension Parser {
   /// Parse a type placeholder.
   mutating func parsePlaceholderType() -> RawIdentifierTypeSyntax {
     let (unexpectedBeforeName, name) = self.expect(.wildcard)
-    // FIXME: Need a better syntax node than this
     return RawIdentifierTypeSyntax(
       unexpectedBeforeName,
       name: name,
@@ -924,7 +923,7 @@ extension Parser {
   mutating func parseTypeAttribute() -> RawAttributeListSyntax.Element {
     switch peek(isAtAnyIn: TypeAttribute.self) {
     case ._local, ._noMetadata, .async, .escaping, .noDerivative, .noescape,
-      .retroactive, .Sendable, .unchecked, .autoclosure:
+      .preconcurrency, .retroactive, .Sendable, .unchecked, .autoclosure:
       // Known type attribute that doesn't take any arguments
       return parseAttributeWithoutArguments()
     case .differentiable:
