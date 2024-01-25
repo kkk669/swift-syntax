@@ -12,7 +12,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-public enum Keyword: UInt8, Hashable {
+public enum Keyword: UInt8, Hashable, Sendable {
   case __consuming
   case __owned
   case __setter_access
@@ -212,6 +212,8 @@ public enum Keyword: UInt8, Hashable {
   case then
   case `throw`
   case `throws`
+  @_spi(ExperimentalLanguageFeatures)
+  case transferring
   case transpose
   case `true`
   case `try`
@@ -647,6 +649,8 @@ public enum Keyword: UInt8, Hashable {
         self = .backDeployed
       case "noDerivative":
         self = .noDerivative
+      case "transferring":
+        self = .transferring
       default:
         return nil
       }
@@ -988,6 +992,7 @@ public enum Keyword: UInt8, Hashable {
       "then", 
       "throw", 
       "throws", 
+      "transferring", 
       "transpose", 
       "true", 
       "try", 

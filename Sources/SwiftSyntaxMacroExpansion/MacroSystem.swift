@@ -319,12 +319,11 @@ private func expandExtensionMacro(
   in context: some MacroExpansionContext,
   indentationWidth: Trivia
 ) throws -> CodeBlockItemListSyntax? {
-  let extendedType: TypeSyntax
-  if let identified = attachedTo.asProtocol(NamedDeclSyntax.self) {
-    extendedType = "\(identified.name.trimmed)"
-  } else if let ext = attachedTo.as(ExtensionDeclSyntax.self) {
-    extendedType = "\(ext.extendedType.trimmed)"
-  } else {
+  guard attachedTo.isProtocol(DeclGroupSyntax.self) else {
+    return nil
+  }
+
+  guard let extendedType = attachedTo.syntacticQualifiedTypeContext else {
     return nil
   }
 
@@ -762,10 +761,8 @@ private class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
     return CodeBlockItemListSyntax(newItems)
   }
 
-  override func visit(_ node: MemberBlockItemListSyntax) -> MemberBlockItemListSyntax {
+  override func visit(_ node: MemberBlockSyntax) -> MemberBlockSyntax {
     let parentDeclGroup = node
-      .parent?
-      .as(MemberBlockSyntax.self)?
       .parent?
       .as(DeclSyntax.self)
     var newItems: [MemberBlockItemSyntax] = []
@@ -792,7 +789,7 @@ private class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
       extensions += expandExtensions(of: node.decl)
     }
 
-    for var item in node {
+    for var item in node.members {
       // Expand member attribute members attached to the declaration context.
       // Note that MemberAttribute macros are _not_ applied to generated members
       if let parentDeclGroup, let decl = item.decl.asProtocol(WithAttributesSyntax.self) {
@@ -825,7 +822,29 @@ private class MacroApplication<Context: MacroExpansionContext>: SyntaxRewriter {
       }
     }
 
-    return .init(newItems)
+    /// Returns an leading trivia for the member blocks closing brace.
+    /// It will add a leading newline, if there is none.
+    var leadingTriviaForClosingBrace: Trivia {
+      if newItems.isEmpty {
+        return node.rightBrace.leadingTrivia
+      }
+
+      if node.rightBrace.leadingTrivia.contains(where: { $0.isNewline }) {
+        return node.rightBrace.leadingTrivia
+      }
+
+      if newItems.last?.trailingTrivia.pieces.last?.isNewline ?? false {
+        return node.rightBrace.leadingTrivia
+      } else {
+        return .newline + node.rightBrace.leadingTrivia
+      }
+    }
+
+    return MemberBlockSyntax(
+      leftBrace: node.leftBrace,
+      members: MemberBlockItemListSyntax(newItems),
+      rightBrace: node.rightBrace.with(\.leadingTrivia, leadingTriviaForClosingBrace)
+    )
   }
 
   override func visit(_ node: VariableDeclSyntax) -> DeclSyntax {
@@ -1297,5 +1316,27 @@ private extension AttributeSyntax {
 private extension AccessorDeclSyntax {
   var isGetOrSet: Bool {
     return accessorSpecifier.tokenKind == .keyword(.get) || accessorSpecifier.tokenKind == .keyword(.set)
+  }
+}
+
+private extension SyntaxProtocol {
+  /// Retrieve the qualified type for the nearest extension or name decl.
+  ///
+  /// For example, for `struct Foo { struct Bar {} }`, calling this on the
+  /// inner struct (`Bar`) will return `Foo.Bar`.
+  var syntacticQualifiedTypeContext: TypeSyntax? {
+    if let ext = self.as(ExtensionDeclSyntax.self) {
+      // Don't handle nested 'extension' cases - they are invalid anyway.
+      return ext.extendedType.trimmed
+    }
+
+    let base = self.parent?.syntacticQualifiedTypeContext
+    if let named = self.asProtocol(NamedDeclSyntax.self) {
+      if let base = base {
+        return TypeSyntax(MemberTypeSyntax(baseType: base, name: named.name.trimmed))
+      }
+      return TypeSyntax(IdentifierTypeSyntax(name: named.name.trimmed))
+    }
+    return base
   }
 }
