@@ -46,7 +46,7 @@
 /// reference its contents, we know that the buffer's contents won't get
 /// deallocated while being accessed and thus we can add an unchecked `Sendable`
 /// conformance.
-@_spi(RawSyntax) public struct SyntaxArenaAllocatedBufferPointer<Element: Sendable>: Collection, @unchecked Sendable {
+@_spi(RawSyntax) public struct SyntaxArenaAllocatedBufferPointer<Element: Sendable>: RandomAccessCollection, @unchecked Sendable {
   private let buffer: UnsafeBufferPointer<Element>
 
   /// Create an empty buffer with no elements.
@@ -82,6 +82,18 @@
 
   public func index(after i: Int) -> Int {
     return buffer.index(after: i)
+  }
+
+  public func index(before i: Int) -> Int {
+    return buffer.index(before: i)
+  }
+
+  public var count: Int {
+    return buffer.count
+  }
+
+  public var isEmpty: Bool {
+    return buffer.isEmpty
   }
 
   var baseAddress: UnsafePointer<Element>? {

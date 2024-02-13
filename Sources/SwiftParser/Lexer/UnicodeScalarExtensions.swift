@@ -97,21 +97,8 @@ extension Unicode.Scalar {
     // ASCII operator chars.
     if self.value < 0x80 {
       switch UInt8(self.value) {
-      case UInt8(ascii: "/"),
-        UInt8(ascii: "="),
-        UInt8(ascii: "-"),
-        UInt8(ascii: "+"),
-        UInt8(ascii: "*"),
-        UInt8(ascii: "%"),
-        UInt8(ascii: "<"),
-        UInt8(ascii: ">"),
-        UInt8(ascii: "!"),
-        UInt8(ascii: "&"),
-        UInt8(ascii: "|"),
-        UInt8(ascii: "^"),
-        UInt8(ascii: "~"),
-        UInt8(ascii: "."),
-        UInt8(ascii: "?"):
+      case "/", "=", "-", "+", "*", "%", "<",
+        ">", "!", "&", "|", "^", "~", ".", "?":
         return true
       default:
         return false
@@ -212,11 +199,6 @@ extension Unicode.Scalar {
       _ = advance()
     }
 
-    // UTF-16 surrogate pair values are not valid code points.
-    if (charValue >= 0xD800 && charValue <= 0xDFFF) {
-      return nil
-    }
-
     // If we got here, we read the appropriate number of accumulated bytes.
     // Verify that the encoding was actually minimal.
     // Number of bits in the value, ignoring leading zeros.
@@ -257,5 +239,42 @@ extension UInt8 {
     // RFC 2279: The octet values FE and FF never appear.
     // RFC 3629: The octet values C0, C1, F5 to FF never appear.
     return self < 0x80 || (self >= 0xC2 && self < 0xF5)
+  }
+}
+
+/// Allows direct comparisons between UInt8 and double quoted literals.
+extension UInt8 {
+  /// Equality operator
+  @_transparent
+  static func == (i: Self, s: Unicode.Scalar) -> Bool {
+    return i == UInt8(ascii: s)
+  }
+  /// Inequality operator
+  @_transparent
+  static func != (i: Self, s: Unicode.Scalar) -> Bool {
+    return i != UInt8(ascii: s)
+  }
+  /// Used in switch statements
+  @_transparent
+  static func ~= (s: Unicode.Scalar, i: Self) -> Bool {
+    return i == UInt8(ascii: s)
+  }
+}
+
+extension UInt8? {
+  /// Equality operator
+  @_transparent
+  static func == (i: Self, s: Unicode.Scalar) -> Bool {
+    return i == UInt8(ascii: s)
+  }
+  /// Inequality operator
+  @_transparent
+  static func != (i: Self, s: Unicode.Scalar) -> Bool {
+    return i != UInt8(ascii: s)
+  }
+  /// Used in switch statements
+  @_transparent
+  static func ~= (s: Unicode.Scalar, i: Self) -> Bool {
+    return i == UInt8(ascii: s)
   }
 }

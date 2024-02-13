@@ -23,7 +23,8 @@ public enum HostToPluginMessage: Codable {
     macro: PluginMessage.MacroReference,
     macroRole: PluginMessage.MacroRole? = nil,
     discriminator: String,
-    syntax: PluginMessage.Syntax
+    syntax: PluginMessage.Syntax,
+    lexicalContext: [PluginMessage.Syntax]? = nil
   )
 
   /// Expand an '@attached' macro.
@@ -35,7 +36,8 @@ public enum HostToPluginMessage: Codable {
     declSyntax: PluginMessage.Syntax,
     parentDeclSyntax: PluginMessage.Syntax?,
     extendedTypeSyntax: PluginMessage.Syntax?,
-    conformanceListSyntax: PluginMessage.Syntax?
+    conformanceListSyntax: PluginMessage.Syntax?,
+    lexicalContext: [PluginMessage.Syntax]? = nil
   )
 
   /// Optionally implemented message to load a dynamic link library.
@@ -100,7 +102,7 @@ public enum PluginMessage {
     }
   }
 
-  public struct MacroReference: Codable {
+  public struct MacroReference: Codable, Sendable {
     public var moduleName: String
     public var typeName: String
 
@@ -114,7 +116,7 @@ public enum PluginMessage {
     }
   }
 
-  public enum MacroRole: String, Codable {
+  public enum MacroRole: String, Codable, Sendable {
     case expression
     case declaration
     case accessor
