@@ -17,7 +17,6 @@ import SwiftParser
 import SwiftParserDiagnostics
 import SwiftSyntax
 #if os(WASI)
-import WASIHelpers
 import WASILibc
 #endif
 import XCTest
