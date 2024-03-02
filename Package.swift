@@ -94,7 +94,7 @@ let package = Package(
 
     .target(
       name: "SwiftIDEUtils",
-      dependencies: ["SwiftSyntax", "SwiftParser"],
+      dependencies: ["SwiftSyntax", "SwiftDiagnostics", "SwiftParser"],
       exclude: ["CMakeLists.txt"]
     ),
 
@@ -107,7 +107,7 @@ let package = Package(
 
     .target(
       name: "SwiftSyntax",
-      dependencies: ["_AtomicBool", "SwiftSyntax509", "SwiftSyntax510", "SwiftSyntax511"],
+      dependencies: ["_AtomicBool", "SwiftSyntax509", "SwiftSyntax510", "SwiftSyntax600"],
       exclude: ["CMakeLists.txt"],
       swiftSettings: swiftSyntaxSwiftSettings
     ),
@@ -131,7 +131,7 @@ let package = Package(
     ),
 
     .target(
-      name: "SwiftSyntax511",
+      name: "SwiftSyntax600",
       dependencies: []
     ),
 
@@ -178,7 +178,7 @@ let package = Package(
 
     .target(
       name: "SwiftSyntaxMacrosTestSupport",
-      dependencies: ["_SwiftSyntaxTestSupport", "SwiftDiagnostics", "SwiftParser", "SwiftSyntaxMacros", "SwiftSyntaxMacroExpansion"]
+      dependencies: ["_SwiftSyntaxTestSupport", "SwiftDiagnostics", "SwiftIDEUtils", "SwiftParser", "SwiftSyntaxMacros", "SwiftSyntaxMacroExpansion"]
     ),
 
     .testTarget(
@@ -198,7 +198,7 @@ let package = Package(
 
     .testTarget(
       name: "SwiftParserTest",
-      dependencies: ["_SwiftSyntaxTestSupport", "SwiftDiagnostics", "SwiftOperators", "SwiftParser", "SwiftSyntaxBuilder",
+      dependencies: ["_SwiftSyntaxTestSupport", "SwiftDiagnostics", "SwiftIDEUtils", "SwiftOperators", "SwiftParser", "SwiftSyntaxBuilder",
                      .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))],
       swiftSettings: swiftParserSwiftSettings
     ),
