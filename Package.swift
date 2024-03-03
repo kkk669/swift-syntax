@@ -44,10 +44,6 @@ let package = Package(
       dependencies: ["_SwiftSyntaxTestSupport", "SwiftParser"]
     ),
 
-    .target(
-      name: "WASIHelpers"
-    ),
-
     // MARK: - Library targets
     // Formatting style:
     //  - One section for each target and its test target
@@ -198,8 +194,7 @@ let package = Package(
 
     .testTarget(
       name: "SwiftParserTest",
-      dependencies: ["_SwiftSyntaxTestSupport", "SwiftDiagnostics", "SwiftIDEUtils", "SwiftOperators", "SwiftParser", "SwiftSyntaxBuilder",
-                     .target(name: "WASIHelpers", condition: .when(platforms: [.wasi]))],
+      dependencies: ["_SwiftSyntaxTestSupport", "SwiftDiagnostics", "SwiftIDEUtils", "SwiftOperators", "SwiftParser", "SwiftSyntaxBuilder"],
       swiftSettings: swiftParserSwiftSettings
     ),
 

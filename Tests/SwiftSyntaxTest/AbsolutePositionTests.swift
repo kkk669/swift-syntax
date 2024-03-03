@@ -11,9 +11,6 @@
 //===----------------------------------------------------------------------===//
 
 import SwiftSyntax
-#if os(WASI)
-import WASIHelpers
-#endif
 import XCTest
 import _SwiftSyntaxTestSupport
 
