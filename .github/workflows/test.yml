@@ -7,16 +7,17 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    container: swiftlang/swift:nightly-main-jammy@sha256:8d3f1a3ad302b2167ca3d3c52fb3a154ab772aa54fb65bc04682f6de5723d0e3
     steps:
       - uses: actions/checkout@v3
-      - uses: swiftwasm/setup-swiftwasm@v1
-        with:
-          swift-version: "wasm-DEVELOPMENT-SNAPSHOT-2024-02-26-a"
+      - run: apt-get update && apt-get install --no-install-recommends -y curl
       - name: Install wasmtime
         run: |
+          touch ~/.bashrc
           curl https://wasmtime.dev/install.sh -sSf | bash
           echo "$HOME/.wasmtime/bin" >> $GITHUB_PATH
       - run: swift --version
       - run: wasmtime -V
-      - run: swift build -c release --build-tests --triple wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
+      - run: swift experimental-sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-01-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-01-a-ubuntu22.04_x86_64.artifactbundle.zip
+      - run: swift build -c release --build-tests --experimental-swift-sdk wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
       - run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
