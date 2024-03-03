@@ -35,6 +35,10 @@ let package = Package(
     ),
 
     .target(
+      name: "_InstructionCounter"
+    ),
+
+    .target(
       name: "_SwiftSyntaxTestSupport",
       dependencies: ["SwiftBasicFormat", "SwiftSyntax", "SwiftSyntaxBuilder", "SwiftSyntaxMacroExpansion"]
     ),
@@ -245,7 +249,7 @@ let package = Package(
 
     .testTarget(
       name: "PerformanceTest",
-      dependencies: ["_SwiftSyntaxTestSupport", "SwiftIDEUtils", "SwiftParser", "SwiftSyntax"],
+      dependencies: ["_InstructionCounter", "_SwiftSyntaxTestSupport", "SwiftIDEUtils", "SwiftParser", "SwiftSyntax"],
       exclude: ["Inputs"]
     ),
   ]
