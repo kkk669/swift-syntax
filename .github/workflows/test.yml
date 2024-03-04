@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     container: swiftlang/swift:nightly-main-jammy@sha256:20683d5bf5331c8a77a77c859e9bde0bea312b1ffc34c817fe76cd1aea9ec3ff
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - run: apt-get update && apt-get install --no-install-recommends -y curl
       - name: Install wasmtime
         run: |
