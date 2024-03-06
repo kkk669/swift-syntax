@@ -19,6 +19,6 @@ jobs:
       - run: swift --version
       - run: wasmtime -V
       - run: swift experimental-sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-06-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-06-a-ubuntu22.04_x86_64.artifactbundle.zip
-      - run: swift build --build-tests --experimental-swift-sdk wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
+      - run: swift build --build-tests --experimental-swift-sdk wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=131072
       - run: wasm-opt -O -all .build/debug/swift-syntaxPackageTests.wasm -o test.wasm
       - run: wasmtime --dir=/ test.wasm
