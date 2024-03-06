@@ -11,9 +11,7 @@
 //===----------------------------------------------------------------------===//
 
 import XCTest
-#if !os(WASI)
 import _InstructionCounter
-#endif
 
 fileprivate var baselineURL: URL {
   if let baselineFile = ProcessInfo.processInfo.environment["BASELINE_FILE"] {
@@ -26,15 +24,11 @@ fileprivate var baselineURL: URL {
 }
 
 func measureInstructions(_ baselineName: StaticString = #function, block: () -> Void, file: StaticString = #file, line: UInt = #line) throws {
-  #if !os(WASI)
   let startInstructions = getInstructionsExecuted()
-  #endif
   block()
-  #if !os(WASI)
   let endInstructions = getInstructionsExecuted()
   let numberOfInstructions = endInstructions - startInstructions
   let strippedBaselineName = "\(baselineName)".replacingOccurrences(of: "()", with: "")
-  #endif
 
   // Performance testing is only supported on macOS.
   // On all other platforms `getInstructionsExecuted` returns 0.

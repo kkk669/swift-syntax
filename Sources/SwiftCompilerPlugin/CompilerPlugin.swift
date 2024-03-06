@@ -101,7 +101,6 @@ struct MacroProviderAdapter<Plugin: CompilerPlugin>: PluginProvider {
   }
 }
 
-#if !os(WASI)
 extension CompilerPlugin {
 
   /// Main entry point of the plugin — sets up a communication channel with
@@ -176,7 +175,6 @@ extension CompilerPlugin {
     return String(describing: errno)
   }
 }
-#endif
 
 internal struct PluginHostConnection: MessageConnection {
   fileprivate let inputStream: FileHandle
