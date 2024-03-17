@@ -686,7 +686,7 @@ extension ParserTestCase {
       for tokenIndex in 0..<Array(tree.tokens(viewMode: .all)).count {
         let flippedTokenTree = TokenPresenceFlipper(flipTokenAtIndex: tokenIndex).rewrite(Syntax(tree))
         _ = ParseDiagnosticsGenerator.diagnostics(for: flippedTokenTree)
-        assertMutationRoundTrip(
+        Self.assertMutationRoundTrip(
           source: flippedTokenTree.syntaxTextBytes,
           parse,
           swiftVersion: swiftVersion,

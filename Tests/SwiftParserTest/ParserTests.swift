@@ -92,7 +92,7 @@ class ParserTests: ParserTestCase {
 #else
     for fileURL in fileURLs where !shouldExclude(fileURL) {
       do {
-        try runParseTest(fileURL: fileURL, checkDiagnostics: checkDiagnostics)
+        try Self.runParseTest(fileURL: fileURL, checkDiagnostics: checkDiagnostics)
       } catch {
         XCTFail("\(name): \(fileURL) failed due to \(error)")
       }
