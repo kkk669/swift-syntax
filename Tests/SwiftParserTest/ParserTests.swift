@@ -22,9 +22,9 @@ import WASILibc
 import XCTest
 import _SwiftSyntaxTestSupport
 
-public class ParserTests: ParserTestCase {
+class ParserTests: ParserTestCase {
   /// Run a single parse test.
-  func runParseTest(fileURL: URL, checkDiagnostics: Bool) throws {
+  static func runParseTest(fileURL: URL, checkDiagnostics: Bool) throws {
     let fileContents = try Data(contentsOf: fileURL)
     let parsed = fileContents.withUnsafeBytes({ buffer in
       // Release builds are fine with the default maximum nesting level of 256.
@@ -64,7 +64,7 @@ public class ParserTests: ParserTestCase {
     name: String,
     path: URL,
     checkDiagnostics: Bool,
-    shouldExclude: (URL) -> Bool = { _ in false }
+    shouldExclude: @Sendable (URL) -> Bool = { _ in false }
   ) {
     let fileURLs = FileManager.default
       .enumerator(at: path, includingPropertiesForKeys: nil)!
@@ -84,7 +84,7 @@ public class ParserTests: ParserTestCase {
       }
 
       do {
-        try runParseTest(fileURL: fileURL, checkDiagnostics: checkDiagnostics)
+        try Self.runParseTest(fileURL: fileURL, checkDiagnostics: checkDiagnostics)
       } catch {
         XCTFail("\(name): \(fileURL) failed due to \(error)")
       }
@@ -92,7 +92,7 @@ public class ParserTests: ParserTestCase {
 #else
     for fileURL in fileURLs where !shouldExclude(fileURL) {
       do {
-        try runParseTest(fileURL: fileURL, checkDiagnostics: checkDiagnostics)
+        try Self.runParseTest(fileURL: fileURL, checkDiagnostics: checkDiagnostics)
       } catch {
         XCTFail("\(name): \(fileURL) failed due to \(error)")
       }
