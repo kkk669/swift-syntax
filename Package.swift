@@ -122,17 +122,17 @@ let package = Package(
 
     .target(
       name: "SwiftSyntax509",
-      dependencies: []
+      path: "Sources/VersionMarkerModules/SwiftSyntax509"
     ),
 
     .target(
       name: "SwiftSyntax510",
-      dependencies: []
+      path: "Sources/VersionMarkerModules/SwiftSyntax510"
     ),
 
     .target(
       name: "SwiftSyntax600",
-      dependencies: []
+      path: "Sources/VersionMarkerModules/SwiftSyntax600"
     ),
 
     // MARK: SwiftSyntaxBuilder
@@ -193,7 +193,6 @@ let package = Package(
       dependencies: ["SwiftSyntax"],
       exclude: ["CMakeLists.txt", "README.md"],
       swiftSettings: swiftParserSwiftSettings
-
     ),
 
     .testTarget(
@@ -234,7 +233,8 @@ let package = Package(
 
     .target(
       name: "SwiftRefactor",
-      dependencies: ["SwiftBasicFormat", "SwiftParser", "SwiftSyntax", "SwiftSyntaxBuilder"]
+      dependencies: ["SwiftBasicFormat", "SwiftParser", "SwiftSyntax", "SwiftSyntaxBuilder"],
+      exclude: ["CMakeLists.txt"]
     ),
 
     .testTarget(

@@ -27,7 +27,15 @@ func tokenCaseMatch(_ caseName: TokenSyntax, experimentalFeature: ExperimentalFe
 }
 
 let parserTokenSpecSetFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
-  DeclSyntax("@_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) import SwiftSyntax")
+  DeclSyntax(
+    """
+    #if swift(>=6)
+    @_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) public import SwiftSyntax
+    #else
+    @_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) import SwiftSyntax
+    #endif
+    """
+  )
 
   for layoutNode in SYNTAX_NODES.compactMap(\.layoutNode) {
     for child in layoutNode.children {
@@ -70,6 +78,17 @@ let parserTokenSpecSetFile = SourceFileSyntax(leadingTrivia: copyrightHeader) {
                       experimentalFeature2: nil
                     )
                   }
+                }
+                SwitchCaseSyntax("default: return nil")
+              }
+            }
+
+            try InitializerDeclSyntax("public init?(token: TokenSyntax)") {
+              try SwitchExprSyntax("switch token") {
+                for choice in choices {
+                  SwitchCaseSyntax(
+                    "case TokenSpec(.\(choice.varOrCaseName)): self = .\(choice.varOrCaseName)"
+                  )
                 }
                 SwitchCaseSyntax("default: return nil")
               }

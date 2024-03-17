@@ -10,12 +10,21 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if swift(>=6)
+import SwiftDiagnostics
+import SwiftOperators
+@_spi(MacroExpansion) import SwiftParser
+public import SwiftSyntax
+import SwiftSyntaxBuilder
+@_spi(MacroExpansion) @_spi(ExperimentalLanguageFeature) public import SwiftSyntaxMacros
+#else
 import SwiftDiagnostics
 import SwiftOperators
 @_spi(MacroExpansion) import SwiftParser
 import SwiftSyntax
 import SwiftSyntaxBuilder
 @_spi(MacroExpansion) @_spi(ExperimentalLanguageFeature) import SwiftSyntaxMacros
+#endif
 
 // MARK: - Public entry function
 
@@ -1287,6 +1296,10 @@ private extension AccessorBlockSyntax {
         )
       )
       result.accessors = .accessors(AccessorDeclListSyntax([getterAsAccessor] + Array(newAccessors)))
+    #if RESILIENT_LIBRARIES
+    @unknown default:
+      fatalError()
+    #endif
     }
     return result
   }

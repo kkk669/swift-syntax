@@ -10,9 +10,15 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if swift(>=6)
+public import SwiftDiagnostics
+@_spi(Diagnostics) import SwiftParser
+@_spi(RawSyntax) public import SwiftSyntax
+#else
 import SwiftDiagnostics
 @_spi(Diagnostics) import SwiftParser
 @_spi(RawSyntax) import SwiftSyntax
+#endif
 
 fileprivate let diagnosticDomain: String = "SwiftLexer"
 
@@ -224,6 +230,10 @@ public extension SwiftSyntax.TokenDiagnostic {
     case .unicodeCurlyQuote: return StaticTokenError.unicodeCurlyQuote
     case .unprintableAsciiCharacter: return StaticTokenError.unprintableAsciiCharacter
     case .unterminatedBlockComment: return StaticTokenError.unterminatedBlockComment
+    #if RESILIENT_LIBRARIES
+    @unknown default:
+      fatalError()
+    #endif
     }
   }
 

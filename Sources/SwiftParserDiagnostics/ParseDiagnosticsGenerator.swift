@@ -10,9 +10,15 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if swift(>=6)
+public import SwiftDiagnostics
+@_spi(Diagnostics) import SwiftParser
+@_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) public import SwiftSyntax
+#else
 import SwiftDiagnostics
 @_spi(Diagnostics) import SwiftParser
 @_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) import SwiftSyntax
+#endif
 
 fileprivate func getTokens(between first: TokenSyntax, and second: TokenSyntax) -> [TokenSyntax] {
   var first = first
@@ -939,8 +945,8 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
     exchangeTokens(
       unexpected: node.unexpectedBetweenModifiersAndFirstName,
-      unexpectedTokenCondition: { TypeSpecifier(token: $0) != nil },
-      correctTokens: [node.type.as(AttributedTypeSyntax.self)?.specifier],
+      unexpectedTokenCondition: { SimpleTypeSpecifierSyntax.SpecifierOptions(token: $0) != nil },
+      correctTokens: node.type.as(AttributedTypeSyntax.self)?.specifiers.simpleSpecifiers ?? [],
       message: { SpecifierOnParameterName(misplacedSpecifiers: $0) },
       moveFixIt: { MoveTokensInFrontOfTypeFixIt(movedTokens: $0) },
       removeRedundantFixIt: { RemoveRedundantFixIt(removeTokens: $0) }
@@ -1736,8 +1742,8 @@ public class ParseDiagnosticsGenerator: SyntaxAnyVisitor {
     }
     exchangeTokens(
       unexpected: node.unexpectedBetweenInoutKeywordAndFirstName,
-      unexpectedTokenCondition: { TypeSpecifier(token: $0) != nil },
-      correctTokens: [node.type.as(AttributedTypeSyntax.self)?.specifier],
+      unexpectedTokenCondition: { SimpleTypeSpecifierSyntax.SpecifierOptions(token: $0) != nil },
+      correctTokens: node.type.as(AttributedTypeSyntax.self)?.specifiers.simpleSpecifiers ?? [],
       message: { SpecifierOnParameterName(misplacedSpecifiers: $0) },
       moveFixIt: { MoveTokensInFrontOfTypeFixIt(movedTokens: $0) },
       removeRedundantFixIt: { RemoveRedundantFixIt(removeTokens: $0) }

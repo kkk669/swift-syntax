@@ -10,7 +10,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if swift(>=6)
+@_spi(RawSyntax) public import SwiftSyntax
+#else
 @_spi(RawSyntax) import SwiftSyntax
+#endif
 
 /// A parser for the Swift programming language.
 ///
@@ -172,6 +176,19 @@ public struct Parser {
       _emptyRawAttributeListSyntax = RawAttributeListSyntax(elements: [], arena: self.arena)
     }
     return _emptyRawAttributeListSyntax!
+  }
+
+  var _emptyRawTypeSpecifierListSyntax: RawTypeSpecifierListSyntax?
+
+  /// Create an empty collection of the given type.
+  ///
+  /// These empty collections are only created once and the same node is returned
+  /// on subsequent calls, reducing memory usage.
+  mutating func emptyCollection(_: RawTypeSpecifierListSyntax.Type) -> RawTypeSpecifierListSyntax {
+    if _emptyRawTypeSpecifierListSyntax == nil {
+      _emptyRawTypeSpecifierListSyntax = RawTypeSpecifierListSyntax(elements: [], arena: self.arena)
+    }
+    return _emptyRawTypeSpecifierListSyntax!
   }
 
   /// The delegated initializer for the parser.

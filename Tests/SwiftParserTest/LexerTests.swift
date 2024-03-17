@@ -44,7 +44,7 @@ fileprivate func assertRawBytesLexeme(
   text: [UInt8],
   trailingTrivia: [UInt8] = [],
   error: SwiftSyntax.TokenDiagnostic? = nil,
-  file: StaticString = #file,
+  file: StaticString = #filePath,
   line: UInt = #line
 ) {
   XCTAssertEqual(lexeme.rawTokenKind, kind, file: file, line: line)
@@ -63,7 +63,7 @@ fileprivate func assertRawBytesLexeme(
   XCTAssertEqual(lexeme.diagnostic, error, file: file, line: line)
 }
 
-public class LexerTests: ParserTestCase {
+class LexerTests: ParserTestCase {
   func testIdentifiers() {
     assertLexemes(
       "Hello World",
@@ -1558,6 +1558,28 @@ public class LexerTests: ParserTestCase {
         LexemeSpec(.identifier, text: "ÿ", trailing: " "),
         LexemeSpec(.identifier, text: "俿", trailing: " "),
         LexemeSpec(.identifier, text: "𐐿"),
+      ]
+    )
+  }
+
+  func testNestedUnterminatedStringInterpolations() {
+    assertLexemes(
+      #"""
+      "\("\(
+
+      """#,
+      lexemes: [
+        LexemeSpec(.stringQuote, text: #"""#),
+        LexemeSpec(.stringSegment, text: ""),
+        LexemeSpec(.backslash, text: #"\"#),
+        LexemeSpec(.leftParen, text: "("),
+        LexemeSpec(.stringQuote, text: #"""#),
+        LexemeSpec(.stringSegment, text: ""),
+        LexemeSpec(.backslash, text: #"\"#),
+        LexemeSpec(.leftParen, text: "("),
+        LexemeSpec(.stringSegment, text: ""),
+        LexemeSpec(.stringSegment, text: ""),
+        LexemeSpec(.endOfFile, leading: "\n", text: "", flags: [.isAtStartOfLine]),
       ]
     )
   }
