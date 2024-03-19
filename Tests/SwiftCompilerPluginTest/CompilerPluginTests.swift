@@ -10,6 +10,8 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if !os(WASI)
+
 @_spi(Testing) import SwiftCompilerPlugin
 import SwiftSyntax
 import SwiftSyntaxMacros
@@ -68,3 +70,5 @@ class CompilerPluginTests: XCTestCase {
 
   }
 }
+
+#endif
