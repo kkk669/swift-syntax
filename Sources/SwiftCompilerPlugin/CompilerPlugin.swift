@@ -12,6 +12,8 @@
 // NOTE: This basic plugin mechanism is mostly copied from
 // https://github.com/apple/swift-package-manager/blob/main/Sources/PackagePlugin/Plugin.swift
 
+#if !os(WASI)
+
 #if swift(>=6.0)
 public import SwiftSyntaxMacros
 private import Foundation
@@ -257,3 +259,5 @@ struct CompilerPluginError: Error, CustomStringConvertible {
     self.description = message
   }
 }
+
+#endif
