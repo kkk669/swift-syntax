@@ -18,6 +18,6 @@ jobs:
           echo "$HOME/.wasmtime/bin" >> $GITHUB_PATH
       - run: swift --version
       - run: wasmtime -V
-      - run: swift experimental-sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-14-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-14-a-ubuntu22.04_x86_64.artifactbundle.zip
+      - run: swift experimental-sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-20-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-20-a-ubuntu22.04_x86_64.artifactbundle.zip
       - run: swift build -c release --build-tests --experimental-swift-sdk wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
       - run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
