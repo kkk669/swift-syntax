@@ -8,6 +8,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container: swiftlang/swift:nightly-main-jammy@sha256:307c0775191bfe1f08717235c6530ec9d819066e1411cc6ec2cf13859e06219f
+    env:
+      STACK_SIZE: 16777216
     steps:
       - uses: actions/checkout@v4
       - run: apt-get update && apt-get install --no-install-recommends -y curl
@@ -19,5 +21,5 @@ jobs:
       - run: swift --version
       - run: wasmtime -V
       - run: swift experimental-sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-22-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-03-22-a-ubuntu22.04_x86_64.artifactbundle.zip
-      - run: swift build -c release --build-tests --experimental-swift-sdk wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=524288
-      - run: wasmtime --dir=/ .build/release/swift-syntaxPackageTests.wasm
+      - run: swift build -c release --build-tests --experimental-swift-sdk wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=$STACK_SIZE
+      - run: wasmtime --dir / --wasm max-wasm-stack=$STACK_SIZE .build/release/swift-syntaxPackageTests.wasm
