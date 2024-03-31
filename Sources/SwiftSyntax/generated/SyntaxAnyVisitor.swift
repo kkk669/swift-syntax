@@ -272,23 +272,19 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
     visitAnyPost(node._syntaxNode)
   }
   
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  override open func visit(_ node: CanImportExprSyntax) -> SyntaxVisitorContinueKind {
+  override open func visit(_ node: _CanImportExprSyntax) -> SyntaxVisitorContinueKind {
     return visitAny(node._syntaxNode)
   }
   
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  override open func visitPost(_ node: CanImportExprSyntax) {
+  override open func visitPost(_ node: _CanImportExprSyntax) {
     visitAnyPost(node._syntaxNode)
   }
   
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  override open func visit(_ node: CanImportVersionInfoSyntax) -> SyntaxVisitorContinueKind {
+  override open func visit(_ node: _CanImportVersionInfoSyntax) -> SyntaxVisitorContinueKind {
     return visitAny(node._syntaxNode)
   }
   
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  override open func visitPost(_ node: CanImportVersionInfoSyntax) {
+  override open func visitPost(_ node: _CanImportVersionInfoSyntax) {
     visitAnyPost(node._syntaxNode)
   }
   
@@ -1371,20 +1367,6 @@ open class SyntaxAnyVisitor: SyntaxVisitor {
   @_spi(ExperimentalLanguageFeatures)
   #endif
   override open func visitPost(_ node: LifetimeSpecifierArgumentSyntax) {
-    visitAnyPost(node._syntaxNode)
-  }
-  
-  #if compiler(>=5.8)
-  @_spi(ExperimentalLanguageFeatures)
-  #endif
-  override open func visit(_ node: LifetimeSpecifierArgumentsSyntax) -> SyntaxVisitorContinueKind {
-    return visitAny(node._syntaxNode)
-  }
-  
-  #if compiler(>=5.8)
-  @_spi(ExperimentalLanguageFeatures)
-  #endif
-  override open func visitPost(_ node: LifetimeSpecifierArgumentsSyntax) {
     visitAnyPost(node._syntaxNode)
   }
   

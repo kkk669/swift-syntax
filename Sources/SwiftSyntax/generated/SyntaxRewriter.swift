@@ -24,8 +24,22 @@
 open class SyntaxRewriter {
   public let viewMode: SyntaxTreeViewMode
   
+  /// The arena in which the parents of rewritten nodes should be allocated.
+  /// 
+  /// The `SyntaxRewriter` subclass is responsible for generating the rewritten nodes. To incorporate them into the
+  /// tree, all of the rewritten node's parents also need to be re-created. This is the arena in which those 
+  /// intermediate nodes should be allocated.
+  private let arena: SyntaxArena?
+  
   public init(viewMode: SyntaxTreeViewMode = .sourceAccurate) {
     self.viewMode = viewMode
+    self.arena = nil
+  }
+  
+  @_spi(RawSyntax)
+  public init(viewMode: SyntaxTreeViewMode = .sourceAccurate, arena: SyntaxArena? = nil) {
+    self.viewMode = viewMode
+    self.arena = arena
   }
   
   /// Rewrite `node`, keeping its parent unless `detach` is `true`.
@@ -269,19 +283,17 @@ open class SyntaxRewriter {
     return StmtSyntax(visitChildren(node))
   }
   
-  /// Visit a ``CanImportExprSyntax``.
+  /// Visit a `_CanImportExprSyntax`.
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  open func visit(_ node: CanImportExprSyntax) -> ExprSyntax {
+  open func visit(_ node: _CanImportExprSyntax) -> ExprSyntax {
     return ExprSyntax(visitChildren(node))
   }
   
-  /// Visit a ``CanImportVersionInfoSyntax``.
+  /// Visit a `_CanImportVersionInfoSyntax`.
   ///   - Parameter node: the node that is being visited
   ///   - Returns: the rewritten node
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  open func visit(_ node: CanImportVersionInfoSyntax) -> ExprSyntax {
+  open func visit(_ node: _CanImportVersionInfoSyntax) -> ExprSyntax {
     return ExprSyntax(visitChildren(node))
   }
   
@@ -1222,16 +1234,6 @@ open class SyntaxRewriter {
   @_spi(ExperimentalLanguageFeatures)
   #endif
   open func visit(_ node: LifetimeSpecifierArgumentSyntax) -> LifetimeSpecifierArgumentSyntax {
-    return visitChildren(node)
-  }
-  
-  /// Visit a `LifetimeSpecifierArgumentsSyntax`.
-  ///   - Parameter node: the node that is being visited
-  ///   - Returns: the rewritten node
-  #if compiler(>=5.8)
-  @_spi(ExperimentalLanguageFeatures)
-  #endif
-  open func visit(_ node: LifetimeSpecifierArgumentsSyntax) -> LifetimeSpecifierArgumentsSyntax {
     return visitChildren(node)
   }
   
@@ -2280,13 +2282,13 @@ open class SyntaxRewriter {
       return {
         self.visitImpl($0, BreakStmtSyntax.self, self.visit)
       }
-    case .canImportExpr:
+    case ._canImportExpr:
       return {
-        self.visitImpl($0, CanImportExprSyntax.self, self.visit)
+        self.visitImpl($0, _CanImportExprSyntax.self, self.visit)
       }
-    case .canImportVersionInfo:
+    case ._canImportVersionInfo:
       return {
-        self.visitImpl($0, CanImportVersionInfoSyntax.self, self.visit)
+        self.visitImpl($0, _CanImportVersionInfoSyntax.self, self.visit)
       }
     case .catchClauseList:
       return {
@@ -2819,10 +2821,6 @@ open class SyntaxRewriter {
     case .lifetimeSpecifierArgument:
       return {
         self.visitImpl($0, LifetimeSpecifierArgumentSyntax.self, self.visit)
-      }
-    case .lifetimeSpecifierArguments:
-      return {
-        self.visitImpl($0, LifetimeSpecifierArgumentsSyntax.self, self.visit)
       }
     case .lifetimeTypeSpecifier:
       return {
@@ -3372,10 +3370,10 @@ open class SyntaxRewriter {
       return visitImpl(node, BorrowExprSyntax.self, visit)
     case .breakStmt:
       return visitImpl(node, BreakStmtSyntax.self, visit)
-    case .canImportExpr:
-      return visitImpl(node, CanImportExprSyntax.self, visit)
-    case .canImportVersionInfo:
-      return visitImpl(node, CanImportVersionInfoSyntax.self, visit)
+    case ._canImportExpr:
+      return visitImpl(node, _CanImportExprSyntax.self, visit)
+    case ._canImportVersionInfo:
+      return visitImpl(node, _CanImportVersionInfoSyntax.self, visit)
     case .catchClauseList:
       return visitImpl(node, CatchClauseListSyntax.self, visit)
     case .catchClause:
@@ -3642,8 +3640,6 @@ open class SyntaxRewriter {
       return visitImpl(node, LifetimeSpecifierArgumentListSyntax.self, visit)
     case .lifetimeSpecifierArgument:
       return visitImpl(node, LifetimeSpecifierArgumentSyntax.self, visit)
-    case .lifetimeSpecifierArguments:
-      return visitImpl(node, LifetimeSpecifierArgumentsSyntax.self, visit)
     case .lifetimeTypeSpecifier:
       return visitImpl(node, LifetimeTypeSpecifierSyntax.self, visit)
     case .macroDecl:
@@ -3966,7 +3962,7 @@ open class SyntaxRewriter {
       // Sanity check, ensure the new children are the same length.
       precondition(newLayout.count == node.raw.layoutView!.children.count)
 
-      let arena = SyntaxArena()
+      let arena = self.arena ?? SyntaxArena()
       let newRaw = node.raw.layoutView!.replacingLayout(with: Array(newLayout), arena: arena)
       // 'withExtendedLifetime' to keep 'SyntaxArena's of them alive until here.
       return withExtendedLifetime(rewrittens) {

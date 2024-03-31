@@ -42,10 +42,8 @@ public enum SyntaxKind: Sendable {
   case booleanLiteralExpr
   case borrowExpr
   case breakStmt
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  case canImportExpr
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  case canImportVersionInfo
+  case _canImportExpr
+  case _canImportVersionInfo
   case catchClauseList
   case catchClause
   case catchItemList
@@ -188,10 +186,6 @@ public enum SyntaxKind: Sendable {
   @_spi(ExperimentalLanguageFeatures)
   #endif
   case lifetimeSpecifierArgument
-  #if compiler(>=5.8)
-  @_spi(ExperimentalLanguageFeatures)
-  #endif
-  case lifetimeSpecifierArguments
   #if compiler(>=5.8)
   @_spi(ExperimentalLanguageFeatures)
   #endif
@@ -506,10 +500,10 @@ public enum SyntaxKind: Sendable {
       return BorrowExprSyntax.self
     case .breakStmt:
       return BreakStmtSyntax.self
-    case .canImportExpr:
-      return CanImportExprSyntax.self
-    case .canImportVersionInfo:
-      return CanImportVersionInfoSyntax.self
+    case ._canImportExpr:
+      return _CanImportExprSyntax.self
+    case ._canImportVersionInfo:
+      return _CanImportVersionInfoSyntax.self
     case .catchClauseList:
       return CatchClauseListSyntax.self
     case .catchClause:
@@ -776,8 +770,6 @@ public enum SyntaxKind: Sendable {
       return LifetimeSpecifierArgumentListSyntax.self
     case .lifetimeSpecifierArgument:
       return LifetimeSpecifierArgumentSyntax.self
-    case .lifetimeSpecifierArguments:
-      return LifetimeSpecifierArgumentsSyntax.self
     case .lifetimeTypeSpecifier:
       return LifetimeTypeSpecifierSyntax.self
     case .macroDecl:
