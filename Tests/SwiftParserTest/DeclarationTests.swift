@@ -3286,7 +3286,7 @@ final class DeclarationTests: ParserTestCase {
 
   func testInitializerWithReturnType() {
     assertParse(
-      "init(_ ptr: UnsafeRawBufferPointer, _ a: borrowing Array<Int>) -> _borrow(a) Self",
+      "init(_ ptr: UnsafeRawBufferPointer, _ a: borrowing Array<Int>) -> dependsOn(a) Self",
       experimentalFeatures: .nonescapableTypes
     )
 
@@ -3306,6 +3306,23 @@ final class DeclarationTests: ParserTestCase {
     assertParse(
       "func testVarDeclTuple2(_ x: (transferring String, String)) {}",
       experimentalFeatures: .transferringArgsAndResults
+    )
+  }
+
+  func testMisplacedAttributeInVarDeclWithMultipleBindings() {
+    assertParse(
+      """
+      let a = "a", 1️⃣@foo b = "b"
+      """,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "misplaced attribute in variable declaration",
+          fixIts: ["move attributes in front of 'let'"]
+        )
+      ],
+      fixedSource: """
+        @foo let a = "a", b = "b"
+        """
     )
   }
 }

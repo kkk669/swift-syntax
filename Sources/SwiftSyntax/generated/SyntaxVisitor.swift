@@ -377,32 +377,28 @@ open class SyntaxVisitor {
   open func visitPost(_ node: BreakStmtSyntax) {
   }
   
-  /// Visiting ``CanImportExprSyntax`` specifically.
+  /// Visiting `_CanImportExprSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  open func visit(_ node: CanImportExprSyntax) -> SyntaxVisitorContinueKind {
+  open func visit(_ node: _CanImportExprSyntax) -> SyntaxVisitorContinueKind {
     return .visitChildren
   }
   
-  /// The function called after visiting ``CanImportExprSyntax`` and its descendants.
+  /// The function called after visiting `_CanImportExprSyntax` and its descendants.
   ///   - node: the node we just finished visiting.
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  open func visitPost(_ node: CanImportExprSyntax) {
+  open func visitPost(_ node: _CanImportExprSyntax) {
   }
   
-  /// Visiting ``CanImportVersionInfoSyntax`` specifically.
+  /// Visiting `_CanImportVersionInfoSyntax` specifically.
   ///   - Parameter node: the node we are visiting.
   ///   - Returns: how should we continue visiting.
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  open func visit(_ node: CanImportVersionInfoSyntax) -> SyntaxVisitorContinueKind {
+  open func visit(_ node: _CanImportVersionInfoSyntax) -> SyntaxVisitorContinueKind {
     return .visitChildren
   }
   
-  /// The function called after visiting ``CanImportVersionInfoSyntax`` and its descendants.
+  /// The function called after visiting `_CanImportVersionInfoSyntax` and its descendants.
   ///   - node: the node we just finished visiting.
-  @available(*, deprecated, message: "'canImport' directives are now represented as a `FunctionCallExpr`")
-  open func visitPost(_ node: CanImportVersionInfoSyntax) {
+  open func visitPost(_ node: _CanImportVersionInfoSyntax) {
   }
   
   /// Visiting ``CatchClauseListSyntax`` specifically.
@@ -2017,24 +2013,6 @@ open class SyntaxVisitor {
   @_spi(ExperimentalLanguageFeatures)
   #endif
   open func visitPost(_ node: LifetimeSpecifierArgumentSyntax) {
-  }
-  
-  /// Visiting `LifetimeSpecifierArgumentsSyntax` specifically.
-  ///   - Parameter node: the node we are visiting.
-  ///   - Returns: how should we continue visiting.
-  #if compiler(>=5.8)
-  @_spi(ExperimentalLanguageFeatures)
-  #endif
-  open func visit(_ node: LifetimeSpecifierArgumentsSyntax) -> SyntaxVisitorContinueKind {
-    return .visitChildren
-  }
-  
-  /// The function called after visiting `LifetimeSpecifierArgumentsSyntax` and its descendants.
-  ///   - node: the node we just finished visiting.
-  #if compiler(>=5.8)
-  @_spi(ExperimentalLanguageFeatures)
-  #endif
-  open func visitPost(_ node: LifetimeSpecifierArgumentsSyntax) {
   }
   
   /// Visiting `LifetimeTypeSpecifierSyntax` specifically.
@@ -3680,13 +3658,13 @@ open class SyntaxVisitor {
       return {
         self.visitImpl(&$0, BreakStmtSyntax.self, self.visit, self.visitPost)
       }
-    case .canImportExpr:
+    case ._canImportExpr:
       return {
-        self.visitImpl(&$0, CanImportExprSyntax.self, self.visit, self.visitPost)
+        self.visitImpl(&$0, _CanImportExprSyntax.self, self.visit, self.visitPost)
       }
-    case .canImportVersionInfo:
+    case ._canImportVersionInfo:
       return {
-        self.visitImpl(&$0, CanImportVersionInfoSyntax.self, self.visit, self.visitPost)
+        self.visitImpl(&$0, _CanImportVersionInfoSyntax.self, self.visit, self.visitPost)
       }
     case .catchClauseList:
       return {
@@ -4219,10 +4197,6 @@ open class SyntaxVisitor {
     case .lifetimeSpecifierArgument:
       return {
         self.visitImpl(&$0, LifetimeSpecifierArgumentSyntax.self, self.visit, self.visitPost)
-      }
-    case .lifetimeSpecifierArguments:
-      return {
-        self.visitImpl(&$0, LifetimeSpecifierArgumentsSyntax.self, self.visit, self.visitPost)
       }
     case .lifetimeTypeSpecifier:
       return {
@@ -4776,10 +4750,10 @@ open class SyntaxVisitor {
       visitImpl(&node, BorrowExprSyntax.self, visit, visitPost)
     case .breakStmt:
       visitImpl(&node, BreakStmtSyntax.self, visit, visitPost)
-    case .canImportExpr:
-      visitImpl(&node, CanImportExprSyntax.self, visit, visitPost)
-    case .canImportVersionInfo:
-      visitImpl(&node, CanImportVersionInfoSyntax.self, visit, visitPost)
+    case ._canImportExpr:
+      visitImpl(&node, _CanImportExprSyntax.self, visit, visitPost)
+    case ._canImportVersionInfo:
+      visitImpl(&node, _CanImportVersionInfoSyntax.self, visit, visitPost)
     case .catchClauseList:
       visitImpl(&node, CatchClauseListSyntax.self, visit, visitPost)
     case .catchClause:
@@ -5046,8 +5020,6 @@ open class SyntaxVisitor {
       visitImpl(&node, LifetimeSpecifierArgumentListSyntax.self, visit, visitPost)
     case .lifetimeSpecifierArgument:
       visitImpl(&node, LifetimeSpecifierArgumentSyntax.self, visit, visitPost)
-    case .lifetimeSpecifierArguments:
-      visitImpl(&node, LifetimeSpecifierArgumentsSyntax.self, visit, visitPost)
     case .lifetimeTypeSpecifier:
       visitImpl(&node, LifetimeTypeSpecifierSyntax.self, visit, visitPost)
     case .macroDecl:

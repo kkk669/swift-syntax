@@ -20,19 +20,19 @@ public enum Keyword: UInt8, Hashable, Sendable {
   case _alignment
   case _backDeploy
   case _borrow
+  #if compiler(>=5.8)
   @_spi(ExperimentalLanguageFeatures)
+  #endif
   case _borrowing
   case _BridgeObject
   case _cdecl
   case _Class
   case _compilerInitialized
   case _const
+  #if compiler(>=5.8)
   @_spi(ExperimentalLanguageFeatures)
-  case _consume
-  @_spi(ExperimentalLanguageFeatures)
+  #endif
   case _consuming
-  @_spi(ExperimentalLanguageFeatures)
-  case _copy
   case _documentation
   case _dynamicReplacement
   case _effects
@@ -43,9 +43,9 @@ public enum Keyword: UInt8, Hashable, Sendable {
   case _local
   case _modify
   case _move
+  #if compiler(>=5.8)
   @_spi(ExperimentalLanguageFeatures)
-  case _mutate
-  @_spi(ExperimentalLanguageFeatures)
+  #endif
   case _mutating
   case _NativeClass
   case _NativeRefCountedObject
@@ -110,6 +110,10 @@ public enum Keyword: UInt8, Hashable, Sendable {
   case `default`
   case `defer`
   case `deinit`
+  #if compiler(>=5.8)
+  @_spi(ExperimentalLanguageFeatures)
+  #endif
+  case dependsOn
   case deprecated
   case derivative
   case didSet
@@ -191,9 +195,13 @@ public enum Keyword: UInt8, Hashable, Sendable {
   case renamed
   case `repeat`
   case required
+  #if compiler(>=5.8)
   @_spi(ExperimentalLanguageFeatures)
+  #endif
   case _resultDependsOn
+  #if compiler(>=5.8)
   @_spi(ExperimentalLanguageFeatures)
+  #endif
   case _resultDependsOnSelf
   case `rethrows`
   case retroactive
@@ -201,6 +209,10 @@ public enum Keyword: UInt8, Hashable, Sendable {
   case reverse
   case right
   case safe
+  #if compiler(>=5.8)
+  @_spi(ExperimentalLanguageFeatures)
+  #endif
+  case scoped
   case `self`
   case `Self`
   case Sendable
@@ -219,7 +231,9 @@ public enum Keyword: UInt8, Hashable, Sendable {
   case then
   case `throw`
   case `throws`
+  #if compiler(>=5.8)
   @_spi(ExperimentalLanguageFeatures)
+  #endif
   case transferring
   case transpose
   case `true`
@@ -343,8 +357,6 @@ public enum Keyword: UInt8, Hashable, Sendable {
       }
     case 5:
       switch text {
-      case "_copy":
-        self = ._copy
       case "_move":
         self = ._move
       case "_read":
@@ -428,6 +440,8 @@ public enum Keyword: UInt8, Hashable, Sendable {
         self = .repeat
       case "return":
         self = .return
+      case "scoped":
+        self = .scoped
       case "static":
         self = .static
       case "struct":
@@ -455,8 +469,6 @@ public enum Keyword: UInt8, Hashable, Sendable {
         self = ._linear
       case "_modify":
         self = ._modify
-      case "_mutate":
-        self = ._mutate
       case "consume":
         self = .consume
       case "default":
@@ -494,8 +506,6 @@ public enum Keyword: UInt8, Hashable, Sendable {
       switch text {
       case "__shared":
         self = .__shared
-      case "_consume":
-        self = ._consume
       case "_effects":
         self = ._effects
       case "_forward":
@@ -563,6 +573,8 @@ public enum Keyword: UInt8, Hashable, Sendable {
         self = .canImport
       case "consuming":
         self = .consuming
+      case "dependsOn":
+        self = .dependsOn
       case "extension":
         self = .extension
       case "lowerThan":
@@ -826,9 +838,7 @@ public enum Keyword: UInt8, Hashable, Sendable {
       "_Class", 
       "_compilerInitialized", 
       "_const", 
-      "_consume", 
       "_consuming", 
-      "_copy", 
       "_documentation", 
       "_dynamicReplacement", 
       "_effects", 
@@ -839,7 +849,6 @@ public enum Keyword: UInt8, Hashable, Sendable {
       "_local", 
       "_modify", 
       "_move", 
-      "_mutate", 
       "_mutating", 
       "_NativeClass", 
       "_NativeRefCountedObject", 
@@ -904,6 +913,7 @@ public enum Keyword: UInt8, Hashable, Sendable {
       "default", 
       "defer", 
       "deinit", 
+      "dependsOn", 
       "deprecated", 
       "derivative", 
       "didSet", 
@@ -993,6 +1003,7 @@ public enum Keyword: UInt8, Hashable, Sendable {
       "reverse", 
       "right", 
       "safe", 
+      "scoped", 
       "self", 
       "Self", 
       "Sendable", 
