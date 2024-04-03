@@ -7,7 +7,7 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: swiftlang/swift:nightly-main-jammy@sha256:a6ec289900186096738552a893f04c4ed57fbd721a42a3a14a32ae3f1fb3535d
+    container: swiftlang/swift:nightly-main-jammy@sha256:946a4ef9371a63391acb5399192fadf2984f22e81449a6b90b70b00954d17383
     env:
       STACK_SIZE: 16777216
     steps:
@@ -20,6 +20,6 @@ jobs:
           echo "$HOME/.wasmtime/bin" >> $GITHUB_PATH
       - run: swift --version
       - run: wasmtime -V
-      - run: swift experimental-sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-04-01-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-04-01-a-ubuntu22.04_x86_64.artifactbundle.zip
+      - run: swift experimental-sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-04-02-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-04-02-a-ubuntu22.04_x86_64.artifactbundle.zip
       - run: swift build -c release --build-tests --experimental-swift-sdk wasm32-unknown-wasi -Xlinker -z -Xlinker stack-size=$STACK_SIZE
       - run: wasmtime --dir / --wasm max-wasm-stack=$STACK_SIZE .build/release/swift-syntaxPackageTests.wasm
