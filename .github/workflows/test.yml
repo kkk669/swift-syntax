@@ -12,12 +12,7 @@ jobs:
       STACK_SIZE: 16777216
     steps:
       - uses: actions/checkout@v4
-      - run: apt-get update && apt-get install --no-install-recommends -y curl
-      - name: Install wasmtime
-        run: |
-          touch ~/.bashrc
-          curl https://wasmtime.dev/install.sh -sSf | bash
-          echo "$HOME/.wasmtime/bin" >> $GITHUB_PATH
+      - uses: bytecodealliance/actions/wasmtime/setup@v1
       - run: swift --version
       - run: wasmtime -V
       - run: swift experimental-sdk install https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-04-03-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-04-03-a-ubuntu22.04_x86_64.artifactbundle.zip
