@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: ["wasm32-wasi-test"]
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     container: swiftlang/swift:nightly-main-jammy@sha256:53d24dfba03c50d04f646c91629d4c63103f4772f5e3dfd24a12fe0fdba775b7
     env:
