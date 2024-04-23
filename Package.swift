@@ -30,6 +30,9 @@ let package = Package(
   ],
   targets: [
     // MARK: - Internal helper targets
+    .target(
+      name: "_SwiftSyntaxCShims"
+    ),
 
     .target(
       name: "_AtomicBool"
@@ -74,7 +77,7 @@ let package = Package(
 
     .target(
       name: "SwiftCompilerPlugin",
-      dependencies: ["SwiftCompilerPluginMessageHandling", "SwiftSyntaxMacros"],
+      dependencies: ["SwiftCompilerPluginMessageHandling", "SwiftSyntaxMacros", "_SwiftSyntaxCShims"],
       exclude: ["CMakeLists.txt"]
     ),
 
@@ -294,7 +297,8 @@ let package = Package(
       dependencies: ["_InstructionCounter", "_SwiftSyntaxTestSupport", "SwiftIDEUtils", "SwiftParser", "SwiftSyntax"],
       exclude: ["Inputs"]
     ),
-  ]
+  ],
+  swiftLanguageVersions: [.v5, .version("6")]
 )
 
 // This is a fake target that depends on all targets in the package.

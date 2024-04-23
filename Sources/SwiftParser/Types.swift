@@ -10,7 +10,11 @@
 //
 //===----------------------------------------------------------------------===//
 
+#if swift(>=6)
+@_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) internal import SwiftSyntax
+#else
 @_spi(RawSyntax) @_spi(ExperimentalLanguageFeatures) import SwiftSyntax
+#endif
 
 extension Parser {
   /// Parse a type.
@@ -1054,7 +1058,7 @@ extension Parser {
       }
     case nil:  // Custom attribute
       return parseAttribute(argumentMode: .customAttribute) { parser in
-        let arguments = parser.parseArgumentListElements(pattern: .none)
+        let arguments = parser.parseArgumentListElements(pattern: .none, allowTrailingComma: false)
         return .argumentList(RawLabeledExprListSyntax(elements: arguments, arena: parser.arena))
       }
 
