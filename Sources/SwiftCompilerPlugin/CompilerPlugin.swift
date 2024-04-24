@@ -12,8 +12,6 @@
 // NOTE: This basic plugin mechanism is mostly copied from
 // https://github.com/apple/swift-package-manager/blob/main/Sources/PackagePlugin/Plugin.swift
 
-#if !os(WASI)
-
 #if swift(>=6.0)
 private import _SwiftSyntaxCShims
 public import SwiftSyntaxMacros
@@ -24,6 +22,8 @@ private import Darwin
 private import Glibc
 #elseif canImport(ucrt)
 private import ucrt
+#elseif canImport(WASILibc)
+private import WASILibc
 #endif
 #else
 import _SwiftSyntaxCShims
@@ -35,6 +35,8 @@ import Darwin
 import Glibc
 #elseif canImport(ucrt)
 import ucrt
+#elseif canImport(WASILibc)
+import WASILibc
 #endif
 #endif
 
@@ -133,6 +135,9 @@ extension CompilerPlugin {
   /// Main entry point of the plugin — sets up a communication channel with
   /// the plugin host and runs the main message loop.
   public static func main() throws {
+    #if os(WASI)
+    internalError("CompilerPlugin.main() is not implemented in WASI.")
+    #else
     let stdin = _ss_stdin()
     let stdout = _ss_stdout()
     let stderr = _ss_stderr()
@@ -187,6 +192,7 @@ extension CompilerPlugin {
       // and exit with an error code.
       internalError(String(describing: error))
     }
+    #endif
   }
 
   // Private function to report internal errors and then exit.
@@ -283,5 +289,3 @@ private func describe(errno: CInt) -> String {
   if let cStr = strerror(errno) { return String(cString: cStr) }
   return String(describing: errno)
 }
-
-#endif
