@@ -17,6 +17,8 @@ private import Darwin
 private import Glibc
 #elseif canImport(ucrt)
 private import ucrt
+#elseif canImport(WASILibc)
+private import WASILibc
 #endif
 #else
 #if canImport(Darwin)
@@ -25,6 +27,8 @@ import Darwin
 import Glibc
 #elseif canImport(ucrt)
 import ucrt
+#elseif canImport(WASILibc)
+import WASILibc
 #endif
 #endif
 
