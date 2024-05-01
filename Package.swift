@@ -35,10 +35,6 @@ let package = Package(
     ),
 
     .target(
-      name: "_AtomicBool"
-    ),
-
-    .target(
       name: "_InstructionCounter"
     ),
 
@@ -77,7 +73,7 @@ let package = Package(
 
     .target(
       name: "SwiftCompilerPlugin",
-      dependencies: ["SwiftCompilerPluginMessageHandling", "SwiftSyntaxMacros", "_SwiftSyntaxCShims"],
+      dependencies: ["SwiftCompilerPluginMessageHandling", "SwiftSyntaxMacros"],
       exclude: ["CMakeLists.txt"]
     ),
 
@@ -91,6 +87,7 @@ let package = Package(
     .target(
       name: "SwiftCompilerPluginMessageHandling",
       dependencies: [
+        "_SwiftSyntaxCShims",
         "SwiftDiagnostics",
         "SwiftOperators",
         "SwiftParser",
@@ -131,7 +128,7 @@ let package = Package(
 
     .target(
       name: "SwiftSyntax",
-      dependencies: ["_AtomicBool", "SwiftSyntax509", "SwiftSyntax510", "SwiftSyntax600"],
+      dependencies: ["_SwiftSyntaxCShims", "SwiftSyntax509", "SwiftSyntax510", "SwiftSyntax600"],
       exclude: ["CMakeLists.txt"],
       swiftSettings: swiftSyntaxSwiftSettings
     ),
@@ -298,7 +295,12 @@ let package = Package(
       exclude: ["Inputs"]
     ),
   ],
-  swiftLanguageVersions: [.v5]
+  // Disable Swift 6 mode when the `SWIFTSYNTAX_DISABLE_SWIFT_6_MODE` environment variable is set. This works around the following
+  // issue: The self-hosted SwiftPM job has Xcode 15.3 (Swift 5.10) installed and builds a Swift 6 SwiftPM from source.
+  // It then tries to build itself as a fat binary using the just-built Swift 6 SwiftPM, which uses xcbuild from Xcode
+  // as the build system. But the xcbuild in the installed Xcode is too old and doesn't know about Swift 6 mode, so it
+  // fails with: SWIFT_VERSION '6' is unsupported, supported versions are: 4.0, 4.2, 5.0 (rdar://126952308)
+  swiftLanguageVersions: hasEnvironmentVariable("SWIFTSYNTAX_DISABLE_SWIFT_6_MODE") ? [.v5] : [.v5, .version("6")]
 )
 
 // This is a fake target that depends on all targets in the package.
