@@ -10,18 +10,71 @@
 //
 //===----------------------------------------------------------------------===//
 
-import Foundation
 @_spi(Experimental) import SwiftLexicalLookup
 import SwiftParser
 import SwiftSyntax
 import XCTest
 import _SwiftSyntaxTestSupport
 
-/// `methodUnderTest` is called with the token at every position marker in the keys of `expected`. It then asserts that the positions of the syntax nodes returned by `methodUnderTest` are the values in `expected`.
+/// Used to define result type expectectations for given markers.
+enum MarkerExpectation {
+  /// Specifies a separate type for each result marker.
+  case distinct([String: SyntaxProtocol.Type])
+  /// Specifies a common type for all results
+  /// apart from the ones defined explicitly in `except`.
+  case all(SyntaxProtocol.Type, except: [String: SyntaxProtocol.Type] = [:])
+  /// Does not assert result types.
+  case none
+
+  /// Assert `actual` result labeled with `marker`
+  /// according to the rules represented by this expectation.
+  fileprivate func assertMarkerType(marker: String, actual: SyntaxProtocol) {
+    switch self {
+    case .all(let expectedType, except: let dictionary):
+      assertMarkerType(marker: marker, actual: actual, expectedType: dictionary[marker] ?? expectedType)
+    case .distinct(let dictionary):
+      if let expectedType = dictionary[marker] {
+        assertMarkerType(marker: marker, actual: actual, expectedType: expectedType)
+      } else {
+        XCTFail("For result \(marker), could not find type expectation")
+      }
+    case .none:
+      break
+    }
+  }
+
+  /// Assert whether `actual` type matches `expectedType`.
+  private func assertMarkerType(marker: String, actual: SyntaxProtocol, expectedType: SyntaxProtocol.Type) {
+    XCTAssert(
+      actual.is(expectedType),
+      "For result \(marker), expected type \(expectedType) doesn't match the actual type \(actual.syntaxNodeType)"
+    )
+  }
+}
+
+/// Used to define result assertion.
+enum ResultExpectation {
+  case fromScope(ScopeSyntax.Type, expectedNames: [String])
+  case fromFileScope(expectedNames: [String])
+
+  var expectedNames: [String] {
+    switch self {
+    case .fromScope(_, let expectedNames):
+      return expectedNames
+    case .fromFileScope(expectedNames: let expectedNames):
+      return expectedNames
+    }
+  }
+}
+
+/// `methodUnderTest` is called with the token at every position marker in the keys of `expected`.
+/// It then asserts that the positions of the syntax nodes returned by `methodUnderTest` are the values in `expected`.
+/// It also checks whether result types match rules specified in `expectedResultTypes`.
 func assertLexicalScopeQuery(
   source: String,
-  methodUnderTest: (TokenSyntax) -> ([SyntaxProtocol?]),
-  expected: [String: [String?]]
+  methodUnderTest: (_ marker: String, _ tokenAtMarker: TokenSyntax) -> ([SyntaxProtocol?]),
+  expected: [String: [String?]],
+  expectedResultTypes: MarkerExpectation = .none
 ) {
   // Extract markers
   let (markerDict, textWithoutMarkers) = extractMarkers(source)
@@ -41,15 +94,15 @@ func assertLexicalScopeQuery(
     }
 
     // Execute the tested method
-    let result = methodUnderTest(testArgument)
+    let result = methodUnderTest(marker, testArgument)
 
     // Extract the expected results for the test argument
-    let expectedValues: [AbsolutePosition?] = expectedMarkers.map { expectedMarker in
+    let expectedPositions: [AbsolutePosition?] = expectedMarkers.map { expectedMarker in
       guard let expectedMarker else { return nil }
 
       guard let expectedPosition = markerDict[expectedMarker]
       else {
-        XCTFail("Could not find token at location \(marker)")
+        XCTFail("Could not find position for \(marker)")
         return nil
       }
 
@@ -57,27 +110,73 @@ func assertLexicalScopeQuery(
     }
 
     // Compare number of actual results to the number of expected results
-    if result.count != expectedValues.count {
+    if result.count != expectedPositions.count {
       XCTFail(
-        "For marker \(marker), actual number of elements: \(result.count) doesn't match the expected: \(expectedValues.count)"
+        "For marker \(marker), actual number of elements: \(result.count) doesn't match the expected: \(expectedPositions.count)"
       )
     }
 
     // Assert validity of the output
-    for (actual, expected) in zip(result, expectedValues) {
-      if actual == nil && expected == nil { continue }
-
-      guard let actual, let expected else {
-        XCTFail(
-          "For marker \(marker), actual result: \(actual?.description ?? "nil"), expected position: \(expected.debugDescription)"
-        )
-        continue
-      }
+    for (actual, (expectedMarker, expectedPosition)) in zip(result, zip(expectedMarkers, expectedPositions)) {
+      guard let actual, let expectedPosition else { continue }
 
       XCTAssert(
-        actual.positionAfterSkippingLeadingTrivia == expected,
-        "For marker \(marker), actual result: \(actual.description) doesn't match expected value: \(sourceFileSyntax.token(at: expected) ?? "nil")"
+        actual.positionAfterSkippingLeadingTrivia == expectedPosition,
+        "For marker \(marker), actual result: \(actual) doesn't match expected value: \(sourceFileSyntax.token(at: expectedPosition)?.description ?? "nil")"
       )
+
+      if let expectedMarker {
+        expectedResultTypes.assertMarkerType(marker: expectedMarker, actual: actual)
+      }
     }
   }
+}
+
+/// Name lookup is called with the token at every position marker in the keys of `expected`.
+/// It then asserts that the positions of the syntax nodes returned by the lookup are the values in `expected`.
+/// It also checks whether result types match rules specified in `expectedResultTypes`.
+func assertLexicalNameLookup(
+  source: String,
+  references: [String: [ResultExpectation]],
+  expectedResultTypes: MarkerExpectation = .none,
+  useNilAsTheParameter: Bool = false,
+  config: LookupConfig = LookupConfig()
+) {
+  assertLexicalScopeQuery(
+    source: source,
+    methodUnderTest: { marker, tokenAtMarker in
+      let result = tokenAtMarker.lookup(for: useNilAsTheParameter ? nil : tokenAtMarker.text, with: config)
+
+      guard let expectedValues = references[marker] else {
+        XCTFail("For marker \(marker), couldn't find result expectation")
+        return []
+      }
+
+      for (actual, expected) in zip(result, expectedValues) {
+        switch (actual, expected) {
+        case (.fromScope(let scope, withNames: _), .fromScope(let expectedType, expectedNames: _)):
+          XCTAssert(
+            scope.syntaxNodeType == expectedType,
+            "For marker \(marker), scope result type of \(scope.syntaxNodeType) doesn't match expected \(expectedType)"
+          )
+        case (.fromFileScope, .fromFileScope):
+          break
+        default:
+          XCTFail("For marker \(marker), result actual result kind \(actual) doesn't match expected \(expected)")
+        }
+      }
+
+      return result.flatMap { lookUpResult in
+        lookUpResult.names.map { lookupName in
+          lookupName.syntax
+        }
+      }
+    },
+    expected: references.mapValues { expectations in
+      expectations.flatMap { expectation in
+        expectation.expectedNames
+      }
+    },
+    expectedResultTypes: expectedResultTypes
+  )
 }
