@@ -63,8 +63,7 @@ class ParserTests: ParserTestCase {
     checkDiagnostics: Bool,
     shouldExclude: @Sendable (URL) -> Bool = { _ in false }
   ) {
-    // nonisolated(unsafe) because [URL] is not marked Sendable on Linux.
-    let _fileURLs = FileManager.default
+    let fileURLs = FileManager.default
       .enumerator(at: path, includingPropertiesForKeys: nil)!
       .compactMap({ $0 as? URL })
       .filter {
@@ -72,11 +71,6 @@ class ParserTests: ParserTestCase {
           || $0.pathExtension == "sil"
           || $0.pathExtension == "swiftinterface"
       }
-    #if swift(>=6.0)
-    nonisolated(unsafe) let fileURLs = _fileURLs
-    #else
-    let fileURLs = _fileURLs
-    #endif
 
     print("\(name) - processing \(fileURLs.count) source files")
 #if !os(WASI)
