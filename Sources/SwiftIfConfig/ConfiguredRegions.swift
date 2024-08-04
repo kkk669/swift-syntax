@@ -24,15 +24,18 @@ extension SyntaxProtocol {
   ///     func f()
   ///   #elseif B
   ///     func g()
+  ///   #elseif compiler(>= 12.0)
+  ///   please print the number after 41
   ///   #endif
   /// #else
   /// #endif
   ///
   /// If the configuration options `DEBUG` and `B` are provided, but `A` is not,
-  /// the results will be contain:
-  ///   - Active region for the `#if DEBUG`
-  ///   - Inactive region for the `#if A`
-  ///   - Active region for the `#elseif B`
+  /// and the compiler version is less than 12.0, the results will be contain:
+  ///   - Active region for the `#if DEBUG`.
+  ///   - Inactive region for the `#if A`.
+  ///   - Active region for the `#elseif B`.
+  ///   - Unparsed region for the `#elseif compiler(>= 12.0)`.
   ///   - Inactive region for the final `#else`.
   public func configuredRegions(
     in configuration: some BuildConfiguration
@@ -78,19 +81,19 @@ fileprivate class ConfiguredRegionVisitor<Configuration: BuildConfiguration>: Sy
       }
 
       // For inactive clauses, distinguish between inactive and unparsed.
-      let isVersioned = clause.isVersioned(
+      let syntaxErrorsAllowed = clause.syntaxErrorsAllowed(
         configuration: configuration
-      ).versioned
+      ).syntaxErrorsAllowed
 
       // If this is within an active region, or this is an unparsed region,
       // record it.
-      if inActiveRegion || isVersioned {
-        regions.append((clause, isVersioned ? .unparsed : .inactive))
+      if inActiveRegion || syntaxErrorsAllowed {
+        regions.append((clause, syntaxErrorsAllowed ? .unparsed : .inactive))
       }
 
       // Recurse into inactive (but not unparsed) regions to find any
       // unparsed regions below.
-      if !isVersioned, let elements = clause.elements {
+      if !syntaxErrorsAllowed, let elements = clause.elements {
         let priorInActiveRegion = inActiveRegion
         inActiveRegion = false
         defer {

@@ -176,12 +176,25 @@ public class EvaluateTests: XCTestCase {
     assertIfConfig("swift(>=5.5)", .active)
     assertIfConfig("swift(<6)", .active)
     assertIfConfig("swift(>=6)", .unparsed)
+    assertIfConfig(
+      "swift(>=...)",
+      .unparsed,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "'swift' version check has invalid version ''",
+          line: 1,
+          column: 9
+        )
+      ]
+    )
     assertIfConfig("compiler(>=5.8)", .active)
     assertIfConfig("compiler(>=5.9)", .active)
     assertIfConfig("compiler(>=5.10)", .unparsed)
     assertIfConfig(#"_compiler_version("5009.*.1")"#, .active)
     assertIfConfig(#"_compiler_version("5009.*.3.2.3")"#, .unparsed)
     assertIfConfig(#"_compiler_version("5010.*.0")"#, .unparsed)
+    assertIfConfig("_compiler_version(>=5.8)", .active)
+    assertIfConfig("_compiler_version(>=12.0)", .unparsed)
     assertIfConfig("compiler(>=5.10) && 3.14159", .unparsed)
     assertIfConfig(
       "compiler(>=5.10) || 3.14159",
@@ -206,6 +219,17 @@ public class EvaluateTests: XCTestCase {
         )
       ]
     )
+    assertIfConfig(
+      #"_compiler_version("...")"#,
+      .unparsed,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "found empty version component",
+          line: 1,
+          column: 20
+        )
+      ]
+    )
   }
 
   func testCanImport() throws {
@@ -216,9 +240,9 @@ public class EvaluateTests: XCTestCase {
     assertIfConfig("canImport(SwiftSyntax, _version: 5.10)", .inactive)
     assertIfConfig(#"canImport(SwiftSyntax, _version: "5.9")"#, .active)
     assertIfConfig("canImport(SwiftSyntax, _underlyingVersion: 5009)", .active)
-    assertIfConfig("canImport(SwiftSyntax, _underlyingVersion: 5009.10", .inactive)
+    assertIfConfig("canImport(SwiftSyntax, _underlyingVersion: 5009.10)", .inactive)
     assertIfConfig(
-      "canImport(SwiftSyntax, _underlyingVersion: 5009.10.5.4.2.3.5",
+      "canImport(SwiftSyntax, _underlyingVersion: 5009.10.5.4.2.3.5)",
       .inactive,
       diagnostics: [
         DiagnosticSpec(
@@ -226,6 +250,30 @@ public class EvaluateTests: XCTestCase {
           line: 1,
           column: 44,
           severity: .warning
+        )
+      ]
+    )
+    assertIfConfig(
+      "canImport(SwiftSyntax, _version: 20A301)",
+      .unparsed,
+      diagnostics: [
+        DiagnosticSpec(
+          message: "'canImport' version check has invalid version '20A301'",
+          line: 1,
+          column: 34,
+          severity: .error
+        )
+      ]
+    )
+    assertIfConfig(
+      #"canImport(SwiftSyntax, _version: "20A301")"#,
+      .unparsed,
+      diagnostics: [
+        DiagnosticSpec(
+          message: #"'canImport' version check has invalid version '"20A301"'"#,
+          line: 1,
+          column: 34,
+          severity: .error
         )
       ]
     )
@@ -245,7 +293,7 @@ fileprivate func assertIfConfig(
   // Evaluate the condition to check the state.
   let actualDiagnostics: [Diagnostic]
   let actualState: IfConfigRegionState
-  (actualState, actualDiagnostics) = IfConfigRegionState.evaluating(condition, in: configuration)
+  (actualState, _, actualDiagnostics) = IfConfigRegionState.evaluating(condition, in: configuration)
   XCTAssertEqual(actualState, expectedState, file: file, line: line)
 
   // Check the diagnostics.
