@@ -28,21 +28,30 @@ extension TupleExprSyntax {
 extension LabeledExprListSyntax {
   /// If this list is a single, unlabeled expression, return it.
   var singleUnlabeledExpression: ExprSyntax? {
-    guard count == 1, let element = first else { return nil }
+    guard count == 1, let element = first, element.label == nil else { return nil }
     return element.expression
   }
 }
 
 extension ExprSyntax {
   /// Whether this is a simple identifier expression and, if so, what the identifier string is.
-  var simpleIdentifierExpr: String? {
-    guard let identExpr = self.as(DeclReferenceExprSyntax.self),
-      identExpr.argumentNames == nil
-    else {
+  var simpleIdentifierExpr: Identifier? {
+    guard let identExpr = self.as(DeclReferenceExprSyntax.self) else {
       return nil
     }
 
-    // FIXME: Handle escaping here.
-    return identExpr.baseName.text
+    return identExpr.simpleIdentifier
+  }
+}
+
+extension DeclReferenceExprSyntax {
+  /// If this declaration reference is a simple identifier, return that
+  /// string.
+  var simpleIdentifier: Identifier? {
+    guard argumentNames == nil else {
+      return nil
+    }
+
+    return baseName.identifier
   }
 }

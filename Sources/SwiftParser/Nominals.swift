@@ -315,7 +315,7 @@ extension Parser {
             arena: self.arena
           )
         )
-      } while keepGoing != nil && self.hasProgressed(&loopProgress)
+      } while keepGoing != nil && !self.atInheritanceListTerminator() && self.hasProgressed(&loopProgress)
     }
 
     let unexpectedAfterInheritedTypeCollection: RawUnexpectedNodesSyntax?
@@ -323,7 +323,7 @@ extension Parser {
     // If it is a Python style inheritance clause, then consume a right paren if there is one.
     if isPythonStyleInheritanceClause, let rightParen = self.consume(if: .rightParen) {
       unexpectedAfterInheritedTypeCollection = RawUnexpectedNodesSyntax(
-        elements: [RawSyntax(rightParen)],
+        [rightParen],
         arena: self.arena
       )
     } else {
@@ -337,6 +337,10 @@ extension Parser {
       unexpectedAfterInheritedTypeCollection,
       arena: self.arena
     )
+  }
+
+  mutating func atInheritanceListTerminator() -> Bool {
+    return self.experimentalFeatures.contains(.trailingComma) && (self.at(.leftBrace) || self.at(.keyword(.where)))
   }
 
   mutating func parsePrimaryAssociatedTypes() -> RawPrimaryAssociatedTypeClauseSyntax {

@@ -63,6 +63,7 @@ enum MacroExpansionError: Error, CustomStringConvertible {
   case noFreestandingMacroRoles(Macro.Type)
   case moreThanOneBodyMacro
   case preambleWithoutBody
+  case recursiveExpansion(any Macro.Type)
 
   var description: String {
     switch self {
@@ -92,6 +93,9 @@ enum MacroExpansionError: Error, CustomStringConvertible {
 
     case .preambleWithoutBody:
       return "preamble macro cannot be applied to a function with no body"
+
+    case .recursiveExpansion(let type):
+      return "recursive expansion of macro '\(type)'"
     }
   }
 }
@@ -394,27 +398,38 @@ public func expandAttachedMacro<Context: MacroExpansionContext>(
     in: context,
     indentationWidth: indentationWidth
   )
-  return expandedSources.map {
-    collapse(expansions: $0, for: macroRole, attachedTo: declarationNode, indentationWidth: indentationWidth)
+  if let expandedSources {
+    // If formatting is disabled we don't want to add any indentation while collapsing
+    let collapseIndentationWidth: Trivia?
+    switch definition.formatMode {
+    case .auto: collapseIndentationWidth = indentationWidth
+    case .disabled: collapseIndentationWidth = []
+    }
+    return collapse(
+      expansions: expandedSources,
+      for: macroRole,
+      attachedTo: declarationNode,
+      indentationWidth: collapseIndentationWidth
+    )
   }
+  return nil
 }
 
 fileprivate extension SyntaxProtocol {
   /// Perform a format if required and then trim any leading/trailing
   /// whitespace.
   func formattedExpansion(_ mode: FormatMode, indentationWidth: Trivia?) -> String {
-    let formatted: Syntax
     switch mode {
     case .auto:
-      formatted = self.formatted(using: BasicFormat(indentationWidth: indentationWidth))
+      return self.formatted(using: BasicFormat(indentationWidth: indentationWidth))
+        .trimmedDescription(matching: \.isWhitespace)
     case .disabled:
-      formatted = Syntax(self)
+      return Syntax(self).description
     #if RESILIENT_LIBRARIES
     @unknown default:
       fatalError()
     #endif
     }
-    return formatted.trimmedDescription(matching: { $0.isWhitespace })
   }
 }
 

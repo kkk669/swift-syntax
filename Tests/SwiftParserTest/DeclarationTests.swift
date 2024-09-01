@@ -951,6 +951,52 @@ final class DeclarationTests: ParserTestCase {
     )
   }
 
+  func testTypedThrowsPlacedAfterArrow() {
+    assertParse(
+      "func test() -> 1️⃣throws(any Error) Int",
+      diagnostics: [
+        DiagnosticSpec(
+          message: "'throws(any Error)' must precede '->'",
+          fixIts: ["move 'throws(any Error)' in front of '->'"]
+        )
+      ],
+      fixedSource: "func test() throws(any Error) ->  Int"
+    )
+
+    assertParse(
+      "func test() -> 1️⃣throws(any Error Int",
+      diagnostics: [
+        DiagnosticSpec(
+          message: "'throws(any Error' must precede '->'",
+          fixIts: ["move 'throws(any Error' in front of '->'"]
+        )
+      ],
+      fixedSource: "func test() throws(any Error -> Int"
+    )
+
+    assertParse(
+      "func test() -> 1️⃣throws (Int, Int)",
+      diagnostics: [
+        DiagnosticSpec(
+          message: "'throws' must precede '->'",
+          fixIts: ["move 'throws' in front of '->'"]
+        )
+      ],
+      fixedSource: "func test() throws -> (Int, Int)"
+    )
+
+    assertParse(
+      "func test() -> 1️⃣throws (any Error) Int",
+      diagnostics: [
+        DiagnosticSpec(
+          message: "'throws' must precede '->'",
+          fixIts: ["move 'throws' in front of '->'"]
+        )
+      ],
+      fixedSource: "func test() throws -> (any Error) Int"
+    )
+  }
+
   func testTypedThrows() {
     assertParse(
       "func test() throws(any Error) -> Int { }"
@@ -1255,47 +1301,13 @@ final class DeclarationTests: ParserTestCase {
   func testExpressionMember() {
     assertParse(
       """
-      struct S 1️⃣{2️⃣
-        3️⃣/4️⃣ ###line 25 "line-directive.swift"5️⃣
-      6️⃣}
+      struct S {
+        1️⃣/ ###line 25 "line-directive.swift"
+      }
       """,
       diagnostics: [
-        DiagnosticSpec(
-          locationMarker: "2️⃣",
-          message: "expected '}' to end struct",
-          notes: [NoteSpec(locationMarker: "1️⃣", message: "to match this opening '{'")],
-          fixIts: ["insert '}'"]
-        ),
-        DiagnosticSpec(
-          locationMarker: "4️⃣",
-          message: "bare slash regex literal may not start with space",
-          fixIts: [
-            "convert to extended regex literal with '#'",
-            #"insert '\'"#,
-          ]
-        ),
-        DiagnosticSpec(
-          locationMarker: "5️⃣",
-          message: "expected '/' to end regex literal",
-          notes: [NoteSpec(locationMarker: "3️⃣", message: "to match this opening '/'")],
-          fixIts: ["insert '/'"]
-        ),
-        DiagnosticSpec(
-          locationMarker: "6️⃣",
-          message: "extraneous brace at top level"
-        ),
-      ],
-      applyFixIts: [
-        "insert '}'",
-        #"insert '\'"#,
-        "insert '/'",
-      ],
-      fixedSource: #"""
-        struct S {
-        }
-          /\ ###line 25 "line-directive.swift"/
-        }
-        """#
+        DiagnosticSpec(message: #"unexpected code '/ ###line 25 "line-directive.swift"' in struct"#)
+      ]
     )
   }
 
@@ -2244,6 +2256,17 @@ final class DeclarationTests: ParserTestCase {
           }
         }
         """
+    )
+  }
+
+  func testVariableGetSetNextLine() {
+    assertParse(
+      """
+      struct X {
+        var x: Int
+        { 17 }
+      }
+      """
     )
   }
 
@@ -3286,6 +3309,38 @@ final class DeclarationTests: ParserTestCase {
       fixedSource: """
         @foo let a = "a", b = "b"
         """
+    )
+  }
+
+  func testConstAsArgumentLabel() {
+    assertParse(
+      "func const(_const: String) {}",
+      substructure: FunctionParameterSyntax(
+        firstName: .identifier("_const"),
+        colon: .colonToken(),
+        type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("String")))
+      )
+    )
+
+    assertParse(
+      "func const(_const map: String) {}",
+      substructure: FunctionParameterSyntax(
+        firstName: .identifier("_const"),
+        secondName: .identifier("map"),
+        colon: .colonToken(),
+        type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("String")))
+      )
+    )
+
+    assertParse(
+      "func const(_const x y: String) {}",
+      substructure: FunctionParameterSyntax(
+        modifiers: [DeclModifierSyntax(name: .keyword(._const))],
+        firstName: .identifier("x"),
+        secondName: .identifier("y"),
+        colon: .colonToken(),
+        type: TypeSyntax(IdentifierTypeSyntax(name: .identifier("String")))
+      )
     )
   }
 }

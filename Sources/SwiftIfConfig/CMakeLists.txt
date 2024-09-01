@@ -13,7 +13,7 @@ add_swift_syntax_library(SwiftIfConfig
   ConfiguredRegions.swift
   IfConfigRegionState.swift
   IfConfigDecl+IfConfig.swift
-  IfConfigError.swift
+  IfConfigDiagnostic.swift
   IfConfigEvaluation.swift
   IfConfigFunctions.swift
   SyntaxLiteralUtils.swift
@@ -24,5 +24,6 @@ add_swift_syntax_library(SwiftIfConfig
 
 target_link_swift_syntax_libraries(SwiftIfConfig PUBLIC
   SwiftSyntax
+  SwiftSyntaxBuilder
   SwiftDiagnostics
   SwiftOperators)

@@ -15,11 +15,14 @@ import SwiftSyntax
 
 enum BuildConfigurationError: Error, CustomStringConvertible {
   case badAttribute(String)
+  case badModule(String)
 
   var description: String {
     switch self {
     case .badAttribute(let attribute):
       return "unacceptable attribute '\(attribute)'"
+    case .badModule(let module):
+      return "unacceptable module '\(module)'"
     }
   }
 }
@@ -51,11 +54,15 @@ struct TestingBuildConfiguration: BuildConfiguration {
   }
 
   func canImport(
-    importPath: [String],
+    importPath: [(TokenSyntax, String)],
     version: CanImportVersion
-  ) -> Bool {
-    guard let moduleName = importPath.first else {
+  ) throws -> Bool {
+    guard let moduleName = importPath.first?.1 else {
       return false
+    }
+
+    if moduleName == "ExplodingModule" {
+      throw BuildConfigurationError.badModule(moduleName)
     }
 
     guard moduleName == "SwiftSyntax" else { return false }

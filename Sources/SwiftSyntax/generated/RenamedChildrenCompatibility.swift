@@ -81,7 +81,6 @@ extension AccessorDeclSyntax {
       body: CodeBlockSyntax? = nil,
       _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -156,7 +155,6 @@ extension ActorDeclSyntax {
       memberBlock: MemberBlockSyntax,
       _ unexpectedAfterMemberBlock: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -255,7 +253,6 @@ extension ArrayExprSyntax {
       rightSquareBracket: TokenSyntax = .rightSquareToken(),
       _ unexpectedAfterRightSquareBracket: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -354,7 +351,6 @@ extension ArrayTypeSyntax {
       rightSquareBracket: TokenSyntax = .rightSquareToken(),
       _ unexpectedAfterRightSquareBracket: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -411,7 +407,6 @@ extension ArrowExprSyntax {
       arrowToken: TokenSyntax = .arrowToken(),
       _ unexpectedAfterArrowToken: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -500,7 +495,6 @@ extension AsExprSyntax {
       typeName: some TypeSyntaxProtocol,
       _ unexpectedAfterTypeName: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -557,7 +551,6 @@ extension AssignmentExprSyntax {
       assignToken: TokenSyntax = .equalToken(),
       _ unexpectedAfterAssignToken: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -620,7 +613,6 @@ extension AssociatedTypeDeclSyntax {
       genericWhereClause: GenericWhereClauseSyntax? = nil,
       _ unexpectedAfterGenericWhereClause: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -721,7 +713,6 @@ extension AttributeSyntax {
       rightParen: TokenSyntax? = nil,
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -782,7 +773,6 @@ extension AvailabilityArgumentSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -841,7 +831,6 @@ extension AvailabilityConditionSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -907,7 +896,6 @@ extension BackDeployedAttributeArgumentsSyntax {
       versionList: PlatformVersionItemListSyntax,
       _ unexpectedAfterVersionList: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -962,7 +950,6 @@ extension BinaryOperatorExprSyntax {
       operatorToken: TokenSyntax,
       _ unexpectedAfterOperatorToken: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1013,7 +1000,6 @@ extension BooleanLiteralExprSyntax {
       booleanLiteral: TokenSyntax,
       _ unexpectedAfterBooleanLiteral: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1070,7 +1056,6 @@ extension _CanImportVersionInfoSyntax {
       versionTuple: VersionTupleSyntax,
       _ unexpectedAfterVersionTuple: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1141,7 +1126,6 @@ extension ClassDeclSyntax {
       memberBlock: MemberBlockSyntax,
       _ unexpectedAfterMemberBlock: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1162,73 +1146,6 @@ extension ClassDeclSyntax {
         unexpectedBetweenGenericWhereClauseAndMemberBlock, 
         memberBlock: memberBlock, 
         unexpectedAfterMemberBlock, 
-        trailingTrivia: trailingTrivia
-      )
-  }
-}
-
-extension ClosureCaptureSyntax {
-  @available(*, deprecated, renamed: "unexpectedBetweenNameAndEqual")
-  public var unexpectedBetweenNameAndAssignToken: UnexpectedNodesSyntax? {
-    get {
-      return unexpectedBetweenNameAndEqual
-    }
-    set {
-      unexpectedBetweenNameAndEqual = newValue
-    }
-  }
-  
-  @available(*, deprecated, renamed: "equal")
-  public var assignToken: TokenSyntax? {
-    get {
-      return equal
-    }
-    set {
-      equal = newValue
-    }
-  }
-  
-  @available(*, deprecated, renamed: "unexpectedBetweenEqualAndExpression")
-  public var unexpectedBetweenAssignTokenAndExpression: UnexpectedNodesSyntax? {
-    get {
-      return unexpectedBetweenEqualAndExpression
-    }
-    set {
-      unexpectedBetweenEqualAndExpression = newValue
-    }
-  }
-  
-  @available(*, deprecated, renamed: "ClosureCaptureSyntax(leadingTrivia:_:specifier:_:name:_:equal:_:expression:_:trailingComma:_:trailingTrivia:)")
-  @_disfavoredOverload
-  public init(
-      leadingTrivia: Trivia? = nil,
-      _ unexpectedBeforeSpecifier: UnexpectedNodesSyntax? = nil,
-      specifier: ClosureCaptureSpecifierSyntax? = nil,
-      _ unexpectedBetweenSpecifierAndName: UnexpectedNodesSyntax? = nil,
-      name: TokenSyntax? = nil,
-      _ unexpectedBetweenNameAndAssignToken: UnexpectedNodesSyntax? = nil,
-      assignToken: TokenSyntax? = nil,
-      _ unexpectedBetweenAssignTokenAndExpression: UnexpectedNodesSyntax? = nil,
-      expression: some ExprSyntaxProtocol,
-      _ unexpectedBetweenExpressionAndTrailingComma: UnexpectedNodesSyntax? = nil,
-      trailingComma: TokenSyntax? = nil,
-      _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
-      trailingTrivia: Trivia? = nil
-    
-  ) {
-    self.init(
-        leadingTrivia: leadingTrivia, 
-        unexpectedBeforeSpecifier, 
-        specifier: specifier, 
-        unexpectedBetweenSpecifierAndName, 
-        name: name, 
-        unexpectedBetweenNameAndAssignToken, 
-        equal: assignToken, 
-        unexpectedBetweenAssignTokenAndExpression, 
-        expression: expression, 
-        unexpectedBetweenExpressionAndTrailingComma, 
-        trailingComma: trailingComma, 
-        unexpectedAfterTrailingComma, 
         trailingTrivia: trailingTrivia
       )
   }
@@ -1277,7 +1194,6 @@ extension ClosureParameterClauseSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1392,7 +1308,6 @@ extension ClosureSignatureSyntax {
       inTok: TokenSyntax = .keyword(.in),
       _ unexpectedAfterInTok: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1487,7 +1402,6 @@ extension ConformanceRequirementSyntax {
       rightTypeIdentifier: some TypeSyntaxProtocol,
       _ unexpectedAfterRightTypeIdentifier: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1544,7 +1458,6 @@ extension ConsumeExprSyntax {
       expression: some ExprSyntaxProtocol,
       _ unexpectedAfterExpression: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1619,7 +1532,6 @@ extension DeclReferenceExprSyntax {
       declNameArguments: DeclNameArgumentsSyntax? = nil,
       _ unexpectedAfterDeclNameArguments: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1714,7 +1626,6 @@ extension DerivativeAttributeArgumentsSyntax {
       diffParams: DifferentiabilityWithRespectToArgumentSyntax? = nil,
       _ unexpectedAfterDiffParams: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1813,7 +1724,6 @@ extension DictionaryElementSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -1948,7 +1858,6 @@ extension DictionaryTypeSyntax {
       rightSquareBracket: TokenSyntax = .rightSquareToken(),
       _ unexpectedAfterRightSquareBracket: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2009,7 +1918,6 @@ extension DifferentiabilityArgumentSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2066,7 +1974,6 @@ extension DifferentiabilityArgumentsSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2125,7 +2032,6 @@ extension DifferentiabilityWithRespectToArgumentSyntax {
       parameters: Arguments,
       _ unexpectedAfterParameters: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2268,7 +2174,6 @@ extension DifferentiableAttributeArgumentsSyntax {
       whereClause: GenericWhereClauseSyntax? = nil,
       _ unexpectedAfterWhereClause: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2331,7 +2236,6 @@ extension DynamicReplacementAttributeArgumentsSyntax {
       declname: DeclReferenceExprSyntax,
       _ unexpectedAfterDeclname: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2390,7 +2294,6 @@ extension EditorPlaceholderDeclSyntax {
       identifier: TokenSyntax,
       _ unexpectedAfterIdentifier: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2445,7 +2348,6 @@ extension EditorPlaceholderExprSyntax {
       identifier: TokenSyntax,
       _ unexpectedAfterIdentifier: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2522,7 +2424,6 @@ extension EnumCaseElementSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2583,7 +2484,6 @@ extension EnumCaseParameterClauseSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2650,7 +2550,6 @@ extension EnumCaseParameterSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2747,7 +2646,6 @@ extension EnumDeclSyntax {
       memberBlock: MemberBlockSyntax,
       _ unexpectedAfterMemberBlock: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2820,7 +2718,6 @@ extension ExpressionSegmentSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2879,7 +2776,6 @@ extension FloatLiteralExprSyntax {
       floatingDigits: TokenSyntax,
       _ unexpectedAfterFloatingDigits: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -2948,7 +2844,6 @@ extension ForStmtSyntax {
       body: CodeBlockSyntax,
       _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3027,7 +2922,6 @@ extension FunctionCallExprSyntax {
       additionalTrailingClosures: MultipleTrailingClosureElementListSyntax = [],
       _ unexpectedAfterAdditionalTrailingClosures: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3102,7 +2996,6 @@ extension FunctionDeclSyntax {
       body: CodeBlockSyntax? = nil,
       _ unexpectedAfterBody: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3171,7 +3064,6 @@ extension FunctionParameterClauseSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3242,7 +3134,6 @@ extension FunctionParameterSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3343,7 +3234,6 @@ extension FunctionSignatureSyntax {
       output: ReturnClauseSyntax? = nil,
       _ unexpectedAfterOutput: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3441,7 +3331,6 @@ extension FunctionTypeSyntax {
       output: ReturnClauseSyntax,
       _ unexpectedAfterOutput: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3534,7 +3423,6 @@ extension GenericArgumentClauseSyntax {
       rightAngleBracket: TokenSyntax = .rightAngleToken(),
       _ unexpectedAfterRightAngleBracket: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3591,7 +3479,6 @@ extension GenericArgumentSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3705,7 +3592,6 @@ extension GenericParameterClauseSyntax {
       rightAngleBracket: TokenSyntax = .rightAngleToken(),
       _ unexpectedAfterRightAngleBracket: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3772,7 +3658,6 @@ extension GenericParameterSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3835,7 +3720,6 @@ extension GenericRequirementSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3890,7 +3774,6 @@ extension GenericWhereClauseSyntax {
       requirementList: GenericRequirementListSyntax,
       _ unexpectedAfterRequirementList: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -3947,7 +3830,6 @@ extension ImplementsAttributeArgumentsSyntax {
       declname: DeclReferenceExprSyntax,
       _ unexpectedAfterDeclname: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4030,7 +3912,6 @@ extension ImportDeclSyntax {
       path: ImportPathComponentListSyntax,
       _ unexpectedAfterPath: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4091,7 +3972,6 @@ extension ImportPathComponentSyntax {
       trailingDot: TokenSyntax? = nil,
       _ unexpectedAfterTrailingDot: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4148,7 +4028,6 @@ extension InfixOperatorExprSyntax {
       rightOperand: some ExprSyntaxProtocol,
       _ unexpectedAfterRightOperand: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4205,7 +4084,6 @@ extension InheritanceClauseSyntax {
       inheritedTypeCollection: InheritedTypeListSyntax,
       _ unexpectedAfterInheritedTypeCollection: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4260,7 +4138,6 @@ extension InheritedTypeSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4313,7 +4190,6 @@ extension IntegerLiteralExprSyntax {
       digits: TokenSyntax,
       _ unexpectedAfterDigits: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4388,7 +4264,6 @@ extension IsExprSyntax {
       typeName: some TypeSyntaxProtocol,
       _ unexpectedAfterTypeName: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4487,7 +4362,6 @@ extension KeyPathSubscriptComponentSyntax {
       rightBracket: TokenSyntax = .rightSquareToken(),
       _ unexpectedAfterRightBracket: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4566,7 +4440,6 @@ extension LabeledStmtSyntax {
       statement: some StmtSyntaxProtocol,
       _ unexpectedAfterStatement: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4665,7 +4538,6 @@ extension LayoutRequirementSyntax {
       rightParen: TokenSyntax? = nil,
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4744,7 +4616,6 @@ extension MacroDeclSyntax {
       genericWhereClause: GenericWhereClauseSyntax? = nil,
       _ unexpectedAfterGenericWhereClause: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -4897,7 +4768,6 @@ extension MacroExpansionDeclSyntax {
       additionalTrailingClosures: MultipleTrailingClosureElementListSyntax = [],
       _ unexpectedAfterAdditionalTrailingClosures: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5050,7 +4920,6 @@ extension MacroExpansionExprSyntax {
       additionalTrailingClosures: MultipleTrailingClosureElementListSyntax = [],
       _ unexpectedAfterAdditionalTrailingClosures: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5119,7 +4988,6 @@ extension MemberAccessExprSyntax {
       declName: DeclReferenceExprSyntax,
       _ unexpectedAfterDeclName: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5178,7 +5046,6 @@ extension MetatypeTypeSyntax {
       typeOrProtocol: TokenSyntax,
       _ unexpectedAfterTypeOrProtocol: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5255,7 +5122,6 @@ extension NamedOpaqueReturnTypeSyntax {
       baseType: some TypeSyntaxProtocol,
       _ unexpectedAfterBaseType: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5344,7 +5210,6 @@ extension OperatorDeclSyntax {
       operatorPrecedenceAndTypes: OperatorPrecedenceAndTypesSyntax? = nil,
       _ unexpectedAfterOperatorPrecedenceAndTypes: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5407,7 +5272,6 @@ extension OptionalBindingConditionSyntax {
       initializer: InitializerClauseSyntax? = nil,
       _ unexpectedAfterInitializer: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5466,7 +5330,6 @@ extension PackElementExprSyntax {
       packRefExpr: some ExprSyntaxProtocol,
       _ unexpectedAfterPackRefExpr: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5521,7 +5384,6 @@ extension PackElementTypeSyntax {
       packType: some TypeSyntaxProtocol,
       _ unexpectedAfterPackType: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5576,7 +5438,6 @@ extension PackExpansionExprSyntax {
       patternExpr: some ExprSyntaxProtocol,
       _ unexpectedAfterPatternExpr: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5631,7 +5492,6 @@ extension PackExpansionTypeSyntax {
       patternType: some TypeSyntaxProtocol,
       _ unexpectedAfterPatternType: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5692,7 +5552,6 @@ extension PatternBindingSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5753,7 +5612,6 @@ extension PlatformVersionItemSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5808,7 +5666,6 @@ extension PostfixOperatorExprSyntax {
       operatorToken: TokenSyntax,
       _ unexpectedAfterOperatorToken: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -5943,7 +5800,6 @@ extension PoundSourceLocationArgumentsSyntax {
       lineNumber: TokenSyntax,
       _ unexpectedAfterLineNumber: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6012,7 +5868,6 @@ extension PoundSourceLocationSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6103,7 +5958,6 @@ extension PrecedenceGroupAssignmentSyntax {
       flag: TokenSyntax,
       _ unexpectedAfterFlag: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6162,7 +6016,6 @@ extension PrecedenceGroupAssociativitySyntax {
       value: TokenSyntax,
       _ unexpectedAfterValue: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6229,7 +6082,6 @@ extension PrecedenceGroupDeclSyntax {
       rightBrace: TokenSyntax = .rightBraceToken(),
       _ unexpectedAfterRightBrace: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6326,7 +6178,6 @@ extension PrecedenceGroupRelationSyntax {
       otherNames: PrecedenceGroupNameListSyntax,
       _ unexpectedAfterOtherNames: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6403,7 +6254,6 @@ extension PrefixOperatorExprSyntax {
       postfixExpression: some ExprSyntaxProtocol,
       _ unexpectedAfterPostfixExpression: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6500,7 +6350,6 @@ extension PrimaryAssociatedTypeClauseSyntax {
       rightAngleBracket: TokenSyntax = .rightAngleToken(),
       _ unexpectedAfterRightAngleBracket: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6569,7 +6418,6 @@ extension ProtocolDeclSyntax {
       memberBlock: MemberBlockSyntax,
       _ unexpectedAfterMemberBlock: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6682,7 +6530,6 @@ extension RegexLiteralExprSyntax {
       closingPounds: TokenSyntax? = nil,
       _ unexpectedAfterClosingPounds: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6743,7 +6590,6 @@ extension ReturnClauseSyntax {
       returnType: some TypeSyntaxProtocol,
       _ unexpectedAfterReturnType: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6840,7 +6686,6 @@ extension SameTypeRequirementSyntax {
       rightTypeIdentifier: some TypeSyntaxProtocol,
       _ unexpectedAfterRightTypeIdentifier: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6897,7 +6742,6 @@ extension SomeOrAnyTypeSyntax {
       baseType: some TypeSyntaxProtocol,
       _ unexpectedAfterBaseType: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -6954,7 +6798,6 @@ extension SourceFileSyntax {
       eofToken: TokenSyntax = .endOfFileToken(),
       _ unexpectedAfterEofToken: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7050,7 +6893,6 @@ extension SpecializeAvailabilityArgumentSyntax {
       semicolon: TokenSyntax = .semicolonToken(),
       _ unexpectedAfterSemicolon: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7143,7 +6985,6 @@ extension SpecializeTargetFunctionArgumentSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7278,7 +7119,6 @@ extension StringLiteralExprSyntax {
       closeDelimiter: TokenSyntax? = nil,
       _ unexpectedAfterCloseDelimiter: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7351,7 +7191,6 @@ extension StructDeclSyntax {
       memberBlock: MemberBlockSyntax,
       _ unexpectedAfterMemberBlock: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7466,7 +7305,6 @@ extension SubscriptCallExprSyntax {
       additionalTrailingClosures: MultipleTrailingClosureElementListSyntax = [],
       _ unexpectedAfterAdditionalTrailingClosures: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7591,7 +7429,6 @@ extension SubscriptDeclSyntax {
       accessor: AccessorBlockSyntax? = nil,
       _ unexpectedAfterAccessor: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7658,7 +7495,6 @@ extension SuppressedTypeSyntax {
       patternType: some TypeSyntaxProtocol,
       _ unexpectedAfterPatternType: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7715,7 +7551,6 @@ extension SwitchCaseSyntax {
       statements: CodeBlockItemListSyntax,
       _ unexpectedAfterStatements: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7778,7 +7613,6 @@ extension SwitchExprSyntax {
       rightBrace: TokenSyntax = .rightBraceToken(),
       _ unexpectedAfterRightBrace: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7915,7 +7749,6 @@ extension TernaryExprSyntax {
       secondChoice: some ExprSyntaxProtocol,
       _ unexpectedAfterSecondChoice: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -7978,7 +7811,6 @@ extension TupleExprSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8059,7 +7891,6 @@ extension TuplePatternElementSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8148,7 +7979,6 @@ extension TupleTypeElementSyntax {
       trailingComma: TokenSyntax? = nil,
       _ unexpectedAfterTrailingComma: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8223,7 +8053,6 @@ extension TypeAliasDeclSyntax {
       genericWhereClause: GenericWhereClauseSyntax? = nil,
       _ unexpectedAfterGenericWhereClause: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8288,7 +8117,6 @@ extension UnresolvedAsExprSyntax {
       questionOrExclamationMark: TokenSyntax? = nil,
       _ unexpectedAfterQuestionOrExclamationMark: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8341,7 +8169,6 @@ extension UnresolvedIsExprSyntax {
       isTok: TokenSyntax = .keyword(.is),
       _ unexpectedAfterIsTok: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8416,7 +8243,6 @@ extension UnresolvedTernaryExprSyntax {
       colonMark: TokenSyntax = .colonToken(),
       _ unexpectedAfterColonMark: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8493,7 +8319,6 @@ extension ValueBindingPatternSyntax {
       valuePattern: some PatternSyntaxProtocol,
       _ unexpectedAfterValuePattern: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8552,7 +8377,6 @@ extension VariableDeclSyntax {
       bindings: PatternBindingListSyntax,
       _ unexpectedAfterBindings: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8611,7 +8435,6 @@ extension WhereClauseSyntax {
       guardResult: some ExprSyntaxProtocol,
       _ unexpectedAfterGuardResult: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8666,7 +8489,6 @@ extension YieldStmtSyntax {
       yields: YieldedExpressions,
       _ unexpectedAfterYields: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
@@ -8723,7 +8545,6 @@ extension YieldedExpressionsClauseSyntax {
       rightParen: TokenSyntax = .rightParenToken(),
       _ unexpectedAfterRightParen: UnexpectedNodesSyntax? = nil,
       trailingTrivia: Trivia? = nil
-    
   ) {
     self.init(
         leadingTrivia: leadingTrivia, 
