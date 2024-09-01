@@ -84,7 +84,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
 
               DeclSyntax(
                 """
-                func verify<Node: RawSyntaxNodeProtocol>(_ raw: RawSyntax?, as _: Node.Type, file: StaticString = #filePath, line: UInt = #line) -> ValidationError? {
+                func verify<Node: RawSyntaxNodeProtocol>(_ raw: RawSyntax?, as _: Node.Type, file: StaticString = #fileID, line: UInt = #line) -> ValidationError? {
                   guard let raw = raw else {
                     return .expectedNonNil(expectedKind: Node.self, file: file, line: line)
                   }
@@ -98,7 +98,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
 
               DeclSyntax(
                 """
-                func verify<Node: RawSyntaxNodeProtocol>(_ raw: RawSyntax?, as _: Node?.Type, file: StaticString = #filePath, line: UInt = #line) -> ValidationError? {
+                func verify<Node: RawSyntaxNodeProtocol>(_ raw: RawSyntax?, as _: Node?.Type, file: StaticString = #fileID, line: UInt = #line) -> ValidationError? {
                   if raw != nil {
                     return verify(raw, as: Node.self, file: file, line: line)
                   }
@@ -109,7 +109,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
 
               DeclSyntax(
                 """
-                func verify(_ raw: RawSyntax?, as _: RawTokenSyntax?.Type, tokenChoices: [TokenChoice], file: StaticString = #filePath, line: UInt = #line) -> ValidationError? {
+                func verify(_ raw: RawSyntax?, as _: RawTokenSyntax?.Type, tokenChoices: [TokenChoice], file: StaticString = #fileID, line: UInt = #line) -> ValidationError? {
                   // Validation of token choice is currently causing assertion failures where
                   // the list of expected token choices in the syntax tree doesn't match those
                   // the parser generates. Disable the verification for now until all issues
@@ -124,7 +124,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
 
               DeclSyntax(
                 """
-                func verify(_ raw: RawSyntax?, as _: RawTokenSyntax.Type, tokenChoices: [TokenChoice], file: StaticString = #filePath, line: UInt = #line) -> ValidationError? {
+                func verify(_ raw: RawSyntax?, as _: RawTokenSyntax.Type, tokenChoices: [TokenChoice], file: StaticString = #fileID, line: UInt = #line) -> ValidationError? {
                   // Validation of token choice is currently causing assertion failures where
                   // the list of expected token choices in the syntax tree doesn't match those
                   // the parser generates. Disable the verification for now until all issues
@@ -199,7 +199,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
                 )
 
                 for node in NON_BASE_SYNTAX_NODES {
-                  try SwitchCaseSyntax("case .\(node.varOrCaseName):") {
+                  try SwitchCaseSyntax("case .\(node.enumCaseCallName):") {
                     if let node = node.layoutNode {
                       ExprSyntax("assert(layout.count == \(raw: node.children.count))")
                       for (index, child) in node.children.enumerated() {
@@ -222,7 +222,7 @@ let rawSyntaxValidationFile = try! SourceFileSyntax(leadingTrivia: copyrightHead
                               case .keyword(let keyword):
                                 ArrayElementSyntax(expression: ExprSyntax(".keyword(\(literal: keyword.spec.name))"))
                               case .token(let token):
-                                ArrayElementSyntax(expression: ExprSyntax(".tokenKind(.\(token.spec.varOrCaseName))"))
+                                ArrayElementSyntax(expression: ExprSyntax(".tokenKind(.\(token.spec.memberCallName))"))
                               }
                             }
                           }

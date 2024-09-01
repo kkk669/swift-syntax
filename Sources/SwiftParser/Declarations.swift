@@ -492,7 +492,7 @@ extension Parser {
             arena: self.arena
           )
         )
-      } while keepGoing != nil && self.hasProgressed(&loopProgress)
+      } while keepGoing != nil && !atGenericParametersListTerminator() && self.hasProgressed(&loopProgress)
     }
 
     let whereClause: RawGenericWhereClauseSyntax?
@@ -519,6 +519,10 @@ extension Parser {
     )
   }
 
+  mutating func atGenericParametersListTerminator() -> Bool {
+    return self.at(prefix: ">")
+  }
+
   mutating func parseGenericWhereClause() -> RawGenericWhereClauseSyntax {
     let (unexpectedBeforeWhereKeyword, whereKeyword) = self.expect(.keyword(.where))
 
@@ -534,9 +538,9 @@ extension Parser {
             RawGenericRequirementSyntax(
               requirement: .sameTypeRequirement(
                 RawSameTypeRequirementSyntax(
-                  leftType: RawTypeSyntax(RawMissingTypeSyntax(arena: self.arena)),
+                  leftType: RawMissingTypeSyntax(arena: self.arena),
                   equal: missingToken(.binaryOperator, text: "=="),
-                  rightType: RawTypeSyntax(RawMissingTypeSyntax(arena: self.arena)),
+                  rightType: RawMissingTypeSyntax(arena: self.arena),
                   arena: self.arena
                 )
               ),
@@ -674,7 +678,7 @@ extension Parser {
             RawSameTypeRequirementSyntax(
               leftType: firstType,
               equal: RawTokenSyntax(missing: .binaryOperator, text: "==", arena: self.arena),
-              rightType: RawTypeSyntax(RawMissingTypeSyntax(arena: self.arena)),
+              rightType: RawMissingTypeSyntax(arena: self.arena),
               arena: self.arena
             )
           )
@@ -700,7 +704,7 @@ extension Parser {
             arena: self.arena
           )
         )
-      } while keepGoing != nil && self.hasProgressed(&loopProgress)
+      } while keepGoing != nil && !self.atWhereClauseListTerminator() && self.hasProgressed(&loopProgress)
     }
 
     return RawGenericWhereClauseSyntax(
@@ -709,6 +713,10 @@ extension Parser {
       requirements: RawGenericRequirementListSyntax(elements: elements, arena: self.arena),
       arena: self.arena
     )
+  }
+
+  mutating func atWhereClauseListTerminator() -> Bool {
+    return self.at(.leftBrace)
   }
 }
 
@@ -722,12 +730,10 @@ extension Parser {
     if let remainingTokens = remainingTokensIfMaximumNestingLevelReached() {
       let item = RawMemberBlockItemSyntax(
         remainingTokens,
-        decl: RawDeclSyntax(
-          RawMissingDeclSyntax(
-            attributes: self.emptyCollection(RawAttributeListSyntax.self),
-            modifiers: self.emptyCollection(RawDeclModifierListSyntax.self),
-            arena: self.arena
-          )
+        decl: RawMissingDeclSyntax(
+          attributes: self.emptyCollection(RawAttributeListSyntax.self),
+          modifiers: self.emptyCollection(RawDeclModifierListSyntax.self),
+          arena: self.arena
         ),
         semicolon: nil,
         arena: self.arena
@@ -1281,17 +1287,7 @@ extension Parser {
             arena: self.arena
           )
 
-          /// Create a version of the same attribute with all tokens missing.
-          class TokenMissingMaker: SyntaxRewriter {
-            override func visit(_ token: TokenSyntax) -> TokenSyntax {
-              return .init(token.tokenKind, presence: .missing)
-            }
-          }
-          let tokenMissingMaker = TokenMissingMaker(arena: self.arena)
-          let missingAttributes = tokenMissingMaker.rewrite(
-            Syntax(raw: RawSyntax(recoveredAttributes), rawNodeArena: arena)
-          ).raw
-          attrs.attributes = missingAttributes.cast(RawAttributeListSyntax.self)
+          attrs.attributes = withAllTokensMarkedMissing(syntax: recoveredAttributes)
         }
 
         var (pattern, typeAnnotation) = self.parseTypedPattern()
@@ -1358,7 +1354,9 @@ extension Parser {
         }
 
         let accessors: RawAccessorBlockSyntax?
-        if self.at(.leftBrace)
+        if (self.at(.leftBrace)
+          && (initializer == nil || !self.currentToken.isAtStartOfLine
+            || self.withLookahead({ $0.atStartOfGetSetAccessor() })))
           || (inMemberDeclList && self.at(anyIn: AccessorDeclSyntax.AccessorSpecifierOptions.self) != nil
             && !self.at(.keyword(.`init`)))
         {
@@ -1568,7 +1566,7 @@ extension Parser {
     let unexpectedBeforeEqual: RawUnexpectedNodesSyntax?
     let equal: RawTokenSyntax
     if let colon = self.consume(if: .colon) {
-      unexpectedBeforeEqual = RawUnexpectedNodesSyntax(elements: [RawSyntax(colon)], arena: self.arena)
+      unexpectedBeforeEqual = RawUnexpectedNodesSyntax([colon], arena: self.arena)
       equal = missingToken(.equal)
     } else {
       (unexpectedBeforeEqual, equal) = self.expect(.equal)
@@ -2029,7 +2027,10 @@ extension Parser {
     let unexpectedBeforeRightParen: RawUnexpectedNodesSyntax?
     let rightParen: RawTokenSyntax?
     if leftParen != nil {
-      args = parseArgumentListElements(pattern: .none, allowTrailingComma: false)
+      args = parseArgumentListElements(
+        pattern: .none,
+        allowTrailingComma: true
+      )
       (unexpectedBeforeRightParen, rightParen) = self.expect(.rightParen)
     } else {
       args = []

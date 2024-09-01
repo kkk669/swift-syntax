@@ -935,30 +935,26 @@ public struct RawClosureCaptureSyntax: RawSyntaxNodeProtocol {
       _ unexpectedBeforeSpecifier: RawUnexpectedNodesSyntax? = nil, 
       specifier: RawClosureCaptureSpecifierSyntax?, 
       _ unexpectedBetweenSpecifierAndName: RawUnexpectedNodesSyntax? = nil, 
-      name: RawTokenSyntax?, 
-      _ unexpectedBetweenNameAndEqual: RawUnexpectedNodesSyntax? = nil, 
-      equal: RawTokenSyntax?, 
-      _ unexpectedBetweenEqualAndExpression: RawUnexpectedNodesSyntax? = nil, 
-      expression: RawExprSyntax, 
-      _ unexpectedBetweenExpressionAndTrailingComma: RawUnexpectedNodesSyntax? = nil, 
+      name: RawTokenSyntax, 
+      _ unexpectedBetweenNameAndInitializer: RawUnexpectedNodesSyntax? = nil, 
+      initializer: RawInitializerClauseSyntax?, 
+      _ unexpectedBetweenInitializerAndTrailingComma: RawUnexpectedNodesSyntax? = nil, 
       trailingComma: RawTokenSyntax?, 
       _ unexpectedAfterTrailingComma: RawUnexpectedNodesSyntax? = nil, 
       arena: __shared SyntaxArena
     ) {
     let raw = RawSyntax.makeLayout(
-      kind: .closureCapture, uninitializedCount: 11, arena: arena) { layout in
+      kind: .closureCapture, uninitializedCount: 9, arena: arena) { layout in
       layout.initialize(repeating: nil)
       layout[0] = unexpectedBeforeSpecifier?.raw
       layout[1] = specifier?.raw
       layout[2] = unexpectedBetweenSpecifierAndName?.raw
-      layout[3] = name?.raw
-      layout[4] = unexpectedBetweenNameAndEqual?.raw
-      layout[5] = equal?.raw
-      layout[6] = unexpectedBetweenEqualAndExpression?.raw
-      layout[7] = expression.raw
-      layout[8] = unexpectedBetweenExpressionAndTrailingComma?.raw
-      layout[9] = trailingComma?.raw
-      layout[10] = unexpectedAfterTrailingComma?.raw
+      layout[3] = name.raw
+      layout[4] = unexpectedBetweenNameAndInitializer?.raw
+      layout[5] = initializer?.raw
+      layout[6] = unexpectedBetweenInitializerAndTrailingComma?.raw
+      layout[7] = trailingComma?.raw
+      layout[8] = unexpectedAfterTrailingComma?.raw
     }
     self.init(unchecked: raw)
   }
@@ -975,36 +971,28 @@ public struct RawClosureCaptureSyntax: RawSyntaxNodeProtocol {
     layoutView.children[2].map(RawUnexpectedNodesSyntax.init(raw:))
   }
   
-  public var name: RawTokenSyntax? {
-    layoutView.children[3].map(RawTokenSyntax.init(raw:))
+  public var name: RawTokenSyntax {
+    layoutView.children[3].map(RawTokenSyntax.init(raw:))!
   }
   
-  public var unexpectedBetweenNameAndEqual: RawUnexpectedNodesSyntax? {
+  public var unexpectedBetweenNameAndInitializer: RawUnexpectedNodesSyntax? {
     layoutView.children[4].map(RawUnexpectedNodesSyntax.init(raw:))
   }
   
-  public var equal: RawTokenSyntax? {
-    layoutView.children[5].map(RawTokenSyntax.init(raw:))
+  public var initializer: RawInitializerClauseSyntax? {
+    layoutView.children[5].map(RawInitializerClauseSyntax.init(raw:))
   }
   
-  public var unexpectedBetweenEqualAndExpression: RawUnexpectedNodesSyntax? {
+  public var unexpectedBetweenInitializerAndTrailingComma: RawUnexpectedNodesSyntax? {
     layoutView.children[6].map(RawUnexpectedNodesSyntax.init(raw:))
   }
   
-  public var expression: RawExprSyntax {
-    layoutView.children[7].map(RawExprSyntax.init(raw:))!
-  }
-  
-  public var unexpectedBetweenExpressionAndTrailingComma: RawUnexpectedNodesSyntax? {
-    layoutView.children[8].map(RawUnexpectedNodesSyntax.init(raw:))
-  }
-  
   public var trailingComma: RawTokenSyntax? {
-    layoutView.children[9].map(RawTokenSyntax.init(raw:))
+    layoutView.children[7].map(RawTokenSyntax.init(raw:))
   }
   
   public var unexpectedAfterTrailingComma: RawUnexpectedNodesSyntax? {
-    layoutView.children[10].map(RawUnexpectedNodesSyntax.init(raw:))
+    layoutView.children[8].map(RawUnexpectedNodesSyntax.init(raw:))
   }
 }
 
@@ -1499,8 +1487,8 @@ public struct RawClosureShorthandParameterSyntax: RawSyntaxNodeProtocol {
 @_spi(RawSyntax)
 public struct RawClosureSignatureSyntax: RawSyntaxNodeProtocol {
   public enum ParameterClause: RawSyntaxNodeProtocol {
-    case `simpleInput`(RawClosureShorthandParameterListSyntax)
-    case `parameterClause`(RawClosureParameterClauseSyntax)
+    case simpleInput(RawClosureShorthandParameterListSyntax)
+    case parameterClause(RawClosureParameterClauseSyntax)
     
     public static func isKindOf(_ raw: RawSyntax) -> Bool {
       return RawClosureShorthandParameterListSyntax.isKindOf(raw) || RawClosureParameterClauseSyntax.isKindOf(raw)
@@ -1697,9 +1685,9 @@ public struct RawCodeBlockItemListSyntax: RawSyntaxNodeProtocol {
 @_spi(RawSyntax)
 public struct RawCodeBlockItemSyntax: RawSyntaxNodeProtocol {
   public enum Item: RawSyntaxNodeProtocol {
-    case `decl`(RawDeclSyntax)
-    case `stmt`(RawStmtSyntax)
-    case `expr`(RawExprSyntax)
+    case decl(RawDeclSyntax)
+    case stmt(RawStmtSyntax)
+    case expr(RawExprSyntax)
     
     public static func isKindOf(_ raw: RawSyntax) -> Bool {
       return RawDeclSyntax.isKindOf(raw) || RawStmtSyntax.isKindOf(raw) || RawExprSyntax.isKindOf(raw)
@@ -1730,6 +1718,18 @@ public struct RawCodeBlockItemSyntax: RawSyntaxNodeProtocol {
         return
       }
       return nil
+    }
+    
+    public init(decl: some RawDeclSyntaxNodeProtocol) {
+      self = .decl(RawDeclSyntax(decl))
+    }
+    
+    public init(stmt: some RawStmtSyntaxNodeProtocol) {
+      self = .stmt(RawStmtSyntax(stmt))
+    }
+    
+    public init(expr: some RawExprSyntaxNodeProtocol) {
+      self = .expr(RawExprSyntax(expr))
     }
   }
   
@@ -1964,7 +1964,7 @@ public struct RawCompositionTypeElementSyntax: RawSyntaxNodeProtocol {
   
   public init(
       _ unexpectedBeforeType: RawUnexpectedNodesSyntax? = nil, 
-      type: RawTypeSyntax, 
+      type: some RawTypeSyntaxNodeProtocol, 
       _ unexpectedBetweenTypeAndAmpersand: RawUnexpectedNodesSyntax? = nil, 
       ampersand: RawTokenSyntax?, 
       _ unexpectedAfterAmpersand: RawUnexpectedNodesSyntax? = nil, 
@@ -2114,10 +2114,10 @@ public struct RawConditionElementListSyntax: RawSyntaxNodeProtocol {
 @_spi(RawSyntax)
 public struct RawConditionElementSyntax: RawSyntaxNodeProtocol {
   public enum Condition: RawSyntaxNodeProtocol {
-    case `expression`(RawExprSyntax)
-    case `availability`(RawAvailabilityConditionSyntax)
-    case `matchingPattern`(RawMatchingPatternConditionSyntax)
-    case `optionalBinding`(RawOptionalBindingConditionSyntax)
+    case expression(RawExprSyntax)
+    case availability(RawAvailabilityConditionSyntax)
+    case matchingPattern(RawMatchingPatternConditionSyntax)
+    case optionalBinding(RawOptionalBindingConditionSyntax)
     
     public static func isKindOf(_ raw: RawSyntax) -> Bool {
       return RawExprSyntax.isKindOf(raw) || RawAvailabilityConditionSyntax.isKindOf(raw) || RawMatchingPatternConditionSyntax.isKindOf(raw) || RawOptionalBindingConditionSyntax.isKindOf(raw)
@@ -2154,6 +2154,10 @@ public struct RawConditionElementSyntax: RawSyntaxNodeProtocol {
         return
       }
       return nil
+    }
+    
+    public init(expression: some RawExprSyntaxNodeProtocol) {
+      self = .expression(RawExprSyntax(expression))
     }
   }
   
@@ -2256,11 +2260,11 @@ public struct RawConformanceRequirementSyntax: RawSyntaxNodeProtocol {
   
   public init(
       _ unexpectedBeforeLeftType: RawUnexpectedNodesSyntax? = nil, 
-      leftType: RawTypeSyntax, 
+      leftType: some RawTypeSyntaxNodeProtocol, 
       _ unexpectedBetweenLeftTypeAndColon: RawUnexpectedNodesSyntax? = nil, 
       colon: RawTokenSyntax, 
       _ unexpectedBetweenColonAndRightType: RawUnexpectedNodesSyntax? = nil, 
-      rightType: RawTypeSyntax, 
+      rightType: some RawTypeSyntaxNodeProtocol, 
       _ unexpectedAfterRightType: RawUnexpectedNodesSyntax? = nil, 
       arena: __shared SyntaxArena
     ) {
@@ -2340,7 +2344,7 @@ public struct RawConsumeExprSyntax: RawExprSyntaxNodeProtocol {
       _ unexpectedBeforeConsumeKeyword: RawUnexpectedNodesSyntax? = nil, 
       consumeKeyword: RawTokenSyntax, 
       _ unexpectedBetweenConsumeKeywordAndExpression: RawUnexpectedNodesSyntax? = nil, 
-      expression: RawExprSyntax, 
+      expression: some RawExprSyntaxNodeProtocol, 
       _ unexpectedAfterExpression: RawUnexpectedNodesSyntax? = nil, 
       arena: __shared SyntaxArena
     ) {
@@ -2668,7 +2672,7 @@ public struct RawCopyExprSyntax: RawExprSyntaxNodeProtocol {
       _ unexpectedBeforeCopyKeyword: RawUnexpectedNodesSyntax? = nil, 
       copyKeyword: RawTokenSyntax, 
       _ unexpectedBetweenCopyKeywordAndExpression: RawUnexpectedNodesSyntax? = nil, 
-      expression: RawExprSyntax, 
+      expression: some RawExprSyntaxNodeProtocol, 
       _ unexpectedAfterExpression: RawUnexpectedNodesSyntax? = nil, 
       arena: __shared SyntaxArena
     ) {

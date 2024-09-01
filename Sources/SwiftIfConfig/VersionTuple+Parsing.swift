@@ -10,6 +10,7 @@
 //
 //===----------------------------------------------------------------------===//
 
+import SwiftDiagnostics
 import SwiftSyntax
 
 extension VersionTuple {
@@ -20,11 +21,35 @@ extension VersionTuple {
   ///   we are parsing.
   ///   - versionSyntax: The syntax node that contains the version string, used
   ///   only for diagnostic purposes.
-  init(
-    parsingCompilerBuildVersion versionString: String,
+  static func parseCompilerBuildVersion(
+    _ versionString: String,
     _ versionSyntax: ExprSyntax
-  ) throws {
-    components = []
+  ) -> (version: VersionTuple?, diagnostics: [Diagnostic]) {
+    var extraDiagnostics: [Diagnostic] = []
+    let version: VersionTuple?
+    do {
+      version = try parseCompilerBuildVersion(versionString, versionSyntax, extraDiagnostics: &extraDiagnostics)
+    } catch {
+      version = nil
+      extraDiagnostics.append(contentsOf: error.asDiagnostics(at: versionSyntax))
+    }
+
+    return (version, extraDiagnostics)
+  }
+
+  /// Parse a compiler build version of the form "5007.*.1.2.3*", which is
+  /// used by an older if configuration form `_compiler_version("...")`.
+  /// - Parameters:
+  ///   - versionString: The version string for the compiler build version that
+  ///   we are parsing.
+  ///   - versionSyntax: The syntax node that contains the version string, used
+  ///   only for diagnostic purposes.
+  static func parseCompilerBuildVersion(
+    _ versionString: String,
+    _ versionSyntax: ExprSyntax,
+    extraDiagnostics: inout [Diagnostic]
+  ) throws -> VersionTuple {
+    var components: [Int] = []
 
     // Version value are separated by periods.
     let componentStrings = versionString.split(separator: ".", omittingEmptySubsequences: false)
@@ -33,7 +58,7 @@ extension VersionTuple {
     func recordComponent(_ value: Int) throws {
       let limit = components.isEmpty ? 9223371 : 999
       if value < 0 || value > limit {
-        throw IfConfigError.compilerVersionOutOfRange(value: value, upperLimit: limit, syntax: versionSyntax)
+        throw IfConfigDiagnostic.compilerVersionOutOfRange(value: value, upperLimit: limit, syntax: versionSyntax)
       }
 
       components.append(value)
@@ -43,13 +68,15 @@ extension VersionTuple {
     for (index, componentString) in componentStrings.enumerated() {
       // Check ahead of time for empty version components
       if componentString.isEmpty {
-        throw IfConfigError.emptyVersionComponent(syntax: versionSyntax)
+        throw IfConfigDiagnostic.emptyVersionComponent(syntax: versionSyntax)
       }
 
       // The second component is always "*", and is never used for comparison.
       if index == 1 {
         if componentString != "*" {
-          throw IfConfigError.compilerVersionSecondComponentNotWildcard(syntax: versionSyntax)
+          extraDiagnostics.append(
+            IfConfigDiagnostic.compilerVersionSecondComponentNotWildcard(syntax: versionSyntax).asDiagnostic
+          )
         }
         try recordComponent(0)
         continue
@@ -57,7 +84,7 @@ extension VersionTuple {
 
       // Every other component must be an integer value.
       guard let component = Int(componentString) else {
-        throw IfConfigError.invalidVersionOperand(name: "_compiler_version", syntax: versionSyntax)
+        throw IfConfigDiagnostic.invalidVersionOperand(name: "_compiler_version", syntax: versionSyntax)
       }
 
       try recordComponent(component)
@@ -65,7 +92,7 @@ extension VersionTuple {
 
     // Only allowed to specify up to 5 version components.
     if components.count > 5 {
-      throw IfConfigError.compilerVersionTooManyComponents(syntax: versionSyntax)
+      throw IfConfigDiagnostic.compilerVersionTooManyComponents(syntax: versionSyntax)
     }
 
     // In the beginning, '_compiler_version(string-literal)' was designed for a
@@ -102,5 +129,7 @@ extension VersionTuple {
       }
       components[0] = components[0] / 1000
     }
+
+    return VersionTuple(components: components)
   }
 }

@@ -12,23 +12,32 @@
 
 /// A canonicalized representation of an identifier that strips away backticks.
 public struct Identifier: Equatable, Hashable, Sendable {
-  /// The sanitized `text` of a token.
+  /// The sanitized name of the identifier.
   public var name: String {
     String(syntaxText: raw.name)
   }
 
   @_spi(RawSyntax)
   public let raw: RawIdentifier
-
-  private let arena: SyntaxArenaRef
+  private let arena: SyntaxArenaRef?
 
   public init?(_ token: TokenSyntax) {
-    guard case .identifier = token.tokenKind else {
+    switch token.tokenKind {
+    case .identifier, .keyword(.self), .keyword(.Self):
+      self.raw = RawIdentifier(token.tokenView)
+      self.arena = token.raw.arenaReference
+    default:
       return nil
     }
+  }
 
-    self.raw = RawIdentifier(token.tokenView)
-    self.arena = token.tokenView.raw.arenaReference
+  public init(_ staticString: StaticString) {
+    self.raw = RawIdentifier(staticString)
+    self.arena = nil
+  }
+
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    lhs.name == rhs.name
   }
 }
 
@@ -46,5 +55,9 @@ public struct RawIdentifier: Equatable, Hashable, Sendable {
     } else {
       self.name = raw.rawText
     }
+  }
+
+  fileprivate init(_ staticString: StaticString) {
+    name = SyntaxText(staticString)
   }
 }
