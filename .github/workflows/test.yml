@@ -5,13 +5,13 @@ on:
   pull_request:
     branches: ["wasm32-wasi-test"]
 env:
-  SWIFT_SDK_URL: https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-09-20-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-09-20-a-wasm32-unknown-wasi.artifactbundle.zip
-  SWIFT_SDK_CHECKSUM: ac7318b8beee4870162292715654499127833b847af6b3d94c32e574579ea189
+  SWIFT_SDK_URL: https://github.com/swiftwasm/swift/releases/download/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-09-26-a/swift-wasm-DEVELOPMENT-SNAPSHOT-2024-09-26-a-wasm32-unknown-wasi.artifactbundle.zip
+  SWIFT_SDK_CHECKSUM: 34c53bac6f41502f26056fd14bbf4757eca2cb93fdab089dd25449bc17cbc3c8
   TARGET_TRIPLE: wasm32-unknown-wasi
 jobs:
   test:
     runs-on: ubuntu-latest
-    container: swiftlang/swift:nightly-main-jammy@sha256:d4411903880b5a6cb9cb5905d592c68a09bbc035796808891fd63fe9aa72e843
+    container: swiftlang/swift:nightly-main-jammy@sha256:61db5d799a789a4808061fc35b85098959f09a80a4e47136a58a52469e8cd2bb
     env:
       STACK_SIZE: 16777216
     steps:
