@@ -54,8 +54,12 @@ extension SyntaxProtocol {
 @_spi(Experimental) public protocol ScopeSyntax: SyntaxProtocol {
   /// Parent of this scope, or `nil` if it is the root.
   var parentScope: ScopeSyntax? { get }
-  /// Names found in this scope. Ordered from first to last introduced.
-  var introducedNames: [LookupName] { get }
+  /// Names introduced by default in this scope.
+  /// Don't include names that might be added depending on the lookup position (like `self`).
+  /// Ordered from first to last introduced.
+  var defaultIntroducedNames: [LookupName] { get }
+  /// Debug description of this scope.
+  var scopeDebugName: String { get }
   /// Finds all declarations `identifier` refers to. `syntax` specifies the node lookup was triggered with.
   /// If `identifier` set to `nil`, returns all available names at the given node.
   func lookup(
@@ -85,20 +89,20 @@ extension SyntaxProtocol {
   /// refers to and is accessible at given syntax node then passes lookup to the parent.
   /// If `identifier` set to `nil`, returns all available names at the given node.
   func defaultLookupImplementation(
+    in names: [LookupName]? = nil,
     _ identifier: Identifier?,
     at lookUpPosition: AbsolutePosition,
     with config: LookupConfig,
     propagateToParent: Bool = true
   ) -> [LookupResult] {
     let filteredNames =
-      introducedNames
+      (names ?? defaultIntroducedNames)
       .filter { introducedName in
         checkIdentifier(identifier, refersTo: introducedName, at: lookUpPosition)
       }
 
-    let fromThisScope = filteredNames.isEmpty ? [] : [LookupResult.fromScope(self, withNames: filteredNames)]
-
-    return fromThisScope + (propagateToParent ? lookupInParent(identifier, at: lookUpPosition, with: config) : [])
+    return LookupResult.getResultArray(for: self, withNames: filteredNames)
+      + (propagateToParent ? lookupInParent(identifier, at: lookUpPosition, with: config) : [])
   }
 
   /// Looks up in parent scope.
@@ -115,6 +119,11 @@ extension SyntaxProtocol {
     refersTo introducedName: LookupName,
     at lookUpPosition: AbsolutePosition
   ) -> Bool {
-    introducedName.isAccessible(at: lookUpPosition) && (identifier == nil || introducedName.identifier == identifier!)
+    introducedName.isAccessible(at: lookUpPosition) && introducedName.refersTo(identifier)
+  }
+
+  /// Debug description of this scope.
+  @_spi(Experimental) public var scopeDebugDescription: String {
+    scopeDebugName + " " + debugLineWithColumnDescription
   }
 }

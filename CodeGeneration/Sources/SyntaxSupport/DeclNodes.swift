@@ -113,7 +113,9 @@ public let DECL_NODES: [Node] = [
           .keyword(.mutableAddressWithOwner),
           .keyword(.mutableAddressWithNativeOwner),
           .keyword(._read),
+          .keyword(.read),
           .keyword(._modify),
+          .keyword(.modify),
           .keyword(.`init`),
         ])
       ),
@@ -486,7 +488,7 @@ public let DECL_NODES: [Node] = [
     base: .decl,
     nameForDiagnostics: "deinitializer",
     documentation: """
-      A `deint` declaration
+      A `deinit` declaration
 
       An example of a deinitializer is
 

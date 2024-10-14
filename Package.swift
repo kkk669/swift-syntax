@@ -3,16 +3,27 @@
 import Foundation
 import PackageDescription
 
-let package = Package(
-  name: "swift-syntax",
-  platforms: [
-    .macOS(.v10_15),
-    .iOS(.v13),
-    .tvOS(.v13),
-    .watchOS(.v6),
-    .macCatalyst(.v13),
-  ],
-  products: [
+let products: [Product]
+
+if buildDynamicLibrary {
+  products = [
+    .library(
+      name: "_SwiftSyntaxDynamic",
+      type: .dynamic,
+      targets: [
+        "SwiftBasicFormat",
+        "SwiftDiagnostics",
+        "SwiftIDEUtils",
+        "SwiftParser",
+        "SwiftParserDiagnostics",
+        "SwiftRefactor",
+        "SwiftSyntax",
+        "SwiftSyntaxBuilder",
+      ]
+    )
+  ]
+} else {
+  products = [
     .library(name: "SwiftBasicFormat", targets: ["SwiftBasicFormat"]),
     .library(name: "SwiftCompilerPlugin", targets: ["SwiftCompilerPlugin"]),
     .library(name: "SwiftDiagnostics", targets: ["SwiftDiagnostics"]),
@@ -31,7 +42,19 @@ let package = Package(
     .library(name: "SwiftSyntaxMacrosGenericTestSupport", targets: ["SwiftSyntaxMacrosGenericTestSupport"]),
     .library(name: "_SwiftCompilerPluginMessageHandling", targets: ["SwiftCompilerPluginMessageHandling"]),
     .library(name: "_SwiftLibraryPluginProvider", targets: ["SwiftLibraryPluginProvider"]),
+  ]
+}
+
+let package = Package(
+  name: "swift-syntax",
+  platforms: [
+    .macOS(.v10_15),
+    .iOS(.v13),
+    .tvOS(.v13),
+    .watchOS(.v6),
+    .macCatalyst(.v13),
   ],
+  products: products,
   targets: [
     // MARK: - Internal helper targets
     .target(
@@ -406,6 +429,13 @@ var rawSyntaxValidation: Bool { hasEnvironmentVariable("SWIFTSYNTAX_ENABLE_RAWSY
 ///
 /// See CONTRIBUTING.md for more information
 var alternateTokenIntrospection: Bool { hasEnvironmentVariable("SWIFTPARSER_ENABLE_ALTERNATE_TOKEN_INTROSPECTION") }
+
+/// Instead of building object files for all modules to be statically linked, build a single dynamic library.
+///
+/// This allows us to build swift-syntax as dynamic libraries, which in turn allows us to build SourceKit-LSP using
+/// SwiftPM on Windows. Linking swift-syntax statically into sourcekit-lsp exceeds the maximum number of exported
+/// symbols on Windows.
+var buildDynamicLibrary: Bool { hasEnvironmentVariable("SWIFTSYNTAX_BUILD_DYNAMIC_LIBRARY") }
 
 // MARK: - Compute custom build settings
 
