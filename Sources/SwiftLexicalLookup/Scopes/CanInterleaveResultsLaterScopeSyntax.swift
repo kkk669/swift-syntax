@@ -12,12 +12,14 @@
 
 import SwiftSyntax
 
-/// Specifies how names should be introduced at the file scope.
-@_spi(Experimental) public enum FileScopeHandlingConfig {
-  /// This is the behavior that is being used
-  /// for Swift files with top-level code.
-  case memberBlockUpToLastDecl
-  /// This is the behavior that is being used
-  /// for Swift files that don’t allow top-level code.
-  case memberBlock
+protocol CanInterleaveResultsLaterScopeSyntax: ScopeSyntax {
+  /// Perform lookup in this scope and later introduce results
+  /// passed as `resultsToInterleave`.
+  /// The exact behavior depends on a specific scope.
+  func lookupWithInterleavedResults(
+    _ identifier: Identifier?,
+    at lookUpPosition: AbsolutePosition,
+    with config: LookupConfig,
+    resultsToInterleave: [LookupResult]
+  ) -> [LookupResult]
 }

@@ -18,6 +18,9 @@ import XCTest
 enum ResultExpectation {
   case fromScope(ScopeSyntax.Type, expectedNames: [ExpectedName])
   case fromFileScope(expectedNames: [ExpectedName])
+  case lookInMembers(LookInMembersScopeSyntax.Type)
+  case lookInGenericParametersOfExtendedType
+  case mightIntroduceDollarIdentifiers
 
   var expectedNames: [ExpectedName] {
     switch self {
@@ -25,6 +28,10 @@ enum ResultExpectation {
       return expectedNames
     case .fromFileScope(expectedNames: let expectedNames):
       return expectedNames
+    case .lookInMembers,
+      .lookInGenericParametersOfExtendedType,
+      .mightIntroduceDollarIdentifiers:
+      return []
     }
   }
 
@@ -34,6 +41,12 @@ enum ResultExpectation {
       return "fromScope"
     case .fromFileScope:
       return "fromFileScope"
+    case .lookInMembers:
+      return "lookInMembers"
+    case .lookInGenericParametersOfExtendedType:
+      return "lookInGenericParametersOfExtendedType"
+    case .mightIntroduceDollarIdentifiers:
+      return "mightIntroduceDollarIdentifiers"
     }
   }
 
@@ -57,22 +70,20 @@ enum ResultExpectation {
         NameExpectation.assertNames(marker: marker, acutalNames: actualNames, expectedNames: expectedNames)
       case (.fromFileScope(_, let actualNames), .fromFileScope(let expectedNames)):
         NameExpectation.assertNames(marker: marker, acutalNames: actualNames, expectedNames: expectedNames)
+      case (.lookInMembers(let scope), .lookInMembers(let expectedType)):
+        XCTAssert(
+          scope.syntaxNodeType == expectedType,
+          "For marker \(marker), scope result type of \(scope.syntaxNodeType) doesn't match expected \(expectedType)"
+        )
+      case (.lookInGenericParametersOfExtendedType, .lookInGenericParametersOfExtendedType):
+        break
+      case (.mightIntroduceDollarIdentifiers, .mightIntroduceDollarIdentifiers):
+        break
       default:
         XCTFail(
           "For marker \(marker), actual result kind \(actual.debugDescription) doesn't match expected \(expected.debugDescription)"
         )
       }
-    }
-  }
-}
-
-extension LookupResult {
-  var debugDescription: String {
-    switch self {
-    case .fromScope:
-      return "fromScope"
-    case .fromFileScope:
-      return "fromFileScope"
     }
   }
 }
