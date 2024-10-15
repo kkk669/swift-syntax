@@ -1,4 +1,4 @@
-name: test
+name: SwiftWasm
 on:
   push:
     branches: ["wasm32-wasi-test"]
