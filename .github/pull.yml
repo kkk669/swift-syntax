@@ -1,0 +1,10 @@
+version: "1"
+rules:
+  - base: main
+    upstream: swiftlang:main
+    mergeMethod: hardreset
+  - base: wasm32-wasi-test
+    upstream: main
+    mergeMethod: merge
+    conflictReviewers:
+      - kkebo
