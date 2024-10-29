@@ -3,8 +3,14 @@ rules:
   - base: main
     upstream: swiftlang:main
     mergeMethod: hardreset
+    assignees:
+      - kkebo
+    reviewers:
+      - kkebo
   - base: wasm32-wasi-test
     upstream: main
     mergeMethod: merge
-    conflictReviewers:
+    assignees:
+      - kkebo
+    reviewers:
       - kkebo
